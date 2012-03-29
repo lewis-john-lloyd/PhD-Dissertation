@@ -1,0 +1,183 @@
+%============================================================================
+% commands.tex
+%============================================================================
+% This file contains:
+% 	- Defined Variables
+%	- Redefined math shorthand
+%	- Defined math shorthand
+
+%============================================================================
+% Defined Variables
+%============================================================================
+% 	- \abstractType:
+%		Use: Toggles the type of abstract to be used
+%		Default Value: abstract
+%		Options: abstract, umiabstract
+\newcommand{\abstractType}{abstract}
+
+%============================================================================
+% Redefined Math Commands
+%============================================================================
+% 	- \Vec{1} or \vec{1}
+%		Long Name: Vector
+%		Arguements[1]: bold and overbar arg1	
+\DeclareRobustCommand{\Vec}[1]{%
+    \ifmmode
+        \underline{\mathbf{#1}}\,%
+    \else
+        $\displaystyle\underline{\mathbf{#1}}\,$%
+    \fi
+}
+\DeclareRobustCommand{\vec}[1]{%
+    \ifmmode
+        \underline{\mathbf{#1}}\,%
+    \else
+        $\displaystyle\underline{\mathbf{#1}}\,$%
+    \fi
+}
+\DeclareRobustCommand{\FVS}[2]{%
+    \ifmmode
+        \Vec{#1}\!(#2)
+    \else
+        $\displaystyle \Vec{#1}\!(#2)$%
+    \fi
+}
+
+\DeclareRobustCommand{\Mat}[1]{%
+    \ifmmode
+        \underline{\Vec{#1}\!}
+    \else
+        $\displaystyle \underline{\Vec{#1}\!}$%
+    \fi
+}
+\DeclareRobustCommand{\mat}[1]{%
+    \ifmmode
+        \underline{\Vec{#1}\!}
+    \else
+        $\displaystyle\underline{\Vec{#1}\!}$%
+    \fi
+}
+
+\DeclareRobustCommand{\norm}[2]{%
+    \ifmmode
+        \| #1\|_{#2}
+    \else
+        $\| #1\|_{#2}$
+    \fi
+}
+\DeclareRobustCommand{\Ens}[1]{%
+    \ifmmode
+        <\! #1 \! >
+    \else
+        $<\! #1 \! >$
+    \fi  
+}
+\DeclareRobustCommand{\Ave}[1]{%
+    \ifmmode
+        \overline{#1}
+    \else
+        $\overline{#1}$
+    \fi  
+}
+%============================================================================
+% UW-Thesis Style Commands
+%============================================================================
+%	- \NomItem{2}:
+%		Long Name: Nomenclature Item
+%		Arguements[2]: arg1 is the symbolic representation of arg2
+\DeclareRobustCommand{\NomItem}[2]{%
+\item{\makebox[0.75in][l]{#1}} #2
+}
+
+%============================================================================
+% New Math Commands w/ Parenthesis
+%============================================================================
+%	- \Div{1}:
+%		Long Name: Divergence
+%		Arguements[1]: divergence of arg1
+\DeclareRobustCommand{\Div}[1]{%
+    \ifmmode
+        \nabla\cdot\left(#1\right)
+    \else
+        $\nabla\cdot\left(#1\right)$
+    \fi
+}
+
+%	- \DerivPar{2}:
+%		Long Name: Partial Derivative
+%		Arguements[2]: partial arg1 with respect to partial arg2 
+\DeclareRobustCommand{\DerivPar}[2]{%
+    \ifmmode
+        \frac{\partial\,\left(#1\right)}{\partial\,#2}
+    \else
+        $\frac{\partial\,\left(#1\right)}{\partial\,#2}$
+    \fi
+}
+%	- \Ddt{2}:
+%		Long Name: Material Derivative
+%		Arguements[2]: total derivative of arg1 with advection speed of arg2
+\DeclareRobustCommand{\Ddt}[2]{%
+    \ifmmode
+        \DerivPar{#1}{t}+\Div{#1 #2}
+    \else
+        $\DerivPar{#1}{t}+\Div{#1 #2}$
+    \fi
+}
+
+%	- \DisDdt{1}:
+%		Long Name: Discrete Time Difference
+%		Arguements[1]: backward time difference of arg1.
+\DeclareRobustCommand{\DisDdt}[1]{%
+    \ifmmode
+        \frac{(#1)^{n+1}-(#1)^{n}}{\Delta t}
+    \else
+        $\frac{(#1)^{n+1}-(#1)^{n}}{\Delta t}$
+    \fi
+}
+
+%============================================================================
+% New Math Commands w/o Parenthesis
+%============================================================================
+%	- \DivOne{1}:
+%		Long Name: Divergence
+%		Arguements[1]: divergence of arg1
+\DeclareRobustCommand{\DivOne}[1]{%
+    \ifmmode
+        \nabla\cdot\,#1
+    \else
+        $\nabla\cdot\,#1$
+    \fi
+}
+
+%	- \DerivParOne{2}:
+%		Long Name: Partial Derivative
+%		Arguements[2]: partial arg1 with respect to partial arg2
+\DeclareRobustCommand{\DerivParOne}[2]{%
+    \ifmmode
+        \frac{\partial \,#1}{\partial\,#2}
+    \else
+        $\frac{\partial \,#1}{\partial\,#2}$
+    \fi
+} 
+
+%	- \DdtOne{2}:
+%		Long Name: Material Derivative
+%		Arguements[2]: total derivative of arg1 with advection speed of arg2
+\DeclareRobustCommand{\DdtOne}[2]{%
+    \ifmmode
+        \DerivParOne{#1}{t}+\DivOne{#1 #2}
+    \else
+        $\DerivParOne{#1}{t}+\DivOne{#1 #2}$
+    \fi
+} 
+
+%	- \DisDdtOne{1}:
+%		Long Name: Discrete Time Difference
+%		Arguements[1]: backward time difference of arg1.
+\DeclareRobustCommand{\DisDdtOne}[1]{%
+    \ifmmode
+        \frac{#1^{n+1}-#1^{n}}{\Delta t}
+    \else
+        $\frac{#1^{n+1}-#1^{n}}{\Delta t}$
+    \fi
+} 

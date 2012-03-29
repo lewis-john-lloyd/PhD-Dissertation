@@ -1,0 +1,244 @@
+%============================================================================
+% mathematics.tex
+%============================================================================
+% This file contains:
+% 	- Hydrodynamic Conservation Equations
+%	- Structural Thermal Energy Equations
+%	- Newton's Method
+%	- Jacobian-Free Methodology
+
+%============================================================================
+\group{Mathematical Formulation}
+% Begin Chapter
+%============================================================================
+As mentioned earlier, most reactor safety-analysis codes depend upon three discrete sets of physics.
+These include, but are not necessarily limited to, two-phase hydrodynamics, heat-transfer between the fluid and a solid structure, and a nuclear power source.
+The different physical phenomena are represented by a system of PDEs and ODEs that constitute a set of balance laws for mass, momentum, and energy.
+This system encompasses different scales in both space and time.
+\pagebreak
+%============================================================================
+\subgroup{Hydrodynamic Conservation Equations}
+% Hydro. Cons. Eqns.
+%============================================================================
+\begin{minipage}{0.42\textwidth}
+\begin{center}\textbf{Conserved Variables}\end{center}
+\begin{align}
+\Vec{q} & = 
+\begin{bmatrix} 
+\alpha \rho_g  \\
+\alpha \left( \rho_v + \rho_g \right)\\
+\left(1-\alpha\right) \rho_l \\
+\alpha_e \rho_l \\
+\alpha \left( \rho_v + \rho_g \right) \Vec{U}_v \\
+\left( 1-\alpha \right) \rho_l \Vec{U}_l \\
+\alpha_e \rho_l \Vec{U}_e \\
+\alpha \left( \rho_v H_v+ \rho_g H_g \right)\\
+\left( 1 -\alpha \right) \rho_l H_l
+\end{bmatrix} 
+\end{align}
+\end{minipage}
+\begin{minipage}{0.42\textwidth}
+\begin{center}\textbf{Independent Variables}\end{center}
+\begin{align}
+\Vec{x} & = \begin{bmatrix}
+\alpha \\
+\alpha_e \\
+P \\
+\alpha P_g \\
+\alpha \left( \rho_v + \rho_g \right) \Vec{U}_v \\
+\left( 1-\alpha \right) \rho_l \Vec{U}_l \\
+\alpha_e  \rho_l \Vec{U}_e \\
+\alpha H_v \\
+\left( 1-\alpha \right) H_l
+\end{bmatrix}
+\end{align}
+\end{minipage}
+
+Note that $\displaystyle \Vec{q}=f(\Vec{x})$.
+
+\subsubgroup{Mass}
+\begin{align}
+\Ddt{\alpha   \rho_v}{\Vec{U}_v} & =  \Gamma   + \DivOne{\Vec{G}_v^{T}}\\
+\Ddt{\alpha   \rho_g}{\Vec{U}_v} & =  \Gamma   + \DivOne{\Vec{G}_g^{T}}\\
+\Ddt{\alpha_l \rho_l}{\Vec{U}_l} & = -\Gamma_l + \DivOne{\Vec{G}_l^{T}} - S''' \\
+\Ddt{\alpha_e \rho_l}{\Vec{U}_e} & = -\Gamma_e + S'''
+\end{align}
+
+\subsubgroup{Momentum}
+
+\begin{align}
+\Ddt{\alpha \rho_g \Vec{U}_g }{\Vec{U}_g} & = \nonumber \\
+-\alpha\;\nabla P + \alpha \rho_g g - \tau^{'''}_{wv}-\tau^{'''}_{I_{lv}}-\tau^{'''}_{I_{ev}}+\Gamma_e U^{'}+\Div{\alpha T_g^{T}} & \\
+\Ddt{\alpha_e \rho_l \Vec{U}_e}{\Vec{U}_e} & = \nonumber \\
+-\alpha_e\;\nabla P + \alpha_e \rho_l g - \tau^{'''}_{wl}+\tau^{'''}_{ev}+\Gamma_e U^{'}+S^{'''}U^{'} & \\
+\Ddt{\alpha_l \rho_l \Vec{U}_l}{\Vec{U}_l} & = \nonumber \\
+-\alpha_l\;\nabla P + \alpha_l \rho_l g - \tau^{'''}_{wl}+\tau^{'''}_{lv}-\Gamma_l U^{'}-S^{'''}U^{'}+\Div{\alpha_l T_l^{T}} &
+\end{align}
+
+\begin{align}
+\DisDdtOne{\dot{\Vec{m}}_{i,j}} & = \min(A_{j},A_{j+1})\frac{1}{2}\left(\frac{\dot{\Vec{m}}_{i,j}^{n}}{A_{j}}+\frac{\dot{\Vec{m}}_{i,j+1}^{n}}{A_{j+1}}\right)\hat{\Vec{U}}_{i,j-\frac{1}{2}}^{n} 
+\end{align}
+
+\subsubgroup{Energy}
+
+\begin{align}
+\Ddt{\alpha \rho_g H_g}{\Vec{U}_g} & \nonumber \\
+= \Gamma H^{'}_{v}+q_{iv}+q_{gl}+Q_g^{'''}-\Div{\alpha \Vec{q}_g^{T}} &\\
+\DerivPar{\left(1-\alpha \right)\rho_l H_l}{t}+\Div{\alpha_l \rho_l H_l \Vec{U}_l} +\Div{\alpha_e \rho_l H_l \Vec{U}_e} & = \nonumber \\
+-\Gamma H^{'}_l + q_{il} - q_{gl} + Q_l^{'''}-\Div{\alpha_l \Vec{q}_l^{T}} &
+\end{align}
+%============================================================================
+\subgroup{Discrete Hydrodynamic Equations}
+% Hydro. Cons. Eqns.
+\pagebreak
+%============================================================================
+\subsubgroup{Axial Momentum}
+
+\begin{IEEEeqnarray}{rCl}
+F_g(\Vec{x}^{n+1}) & = & \overbrace{E_g({\Vec{x}^{n}})}^{\text{Purely explicit terms}}-\overbrace{A_{mom,j}\Delta z_j\left[ \alpha_g^n\frac{P_{J+1}^{n+1}-P_{J}^{n+1}}{\Delta z_j}\right]}^{\text{Semi-Implicit Pressure Term}}  \\
+&&-\overbrace{A_{mom,j}\Delta z_j\left[ \frac{dP}{dz}\bigg|_{w,g}^{*}+\frac{dP}{dz}\bigg|_{i,lg}^{*}+\frac{dP}{dz}\bigg|_{i,eg}^{*}\right]}^{\text{Semi-Implicit Drag Terms}}\nonumber \\
+&& +\overbrace{\mathcal{S}p^{n+1}_{g,j}}^{\text{Implicit Source Term}} -\overbrace{\frac{\left(M_{g,j}^{n+1}-M_{g,j}^{n}\right)}{\Delta t}\Delta z}^{\text{Time rate of change}}\nonumber \\
+& = &  0 \nonumber
+\end{IEEEeqnarray}
+
+The nonlinear functional associated with this equation is as follows:
+
+\begin{IEEEeqnarray}{rCl}
+\overbrace{\FVS{F}{\Vec{M}^{n+1},\;P^{n+1}}}^{\text{Nonlinear Functional}} & = & 0 \nonumber \\
+& = & \underbrace{\FVS{E}{\Vec{M}^{n}}}_{\text{Explict Terms}} +\underbrace{\FVS{I}{\Vec{M}^{n+1},\;P^{n+1}}}_{\text{Implicit Terms}}\nonumber
+\end{IEEEeqnarray}
+\begin{IEEEeqnarray}{rCl}
+\Vec{x}^{n+1} & = & \begin{bmatrix} M_l^{n+1}\\M_g^{n+1}\\M_e^{n+1}\\P^{n+1}\end{bmatrix} \nonumber \\
+\FVS{F}{\Vec{x}^{n+1}} & = & \FVS{E}{\Vec{x}^n}+\FVS{I}{\Vec{x}^{n+1}} \nonumber
+\end{IEEEeqnarray}
+
+Now, this nonlinear functional is solved using a Newton Step.
+
+\begin{IEEEeqnarray}{rCl}
+\Vec{F}(\Vec{x}_{k+1}^{n+1}) = \Vec{F}(\Vec{x}_{k}^{n+1}) + \Mat{J}\cdot\Vec{\delta x}_{k} & = & 0\nonumber \\
+\Vec{\delta x}_k & =&  \Vec{x}^{n+1}_{k+1}-\Vec{x}^{n+1}_{k} \nonumber \\
+\Vec{F}(\Vec{x}_{k}^{n+1}) + \Mat{J} \cdot\Vec{\delta x}_{k} & = & 0 \nonumber \\
+\Mat{J} \cdot\Vec{\delta x}_{k} & = & -\Vec{F}(\Vec{x}_{k}^{n+1}) \nonumber \\
+\Mat{J}_{[:,1:3]} \cdot\Vec{\delta M}_{k}+\Vec{J}_{[:,4]}\cdot \Vec{\delta P}_{k} & = & -\Vec{F}(\Vec{x}_{k}^{n+1}) \nonumber
+\end{IEEEeqnarray}
+
+\begin{IEEEeqnarray}{rCl}
+\Mat{J}_{[:,1:3]}\cdot [\Vec{M}^{n+1}_{k+1}-\Vec{M}^{n+1}_{k}] & = & -\Vec{F}(\Vec{x}^{n+1}_{k})-\Vec{J}_{[:,4]}\cdot \Vec{\delta P}_{k} \nonumber \\
+\Mat{J}_{[:,1:3]}\cdot \Vec{M}^{n+1}_{k+1} & = & \Mat{J}_{[:,1:3]}\cdot \Vec{M}^{n+1}_{k} - \Vec{F}(\Vec{x}^{n+1}_{k})-\Vec{J}_{[:,4]}\cdot \Vec{\delta P}_{k}\nonumber \\
+\Vec{M}^{n+1}_{k+1} & = & \Vec{M}^{n+1}_{k} - [\Mat{J}_{[:,1:3]}]^{-1}\cdot\left[\Vec{F}(\Vec{x}^{n+1}_{k})+\Vec{J}_{[:,4]}\cdot \Vec{\delta P}_{k}\right]\nonumber \\
+\end{IEEEeqnarray}
+
+
+
+\begin{align}
+\Mat{J}_{[1:3,1:3]} & \equiv -\frac{2 A_{mom}\Delta t}{\Delta z}\cdot \nonumber \\
+&\cdot \begin{bmatrix} 
+K^{n}_{w,l} + \frac{K^{n}_{i,lg}}{\Ave{\alpha\rho}^{n}_{l}} +\frac{1}{2} &  -\frac{K^{n}_{i,lg}}{\Ave{\alpha\rho}^{n}_{g}} & 0\\
+-\frac{K^{n}_{i,lg}}{\Ave{\alpha\rho}^{n}_{l}} &  K^{n}_{w,g} + \frac{K^{n}_{i,lg}}{\Ave{\alpha\rho}^{n}_{g}}+\frac{K^{n}_{i,eg}}{\Ave{\alpha\rho}^{n}_{g}} +\frac{1}{2} & -\frac{K^{n}_{i,eg}}{\Ave{\alpha\rho}^{n}_{e}}\\
+0 & -\frac{K^{n}_{i,eg}}{\Ave{\alpha\rho}^{n}_{g}} &  K^{k}_{w,e} + \frac{K^{n}_{i,eg}}{\Ave{\alpha\rho}^{n}_{e}}+\frac{1}{2}\\
+\end{bmatrix}
+\end{align}
+
+\begin{align}
+\Mat{J}(\Vec{x}^{k})_{[1:3,4]} & \equiv \frac{A_{mom}\Delta t}{\Delta z} \begin{bmatrix} 
+\Ens{\alpha^{n}_{l}}\\
+\Ens{\alpha^{n}_{g}}\\
+\Ens{\alpha^{n}_{e}}
+\end{bmatrix}
+\end{align}
+
+
+
+\subsubgroup{Linearization}
+The semi-implicit method, with a single Newton Step linearizes about the old time value and solves for a single delta. This has several ramifications. 
+\subsubsubgroup{Wall Drag}
+The beginning equation to formulate the wall drag is shown in Eqn.
+
+\begin{IEEEeqnarray}{rCl}
+\frac{dP}{dz}\bigg\vert_{\text{Fric},k} & = & \frac{f}{D_h}\frac{\Ave{\rho}_k U^2_k}{2}\\
+\frac{dP}{dz}\bigg\vert_{Fric,k} & = & \frac{f}{D_h} \frac{M^2_k}{A^2_{mom}}\frac{1}{2\Ave{\rho}_k}\frac{1}{\Ave{\alpha}^2}\\
+\frac{dP}{dz}\bigg\vert_{k} & = & \frac{f}{D_h}\frac{M^2_k}{A^2_{mom}}\frac{1}{2\Ave{\rho}_k}\frac{\alpha^2_b}{\Ave{\alpha}^2}\\ 
+K_{wf,k} & = & \frac{A_{mom}}{M_k}\frac{dP}{dz}\bigg\vert_{k}\\
+K_{wf,k} & = & \frac{A_{mom}}{M_k}\frac{f}{D_h}\frac{M^2_k}{A^2_{mom}}\frac{1}{2\Ave{\rho}_k}\frac{\alpha^2_b}{\Ave{\alpha}^2}\\
+K_{wf,k} & = & \frac{f}{D_h}\frac{M_k}{A_{mom}}\frac{1}{2\Ave{\rho}_k}\frac{\alpha^2_b}{\Ave{\alpha}^2}
+\end{IEEEeqnarray}
+
+\begin{IEEEeqnarray}{rCl}
+\frac{dP}{dz}\bigg\vert_{\text{Form},k} & = & \frac{f}{D_h}\frac{\Ave{\rho}_k U^2_k}{2}\\
+\frac{dP}{dz}\bigg\vert_{w,k} & = & \frac{f}{D_h} \frac{M^2_k}{A^2_{mom}}\frac{1}{2\Ave{\alpha\rho}_k}\\
+\frac{dP}{dz}\bigg\vert_{k} & = & \frac{f}{D_h}\frac{M^2_k}{A^2_{mom}}\frac{1}{2\Ave{\rho}_k}\frac{\alpha^2_b}{\Ave{\alpha}^2}\\ 
+K_{wf,k} & = & \frac{A_{mom}}{M_k}\frac{dP}{dz}\bigg\vert_{k}\\
+K_{wf,k} & = & \frac{A_{mom}}{M_k}\frac{f}{D_h}\frac{M^2_k}{A^2_{mom}}\frac{1}{2\Ave{\rho}_k}\frac{\alpha^2_b}{\Ave{\alpha}^2}\\
+K_{wf,k} & = & \frac{f}{D_h}\frac{M_k}{A_{mom}}\frac{1}{2\Ave{\rho}_k}\frac{\alpha^2_b}{\Ave{\alpha}^2}
+\end{IEEEeqnarray}
+
+The Momentum Equations, outlined in Section \ref{blarp} contain an implicit wall drag. This means that we need to evaluate the wall drag at the future time value. To do this in the semi-implicit methodology requires that we linearize the future value using Newton's Method. The current implementation uses the following derivation.
+
+\begin{eqnarray}
+\frac{dP}{dz}\bigg\vert^{*}_{w,k} & = & \frac{dP}{dz}\bigg\vert^{n}_{w,k}+\frac{d (\frac{dP}{dz}\big\vert_{w,k})}{d M_k}\bigg\vert^{n}\;\delta M_k\\
+\frac{d (\frac{dP}{dz}\big\vert_{w,k})}{d M_k} & = & \frac{d}{d M_k}\left[\left(\frac{f}{D_h}+\frac{K_{form}}{\Delta z_j}\right)\left(\frac{M^2_k}{A^2_{mom}}\right)\left(\frac{1}{2\rho_k}\right) \right]\\
+& = & 2 \left(\frac{f}{D_h}+\frac{K_{form}}{\Delta z_j}\right)\left(\frac{M_k}{A_{mom}}\right)\left(\frac{1}{2\rho_k}\right)\\
+& = & \left(\frac{2}{M_k}\right)\left(\frac{dP}{dz}\bigg\vert_{w,k}\right) \\
+\frac{dP}{dz}\bigg\vert^{n+1}_{w,k} & = & \frac{dP}{dz}\bigg\vert^{n}_{w,k}\left(1+\frac{2 \delta M_k}{M_k}\right) \\
+\frac{dP}{dz}\bigg\vert^{n+1}_{w,k} & = & \frac{1}{M_k}\frac{dP}{dz}\bigg\vert^{n}_{w,k}\left(M_k+2\delta M_k\right) \\
+\frac{dP}{dz}\bigg\vert^{n+1}_{w,k} & = & K^{n}_{wz,k}\left(M_k+2\delta M_k\right) \\
+\end{eqnarray}
+
+Modifying this derivation to take into account the multiple Newton Steps results in the equations shown below. For brevity, the phase index, $_k$, is dropped from this derivation. Once the linearization starts, the index, $_k$, will refer to Newton iteration. 
+\begin{eqnarray}
+\label{NewPressureLoss}
+\frac{dP}{dz}\bigg\vert_{w}& = & \left(\frac{f}{D_h}+\frac{K_{form}}{\Delta z_j}\right)\left(\frac{M^2}{A^2_{mom}}\right)\left(\frac{1}{2\rho}\right)\\
+\frac{dP}{dz}\bigg\vert_{w} & = & f(M) \\
+f|_{M^{n+1}_{k}} & = & f|_{M^{n+1}_{k-1}}+\frac{d\; f }{d M}\bigg\vert_{M_{k-1}^{n+1}}\;\delta M^{n+1}_{k-1}\\
+\frac{d\; f }{d M}\bigg\vert_{M_{k-1}^{n+1}} & = & \frac{2}{M^{n+1}_{k-1}}\; f|_{M^{n+1}_{k-1}}\\
+K^{n+1}_{wz,k-1} & = & \frac{f|_{M^{n+1}_{k-1}}}{M^{n+1}_{k-1}} \\
+f|_{M^{n+1}_{k}} & = & [K^{n+1}_{wz,k-1}] M_{k-1}^{n+1}+2 \left[K^{n+1}_{wz,k-1} \right]\delta M^{n+1}_{k-1}
+\end{eqnarray}
+
+\begin{IEEEeqnarray}{rCl}
+M^* & = & M_k \frac{\alpha_b}{\Ave{\alpha}}\\
+G_k & = & \frac{M^*}{A_{mom}}=\frac{M_k \alpha_b}{A_{mom}\Ave{\alpha}}\\
+\frac{dP}{dz}\bigg\vert_{k} & = & f \frac{1}{D_h}\frac{G_k^2}{2 \Ave{\rho}_k}\\ 
+\frac{dP}{dz}\bigg\vert_{k} & = & f \frac{1}{D_h}\frac{1}{2 \Ave{\rho}_k}\frac{M^2_k \alpha^2_b}{A^2_{mom}\Ave{\alpha}^2}\\ 
+K_i & = & \frac{1}{2} fi_{ia}\cdot coefd\cdot rvp\cdot urvl\cdot aintfh\cdot dxi\cdot \frac{1}{(\alpha ^*)^3}\\
+alrl & = & A_{mom}\Ave{\alpha\rho}\\
+C[2] & = & \frac{\Delta t}{\Delta x}\frac{K_i \Delta x}{A_{mom}\Ave{\alpha\rho}}
+\end{IEEEeqnarray}
+
+
+
+%============================================================================
+\subgroup{Structural Thermal Energy Equations}
+% Heat Structures
+%============================================================================
+
+%============================================================================
+\subgroup{Newton's Method}
+% Newton's Method
+%============================================================================
+
+COBRA currently uses a single linearized Newton step to solve the hydrodynamic equations.
+This method has been shown to be adequate \ref{blarp} given a small enough time step.
+One potential improvement that can be made to the current method is multiple Newton steps being taken with a frozen Jacobian.
+The Jacobian will be evaluated at the old time value and not updated during the Newton process.
+
+
+%============================================================================
+\subgroup{Krylov Solvers}
+% Krylov Solvers
+%============================================================================
+To solve a give newton iteraete, a Krylov subspace based method is used.
+This methodology eliminates the requirement of analytically forming the Jacobian.
+
+
+\begin{align}
+\begin{bmatrix} 
+h  \\
+hu \\
+\end{bmatrix}_t +\begin{bmatrix} 
+uh  \\
+h u^2 + \frac{1}{2}g h^2 \\
+\end{bmatrix}_x & = 0
+\end{align}
+
+

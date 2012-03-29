@@ -1,0 +1,99 @@
+%============================================================================
+% prelude.tex
+%============================================================================
+%	This files contains:
+%   - Title Page
+%	- Copyright Page
+%   - Dedication
+%   - Acknowledgments
+%   - Table of contents, List of Tables and List of Figures
+%   - Nomenclature Page
+%   - Abstract
+
+%============================================================================
+% Make the page numbers Roman (i, ii, etc)
+%============================================================================
+\clearpage\pagenumbering{roman}  
+
+%============================================================================
+% Title Page
+%============================================================================
+% Once the below are defined, use \maketitle to generate the titlepage
+%	- \title{}
+%	- \author{}
+%	- \date{}
+% 	- \advisorname{}:
+%		Name of primary thesis advisor.
+%	- \advisortitle{}:
+%		
+%	- \degree{Degree Title Here}:
+%		The default degree is ``Doctor of Philosophy'' (unless the document style msthesis is specified and then the default degree is ``Master of Science'').
+%	- \dissertation: 
+%		The default is dissertation, unless the document style msthesis was specified in which case it becomes thesis.
+%     If msthesis is specified for the MS margins, you can still have a dissertation if you specify \disseration.
+%	- \project:
+%		For a masters project report, specify \project
+%	- \prelim:
+%		For a preliminary report, specify \prelim
+%   - \thesis:
+%		For a masters thesis, specify \thesis
+%	- \department{}:
+%		The default department is ``Electrical Engineering''
+%		The department can be changed using the command \department{}
+
+\title{My Prelim}
+\author{Lewis John Lloyd}
+\date{2012}
+\prelim
+\department{Nuclear Engineering and Engineering Physics}
+\advisorname{Michael Corradini}
+\advisortitle{Professor}
+\maketitle
+
+%============================================================================
+% Copyright Page
+%============================================================================
+%	- \copyrightpage:
+%		To include a copyright page use \copyrightpage
+
+%============================================================================
+% Dedication Page
+%============================================================================
+%\begin{dedication}
+% Put dedication here.
+%\end{dedication}
+
+%============================================================================
+% Acknowledgement Page
+%============================================================================
+\begin{acknowledgments}
+\input{Acknowledgements}
+\end{acknowledgments}
+
+%============================================================================
+% Auto-Generated Pages
+%============================================================================
+%	- \tableofcontents
+%	- \listoftables
+%	- \listoffigures
+\tableofcontents
+\listoftables
+\listoffigures
+\listofalgorithms
+
+%============================================================================
+% Nomenclature Page
+%============================================================================
+\input{Nomenclature}
+
+%============================================================================
+% Abstract
+%============================================================================
+\begin{\abstractType}
+  \input{Abstract}
+\end{\abstractType}
+
+%============================================================================
+% Make the page numbers Arabic (1, 2, etc)
+%============================================================================
+\clearpage\pagenumbering{arabic}
