@@ -128,6 +128,100 @@ Now, this nonlinear functional is solved using a Newton Step.
 \Vec{M}^{n+1}_{k+1} & = & \Vec{M}^{n+1}_{k} - [\Mat{J}_{[:,1:3]}]^{-1}\cdot\left[\Vec{F}(\Vec{x}^{n+1}_{k})+\Vec{J}_{[:,4]}\cdot \Vec{\delta P}_{k}\right]\nonumber \\
 \end{IEEEeqnarray}
 
+\begin{align}
+\Mat{J} & \equiv \begin{bmatrix} 
+\DerivParOne{\vec{I}_{1}}{\vec{\dot{m}}_{l}} & \DerivParOne{\vec{I}_{1}}{\vec{\dot{m}}_{g}}  & \DerivParOne{\vec{I}_{1}}{\vec{\dot{m}}_{e}} & \DerivParOne{\vec{I}_{1}}{\Delta P}\\
+\DerivParOne{\vec{I}_{2}}{\vec{\dot{m}}_{l}} & \DerivParOne{\vec{I}_{2}}{\vec{\dot{m}}_{g}}  & \DerivParOne{\vec{I}_{2}}{\vec{\dot{m}}_{e}} & \DerivParOne{\vec{I}_{2}}{\Delta P}\\
+\DerivParOne{\vec{I}_{3}}{\vec{\dot{m}}_{l}} & \DerivParOne{\vec{I}_{3}}{\vec{\dot{m}}_{g}}  & \DerivParOne{\vec{I}_{3}}{\vec{\dot{m}}_{e}} & \DerivParOne{\vec{I}_{3}}{\Delta P}
+\end{bmatrix}
+\end{align}
+
+\begin{align}
+\begin{bmatrix} 
+\DerivParOne{\vec{I}_{l}}{\vec{\dot{m}}_{l}} & \DerivParOne{\vec{I}_{l}}{\vec{\dot{m}}_{g}}  & \DerivParOne{\vec{I}_{l}}{\vec{\dot{m}}_{e}} & \DerivParOne{\vec{I}_{l}}{\Delta P}\\
+\DerivParOne{\vec{I}_{g}}{\vec{\dot{m}}_{l}} & \DerivParOne{\vec{I}_{g}}{\vec{\dot{m}}_{g}}  & \DerivParOne{\vec{I}_{g}}{\vec{\dot{m}}_{e}} & \DerivParOne{\vec{I}_{g}}{\Delta P}\\
+\DerivParOne{\vec{I}_{e}}{\vec{\dot{m}}_{l}} & \DerivParOne{\vec{I}_{e}}{\vec{\dot{m}}_{g}}  & \DerivParOne{\vec{I}_{e}}{\vec{\dot{m}}_{e}} & \DerivParOne{\vec{I}_{e}}{\Delta P}
+\end{bmatrix}_{0}
+\cdot
+\begin{bmatrix}
+\Delta \vec{\dot{m}}_l \\
+\Delta \vec{\dot{m}}_g \\
+\Delta \vec{\dot{m}}_e \\
+\Delta P
+\end{bmatrix}_{k\rightarrow k+1} & =
+-\begin{bmatrix}
+\vec{E}_{l} \\
+\vec{E}_{g} \\
+\vec{E}_{e}
+\end{bmatrix} -
+\begin{bmatrix}
+\vec{I}_{l} \\
+\vec{I}_{g} \\
+\vec{I}_{e}
+\end{bmatrix}_{k} \\ 
+% HERE IS A SEPERATE EQUATION
+\begin{bmatrix} 
+\DerivParOne{\vec{I}_{l}}{\vec{\dot{m}}_{l}} & \DerivParOne{\vec{I}_{l}}{\vec{\dot{m}}_{g}}  & \DerivParOne{\vec{I}_{l}}{\vec{\dot{m}}_{e}} \\
+\DerivParOne{\vec{I}_{g}}{\vec{\dot{m}}_{l}} & \DerivParOne{\vec{I}_{g}}{\vec{\dot{m}}_{g}}  & \DerivParOne{\vec{I}_{g}}{\vec{\dot{m}}_{e}} \\
+\DerivParOne{\vec{I}_{e}}{\vec{\dot{m}}_{l}} & \DerivParOne{\vec{I}_{e}}{\vec{\dot{m}}_{g}}  & \DerivParOne{\vec{I}_{e}}{\vec{\dot{m}}_{e}}
+\end{bmatrix}_{0}
+\cdot
+\begin{bmatrix}
+\Delta \vec{\dot{m}}_l \\
+\Delta \vec{\dot{m}}_g \\
+\Delta \vec{\dot{m}}_e
+\end{bmatrix}_{k\rightarrow k+1} & =
+-\vec{E} -
+\vec{I}_{k} -
+\begin{bmatrix}
+\DerivParOne{\vec{I}_{l}}{\Delta P} \\
+\DerivParOne{\vec{I}_{g}}{\Delta P} \\
+\DerivParOne{\vec{I}_{e}}{\Delta P}
+\end{bmatrix}_{0}
+\Delta P_{k \rightarrow k+1} \\
+% HERE IS A SEPERATE EQUATION
+\mat{J}_{\,0}
+\cdot
+\begin{bmatrix}
+\Delta \vec{\dot{m}}_l \\
+\Delta \vec{\dot{m}}_g \\
+\Delta \vec{\dot{m}}_e
+\end{bmatrix}_{k\rightarrow k+1} & =
+-\vec{E} -
+\vec{I}_{k} -
+\vec{p}_{0}
+\Delta P_{k \rightarrow k+1} \\
+% HERE IS A SEPERATE EQUATION
+\begin{bmatrix}
+\Delta \vec{\dot{m}}_l \\
+\Delta \vec{\dot{m}}_g \\
+\Delta \vec{\dot{m}}_e
+\end{bmatrix}_{k\rightarrow k+1} & =
+-\mat{J}_{\,0}^{-1}\left(\vec{E} + \vec{I}_{k}\right) -
+\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0} \Delta P_{k \rightarrow k+1} \\
+% HERE IS A SEPERATE EQUATION
+\vec{\dot{m}}^{n+1}_{k+1}- \vec{\dot{m}}^{n+1}_{k} & =
+-\mat{J}_{\,0}^{-1}\left(\vec{E} + \vec{I}_{k}\right) -
+\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0} \Delta P_{k \rightarrow k+1}\\
+% HERE IS A SEPERATE EQUATION
+\vec{\dot{m}}^{n+1}_{k+1} & =
+\underbrace{\vec{\dot{m}}^{n+1}_{k} -\mat{J}_{\,0}^{-1}\left(\vec{E} + \vec{I}_{k}\right)}_{\vec{\dot{m}}^{*}_{k}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{\dot{m}}}{\partial \Delta P}} \Delta P_{k \rightarrow k+1} \\
+% HERE IS A SEPERATE EQUATION
+\vec{\dot{m}}^{n+1}_{k+1} & =
+\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{m}}^{n+1}_{k} - \mat{J}^{-1}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{\dot{m}}}{\partial \Delta P}} \Delta P_{k \rightarrow k+1}
+\end{align}
+
+\begin{align}
+% HERE IS A SEPERATE EQUATION
+\vec{\dot{m}}^{n+1}_{k+1} & =
+\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{m}}^{n+1}_{k} - \mat{J}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{\dot{m}}}{\partial \Delta P}} \Delta P_{k \rightarrow k+1} \\
+% HERE IS A SEPERATE EQUATION
+\vec{\dot{m}}^{n+1}_{k+1} & =
+\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{m}}^{n+1}_{k} - \mat{J}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \frac{\partial \vec{\dot{m}}}{\partial \Delta P}\bigg|_{0} \Delta P_{k \rightarrow k+1} \\
+% HERE IS A SEPERATE EQUATION
+\vec{\dot{m}}^{n+1}_{k+1} & =
+\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \left(\mat{I} - \mat{J}^{-1}_{\,0}\cdot \mat{\alpha}_{0}\right)\cdot\vec{x}^{n+1}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \frac{\partial \vec{\dot{m}}}{\partial \Delta P}\bigg|_{0} \Delta P_{k \rightarrow k+1}
+\end{align}
 
 
 \begin{align}

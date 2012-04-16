@@ -15,44 +15,44 @@ commandsmath.tex,258
         \frac{\partial \,#1}ial157,4098
         $\frac{\partial \,#1}ial159,4151
 
-JacobianFreeNewtonKrylov.tex,534
+jfnk.tex,533
 \label{TransientLoop}TransientLoop32,1642
 \label{ModifiedNewtonsAlgorithm}ModifiedNewtonsAlgorithm51,2197
-\label{ImplicitAndExplicit}ImplicitAndExplicit96,4307
-\label{NonlinearFunction}NonlinearFunction103,4537
-\label{TaylorSeriesExpansion}TaylorSeriesExpansion116,5168
-\label{DeltaX}DeltaX124,5697
-\label{NewtonsMethod}NewtonsMethod132,6027
-\label{JacobianFreeExpansion}JacobianFreeExpansion181,8520
-\label{JacobianFreeApproximation}JacobianFreeApproximation183,8704
-\label{KrylovResidual}KrylovResidual202,10302
+\label{ImplicitAndExplicit}ImplicitAndExplicit92,4226
+\label{NonlinearFunction}NonlinearFunction99,4456
+\label{TaylorSeriesExpansion}TaylorSeriesExpansion112,5087
+\label{DeltaX}DeltaX120,5616
+\label{NewtonsMethod}NewtonsMethod128,5946
+\label{JacobianFreeExpansion}JacobianFreeExpansion177,8439
+\label{JacobianFreeApproximation}JacobianFreeApproximation179,8623
+\label{KrylovResidual}KrylovResidual198,10221
 
 main.tex,90
 \newcommand{\StandAlone}\StandAlone40,1265
 \renewcommand{\ttdefault}\ttdefault61,2088
 
-Mathematics.tex,191
-The Momentum Equations, outlined in Section \ref{blarp}blarp175,8785
-\label{NewPressureLoss}NewPressureLoss189,10312
-This method has been shown to be adequate \ref{blarp}blarp221,12048
+mathematics.tex,1201
+\underbrace{\vec{\dot{m}}^{n+1}_{k} -\mat{J}_{\,0}^{-1}\left(\vec{E} + \vec{I}_{k}\right)}_{\vec{\dot{m}}^{*}_{k}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{ial208,9456
+\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{m}}^{n+1}_{k} - \mat{J}^{-1}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{ial211,9766
+\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{m}}^{n+1}_{k} - \mat{J}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{ial217,10121
+\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{m}}^{n+1}_{k} - \mat{J}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \frac{\partial \vec{ial220,10447
+\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \left(\mat{I} - \mat{J}^{-1}_{\,0}\cdot \mat{\alpha}_{0}\right)\cdot\vec{x}^{n+1}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \frac{\partial \vec{ial223,10731
+The Momentum Equations, outlined in Section \ref{blarp}blarp269,13452
+\label{NewPressureLoss}NewPressureLoss283,14979
+This method has been shown to be adequate \ref{blarp}blarp315,16715
 
 models.tex,44
 \group{Model stuff} \label{merp}merp6,157
 
-single.tex,43
-\newcommand{\StandAlone}\StandAlone8,217
+twophaseflow.tex,0
 
-TwoPhaseFlow.tex,0
+prelude.tex,0
 
-scratch.tex,0
+nomenclature.tex,0
 
-Prelude.tex,0
+intro.tex,0
 
-Nomenclature.tex,0
-
-Introduction.tex,0
-
-CommandsTikz.tex,0
+commandstikz.tex,0
 
 acknowledgements.tex,0
 

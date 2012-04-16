@@ -2,3 +2,5 @@
 *.lo*
 *.out
 *.toc
+*.backup
+*~

@@ -51,33 +51,29 @@ In the Jacobian-Free Newton Krylov framework, the following procedure is taken:
 \label{ModifiedNewtonsAlgorithm}
 \caption{Modified Newton's Method - Frozen Jacobian}
 \begin{algorithmic}[1]
-\Define $\vec{x}^{n+1}_0$ 
-\Calculate Junction Values
-\Calculate $\vec{u}^{n+1}_0$
-\Set $\vec{u}^{*}_0 = \vec{u}^{n+1}_0$
-\State Apply BCs
+\Define $\vec{x}^{n}$
+\Calculate Material Properties @ $\vec{x}^{n}$.
+\Calculate Split/Merge Values @ $\vec{x}^{n}$.
+\Calculate Velocities @ $\vec{x}^{n}$
+\Calculate $\vec{E}_{mom}$
+\Calculate $\vec{E}_{con}$
 \Set $k = 0$
+\BlackBox Predict $\vec{x}_{k} \equiv \vec{x}^{n+1}_{k}$ / Apply Implicit Boundary Conditions
 \Loop \quad Take a Newton Step
-    \If{ $k = 0$}
-        \Calculate $\mathbf{J}_{0} \equiv \Mat{J}(\Vec{x}^{n+1}_0)$
-        \Calculate $\mathbf{E} \equiv \mathbf{E}(\Vec{x}^{n})$
-    \Else
-        \State Apply BCs
-    \EndIf
-    \Calculate $\mathbf{I}_k \equiv \Vec{I}(\Vec{x}^{n+1}_k)$
-    \Calculate $\mathbf{F}_{k} = \mathbf{E} + \mathbf{I}_k$
-    \BlackBox Scale $\mathbf{F}_k$ and $\mathbf{J}_0$.
-    \BlackBox $\Vec{\delta x}_k = -\mathbf{J}^{-1}_0\cdot \mathbf{F}_k$ \Comment{Solver Choice}
-    \BlackBox $\Vec{x}^{n+1}_{k+1}$ \Comment{Line-search or Trust Region}
-    \Update Material Properties \Comment{UpdateVariables}
-    \Test Material Properties
-    \Update Junction Values \Comment{UpdateJunctions}
-    \Update $\vec{u}^{n+1}_{k+1}$ \Comment{CalcAxialVelocity and CalcTransVelocity}
-    \Update $\Vec{u}^{*}_{k+1}$ \Comment{CalcModAxialVelocity and CalcModTransVelocity}
-    \Calculate Convergence Norms
-    \If{ Converged}
-        \State \bf{exit loop}
-    \EndIf
+  \Calculate $\vec{I}(\vec{x}_{k})_{mom}$
+  \Calculate $\vec{I}(\vec{x}_{k})_{con}$
+  \BlackBox Scale $\vec{F}(\vec{x}_k)$ and $\vec{J}(\vec{x}_{k})$.
+  \BlackBox $\Vec{\delta x}_k = -\mathbf{J}^{-1}_0\cdot \mathbf{F}_k$ \Comment{Solver Choice}
+  \BlackBox $\Vec{x}^{n+1}_{k+1}$ \Comment{Line-search or Trust Region}
+  \Update Material Properties \Comment{UpdateVariables}
+  \Test Material Properties
+  \Update Junction Values \Comment{UpdateJunctions}
+  \Update $\vec{u}^{n+1}_{k+1}$ \Comment{CalcAxialVelocity and CalcTransVelocity}
+  \Update $\Vec{u}^{*}_{k+1}$ \Comment{CalcModAxialVelocity and CalcModTransVelocity}
+  \Calculate Convergence Norms
+  \If{ Converged}
+    \State \bf{exit loop}
+  \EndIf
 \EndLoop \quad $k = k+1$
 \end{algorithmic}
 \end{algorithm}
