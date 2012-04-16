@@ -132,17 +132,17 @@
 %=======================================================================
 % Include custom math commands
 %=======================================================================
-\input{CommandsMath}
+\input{commandsmath}
 
 %=======================================================================
 % Include custom tikz commands
 %=======================================================================
-\input{CommandsTikz}
+\input{commandstikz}
 
 %=======================================================================
 % Include custom variables based on ifthen commands
 %=======================================================================
-\input{CommandsGeneral}
+\input{commandsgeneral}
 
 %=======================================================================
 % Start Document
@@ -153,16 +153,17 @@
 %=======================================================================
 % Chapters
 %=======================================================================
-\include{Prelude}              	    % Title page
-                                    % Abstract
-                                    % Table of Contents
-                                    % List of Tables
-                                    % List of Figures
-                                    % Nomenclature
-\include{Introduction}              % Chapter: Introduction
-\include{TwoPhaseFlow}              % Chapter: Background
-\include{Mathematics}               % Chapter: Mathematical formulation
-\include{JacobianFreeNewtonKrylov}  % Chapter: Jacobian Free Newton Krylov Overview
+\include{prelude}       % Title page
+                        % Abstract
+                        % Table of Contents
+                        % List of Tables
+                        % List of Figures
+                        % List of Algorithms
+                        % Nomenclature
+\include{intro}         % Chapter: Introduction
+\include{twophaseflow}  % Chapter: Background
+\include{mathematics}   % Chapter: Mathematical formulation
+\include{jfnk}          % Chapter: Jacobian Free Newton Krylov Overview
 %=======================================================================
 % Appendices
 %=======================================================================
