@@ -118,23 +118,8 @@ Now, this nonlinear functional is solved using a Newton Step.
 \Vec{F}(\Vec{x}_{k+1}^{n+1}) = \Vec{F}(\Vec{x}_{k}^{n+1}) + \Mat{J}\cdot\Vec{\delta x}_{k} & = & 0\nonumber \\
 \Vec{\delta x}_k & =&  \Vec{x}^{n+1}_{k+1}-\Vec{x}^{n+1}_{k} \nonumber \\
 \Vec{F}(\Vec{x}_{k}^{n+1}) + \Mat{J} \cdot\Vec{\delta x}_{k} & = & 0 \nonumber \\
-\Mat{J} \cdot\Vec{\delta x}_{k} & = & -\Vec{F}(\Vec{x}_{k}^{n+1}) \nonumber \\
-\Mat{J}_{[:,1:3]} \cdot\Vec{\delta M}_{k}+\Vec{J}_{[:,4]}\cdot \Vec{\delta P}_{k} & = & -\Vec{F}(\Vec{x}_{k}^{n+1}) \nonumber
+\Mat{J} \cdot\Vec{\delta x}_{k} & = & -\Vec{F}(\Vec{x}_{k}^{n+1}) \nonumber
 \end{IEEEeqnarray}
-
-\begin{IEEEeqnarray}{rCl}
-\Mat{J}_{[:,1:3]}\cdot [\Vec{M}^{n+1}_{k+1}-\Vec{M}^{n+1}_{k}] & = & -\Vec{F}(\Vec{x}^{n+1}_{k})-\Vec{J}_{[:,4]}\cdot \Vec{\delta P}_{k} \nonumber \\
-\Mat{J}_{[:,1:3]}\cdot \Vec{M}^{n+1}_{k+1} & = & \Mat{J}_{[:,1:3]}\cdot \Vec{M}^{n+1}_{k} - \Vec{F}(\Vec{x}^{n+1}_{k})-\Vec{J}_{[:,4]}\cdot \Vec{\delta P}_{k}\nonumber \\
-\Vec{M}^{n+1}_{k+1} & = & \Vec{M}^{n+1}_{k} - [\Mat{J}_{[:,1:3]}]^{-1}\cdot\left[\Vec{F}(\Vec{x}^{n+1}_{k})+\Vec{J}_{[:,4]}\cdot \Vec{\delta P}_{k}\right]\nonumber \\
-\end{IEEEeqnarray}
-
-\begin{align}
-\Mat{J} & \equiv \begin{bmatrix} 
-\DerivParOne{\vec{I}_{1}}{\vec{\dot{m}}_{l}} & \DerivParOne{\vec{I}_{1}}{\vec{\dot{m}}_{g}}  & \DerivParOne{\vec{I}_{1}}{\vec{\dot{m}}_{e}} & \DerivParOne{\vec{I}_{1}}{\Delta P}\\
-\DerivParOne{\vec{I}_{2}}{\vec{\dot{m}}_{l}} & \DerivParOne{\vec{I}_{2}}{\vec{\dot{m}}_{g}}  & \DerivParOne{\vec{I}_{2}}{\vec{\dot{m}}_{e}} & \DerivParOne{\vec{I}_{2}}{\Delta P}\\
-\DerivParOne{\vec{I}_{3}}{\vec{\dot{m}}_{l}} & \DerivParOne{\vec{I}_{3}}{\vec{\dot{m}}_{g}}  & \DerivParOne{\vec{I}_{3}}{\vec{\dot{m}}_{e}} & \DerivParOne{\vec{I}_{3}}{\Delta P}
-\end{bmatrix}
-\end{align}
 
 \begin{align}
 \begin{bmatrix} 
@@ -225,7 +210,7 @@ Now, this nonlinear functional is solved using a Newton Step.
 
 
 \begin{align}
-\Mat{J}_{[1:3,1:3]} & \equiv -\frac{2 A_{mom}\Delta t}{\Delta z}\cdot \nonumber \\
+\Mat{J}_{0} & \equiv -\frac{2 A_{mom}\Delta t}{\Delta z}\cdot \nonumber \\
 &\cdot \begin{bmatrix} 
 K^{n}_{w,l} + \frac{K^{n}_{i,lg}}{\Ave{\alpha\rho}^{n}_{l}} +\frac{1}{2} &  -\frac{K^{n}_{i,lg}}{\Ave{\alpha\rho}^{n}_{g}} & 0\\
 -\frac{K^{n}_{i,lg}}{\Ave{\alpha\rho}^{n}_{l}} &  K^{n}_{w,g} + \frac{K^{n}_{i,lg}}{\Ave{\alpha\rho}^{n}_{g}}+\frac{K^{n}_{i,eg}}{\Ave{\alpha\rho}^{n}_{g}} +\frac{1}{2} & -\frac{K^{n}_{i,eg}}{\Ave{\alpha\rho}^{n}_{e}}\\
@@ -233,73 +218,26 @@ K^{n}_{w,l} + \frac{K^{n}_{i,lg}}{\Ave{\alpha\rho}^{n}_{l}} +\frac{1}{2} &  -\fr
 \end{bmatrix}
 \end{align}
 
-\begin{align}
-\Mat{J}(\Vec{x}^{k})_{[1:3,4]} & \equiv \frac{A_{mom}\Delta t}{\Delta z} \begin{bmatrix} 
-\Ens{\alpha^{n}_{l}}\\
-\Ens{\alpha^{n}_{g}}\\
-\Ens{\alpha^{n}_{e}}
-\end{bmatrix}
-\end{align}
-
-
-
 \subsubgroup{Linearization}
-The semi-implicit method, with a single Newton Step linearizes about the old time value and solves for a single delta. This has several ramifications. 
+The semi-implicit method, with a single Newton Step linearizes about the old time value and solves for a single delta. This has several ramifications.
+
 \subsubsubgroup{Wall Drag}
 The beginning equation to formulate the wall drag is shown in Eqn.
 
 \begin{IEEEeqnarray}{rCl}
-\frac{dP}{dz}\bigg\vert_{\text{Fric},k} & = & \frac{f}{D_h}\frac{\Ave{\rho}_k U^2_k}{2}\\
-\frac{dP}{dz}\bigg\vert_{Fric,k} & = & \frac{f}{D_h} \frac{M^2_k}{A^2_{mom}}\frac{1}{2\Ave{\rho}_k}\frac{1}{\Ave{\alpha}^2}\\
-\frac{dP}{dz}\bigg\vert_{k} & = & \frac{f}{D_h}\frac{M^2_k}{A^2_{mom}}\frac{1}{2\Ave{\rho}_k}\frac{\alpha^2_b}{\Ave{\alpha}^2}\\ 
-K_{wf,k} & = & \frac{A_{mom}}{M_k}\frac{dP}{dz}\bigg\vert_{k}\\
-K_{wf,k} & = & \frac{A_{mom}}{M_k}\frac{f}{D_h}\frac{M^2_k}{A^2_{mom}}\frac{1}{2\Ave{\rho}_k}\frac{\alpha^2_b}{\Ave{\alpha}^2}\\
-K_{wf,k} & = & \frac{f}{D_h}\frac{M_k}{A_{mom}}\frac{1}{2\Ave{\rho}_k}\frac{\alpha^2_b}{\Ave{\alpha}^2}
+\frac{dP}{dz}\bigg\vert^{n+1}_{k} & \equiv & \left(\frac{f^{n}}{D_h}+\frac{K_{form}}{\Delta z}\right) \left(\frac{1}{2 \rho^{n}}\right) \left(\frac{\dot{\vec{m}}^{n+1}_{k}}{A_{mom}}\right)^{2}\\
+ & = & \left[\left(\frac{f^{n}}{D_h}+\frac{K_{form}}{\Delta z}\right) \left(\frac{1}{2 A^2_{mom} \rho^{n}}\right)\right] \left[\dot{\vec{m}}^{n+1}_{k}\right]^2\\
+  & = & \left[K^{n}\right] \left[\dot{\vec{m}}^{n+1}_{k}\right]^2\\
+\frac{\partial }{\partial_{\dot{\vec{m}}^{n+1}_{k}}} \left(\frac{dP}{dz}\bigg\vert^{n+1}_{k}\right) & = & \left[K^{n}\right]2\left[ \dot{\vec{m}}_{k}^{n+1}\right]
 \end{IEEEeqnarray}
 
-\begin{IEEEeqnarray}{rCl}
-\frac{dP}{dz}\bigg\vert_{\text{Form},k} & = & \frac{f}{D_h}\frac{\Ave{\rho}_k U^2_k}{2}\\
-\frac{dP}{dz}\bigg\vert_{w,k} & = & \frac{f}{D_h} \frac{M^2_k}{A^2_{mom}}\frac{1}{2\Ave{\alpha\rho}_k}\\
-\frac{dP}{dz}\bigg\vert_{k} & = & \frac{f}{D_h}\frac{M^2_k}{A^2_{mom}}\frac{1}{2\Ave{\rho}_k}\frac{\alpha^2_b}{\Ave{\alpha}^2}\\ 
-K_{wf,k} & = & \frac{A_{mom}}{M_k}\frac{dP}{dz}\bigg\vert_{k}\\
-K_{wf,k} & = & \frac{A_{mom}}{M_k}\frac{f}{D_h}\frac{M^2_k}{A^2_{mom}}\frac{1}{2\Ave{\rho}_k}\frac{\alpha^2_b}{\Ave{\alpha}^2}\\
-K_{wf,k} & = & \frac{f}{D_h}\frac{M_k}{A_{mom}}\frac{1}{2\Ave{\rho}_k}\frac{\alpha^2_b}{\Ave{\alpha}^2}
-\end{IEEEeqnarray}
+The Momentum Equations, outlined in Section \ref{blarp} contain an implicit wall drag. This means that we need to evaluate the wall drag at the future time value.
+To do this in the semi-implicit methodology requires that we linearize the future value using Newton's Method.
+The current implementation uses the following derivation.
 
-The Momentum Equations, outlined in Section \ref{blarp} contain an implicit wall drag. This means that we need to evaluate the wall drag at the future time value. To do this in the semi-implicit methodology requires that we linearize the future value using Newton's Method. The current implementation uses the following derivation.
-
-\begin{eqnarray}
-\frac{dP}{dz}\bigg\vert^{*}_{w,k} & = & \frac{dP}{dz}\bigg\vert^{n}_{w,k}+\frac{d (\frac{dP}{dz}\big\vert_{w,k})}{d M_k}\bigg\vert^{n}\;\delta M_k\\
-\frac{d (\frac{dP}{dz}\big\vert_{w,k})}{d M_k} & = & \frac{d}{d M_k}\left[\left(\frac{f}{D_h}+\frac{K_{form}}{\Delta z_j}\right)\left(\frac{M^2_k}{A^2_{mom}}\right)\left(\frac{1}{2\rho_k}\right) \right]\\
-& = & 2 \left(\frac{f}{D_h}+\frac{K_{form}}{\Delta z_j}\right)\left(\frac{M_k}{A_{mom}}\right)\left(\frac{1}{2\rho_k}\right)\\
-& = & \left(\frac{2}{M_k}\right)\left(\frac{dP}{dz}\bigg\vert_{w,k}\right) \\
-\frac{dP}{dz}\bigg\vert^{n+1}_{w,k} & = & \frac{dP}{dz}\bigg\vert^{n}_{w,k}\left(1+\frac{2 \delta M_k}{M_k}\right) \\
-\frac{dP}{dz}\bigg\vert^{n+1}_{w,k} & = & \frac{1}{M_k}\frac{dP}{dz}\bigg\vert^{n}_{w,k}\left(M_k+2\delta M_k\right) \\
-\frac{dP}{dz}\bigg\vert^{n+1}_{w,k} & = & K^{n}_{wz,k}\left(M_k+2\delta M_k\right) \\
-\end{eqnarray}
-
-Modifying this derivation to take into account the multiple Newton Steps results in the equations shown below. For brevity, the phase index, $_k$, is dropped from this derivation. Once the linearization starts, the index, $_k$, will refer to Newton iteration. 
-\begin{eqnarray}
-\label{NewPressureLoss}
-\frac{dP}{dz}\bigg\vert_{w}& = & \left(\frac{f}{D_h}+\frac{K_{form}}{\Delta z_j}\right)\left(\frac{M^2}{A^2_{mom}}\right)\left(\frac{1}{2\rho}\right)\\
-\frac{dP}{dz}\bigg\vert_{w} & = & f(M) \\
-f|_{M^{n+1}_{k}} & = & f|_{M^{n+1}_{k-1}}+\frac{d\; f }{d M}\bigg\vert_{M_{k-1}^{n+1}}\;\delta M^{n+1}_{k-1}\\
-\frac{d\; f }{d M}\bigg\vert_{M_{k-1}^{n+1}} & = & \frac{2}{M^{n+1}_{k-1}}\; f|_{M^{n+1}_{k-1}}\\
-K^{n+1}_{wz,k-1} & = & \frac{f|_{M^{n+1}_{k-1}}}{M^{n+1}_{k-1}} \\
-f|_{M^{n+1}_{k}} & = & [K^{n+1}_{wz,k-1}] M_{k-1}^{n+1}+2 \left[K^{n+1}_{wz,k-1} \right]\delta M^{n+1}_{k-1}
-\end{eqnarray}
-
-\begin{IEEEeqnarray}{rCl}
-M^* & = & M_k \frac{\alpha_b}{\Ave{\alpha}}\\
-G_k & = & \frac{M^*}{A_{mom}}=\frac{M_k \alpha_b}{A_{mom}\Ave{\alpha}}\\
-\frac{dP}{dz}\bigg\vert_{k} & = & f \frac{1}{D_h}\frac{G_k^2}{2 \Ave{\rho}_k}\\ 
-\frac{dP}{dz}\bigg\vert_{k} & = & f \frac{1}{D_h}\frac{1}{2 \Ave{\rho}_k}\frac{M^2_k \alpha^2_b}{A^2_{mom}\Ave{\alpha}^2}\\ 
-K_i & = & \frac{1}{2} fi_{ia}\cdot coefd\cdot rvp\cdot urvl\cdot aintfh\cdot dxi\cdot \frac{1}{(\alpha ^*)^3}\\
-alrl & = & A_{mom}\Ave{\alpha\rho}\\
-C[2] & = & \frac{\Delta t}{\Delta x}\frac{K_i \Delta x}{A_{mom}\Ave{\alpha\rho}}
-\end{IEEEeqnarray}
-
-
+Modifying this derivation to take into account the multiple Newton Steps results in the equations shown below.
+For brevity, the phase index, $_k$, is dropped from this derivation.
+Once the linearization starts, the index, $_k$, will refer to Newton iteration.
 
 %============================================================================
 \subgroup{Structural Thermal Energy Equations}
@@ -323,16 +261,3 @@ The Jacobian will be evaluated at the old time value and not updated during the 
 %============================================================================
 To solve a give newton iteraete, a Krylov subspace based method is used.
 This methodology eliminates the requirement of analytically forming the Jacobian.
-
-
-\begin{align}
-\begin{bmatrix} 
-h  \\
-hu \\
-\end{bmatrix}_t +\begin{bmatrix} 
-uh  \\
-h u^2 + \frac{1}{2}g h^2 \\
-\end{bmatrix}_x & = 0
-\end{align}
-
-
