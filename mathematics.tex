@@ -96,9 +96,35 @@ Note that $\displaystyle \Vec{q}=f(\Vec{x})$.
 
 \begin{IEEEeqnarray}{rCl}
 F_g(\Vec{x}^{n+1}) & = & \overbrace{E_g({\Vec{x}^{n}})}^{\text{Purely explicit terms}}-\overbrace{A_{mom,j}\Delta z_j\left[ \alpha_g^n\frac{P_{J+1}^{n+1}-P_{J}^{n+1}}{\Delta z_j}\right]}^{\text{Semi-Implicit Pressure Term}}  \\
-&&-\overbrace{A_{mom,j}\Delta z_j\left[ \frac{dP}{dz}\bigg|_{w,g}^{*}+\frac{dP}{dz}\bigg|_{i,lg}^{*}+\frac{dP}{dz}\bigg|_{i,eg}^{*}\right]}^{\text{Semi-Implicit Drag Terms}}\nonumber \\
-&& +\overbrace{\mathcal{S}p^{n+1}_{g,j}}^{\text{Implicit Source Term}} -\overbrace{\frac{\left(M_{g,j}^{n+1}-M_{g,j}^{n}\right)}{\Delta t}\Delta z}^{\text{Time rate of change}}\nonumber \\
+& - & \overbrace{A_{mom,j}\Delta z_j\left[ \frac{dP}{dz}\bigg|_{w,g}^{*}+\frac{dP}{dz}\bigg|_{i,lg}^{*}+\frac{dP}{dz}\bigg|_{i,eg}^{*}\right]}^{\text{Semi-Implicit Drag Terms}}\nonumber \\
+& + & \overbrace{\mathcal{S}p^{n+1}_{g,j}}^{\text{Implicit Source Term}} -\overbrace{\frac{\left(M_{g,j}^{n+1}-M_{g,j}^{n}\right)}{\Delta t}\Delta z}^{\text{Time rate of change}}\nonumber \\
 & = &  0 \nonumber
+\end{IEEEeqnarray}
+
+Current methodology in COBRA-IE for obtaining tentative newtime $\dot{\vec{M}}^{\widetilde{n+1}}$ and $\displaystyle \frac{d\dot{\vec{M}}}{d P}$.
+This methodology is based on linearizing certain terms within the momentum equations.
+These  equations are solved for the $\dot{\vec{M}}^{\widetilde{n+1}}$.
+The derivative of these equations with respect to pressure is taken to find $\displaystyle \frac{d\dot{\vec{M}}}{d P}$.
+\begin{IEEEeqnarray}{rCl}
+\mat{J}_{0}\,\dot{\vec{M}}^{\widetilde{n+1}} & = & -\vec{E} - \vec{I}(\dot{\vec{M}}^{n}) + \dot{\vec{M}}^{n} \nonumber \\
+\dot{\vec{M}}^{\widetilde{n+1}} & = & -\mat{J}^{-1}_{\,0}\,\vec{E} - \mat{J}^{-1}_{\,0}\,\vec{I}(\dot{\vec{M}}^{n}) + \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n} \nonumber
+\end{IEEEeqnarray}
+
+Proposed methodology for obtaining tentative newtime $\dot{\vec{M}}^{\widetilde{n+1}}$ and $\displaystyle \frac{d\dot{\vec{M}}}{d P}$.
+This methodology is based on linearizing the the equations and taking a Newton Step.
+\begin{IEEEeqnarray}{rCl}
+\mat{J}_{0}\,\left[\dot{\vec{M}}^{n+1}_{k+1}-\dot{\vec{M}}^{n+1}_{k}\right] & = & -\vec{E} - \vec{I}(\dot{\vec{M}}^{n+1}_{k}) \nonumber \\
+\dot{\vec{M}}^{n+1}_{k+1} & = & \dot{\vec{M}}^{n+1}_{k} - \mat{J}^{-1}_{0}\,\vec{E} - \mat{J}^{-1}_{0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{k}) \nonumber
+\end{IEEEeqnarray}
+
+Difference between current process and new process.
+\begin{IEEEeqnarray}{rCl}
+\dot{\vec{M}}^{n+1}_{k+1} - \dot{\vec{M}}^{\widetilde{n+1}}_{k+1} & = & \dot{\vec{M}}^{n+1}_{k} - \mat{J}^{-1}_{0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{k}) + \mat{J}^{-1}_{\,0}\,\vec{I}(\dot{\vec{M}}^{n}) - \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n}\nonumber \\
+\dot{\vec{M}}^{n+1}_{1} - \dot{\vec{M}}^{\widetilde{n+1}}_{1} & = & \dot{\vec{M}}^{n} - \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n}\nonumber \\
+\dot{\vec{M}}^{n+1}_{1} & = & \dot{\vec{M}}^{\widetilde{n+1}}_{1} + [\mat{I} - \mat{J}^{-1}_{\,0}]\,\dot{\vec{M}}^{n} \nonumber \\
+\dot{\vec{M}}^{n+1}_{2} - \dot{\vec{M}}^{\widetilde{n+1}}_{2} & = & \dot{\vec{M}}^{n+1}_{1} - \mat{J}^{-1}_{0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{1}) + \mat{J}^{-1}_{\,0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{1}) - \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n+1}_{1}\nonumber \\
+\dot{\vec{M}}^{n+1}_{2} & = & \dot{\vec{M}}^{\widetilde{n+1}}_{2} + [\mat{I} - \mat{J}^{-1}_{\,0}]\dot{\vec{M}}^{n+1}_{1}\nonumber \\
+\dot{\vec{M}}^{n+1}_{k+1} & = & \dot{\vec{M}}^{\widetilde{n+1}}_{k+1} + [\mat{I} - \mat{J}^{-1}_{\,0}]\dot{\vec{M}}^{n+1}_{k} \nonumber
 \end{IEEEeqnarray}
 
 The nonlinear functional associated with this equation is as follows:
