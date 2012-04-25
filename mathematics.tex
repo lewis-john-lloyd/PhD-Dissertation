@@ -56,12 +56,25 @@ P \\
 
 Note that $\displaystyle \Vec{q}=f(\Vec{x})$.
 
-\subsubgroup{Mass}
+\subsubgroup{Continuity Equations}
+\subsubsubgroup{Mass}
+\begin{IEEEeqnarray}{lCl}
+(\alpha \rho_v)^{n+1} + \frac{\Delta t}{V_m}\left[\sum_{axial} \frac{(\alpha \rho_{v})_{don}^{n}A_{m}}{A_{c}<\alpha \rho_v>^{n}} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} + \sum_{gaps} \frac{(\alpha \rho_{v})_{don}^{n} \Delta w_{g} \Delta x_{m}}{A_{c}<\alpha \rho_v>^{n}} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}}\right] & & \nonumber \\
+= \Delta t \left((\alpha \rho_v)^{n} + \Gamma^{\,n} + \nabla\cdot \Vec{G}_{v}^{n}\right) & & \\
+(\alpha \rho_g)^{n+1} + \frac{\Delta t}{V_m}\left[\sum_{axial} \frac{(\alpha \rho_{g})_{don}^{n}A_{m}}{A_{c}<\alpha \rho_g>^{n}} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} + \sum_{gaps} \frac{(\alpha \rho_{g})_{don}^{n} \Delta w_{g} \Delta x_{m}}{A_{c}<\alpha \rho_g>^{n}} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}}\right] & & \nonumber \\
+= \Delta t \left((\alpha \rho_g)^{n} + \Gamma^{\,n} + \nabla\cdot \Vec{G}_{g}^{n}\right) & &  \\
+(\alpha_l \rho_l)^{n+1} + \frac{\Delta t}{V_m}\left[\sum_{axial} \frac{(\alpha_l \rho_{l})_{don}^{n}A_{m}}{A_{c}<\alpha_l \rho_l>^{n}} \dot{\vec{M}}^{n+1}_{l}\cdot \vec{\hat{n}} + \sum_{gaps} \frac{(\alpha_l \rho_{l})_{don}^{n} \Delta w_{g} \Delta x_{m}}{A_{c}<\alpha_l \rho_l>^{n}} \dot{\vec{W}}^{n+1}_{l}\cdot \vec{\hat{n}}\right] & & \nonumber \\
+= \Delta t \left((\alpha_l \rho_l)^{n} -\Gamma^{\,n}_{l} + \nabla\cdot \Vec{G}_{l}^{n} - S'''\right) & & \\
+(\alpha_e \rho_l)^{n+1} + \frac{\Delta t}{V_m}\left[\sum_{axial} \frac{(\alpha_e \rho_{l})_{don}^{n}A_{m}}{A_{c}<\alpha_e \rho_l>^{n}} \dot{\vec{M}}^{n+1}_{e}\cdot \vec{\hat{n}} + \sum_{gaps} \frac{(\alpha_e \rho_{l})_{don}^{n} \Delta w_{g} \Delta x_{m}}{A_{c}<\alpha_e \rho_l>^{n}} \dot{\vec{W}}^{n+1}_{e}\cdot \vec{\hat{n}}\right] & & \nonumber \\
+= \Delta t \left((\alpha_e \rho_l)^{n} - \Gamma^{\,n}_{e} - S'''\right)& & 
+\end{IEEEeqnarray}
+
+\subsubsubgroup{Energy}
 \begin{align}
-\Ddt{\alpha   \rho_v}{\Vec{U}_v} & =  \Gamma   + \DivOne{\Vec{G}_v^{T}}\\
-\Ddt{\alpha   \rho_g}{\Vec{U}_v} & =  \Gamma   + \DivOne{\Vec{G}_g^{T}}\\
-\Ddt{\alpha_l \rho_l}{\Vec{U}_l} & = -\Gamma_l + \DivOne{\Vec{G}_l^{T}} - S''' \\
-\Ddt{\alpha_e \rho_l}{\Vec{U}_e} & = -\Gamma_e + S'''
+\Ddt{\alpha \rho_g H_g}{\Vec{U}_g} & \nonumber \\
+= \Gamma H^{'}_{v}+q_{iv}+q_{gl}+Q_g^{'''}-\Div{\alpha \Vec{q}_g^{T}} &\\
+\DerivPar{\left(1-\alpha \right)\rho_l H_l}{t}+\Div{\alpha_l \rho_l H_l \Vec{U}_l} +\Div{\alpha_e \rho_l H_l \Vec{U}_e} & = \nonumber \\
+-\Gamma H^{'}_l + q_{il} - q_{gl} + Q_l^{'''}-\Div{\alpha_l \Vec{q}_l^{T}} &
 \end{align}
 
 \subsubgroup{Momentum}
@@ -79,14 +92,6 @@ Note that $\displaystyle \Vec{q}=f(\Vec{x})$.
 \DisDdtOne{\dot{\Vec{m}}_{i,j}} & = \min(A_{j},A_{j+1})\frac{1}{2}\left(\frac{\dot{\Vec{m}}_{i,j}^{n}}{A_{j}}+\frac{\dot{\Vec{m}}_{i,j+1}^{n}}{A_{j+1}}\right)\hat{\Vec{U}}_{i,j-\frac{1}{2}}^{n} 
 \end{align}
 
-\subsubgroup{Energy}
-
-\begin{align}
-\Ddt{\alpha \rho_g H_g}{\Vec{U}_g} & \nonumber \\
-= \Gamma H^{'}_{v}+q_{iv}+q_{gl}+Q_g^{'''}-\Div{\alpha \Vec{q}_g^{T}} &\\
-\DerivPar{\left(1-\alpha \right)\rho_l H_l}{t}+\Div{\alpha_l \rho_l H_l \Vec{U}_l} +\Div{\alpha_e \rho_l H_l \Vec{U}_e} & = \nonumber \\
--\Gamma H^{'}_l + q_{il} - q_{gl} + Q_l^{'''}-\Div{\alpha_l \Vec{q}_l^{T}} &
-\end{align}
 %============================================================================
 \subgroup{Discrete Hydrodynamic Equations}
 % Hydro. Cons. Eqns.
@@ -106,25 +111,26 @@ This methodology is based on linearizing certain terms within the momentum equat
 These  equations are solved for the $\dot{\vec{M}}^{\widetilde{n+1}}$.
 The derivative of these equations with respect to pressure is taken to find $\displaystyle \frac{d\dot{\vec{M}}}{d P}$.
 \begin{IEEEeqnarray}{rCl}
-\mat{J}_{0}\,\dot{\vec{M}}^{\widetilde{n+1}} & = & -\vec{E} - \vec{I}(\dot{\vec{M}}^{n}) + \dot{\vec{M}}^{n} \nonumber \\
-\dot{\vec{M}}^{\widetilde{n+1}} & = & -\mat{J}^{-1}_{\,0}\,\vec{E} - \mat{J}^{-1}_{\,0}\,\vec{I}(\dot{\vec{M}}^{n}) + \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n} \nonumber
+\mat{J}_{0}\,\dot{\vec{M}}^{n+1} & = & -\vec{E} - \vec{I}(\dot{\vec{M}}^{n}) - \dot{\vec{M}}^{n} +\vec{b} \delta \text{P}^{\;n+1} \nonumber \\
+\dot{\vec{M}}^{n+1} & = & -\mat{J}^{-1}_{\,0}\,\left[\vec{E} + \vec{I}(\dot{\vec{M}}^{n}) + \dot{\vec{M}}^{n}\right]  +\mat{J}^{-1}_{\,0}\,\vec{b} \delta \text{P}^{\;n+1} \nonumber\\
+\dot{\vec{M}}^{n+1} & = & \underbrace{-\mat{J}^{-1}_{\,0}\,\left[\vec{E} + \vec{I}(\dot{\vec{M}}^{n}) + \dot{\vec{M}}^{n}\right]}_{\dot{\vec{M}}^{\widetilde{n+1}}} +\underbrace{\mat{J}^{-1}_{\,0}\,\vec{b}}_{\frac{\partial\;\dot{\vec{M}}^{n+1}}{\partial \text{P}}}  \delta \text{P}^{\;n+1} \nonumber
 \end{IEEEeqnarray}
 
 Proposed methodology for obtaining tentative newtime $\dot{\vec{M}}^{\widetilde{n+1}}$ and $\displaystyle \frac{d\dot{\vec{M}}}{d P}$.
 This methodology is based on linearizing the the equations and taking a Newton Step.
 \begin{IEEEeqnarray}{rCl}
-\mat{J}_{0}\,\left[\dot{\vec{M}}^{n+1}_{k+1}-\dot{\vec{M}}^{n+1}_{k}\right] & = & -\vec{E} - \vec{I}(\dot{\vec{M}}^{n+1}_{k}) \nonumber \\
-\dot{\vec{M}}^{n+1}_{k+1} & = & \dot{\vec{M}}^{n+1}_{k} - \mat{J}^{-1}_{0}\,\vec{E} - \mat{J}^{-1}_{0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{k}) \nonumber
+\mat{J}_{0}\,\left[\dot{\vec{M}}^{n+1}_{k+1}-\dot{\vec{M}}^{n+1}_{k}\right] & = & -\vec{E} - \vec{I}(\dot{\vec{M}}^{n+1}_{k}) + \vec{b} \delta \text{P}_{k\rightarrow k+1}^{\;n+1} \nonumber \\
+\dot{\vec{M}}^{n+1}_{k+1} & = & \dot{\vec{M}}^{n+1}_{k} - \mat{J}^{-1}_{0}\,\left[\vec{E} + \vec{I}(\dot{\vec{M}}^{n+1}_{k})\right] +\mat{J}^{-1}_{0}\,\vec{b} \delta \text{P}_{k\rightarrow k+1}^{\;n+1} \nonumber
 \end{IEEEeqnarray}
 
 Difference between current process and new process.
 \begin{IEEEeqnarray}{rCl}
-\dot{\vec{M}}^{n+1}_{k+1} - \dot{\vec{M}}^{\widetilde{n+1}}_{k+1} & = & \dot{\vec{M}}^{n+1}_{k} - \mat{J}^{-1}_{0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{k}) + \mat{J}^{-1}_{\,0}\,\vec{I}(\dot{\vec{M}}^{n}) - \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n}\nonumber \\
-\dot{\vec{M}}^{n+1}_{1} - \dot{\vec{M}}^{\widetilde{n+1}}_{1} & = & \dot{\vec{M}}^{n} - \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n}\nonumber \\
-\dot{\vec{M}}^{n+1}_{1} & = & \dot{\vec{M}}^{\widetilde{n+1}}_{1} + [\mat{I} - \mat{J}^{-1}_{\,0}]\,\dot{\vec{M}}^{n} \nonumber \\
-\dot{\vec{M}}^{n+1}_{2} - \dot{\vec{M}}^{\widetilde{n+1}}_{2} & = & \dot{\vec{M}}^{n+1}_{1} - \mat{J}^{-1}_{0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{1}) + \mat{J}^{-1}_{\,0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{1}) - \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n+1}_{1}\nonumber \\
-\dot{\vec{M}}^{n+1}_{2} & = & \dot{\vec{M}}^{\widetilde{n+1}}_{2} + [\mat{I} - \mat{J}^{-1}_{\,0}]\dot{\vec{M}}^{n+1}_{1}\nonumber \\
-\dot{\vec{M}}^{n+1}_{k+1} & = & \dot{\vec{M}}^{\widetilde{n+1}}_{k+1} + [\mat{I} - \mat{J}^{-1}_{\,0}]\dot{\vec{M}}^{n+1}_{k} \nonumber
+\dot{\vec{M}}^{n+1}_{k+1} - \dot{\vec{M}}^{\widetilde{n+1}}_{k+1} & = & \dot{\vec{M}}^{n+1}_{k} - \mat{J}^{-1}_{0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{k}) + \mat{J}^{-1}_{\,0}\,\vec{I}(\dot{\vec{M}}^{n}) + \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n}\nonumber \\
+\dot{\vec{M}}^{n+1}_{1} - \dot{\vec{M}}^{\widetilde{n+1}}_{1} & = & \dot{\vec{M}}^{n} + \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n}\nonumber \\
+\dot{\vec{M}}^{n+1}_{1} & = & \dot{\vec{M}}^{\widetilde{n+1}}_{1} + [\mat{I} + \mat{J}^{-1}_{\,0}]\,\dot{\vec{M}}^{n} \nonumber \\
+\dot{\vec{M}}^{n+1}_{2} - \dot{\vec{M}}^{\widetilde{n+1}}_{2} & = & \dot{\vec{M}}^{n+1}_{1} - \mat{J}^{-1}_{0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{1}) + \mat{J}^{-1}_{\,0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{1}) + \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n+1}_{1}\nonumber \\
+\dot{\vec{M}}^{n+1}_{2} & = & \dot{\vec{M}}^{\widetilde{n+1}}_{2} + [\mat{I} + \mat{J}^{-1}_{\,0}]\dot{\vec{M}}^{n+1}_{1}\nonumber \\
+\dot{\vec{M}}^{n+1}_{k+1} & = & \dot{\vec{M}}^{\widetilde{n+1}}_{k+1} + [\mat{I} + \mat{J}^{-1}_{\,0}]\dot{\vec{M}}^{n+1}_{k} \nonumber
 \end{IEEEeqnarray}
 
 The nonlinear functional associated with this equation is as follows:
