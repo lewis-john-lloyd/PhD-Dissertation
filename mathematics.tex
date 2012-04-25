@@ -58,39 +58,80 @@ Note that $\displaystyle \Vec{q}=f(\Vec{x})$.
 
 \subsubgroup{Continuity Equations}
 \subsubsubgroup{Mass}
+
+\begin{IEEEeqnarray}{lCr}
+\frac{\partial}{\partial t} \alpha_g \rho_g + \nabla\cdot\left(\alpha_g\rho_g\vec{U}_g\right) & = & \Gamma''' \\
+\frac{\partial}{\partial t} \alpha_l \rho_l + \nabla\cdot\left(\alpha_l\rho_l\vec{U}_l\right) & = & -(1-\eta) \Gamma''' - S''' \\
+\frac{\partial}{\partial t} \alpha_e \rho_l + \nabla\cdot\left(\alpha_e\rho_l\vec{U}_e\right) & = & -\eta \Gamma''' + S'''\\
+\frac{\partial}{\partial t} \alpha_g \rho_{nc} + \nabla\cdot\left(\alpha_g\rho_{nc}\vec{U}_g\right) & = & \Gamma''' 
+\end{IEEEeqnarray}
+
 \begin{IEEEeqnarray}{lCl}
-(\alpha \rho_v)^{n+1} + \frac{\Delta t}{V_m}\left[\sum_{axial} \frac{(\alpha \rho_{v})_{don}^{n}A_{m}}{A_{c}<\alpha \rho_v>^{n}} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} + \sum_{gaps} \frac{(\alpha \rho_{v})_{don}^{n} \Delta w_{g} \Delta x_{m}}{A_{c}<\alpha \rho_v>^{n}} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}}\right] & & \nonumber \\
-= \Delta t \left((\alpha \rho_v)^{n} + \Gamma^{\,n} + \nabla\cdot \Vec{G}_{v}^{n}\right) & & \\
-(\alpha \rho_g)^{n+1} + \frac{\Delta t}{V_m}\left[\sum_{axial} \frac{(\alpha \rho_{g})_{don}^{n}A_{m}}{A_{c}<\alpha \rho_g>^{n}} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} + \sum_{gaps} \frac{(\alpha \rho_{g})_{don}^{n} \Delta w_{g} \Delta x_{m}}{A_{c}<\alpha \rho_g>^{n}} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}}\right] & & \nonumber \\
-= \Delta t \left((\alpha \rho_g)^{n} + \Gamma^{\,n} + \nabla\cdot \Vec{G}_{g}^{n}\right) & &  \\
-(\alpha_l \rho_l)^{n+1} + \frac{\Delta t}{V_m}\left[\sum_{axial} \frac{(\alpha_l \rho_{l})_{don}^{n}A_{m}}{A_{c}<\alpha_l \rho_l>^{n}} \dot{\vec{M}}^{n+1}_{l}\cdot \vec{\hat{n}} + \sum_{gaps} \frac{(\alpha_l \rho_{l})_{don}^{n} \Delta w_{g} \Delta x_{m}}{A_{c}<\alpha_l \rho_l>^{n}} \dot{\vec{W}}^{n+1}_{l}\cdot \vec{\hat{n}}\right] & & \nonumber \\
-= \Delta t \left((\alpha_l \rho_l)^{n} -\Gamma^{\,n}_{l} + \nabla\cdot \Vec{G}_{l}^{n} - S'''\right) & & \\
-(\alpha_e \rho_l)^{n+1} + \frac{\Delta t}{V_m}\left[\sum_{axial} \frac{(\alpha_e \rho_{l})_{don}^{n}A_{m}}{A_{c}<\alpha_e \rho_l>^{n}} \dot{\vec{M}}^{n+1}_{e}\cdot \vec{\hat{n}} + \sum_{gaps} \frac{(\alpha_e \rho_{l})_{don}^{n} \Delta w_{g} \Delta x_{m}}{A_{c}<\alpha_e \rho_l>^{n}} \dot{\vec{W}}^{n+1}_{e}\cdot \vec{\hat{n}}\right] & & \nonumber \\
-= \Delta t \left((\alpha_e \rho_l)^{n} - \Gamma^{\,n}_{e} - S'''\right)& & 
+% Here is the vapor mass equation.
+(\alpha_g \rho_v)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha_g \rho_{v})_{don}}{<\alpha_g \rho_v>}\right]^{n} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha_g \rho_{v})_{don}}{<\alpha_g \rho_v>}\right]^{n} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}}\right] & & \nonumber \\
+= (\alpha_g \rho_v)^{n} + \frac{\Delta t}{V_c} \Gamma^{\,n} & & \\
+% Here is the gas mass equation.
+(\alpha_g \rho_g)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha_g \rho_{g})_{don}}{<\alpha_g \rho_g>}\right]^{n} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha_g \rho_{g})_{don}}{<\alpha_g \rho_g>}\right]^{n} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}}\right] & & \nonumber \\
+= (\alpha_g \rho_g)^{n} & &  \\
+% Here is the continuous liquid mass equation.
+(\alpha_l \rho_l)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha_l \rho_{l})_{don}}{<\alpha_l \rho_l>}\right]^{n} \dot{\vec{M}}^{n+1}_{l}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha_l \rho_{l})_{don}}{<\alpha_l \rho_l>}\right]^{n} \dot{\vec{W}}^{n+1}_{l}\cdot \vec{\hat{n}}\right] & & \nonumber \\
+= (\alpha_l \rho_l)^{n} + \frac{\Delta t}{V_c} \left(S_{D}^{n} - (1-\eta^{n})\Gamma^{\,n}_{l} - S_{E}^{n}\right) & & \\
+% Here is the entrained liquid mass equation.
+(\alpha_e \rho_l)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha_e \rho_{l})_{don}}{<\alpha_e \rho_l>}\right]^{n} \dot{\vec{M}}^{n+1}_{e}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha_e \rho_{l})_{don}}{<\alpha_e \rho_l>}\right]^{n} \dot{\vec{W}}^{n+1}_{e}\cdot \vec{\hat{n}}\right] & & \nonumber \\
+= (\alpha_e \rho_l)^{n} + \frac{\Delta t}{V_c} \left(S_{E}^{n} - \eta^{n}\Gamma^{\,n}_{e} - S_{D}^{n}\right)& & 
 \end{IEEEeqnarray}
 
 \subsubsubgroup{Energy}
-\begin{align}
-\Ddt{\alpha \rho_g H_g}{\Vec{U}_g} & \nonumber \\
-= \Gamma H^{'}_{v}+q_{iv}+q_{gl}+Q_g^{'''}-\Div{\alpha \Vec{q}_g^{T}} &\\
-\DerivPar{\left(1-\alpha \right)\rho_l H_l}{t}+\Div{\alpha_l \rho_l H_l \Vec{U}_l} +\Div{\alpha_e \rho_l H_l \Vec{U}_e} & = \nonumber \\
--\Gamma H^{'}_l + q_{il} - q_{gl} + Q_l^{'''}-\Div{\alpha_l \Vec{q}_l^{T}} &
-\end{align}
+\begin{IEEEeqnarray}{Cr}
+\frac{\partial}{\partial t}\left(\alpha_g (\rho_v h_v+\rho_{nc} h_{nc})\right)+\nabla\cdot\left(\alpha_g(\rho_v h_v + \rho_{nc} h_{nc}) \vec{U}_g\right) & \nonumber \\
+= \Gamma'''h'_{v} + q'''_{i,v} + q'''_{gl} + q'''_{wg} + \alpha_g \frac{\partial P}{\partial t} & \\
+\frac{\partial}{\partial t}\left((\alpha_e +\alpha_l) \rho_l h_l\right)+\nabla\cdot\left(\alpha_l\rho_l h_l \vec{U}_l\right)+\nabla\cdot\left(\alpha_e\rho_l h_l \vec{U}_e\right)  \nonumber \\
+= \Gamma'''h'_{v} + q'''_{i,v} + q'''_{gl} + q'''_{wg} + \alpha_g \frac{\partial P}{\partial t} &
+\end{IEEEeqnarray}
+
+\begin{IEEEeqnarray}{ll}
+% Here be the gas equations.
+ & (\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) )^{n+1} - \alpha_{g}^{n}P^{\;n+1} \nonumber \\
++& \frac{\Delta t}{V_c} \sum_{J} \left(\frac{(\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) )_{don}}{<\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) >}\right)^{n} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} \nonumber \\
++& \frac{\Delta t}{V_c} \sum_{K} \left(\frac{(\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) )_{don}}{<\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) >}\right)^{n} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}} \nonumber \\
+=& (\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) )^{n} - \alpha_{g}^{n}P^{\;n} + \frac{\Delta t}{V_c}\left(q^{n}_{wg} + q^{n}_{i,v} + \Gamma^{\,n}h'^{\,n}_{v} + q^{n}_{gl}\right)\\
+% Here be the liquid equations.
+ & ((\alpha_e +\alpha_l) \rho_l h_l)^{n+1} - (\alpha_e +\alpha_l)^{n}P^{\;n+1} \nonumber \\
++& \frac{\Delta t}{V_c} \sum_{J}\left[  \left(\frac{(\alpha_l \rho_l h_l )_{don}}{<\alpha_l \rho_l h_l >}\right)^{n} \dot{\vec{M}}^{n+1}_{l}\cdot \vec{\hat{n}}+ \left(\frac{(\alpha_e \rho_l h_l )_{don}}{<\alpha_e \rho_l h_l >}\right)^{n} \dot{\vec{M}}^{n+1}_{e}\cdot \vec{\hat{n}}\right] \nonumber \\
++& \frac{\Delta t}{V_c} \sum_{K}\left[  \left(\frac{(\alpha_l \rho_l h_l )_{don}}{<\alpha_l \rho_l h_l >}\right)^{n} \dot{\vec{W}}^{n+1}_{l}\cdot \vec{\hat{n}}+ \left(\frac{(\alpha_e \rho_l h_l )_{don}}{<\alpha_e \rho_l h_l >}\right)^{n} \dot{\vec{W}}^{n+1}_{e}\cdot \vec{\hat{n}}\right] \nonumber \\
+=& ((\alpha_e +\alpha_l) \rho_l h_l)^{n} - (\alpha_e +\alpha_l)^{n}P^{\;n} + \frac{\Delta t}{V_c}\left(q^{n}_{wl} + q^{n}_{i,l} -\Gamma^{\,n}h'^{\,n}_{l} - q^{n}_{gl}\right)
+\end{IEEEeqnarray}
 
 \subsubgroup{Momentum}
+\subsubsubgroup{Axial Momentum}
 
-\begin{align}
-\Ddt{\alpha \rho_g \Vec{U}_g }{\Vec{U}_g} & = \nonumber \\
--\alpha\;\nabla P + \alpha \rho_g g - \tau^{'''}_{wv}-\tau^{'''}_{I_{lv}}-\tau^{'''}_{I_{ev}}+\Gamma_e U^{'}+\Div{\alpha T_g^{T}} & \\
-\Ddt{\alpha_e \rho_l \Vec{U}_e}{\Vec{U}_e} & = \nonumber \\
--\alpha_e\;\nabla P + \alpha_e \rho_l g - \tau^{'''}_{wl}+\tau^{'''}_{ev}+\Gamma_e U^{'}+S^{'''}U^{'} & \\
-\Ddt{\alpha_l \rho_l \Vec{U}_l}{\Vec{U}_l} & = \nonumber \\
--\alpha_l\;\nabla P + \alpha_l \rho_l g - \tau^{'''}_{wl}+\tau^{'''}_{lv}-\Gamma_l U^{'}-S^{'''}U^{'}+\Div{\alpha_l T_l^{T}} &
-\end{align}
+\begin{IEEEeqnarray}{lr}
+\frac{\partial }{\partial t} \left(\alpha_g (\rho_v + \rho_{nc}) \Vec{U}_g \right) + \nabla\cdot\left(\alpha_g (\rho_v + \rho_{nc}) \vec{U}_g \vec{U}_g \right) = &\nonumber \\
+-\alpha_g\;\nabla P + \alpha_g (\rho_v + \rho_{nc}) \vec{g} - \tau^{'}_{wg}-\tau^{'}_{I_{gl}} - \tau^{'}_{I_{ge}} + \Gamma''' \vec{U}^{'} & \\
+\frac{\partial }{\partial t} \left(\alpha_l \rho_l \Vec{U}_l \right) + \nabla\cdot\left(\alpha_l \rho_l \vec{U}_l \vec{U}_l \right) = &\nonumber \\
+-\alpha_l\;\nabla P + \alpha_l \rho_l \vec{g} - \tau^{'}_{wl} + \tau^{'}_{I_{gl}} -\left((1-\eta)\Gamma'''\vec{U}'\right) - S'''\vec{U}'& \\
+\frac{\partial }{\partial t} \left(\alpha_e \rho_l \Vec{U}_e \right) + \nabla\cdot\left(\alpha_e \rho_l \vec{U}_e \vec{U}_e \right) = &\nonumber \\
+-\alpha_e\;\nabla P + \alpha_e \rho_l \vec{g} - \tau^{'}_{wl} + \tau^{'}_{I_{ge}} -\left(\eta\Gamma'''\vec{U}'\right) + S'''\vec{U}'&
+\end{IEEEeqnarray}
 
-\begin{align}
-\DisDdtOne{\dot{\Vec{m}}_{i,j}} & = \min(A_{j},A_{j+1})\frac{1}{2}\left(\frac{\dot{\Vec{m}}_{i,j}^{n}}{A_{j}}+\frac{\dot{\Vec{m}}_{i,j+1}^{n}}{A_{j+1}}\right)\hat{\Vec{U}}_{i,j-\frac{1}{2}}^{n} 
-\end{align}
+\begin{IEEEeqnarray}{rCl}
+F_g(\Vec{x}^{n+1}) & = & \overbrace{E_g({\Vec{x}^{n}})}^{\text{Purely explicit terms}}-\overbrace{A_{mom,j}\Delta z_j\left[ \alpha_g^n\frac{P_{J+1}^{n+1}-P_{J}^{n+1}}{\Delta z_j}\right]}^{\text{Semi-Implicit Pressure Term}}  \\
+& - & \overbrace{A_{mom,j}\Delta z_j\left[ \frac{dP}{dz}\bigg|_{w,g}^{*}+\frac{dP}{dz}\bigg|_{i,lg}^{*}+\frac{dP}{dz}\bigg|_{i,eg}^{*}\right]}^{\text{Semi-Implicit Drag Terms}}\nonumber \\
+& + & \overbrace{\mathcal{S}p^{n+1}_{g,j}}^{\text{Implicit Source Term}} -\overbrace{\frac{\left(M_{g,j}^{n+1}-M_{g,j}^{n}\right)}{\Delta t}\Delta z}^{\text{Time rate of change}}\nonumber \\
+& = &  0 \nonumber
+\end{IEEEeqnarray}
+
+\subsubsubgroup{Transverse Momentum}
+
+\begin{IEEEeqnarray}{lr}
+\frac{\partial }{\partial t} \left(\alpha_g (\rho_v + \rho_{nc}) \Vec{V}_g \right) + \nabla\cdot\left(\alpha_g (\rho_v + \rho_{nc}) \vec{V}_g \vec{V}_g \right) = &\nonumber \\
+-\alpha_g\;\nabla P - \tau^{'}_{wg}-\tau^{'}_{I_{gl}} - \tau^{'}_{I_{ge}} + \Gamma''' \vec{U}^{'} & \\
+\frac{\partial }{\partial t} \left(\alpha_l \rho_l \Vec{V}_l \right) + \nabla\cdot\left(\alpha_l \rho_l \vec{V}_l \vec{V}_l \right) = &\nonumber \\
+-\alpha_l\;\nabla P - \tau^{'}_{wl} + \tau^{'}_{I_{gl}} -\left((1-\eta)\Gamma'''\vec{U}'\right) - S'''\vec{U}'& \\
+\frac{\partial }{\partial t} \left(\alpha_e \rho_l \Vec{V}_e \right) + \nabla\cdot\left(\alpha_e \rho_l \vec{V}_e \vec{V}_e \right) = &\nonumber \\
+-\alpha_e\;\nabla P - \tau^{'}_{wl} + \tau^{'}_{I_{ge}} -\left(\eta\Gamma'''\vec{U}'\right) + S'''\vec{U}'&
+\end{IEEEeqnarray}
+
 
 %============================================================================
 \subgroup{Discrete Hydrodynamic Equations}
@@ -99,12 +140,6 @@ Note that $\displaystyle \Vec{q}=f(\Vec{x})$.
 %============================================================================
 \subsubgroup{Axial Momentum}
 
-\begin{IEEEeqnarray}{rCl}
-F_g(\Vec{x}^{n+1}) & = & \overbrace{E_g({\Vec{x}^{n}})}^{\text{Purely explicit terms}}-\overbrace{A_{mom,j}\Delta z_j\left[ \alpha_g^n\frac{P_{J+1}^{n+1}-P_{J}^{n+1}}{\Delta z_j}\right]}^{\text{Semi-Implicit Pressure Term}}  \\
-& - & \overbrace{A_{mom,j}\Delta z_j\left[ \frac{dP}{dz}\bigg|_{w,g}^{*}+\frac{dP}{dz}\bigg|_{i,lg}^{*}+\frac{dP}{dz}\bigg|_{i,eg}^{*}\right]}^{\text{Semi-Implicit Drag Terms}}\nonumber \\
-& + & \overbrace{\mathcal{S}p^{n+1}_{g,j}}^{\text{Implicit Source Term}} -\overbrace{\frac{\left(M_{g,j}^{n+1}-M_{g,j}^{n}\right)}{\Delta t}\Delta z}^{\text{Time rate of change}}\nonumber \\
-& = &  0 \nonumber
-\end{IEEEeqnarray}
 
 Current methodology in COBRA-IE for obtaining tentative newtime $\dot{\vec{M}}^{\widetilde{n+1}}$ and $\displaystyle \frac{d\dot{\vec{M}}}{d P}$.
 This methodology is based on linearizing certain terms within the momentum equations.
@@ -139,6 +174,7 @@ The nonlinear functional associated with this equation is as follows:
 \overbrace{\FVS{F}{\Vec{M}^{n+1},\;P^{n+1}}}^{\text{Nonlinear Functional}} & = & 0 \nonumber \\
 & = & \underbrace{\FVS{E}{\Vec{M}^{n}}}_{\text{Explict Terms}} +\underbrace{\FVS{I}{\Vec{M}^{n+1},\;P^{n+1}}}_{\text{Implicit Terms}}\nonumber
 \end{IEEEeqnarray}
+
 \begin{IEEEeqnarray}{rCl}
 \Vec{x}^{n+1} & = & \begin{bmatrix} M_l^{n+1}\\M_g^{n+1}\\M_e^{n+1}\\P^{n+1}\end{bmatrix} \nonumber \\
 \FVS{F}{\Vec{x}^{n+1}} & = & \FVS{E}{\Vec{x}^n}+\FVS{I}{\Vec{x}^{n+1}} \nonumber
@@ -155,15 +191,15 @@ Now, this nonlinear functional is solved using a Newton Step.
 
 \begin{align}
 \begin{bmatrix} 
-\DerivParOne{\vec{I}_{l}}{\vec{\dot{m}}_{l}} & \DerivParOne{\vec{I}_{l}}{\vec{\dot{m}}_{g}}  & \DerivParOne{\vec{I}_{l}}{\vec{\dot{m}}_{e}} & \DerivParOne{\vec{I}_{l}}{\Delta P}\\
-\DerivParOne{\vec{I}_{g}}{\vec{\dot{m}}_{l}} & \DerivParOne{\vec{I}_{g}}{\vec{\dot{m}}_{g}}  & \DerivParOne{\vec{I}_{g}}{\vec{\dot{m}}_{e}} & \DerivParOne{\vec{I}_{g}}{\Delta P}\\
-\DerivParOne{\vec{I}_{e}}{\vec{\dot{m}}_{l}} & \DerivParOne{\vec{I}_{e}}{\vec{\dot{m}}_{g}}  & \DerivParOne{\vec{I}_{e}}{\vec{\dot{m}}_{e}} & \DerivParOne{\vec{I}_{e}}{\Delta P}
+\DerivParOne{\vec{I}_{l}}{\vec{\dot{M}}_{l}} & \DerivParOne{\vec{I}_{l}}{\vec{\dot{M}}_{g}}  & \DerivParOne{\vec{I}_{l}}{\vec{\dot{M}}_{e}} & \DerivParOne{\vec{I}_{l}}{\Delta P}\\
+\DerivParOne{\vec{I}_{g}}{\vec{\dot{M}}_{l}} & \DerivParOne{\vec{I}_{g}}{\vec{\dot{M}}_{g}}  & \DerivParOne{\vec{I}_{g}}{\vec{\dot{M}}_{e}} & \DerivParOne{\vec{I}_{g}}{\Delta P}\\
+\DerivParOne{\vec{I}_{e}}{\vec{\dot{M}}_{l}} & \DerivParOne{\vec{I}_{e}}{\vec{\dot{M}}_{g}}  & \DerivParOne{\vec{I}_{e}}{\vec{\dot{M}}_{e}} & \DerivParOne{\vec{I}_{e}}{\Delta P}
 \end{bmatrix}_{0}
 \cdot
 \begin{bmatrix}
-\Delta \vec{\dot{m}}_l \\
-\Delta \vec{\dot{m}}_g \\
-\Delta \vec{\dot{m}}_e \\
+\Delta \vec{\dot{M}}_l \\
+\Delta \vec{\dot{M}}_g \\
+\Delta \vec{\dot{M}}_e \\
 \Delta P
 \end{bmatrix}_{k\rightarrow k+1} & =
 -\begin{bmatrix}
@@ -178,15 +214,15 @@ Now, this nonlinear functional is solved using a Newton Step.
 \end{bmatrix}_{k} \\ 
 % HERE IS A SEPERATE EQUATION
 \begin{bmatrix} 
-\DerivParOne{\vec{I}_{l}}{\vec{\dot{m}}_{l}} & \DerivParOne{\vec{I}_{l}}{\vec{\dot{m}}_{g}}  & \DerivParOne{\vec{I}_{l}}{\vec{\dot{m}}_{e}} \\
-\DerivParOne{\vec{I}_{g}}{\vec{\dot{m}}_{l}} & \DerivParOne{\vec{I}_{g}}{\vec{\dot{m}}_{g}}  & \DerivParOne{\vec{I}_{g}}{\vec{\dot{m}}_{e}} \\
-\DerivParOne{\vec{I}_{e}}{\vec{\dot{m}}_{l}} & \DerivParOne{\vec{I}_{e}}{\vec{\dot{m}}_{g}}  & \DerivParOne{\vec{I}_{e}}{\vec{\dot{m}}_{e}}
+\DerivParOne{\vec{I}_{l}}{\vec{\dot{M}}_{l}} & \DerivParOne{\vec{I}_{l}}{\vec{\dot{M}}_{g}}  & \DerivParOne{\vec{I}_{l}}{\vec{\dot{M}}_{e}} \\
+\DerivParOne{\vec{I}_{g}}{\vec{\dot{M}}_{l}} & \DerivParOne{\vec{I}_{g}}{\vec{\dot{M}}_{g}}  & \DerivParOne{\vec{I}_{g}}{\vec{\dot{M}}_{e}} \\
+\DerivParOne{\vec{I}_{e}}{\vec{\dot{M}}_{l}} & \DerivParOne{\vec{I}_{e}}{\vec{\dot{M}}_{g}}  & \DerivParOne{\vec{I}_{e}}{\vec{\dot{M}}_{e}}
 \end{bmatrix}_{0}
 \cdot
 \begin{bmatrix}
-\Delta \vec{\dot{m}}_l \\
-\Delta \vec{\dot{m}}_g \\
-\Delta \vec{\dot{m}}_e
+\Delta \vec{\dot{M}}_l \\
+\Delta \vec{\dot{M}}_g \\
+\Delta \vec{\dot{M}}_e
 \end{bmatrix}_{k\rightarrow k+1} & =
 -\vec{E} -
 \vec{I}_{k} -
@@ -200,9 +236,9 @@ Now, this nonlinear functional is solved using a Newton Step.
 \mat{J}_{\,0}
 \cdot
 \begin{bmatrix}
-\Delta \vec{\dot{m}}_l \\
-\Delta \vec{\dot{m}}_g \\
-\Delta \vec{\dot{m}}_e
+\Delta \vec{\dot{M}}_l \\
+\Delta \vec{\dot{M}}_g \\
+\Delta \vec{\dot{M}}_e
 \end{bmatrix}_{k\rightarrow k+1} & =
 -\vec{E} -
 \vec{I}_{k} -
@@ -210,22 +246,22 @@ Now, this nonlinear functional is solved using a Newton Step.
 \Delta P_{k \rightarrow k+1} \\
 % HERE IS A SEPERATE EQUATION
 \begin{bmatrix}
-\Delta \vec{\dot{m}}_l \\
-\Delta \vec{\dot{m}}_g \\
-\Delta \vec{\dot{m}}_e
+\Delta \vec{\dot{M}}_l \\
+\Delta \vec{\dot{M}}_g \\
+\Delta \vec{\dot{M}}_e
 \end{bmatrix}_{k\rightarrow k+1} & =
 -\mat{J}_{\,0}^{-1}\left(\vec{E} + \vec{I}_{k}\right) -
 \mat{J}_{\,0}^{-1} \cdot \vec{p}_{0} \Delta P_{k \rightarrow k+1} \\
 % HERE IS A SEPERATE EQUATION
-\vec{\dot{m}}^{n+1}_{k+1}- \vec{\dot{m}}^{n+1}_{k} & =
+\vec{\dot{M}}^{n+1}_{k+1}- \vec{\dot{M}}^{n+1}_{k} & =
 -\mat{J}_{\,0}^{-1}\left(\vec{E} + \vec{I}_{k}\right) -
 \mat{J}_{\,0}^{-1} \cdot \vec{p}_{0} \Delta P_{k \rightarrow k+1}\\
 % HERE IS A SEPERATE EQUATION
-\vec{\dot{m}}^{n+1}_{k+1} & =
-\underbrace{\vec{\dot{m}}^{n+1}_{k} -\mat{J}_{\,0}^{-1}\left(\vec{E} + \vec{I}_{k}\right)}_{\vec{\dot{m}}^{*}_{k}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{\dot{m}}}{\partial \Delta P}} \Delta P_{k \rightarrow k+1} \\
+\vec{\dot{M}}^{n+1}_{k+1} & =
+\underbrace{\vec{\dot{M}}^{n+1}_{k} -\mat{J}_{\,0}^{-1}\left(\vec{E} + \vec{I}_{k}\right)}_{\vec{\dot{M}}^{*}_{k}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{\dot{M}}}{\partial \Delta P}} \Delta P_{k \rightarrow k+1} \\
 % HERE IS A SEPERATE EQUATION
-\vec{\dot{m}}^{n+1}_{k+1} & =
-\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{m}}^{n+1}_{k} - \mat{J}^{-1}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{\dot{m}}}{\partial \Delta P}} \Delta P_{k \rightarrow k+1}
+\vec{\dot{M}}^{n+1}_{k+1} & =
+\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{M}}^{n+1}_{k} - \mat{J}^{-1}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{M}}^{n+1}_{*}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{\dot{M}}}{\partial \Delta P}} \Delta P_{k \rightarrow k+1}
 \end{align}
 
 \begin{align}
