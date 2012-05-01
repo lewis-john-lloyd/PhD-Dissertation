@@ -146,7 +146,7 @@ This methodology is based on linearizing certain terms within the momentum equat
 These  equations are solved for the $\dot{\vec{M}}^{\widetilde{n+1}}$.
 The derivative of these equations with respect to pressure is taken to find $\displaystyle \frac{d\dot{\vec{M}}}{d P}$.
 \begin{IEEEeqnarray}{rCl}
-\mat{J}_{0}\,\dot{\vec{M}}^{n+1} & = & -\vec{E} - \vec{I}(\dot{\vec{M}}^{n}) - \dot{\vec{M}}^{n} +\vec{b} \delta \text{P}^{\;n+1} \nonumber \\
+\mat{J}_{0}\,\dot{\vec{M}}_{k}^{n+1} & = & -\vec{E} - \vec{I}(\dot{\vec{M}}^{n}) - \dot{\vec{M}}^{n} +\vec{b} \delta \text{P}^{\;n+1} \nonumber \\
 \dot{\vec{M}}^{n+1} & = & -\mat{J}^{-1}_{\,0}\,\left[\vec{E} + \vec{I}(\dot{\vec{M}}^{n}) + \dot{\vec{M}}^{n}\right]  +\mat{J}^{-1}_{\,0}\,\vec{b} \delta \text{P}^{\;n+1} \nonumber\\
 \dot{\vec{M}}^{n+1} & = & \underbrace{-\mat{J}^{-1}_{\,0}\,\left[\vec{E} + \vec{I}(\dot{\vec{M}}^{n}) + \dot{\vec{M}}^{n}\right]}_{\dot{\vec{M}}^{\widetilde{n+1}}} +\underbrace{\mat{J}^{-1}_{\,0}\,\vec{b}}_{\frac{\partial\;\dot{\vec{M}}^{n+1}}{\partial \text{P}}}  \delta \text{P}^{\;n+1} \nonumber
 \end{IEEEeqnarray}
@@ -160,7 +160,7 @@ This methodology is based on linearizing the the equations and taking a Newton S
 
 Difference between current process and new process.
 \begin{IEEEeqnarray}{rCl}
-\dot{\vec{M}}^{n+1}_{k+1} - \dot{\vec{M}}^{\widetilde{n+1}}_{k+1} & = & \dot{\vec{M}}^{n+1}_{k} - \mat{J}^{-1}_{0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{k}) + \mat{J}^{-1}_{\,0}\,\vec{I}(\dot{\vec{M}}^{n}) + \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n}\nonumber \\
+\dot{\vec{M}}^{n+1}_{k+1} - \dot{\vec{M}}^{n+1}_{k+1} & = & \dot{\vec{M}}^{n+1}_{k} - \mat{J}^{-1}_{0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{k}) + \mat{J}^{-1}_{\,0}\,\vec{I}(\dot{\vec{M}}^{n}) + \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n} - \nonumber \\
 \dot{\vec{M}}^{n+1}_{1} - \dot{\vec{M}}^{\widetilde{n+1}}_{1} & = & \dot{\vec{M}}^{n} + \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n}\nonumber \\
 \dot{\vec{M}}^{n+1}_{1} & = & \dot{\vec{M}}^{\widetilde{n+1}}_{1} + [\mat{I} + \mat{J}^{-1}_{\,0}]\,\dot{\vec{M}}^{n} \nonumber \\
 \dot{\vec{M}}^{n+1}_{2} - \dot{\vec{M}}^{\widetilde{n+1}}_{2} & = & \dot{\vec{M}}^{n+1}_{1} - \mat{J}^{-1}_{0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{1}) + \mat{J}^{-1}_{\,0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{1}) + \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n+1}_{1}\nonumber \\
