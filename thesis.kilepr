@@ -168,10 +168,10 @@ order=0
 
 [item:mathematics.tex]
 archive=true
-column=47
+column=289
 encoding=UTF-8
 highlight=LaTeX
-line=128
+line=162
 mode=LaTeX
 open=true
 order=3
@@ -293,5 +293,5 @@ CursorColumn=70
 CursorLine=13
 
 [view-settings,view=0,item:mathematics.tex]
-CursorColumn=47
-CursorLine=128
+CursorColumn=289
+CursorLine=162

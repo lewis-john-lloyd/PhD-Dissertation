@@ -160,12 +160,12 @@ This methodology is based on linearizing the the equations and taking a Newton S
 
 Difference between current process and new process.
 \begin{IEEEeqnarray}{rCl}
-\dot{\vec{M}}^{n+1}_{k+1} - \dot{\vec{M}}^{n+1}_{k+1} & = & \dot{\vec{M}}^{n+1}_{k} - \mat{J}^{-1}_{0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{k}) + \mat{J}^{-1}_{\,0}\,\vec{I}(\dot{\vec{M}}^{n}) + \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n} - \nonumber \\
-\dot{\vec{M}}^{n+1}_{1} - \dot{\vec{M}}^{\widetilde{n+1}}_{1} & = & \dot{\vec{M}}^{n} + \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n}\nonumber \\
-\dot{\vec{M}}^{n+1}_{1} & = & \dot{\vec{M}}^{\widetilde{n+1}}_{1} + [\mat{I} + \mat{J}^{-1}_{\,0}]\,\dot{\vec{M}}^{n} \nonumber \\
-\dot{\vec{M}}^{n+1}_{2} - \dot{\vec{M}}^{\widetilde{n+1}}_{2} & = & \dot{\vec{M}}^{n+1}_{1} - \mat{J}^{-1}_{0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{1}) + \mat{J}^{-1}_{\,0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{1}) + \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n+1}_{1}\nonumber \\
-\dot{\vec{M}}^{n+1}_{2} & = & \dot{\vec{M}}^{\widetilde{n+1}}_{2} + [\mat{I} + \mat{J}^{-1}_{\,0}]\dot{\vec{M}}^{n+1}_{1}\nonumber \\
-\dot{\vec{M}}^{n+1}_{k+1} & = & \dot{\vec{M}}^{\widetilde{n+1}}_{k+1} + [\mat{I} + \mat{J}^{-1}_{\,0}]\dot{\vec{M}}^{n+1}_{k} \nonumber
+\dot{\vec{M}}^{n+1}_{k+1} - \dot{\vec{M}}^{n+1}_{k+1} & = & \dot{\vec{M}}^{n+1}_{k} - \mat{J}^{-1}_{0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{k}) + \mat{J}^{-1}_{\,0}\,\vec{I}(\dot{\vec{M}}^{n}) + \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n} + \mat{J}^{-1}_{\,0}\vec{b}\left[\delta \text{P}_{0\rightarrow 1}^{\;n+1}  - \delta \text{P}^{\;n+1}\right]\nonumber \\
+\dot{\vec{M}}^{n+1}_{1} - \dot{\vec{M}}^{n+1}_{1} & = & \dot{\vec{M}}^{n} + \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n}+ \mat{J}^{-1}_{\,0}\vec{b}\left[\delta \text{P}_{k\rightarrow k+1}^{\;n+1}  - \delta \text{P}^{\;n+1}\right]\nonumber \\
+\dot{\vec{M}}^{n+1}_{1} & = & \dot{\vec{M}}^{n+1}_{1} + [\mat{I} + \mat{J}^{-1}_{\,0}]\,\dot{\vec{M}}^{n} \nonumber \\
+\dot{\vec{M}}^{n+1}_{2} - \dot{\vec{M}}^{n+1}_{2} & = & \dot{\vec{M}}^{n+1}_{1} - \mat{J}^{-1}_{0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{1}) + \mat{J}^{-1}_{\,0}\,\vec{I}(\dot{\vec{M}}^{n+1}_{1}) + \mat{J}^{-1}_{\,0}\,\dot{\vec{M}}^{n+1}_{1}\nonumber \\
+\dot{\vec{M}}^{n+1}_{2} & = & \dot{\vec{M}}^{n+1}_{2} + [\mat{I} + \mat{J}^{-1}_{\,0}]\dot{\vec{M}}^{n+1}_{1}\nonumber \\
+\dot{\vec{M}}^{n+1}_{k+1} & = & \dot{\vec{M}}^{n+1}_{k+1} + [\mat{I} + \mat{J}^{-1}_{\,0}]\dot{\vec{M}}^{n+1}_{k} \nonumber
 \end{IEEEeqnarray}
 
 The nonlinear functional associated with this equation is as follows:
