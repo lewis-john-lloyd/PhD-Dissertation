@@ -58,6 +58,19 @@ Note that $\displaystyle \Vec{q}=f(\Vec{x})$.
 
 \subsubgroup{Continuity Equations}
 \subsubsubgroup{Mass}
+\begin{align}
+\Vec{x} & = \begin{bmatrix}
+\alpha \\
+\alpha_e \\
+P \\
+\alpha P_g \\
+\alpha \left( \rho_v + \rho_g \right) \Vec{U}_v \\
+\left( 1-\alpha \right) \rho_l \Vec{U}_l \\
+\alpha_e  \rho_l \Vec{U}_e \\
+\alpha H_v \\
+\left( 1-\alpha \right) H_l
+\end{bmatrix}
+\end{align}
 
 \begin{IEEEeqnarray}{lCr}
 \frac{\partial}{\partial t} \alpha_g \rho_g + \nabla\cdot\left(\alpha_g\rho_g\vec{U}_g\right) & = & \Gamma''' \\
@@ -68,17 +81,17 @@ Note that $\displaystyle \Vec{q}=f(\Vec{x})$.
 
 \begin{IEEEeqnarray}{lCl}
 % Here is the vapor mass equation.
-(\alpha_g \rho_v)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha_g \rho_{v})_{don}}{<\alpha_g \rho_v>}\right]^{n} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha_g \rho_{v})_{don}}{<\alpha_g \rho_v>}\right]^{n} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}}\right] & & \nonumber \\
-= (\alpha_g \rho_v)^{n} + \frac{\Delta t}{V_c} \Gamma^{\,n} & & \\
+(\alpha \rho_v)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha \rho_{v})^{*}}{<\alpha \rho_v>}\right]^{n} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha \rho_{v})^{*}}{<\alpha \rho_v>}\right]^{n} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}}\right] & & \nonumber \\
+= (\alpha \rho_v)^{n} + \frac{\Delta t}{V_c} \Gamma^{\,n+1} & & \\
 % Here is the gas mass equation.
-(\alpha_g \rho_g)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha_g \rho_{g})_{don}}{<\alpha_g \rho_g>}\right]^{n} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha_g \rho_{g})_{don}}{<\alpha_g \rho_g>}\right]^{n} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}}\right] & & \nonumber \\
-= (\alpha_g \rho_g)^{n} & &  \\
+(\alpha \rho_g)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha \rho_{g})^{*}}{<\alpha \rho_g>}\right]^{n} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha \rho_{g})^{*}}{<\alpha \rho_g>}\right]^{n} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}}\right] & & \nonumber \\
+= (\alpha \rho_g)^{n} & &  \\
 % Here is the continuous liquid mass equation.
-(\alpha_l \rho_l)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha_l \rho_{l})_{don}}{<\alpha_l \rho_l>}\right]^{n} \dot{\vec{M}}^{n+1}_{l}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha_l \rho_{l})_{don}}{<\alpha_l \rho_l>}\right]^{n} \dot{\vec{W}}^{n+1}_{l}\cdot \vec{\hat{n}}\right] & & \nonumber \\
-= (\alpha_l \rho_l)^{n} + \frac{\Delta t}{V_c} \left(S_{D}^{n} - (1-\eta^{n})\Gamma^{\,n}_{l} - S_{E}^{n}\right) & & \\
+(\alpha_l \rho_l)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha_l \rho_{l})^{*}}{<\alpha_l \rho_l>}\right]^{n} \dot{\vec{M}}^{n+1}_{l}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha_l \rho_{l})^{*}}{<\alpha_l \rho_l>}\right]^{n} \dot{\vec{W}}^{n+1}_{l}\cdot \vec{\hat{n}}\right] & & \nonumber \\
+= (\alpha_l \rho_l)^{n} + \frac{\Delta t}{V_c} \left(S_{D}^{n+1} - (1-\eta^{n})\Gamma^{\,n+1}_{l} - S_{E}^{n+1}\right) & & \\
 % Here is the entrained liquid mass equation.
-(\alpha_e \rho_l)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha_e \rho_{l})_{don}}{<\alpha_e \rho_l>}\right]^{n} \dot{\vec{M}}^{n+1}_{e}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha_e \rho_{l})_{don}}{<\alpha_e \rho_l>}\right]^{n} \dot{\vec{W}}^{n+1}_{e}\cdot \vec{\hat{n}}\right] & & \nonumber \\
-= (\alpha_e \rho_l)^{n} + \frac{\Delta t}{V_c} \left(S_{E}^{n} - \eta^{n}\Gamma^{\,n}_{e} - S_{D}^{n}\right)& & 
+(\alpha_e \rho_l)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha_e \rho_{l})^{*}}{<\alpha_e \rho_l>}\right]^{n} \dot{\vec{M}}^{n+1}_{e}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha_e \rho_{l})^{*}}{<\alpha_e \rho_l>}\right]^{n} \dot{\vec{W}}^{n+1}_{e}\cdot \vec{\hat{n}}\right] & & \nonumber \\
+= (\alpha_e \rho_l)^{n} + \frac{\Delta t}{V_c} \left(S_{E}^{n+1} - \eta^{n}\Gamma^{\,n+1}_{e} - S_{D}^{n+1}\right)& & 
 \end{IEEEeqnarray}
 
 \subsubsubgroup{Energy}
@@ -92,13 +105,13 @@ Note that $\displaystyle \Vec{q}=f(\Vec{x})$.
 \begin{IEEEeqnarray}{ll}
 % Here be the gas equations.
  & (\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) )^{n+1} - \alpha_{g}^{n}P^{\;n+1} \nonumber \\
-+& \frac{\Delta t}{V_c} \sum_{J} \left(\frac{(\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) )_{don}}{<\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) >}\right)^{n} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} \nonumber \\
-+& \frac{\Delta t}{V_c} \sum_{K} \left(\frac{(\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) )_{don}}{<\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) >}\right)^{n} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}} \nonumber \\
++& \frac{\Delta t}{V_c} \sum_{J} \left(\frac{(\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) )^{*}}{<\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) >}\right)^{n} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} \nonumber \\
++& \frac{\Delta t}{V_c} \sum_{K} \left(\frac{(\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) )^{*}}{<\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) >}\right)^{n} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}} \nonumber \\
 =& (\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) )^{n} - \alpha_{g}^{n}P^{\;n} + \frac{\Delta t}{V_c}\left(q^{n}_{wg} + q^{n}_{i,v} + \Gamma^{\,n}h'^{\,n}_{v} + q^{n}_{gl}\right)\\
 % Here be the liquid equations.
  & ((\alpha_e +\alpha_l) \rho_l h_l)^{n+1} - (\alpha_e +\alpha_l)^{n}P^{\;n+1} \nonumber \\
-+& \frac{\Delta t}{V_c} \sum_{J}\left[  \left(\frac{(\alpha_l \rho_l h_l )_{don}}{<\alpha_l \rho_l h_l >}\right)^{n} \dot{\vec{M}}^{n+1}_{l}\cdot \vec{\hat{n}}+ \left(\frac{(\alpha_e \rho_l h_l )_{don}}{<\alpha_e \rho_l h_l >}\right)^{n} \dot{\vec{M}}^{n+1}_{e}\cdot \vec{\hat{n}}\right] \nonumber \\
-+& \frac{\Delta t}{V_c} \sum_{K}\left[  \left(\frac{(\alpha_l \rho_l h_l )_{don}}{<\alpha_l \rho_l h_l >}\right)^{n} \dot{\vec{W}}^{n+1}_{l}\cdot \vec{\hat{n}}+ \left(\frac{(\alpha_e \rho_l h_l )_{don}}{<\alpha_e \rho_l h_l >}\right)^{n} \dot{\vec{W}}^{n+1}_{e}\cdot \vec{\hat{n}}\right] \nonumber \\
++& \frac{\Delta t}{V_c} \sum_{J}\left[  \left(\frac{(\alpha_l \rho_l h_l )^{*}}{<\alpha_l \rho_l h_l >}\right)^{n} \dot{\vec{M}}^{n+1}_{l}\cdot \vec{\hat{n}}+ \left(\frac{(\alpha_e \rho_l h_l )^{*}}{<\alpha_e \rho_l h_l >}\right)^{n} \dot{\vec{M}}^{n+1}_{e}\cdot \vec{\hat{n}}\right] \nonumber \\
++& \frac{\Delta t}{V_c} \sum_{K}\left[  \left(\frac{(\alpha_l \rho_l h_l )^{*}}{<\alpha_l \rho_l h_l >}\right)^{n} \dot{\vec{W}}^{n+1}_{l}\cdot \vec{\hat{n}}+ \left(\frac{(\alpha_e \rho_l h_l )^{*}}{<\alpha_e \rho_l h_l >}\right)^{n} \dot{\vec{W}}^{n+1}_{e}\cdot \vec{\hat{n}}\right] \nonumber \\
 =& ((\alpha_e +\alpha_l) \rho_l h_l)^{n} - (\alpha_e +\alpha_l)^{n}P^{\;n} + \frac{\Delta t}{V_c}\left(q^{n}_{wl} + q^{n}_{i,l} -\Gamma^{\,n}h'^{\,n}_{l} - q^{n}_{gl}\right)
 \end{IEEEeqnarray}
 
@@ -313,7 +326,7 @@ The beginning equation to formulate the wall drag is shown in Eqn.
 \frac{\partial }{\partial_{\dot{\vec{m}}^{n+1}_{k}}} \left(\frac{dP}{dz}\bigg\vert^{n+1}_{k}\right) & = & \left[K^{n}\right]2\left[ \dot{\vec{m}}_{k}^{n+1}\right]
 \end{IEEEeqnarray}
 
-The Momentum Equations, outlined in Section \ref{blarp} contain an implicit wall drag. This means that we need to evaluate the wall drag at the future time value.
+The Momentum Equations, outlined in Section contain an implicit wall drag. This means that we need to evaluate the wall drag at the future time value.
 To do this in the semi-implicit methodology requires that we linearize the future value using Newton's Method.
 The current implementation uses the following derivation.
 
@@ -332,7 +345,7 @@ Once the linearization starts, the index, $_k$, will refer to Newton iteration.
 %============================================================================
 
 COBRA currently uses a single linearized Newton step to solve the hydrodynamic equations.
-This method has been shown to be adequate \ref{blarp} given a small enough time step.
+This method has been shown to be adequate given a small enough time step.
 One potential improvement that can be made to the current method is multiple Newton steps being taken with a frozen Jacobian.
 The Jacobian will be evaluated at the old time value and not updated during the Newton process.
 

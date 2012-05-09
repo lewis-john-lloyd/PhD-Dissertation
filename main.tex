@@ -69,24 +69,25 @@
 %	- amsmath
 %		Purpose: The package amsmath includes most useful math stuff.
 \usepackage{amsmath}
-
-%	- hyperref
-%		Purpose: The package hyperref allows for hyperlinks within the document.
-\usepackage[%dvips,%
-			bookmarks,%
-			pdfauthor={Lewis John Lloyd},%
-			colorlinks,%
-			citecolor=black,%
-			filecolor=black,%
-			linkcolor=black,%
-			urlcolor=black
-			]{hyperref}
-
 \usepackage{IEEEtrantools}
 \usepackage[ruled,
             chapter
 ]{algorithm}
 \usepackage{algpseudocode}
+
+\usepackage{pdflscape}
+
+%	- hyperref
+%		Purpose: The package hyperref allows for hyperlinks within the document.
+\usepackage[bookmarks,%
+	    pdfauthor={Lewis John Lloyd},%
+	    colorlinks,%
+	    citecolor=black,%
+	    filecolor=black,%
+	    linkcolor=black,%
+	    urlcolor=black
+	    ]{hyperref}
+
 %========================================================================
 %  Draft Control Commands
 %========================================================================
@@ -167,6 +168,7 @@
 %=======================================================================
 % Appendices
 %=======================================================================
+\appendix
 \begin{appendices}
 \include{models}				% Appendix: Verification Work
 \end{appendices}
