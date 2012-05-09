@@ -156,58 +156,51 @@ Linearization of the axial momentum equations in COBRA-IE.
 
 Note: 
 
-\begin{IEEEeqnarray}{rCl}
+\begin{IEEEeqnarray}{rCCCr}
 \vec{L}(\vec{x}_{k}) & = & \mat{L}\;\dot{\vec{M}}_{k} + \vec{b}\Delta\text{P}_{k} \nonumber \\
 \frac{\partial}{\partial \Delta\text{P}_{k}}\left[\vec{b} \Delta \text{P}_{k}\right] & = & \vec{b} \nonumber \\
-\frac{\partial\; \vec{N}(\vec{x}_{k})}{\partial \vec{x}_{k}} & = & \mat{N}(\dot{\vec{M}}_{k})\dot{\vec{M}}_{k} \nonumber \\
-\frac{\partial\; \vec{F}(\vec{x}_{k})}{\partial \dot{\vec{M}_{k}}} & = & \frac{\partial}{\partial \vec{\dot{M}}_{k}}\left[ \vec{E} + \vec{L}(\vec{x}_{k}) + \vec{N}(\vec{x}_{k})\right] = \left[\mat{L}+\mat{N}(\dot{\vec{M}}_{k})\right]  \nonumber \\
-\mat{J}_{k} & = & \left[\mat{L}+\mat{N}(\dot{\vec{M}}_{k})\right] \nonumber
+\frac{\partial\; \vec{N}(\vec{x}_{k})}{\partial \vec{x}_{k}} & = & \frac{\partial\; \vec{N}(\vec{x}_{k})}{\partial \dot{\vec{M}}_{k}} & = & \mat{N}(\dot{\vec{M}}_{k}) \nonumber \\
+\mat{J}^{*}_{k} & = & \frac{\partial\; \vec{F}(\vec{x}_{k})}{\partial \dot{\vec{M}_{k}}} & = & \mat{L} + \mat{N}(\dot{\vec{M}}_{k})  \nonumber \\
+\mat{J}_{\,k}\delta \vec{x} & = & \frac{\partial\; \vec{F}(\vec{x}_{k})}{\partial \vec{x}_{k}}\delta\vec{x} & = & \mat{J}^{*}_{\,k}\delta(\dot{\vec{M}}) + \vec{b}\delta(\Delta \text{P})\nonumber
 \end{IEEEeqnarray}
 
+Current View Point
+
 \begin{IEEEeqnarray}{rCl}
-\vec{F}(\vec{x}_{k+1}) & = & 0 \nonumber \\
-\vec{F}(\vec{x}_{k+1}) & = & \vec{E} + \vec{L}(\vec{x}_{k+1}) + \vec{N}(\vec{x}_{k+1}) \nonumber \\
+0 & = & \vec{F}(\vec{x}_{k+1}) \nonumber \\
+0 & = & \vec{F}(\vec{x}_{k+1}) =  \vec{E} + \vec{L}(\vec{x}_{k+1}) + \vec{N}(\vec{x}_{k+1})  \nonumber \\
 0 & = & \vec{E} + \vec{L}(\vec{x}_{k+1}) + \vec{N}(\vec{x}_{k+1}) \nonumber \\
 0 & = & \vec{E} + \mat{L}\;\dot{\vec{M}}_{k+1} + \vec{b}\Delta\text{P}_{k+1} + \vec{N}(\vec{x}_{k+1}) \nonumber \\
 0 & = & \vec{E} + \mat{L}\;\dot{\vec{M}}_{k+1} + \vec{b}\Delta \text{P}_{k} + \frac{\partial\left[ \vec{b}\Delta\text{P}_{k+1}\right]}{\partial\,\Delta \text{P}_{k+1}}\delta(\Delta \text{P}) + \vec{N}(\vec{x}_{k}) + \frac{\partial \left[ \vec{N}(\vec{x}_{k+1})\right]}{\partial\, \vec{x}_{k+1}}\left[\vec{x}_{k+1}-\vec{x}_{k}\right] \nonumber
 \end{IEEEeqnarray}
 
 \begin{IEEEeqnarray}{rCl}
- \mat{L}\;\dot{\vec{M}}_{k+1} + \mat{N}(\dot{\vec{M}}_{k})\;\dot{\vec{M}}_{k+1} & = & -\vec{E} - \vec{b}\Delta \text{P}_{k} - \vec{N}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) + \mat{N}(\dot{\vec{M}}_{k}) \nonumber \\
+ \mat{L}\;\dot{\vec{M}}_{k+1} + \mat{N}(\dot{\vec{M}}_{k})\;\dot{\vec{M}}_{k+1} & = & -\vec{E} - \vec{b}\Delta \text{P}_{k} - \vec{N}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) + \mat{N}(\dot{\vec{M}}_{k})\dot{\vec{M}}_{k} \nonumber \\
  \left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\dot{\vec{M}}_{k+1} & = & - \left[\vec{E} + \vec{b}\Delta \text{P}_{k} + \vec{N}(\vec{x}_{k}) - \mat{N}(\dot{\vec{M}}_{k})\;\dot{\vec{M}}_{k}\right] - \vec{b}\delta(\Delta \text{P}) \nonumber \\
- \mat{J}_{\,k}\; \dot{\vec{M}}_{k+1} & = &  -\vec{a} - \vec{b}\delta(\Delta \text{P}) \nonumber \\
-\dot{\vec{M}}_{k+1} & = &  -\mat{J}_{\,k}^{-1}\;\vec{a} - \mat{J}^{-1}_{\,k}\;\vec{b}\delta(\Delta \text{P}) \nonumber
+ \mat{J}^{*}_{\,k}\; \dot{\vec{M}}_{k+1} & = &  -\vec{f} - \vec{b}\delta(\Delta \text{P}) \nonumber \\
+\dot{\vec{M}}_{k+1} & = &  \underbrace{-\mat{J}_{\,k}^{-*}\;\vec{f}}_{\dot{\vec{M}}^{\widetilde{n+1}}_{\,k}} \underbrace{- \mat{J}^{-*}_{\,k}\;\vec{b}}_{\frac{d \dot{\vec{M}}_{k}}{d \Delta \text{P}}}\delta(\Delta \text{P}) \nonumber \\
+\dot{\vec{M}}_{k+1} & = &  \dot{\vec{M}}^{\widetilde{n+1}}_{\,k} + \frac{d \dot{\vec{M}}_{k}}{d \Delta \text{P}}\delta(\Delta \text{P}) \nonumber 
 \end{IEEEeqnarray}
 
+Relation between Newton step and current formulation.
+
 \begin{IEEEeqnarray}{rCl}
-\left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\dot{\vec{M}}_{k+1} & = & - \left[\vec{E} + \mat{L}\;\dot{\vec{M}}_{k} + \vec{b}\text{P}_{k} + \vec{N}(\vec{x}_{k}) \right] - \vec{b}\delta\text{P} + \mat{L}\;\dot{\vec{M}}_{k} + \mat{N}(\dot{\vec{M}}_{k})\;\dot{\vec{M}}_{k} \nonumber \\
-\left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\dot{\vec{M}}_{k+1} & = & - \vec{F}(\vec{x}_{k}) - \vec{b}\delta\text{P} + \left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\;\dot{\vec{M}}_{k} \nonumber \\
-\mat{J}_{\,k}\,\dot{\vec{M}}_{k+1} & = & - \vec{F}(\vec{x}_{k}) - \vec{b}\delta\text{P} + \mat{J}_{\,k}\;\dot{\vec{M}}_{k} \nonumber \\
-\dot{\vec{M}}_{k+1} & = & \dot{\vec{M}}_{k} - \mat{J}_{\,k}^{-1} \vec{F}(\vec{x}_{k}) - \mat{J}_{\,k}^{-1}\vec{b}\delta\text{P} \nonumber \\
-\mat{J}_{\,k}\,\delta\dot{\vec{M}} & = & - \vec{F}(\vec{x}_{k}) - \vec{b}\delta\text{P} \nonumber \\
-\mat{J}_{\,k}\,\delta\dot{\vec{x}} & = & - \vec{F}(\vec{x}_{k}) \nonumber
+\left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\dot{\vec{M}}_{k+1} & = & - \left[\vec{E} + \mat{L}\;\dot{\vec{M}}_{k} + \vec{b}\Delta \text{P}_{k} + \vec{N}(\vec{x}_{k}) \right] - \vec{b}\delta(\Delta \text{P}) + \mat{L}\;\dot{\vec{M}}_{k} + \mat{N}(\dot{\vec{M}}_{k})\;\dot{\vec{M}}_{k} \nonumber \\
+\left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\dot{\vec{M}}_{k+1} & = & - \vec{F}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) + \left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\;\dot{\vec{M}}_{k} \nonumber \\
+\mat{J}^{*}_{\,k}\,\dot{\vec{M}}_{k+1} & = & - \vec{F}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) + \mat{J}^{*}_{\,k}\;\dot{\vec{M}}_{k} \nonumber \\
+\dot{\vec{M}}_{k+1} & = & \underbrace{\dot{\vec{M}}_{k} - \mat{J}_{\,k}^{-*} \vec{F}(\vec{x}_{k})}_{\dot{\vec{M}}^{\widetilde{n+1}}_{\,k}} \underbrace{- \mat{J}_{\,k}^{-1}\vec{b}}_{\frac{d \dot{\vec{M}}_{k}}{d \Delta \text{P}}}\delta\text{P} \nonumber \\
+\dot{\vec{M}}_{k+1} & = &  \dot{\vec{M}}^{\widetilde{n+1}}_{\,k} + \frac{d \dot{\vec{M}}_{k}}{d \Delta \text{P}}\delta(\Delta \text{P}) \nonumber 
 \end{IEEEeqnarray}
 
-
-The nonlinear functional associated with this equation is as follows:
-
-\begin{IEEEeqnarray}{rCl}
-\overbrace{\FVS{F}{\Vec{M}^{n+1},\;P^{n+1}}}^{\text{Nonlinear Functional}} & = & 0 \nonumber \\
-& = & \underbrace{\FVS{E}{\Vec{M}^{n}}}_{\text{Explict Terms}} +\underbrace{\FVS{I}{\Vec{M}^{n+1},\;P^{n+1}}}_{\text{Implicit Terms}}\nonumber
-\end{IEEEeqnarray}
+Equivalence with a Newton step.
 
 \begin{IEEEeqnarray}{rCl}
-\Vec{x}^{n+1} & = & \begin{bmatrix} M_l^{n+1}\\M_g^{n+1}\\M_e^{n+1}\\P^{n+1}\end{bmatrix} \nonumber \\
-\FVS{F}{\Vec{x}^{n+1}} & = & \FVS{E}{\Vec{x}^n}+\FVS{I}{\Vec{x}^{n+1}} \nonumber
-\end{IEEEeqnarray}
-
-Now, this nonlinear functional is solved using a Newton Step.
-
-\begin{IEEEeqnarray}{rCl}
-\Vec{F}(\Vec{x}_{k+1}^{n+1}) = \Vec{F}(\Vec{x}_{k}^{n+1}) + \Mat{J}\cdot\Vec{\delta x}_{k} & = & 0\nonumber \\
-\Vec{\delta x}_k & =&  \Vec{x}^{n+1}_{k+1}-\Vec{x}^{n+1}_{k} \nonumber \\
-\Vec{F}(\Vec{x}_{k}^{n+1}) + \Mat{J} \cdot\Vec{\delta x}_{k} & = & 0 \nonumber \\
-\Mat{J} \cdot\Vec{\delta x}_{k} & = & -\Vec{F}(\Vec{x}_{k}^{n+1}) \nonumber
+\left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\dot{\vec{M}}_{k+1} & = & - \left[\vec{E} + \mat{L}\;\dot{\vec{M}}_{k} + \vec{b}\Delta \text{P}_{k} + \vec{N}(\vec{x}_{k}) \right] - \vec{b}\delta(\Delta \text{P}) + \mat{L}\;\dot{\vec{M}}_{k} + \mat{N}(\dot{\vec{M}}_{k})\;\dot{\vec{M}}_{k} \nonumber \\
+\left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\dot{\vec{M}}_{k+1} & = & - \vec{F}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) + \left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\;\dot{\vec{M}}_{k} \nonumber \\
+\mat{J}^{*}_{\,k}\,\dot{\vec{M}}_{k+1} & = & - \vec{F}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) + \mat{J}^{*}_{\,k}\;\dot{\vec{M}}_{k} \nonumber \\
+\mat{J}^{*}_{\,k}\,\left[\dot{\vec{M}}_{k+1}-\dot{\vec{M}}_{k} \right] & = & - \vec{F}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) \nonumber \\
+\mat{J}^{*}_{\,k}\,\delta(\dot{\vec{M}}) + \vec{b}\delta(\Delta \text{P})  & = & - \vec{F}(\vec{x}_{k})  \nonumber \\
+\mat{J}_{\,k}\,\delta\vec{x} + \vec{b}\delta(\Delta \text{P})  & = & - \vec{F}(\vec{x}_{k})  \nonumber 
 \end{IEEEeqnarray}
 
 \begin{align}
