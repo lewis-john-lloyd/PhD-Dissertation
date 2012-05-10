@@ -33,60 +33,48 @@
 %		Purpos: fonts
 %\usepackage[latin1]{inputenc}
 
-% 	- ifthen
-%		Purpose:
-
+% ifthen:
 \usepackage{ifthen}
 \newcommand{\StandAlone}{false}
 
-% 	- epsfig
-%		Purpose: The package epsfig is used to bring in the Encapsulated PostScript figures into the document.
+% epsfig: The package epsfig is used to bring in the Encapsulated PostScript figures into the document.
 \usepackage{epsfig}
 
-% 	- verbatim
-%		Purpose:
-
+% verbatim:
 \usepackage{verbatim}
 
-% 	- pfg/TikZ
-%		Purpose: The package tikz is used to create graphics.
+% pfg/TikZ: The package tikz is used to create graphics.
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows}
 
-%	- times
-%		Purpose: The package times is used to change the fonts to Times Roman; however because the times typewriter font looks odd, the original LaTeX Computer Modern font is kept for the typewriter font using \renewcommand{\ttdefault}{cmtt}
-%		Note: 	Times Roman is a PostScript font and therefore, the document cannot be correctly viewed from the *.dvi file. 
-%				It should be converted to a *.ps file first and then viewed with a PostScript previewer.
+% times: The package times is used to change the fonts to Times Roman; however because the times typewriter font looks odd, the original LaTeX Computer Modern font is kept for the typewriter font using \renewcommand{\ttdefault}{cmtt}.
+%	Times Roman is a PostScript font and therefore, the document cannot be correctly viewed from the *.dvi file. 
+%	It should be converted to a *.ps file first and then viewed with a PostScript previewer.
 \usepackage{times}
 \renewcommand{\ttdefault}{cmtt}
 
-%	- syntonly
-%		Purpose: The package syntonly checks the syntax of document without actually generating files.
-%		Note: Activated by the \syntaxonly flag
+% syntonly: The package syntonly checks the syntax of document without actually generating files.
 \usepackage{syntonly}
+% Activated by the \syntaxonly flag.
 %\syntaxonly
 
-%	- amsmath
-%		Purpose: The package amsmath includes most useful math stuff.
+% amsmath: The package amsmath includes most useful math stuff.
 \usepackage{amsmath}
+
+% IEEEtrantools: This package provides the IEEEeqnarray environment.
 \usepackage{IEEEtrantools}
-\usepackage[ruled,
-            chapter
-]{algorithm}
+
+% algorithm: This package provides the algorithm environment.
+\usepackage[ruled,chapter]{algorithm}
+
+% algpseudocode: This package provides the pseudocode algorithm environment.
 \usepackage{algpseudocode}
 
+% pdflscape: This package allows for pages to be rotated within the document.
 \usepackage{pdflscape}
 
-%	- hyperref
-%		Purpose: The package hyperref allows for hyperlinks within the document.
-\usepackage[bookmarks,%
-	    pdfauthor={Lewis John Lloyd},%
-	    colorlinks,%
-	    citecolor=black,%
-	    filecolor=black,%
-	    linkcolor=black,%
-	    urlcolor=black
-	    ]{hyperref}
+% hyperref: The package hyperref allows for hyperlinks within the document.
+\usepackage[bookmarks,pdfauthor={Lewis John Lloyd},colorlinks,citecolor=black,filecolor=black,linkcolor=black,urlcolor=black]{hyperref}
 
 %========================================================================
 %  Draft Control Commands
@@ -122,14 +110,6 @@
 %					This is only visible in the *.ps file (NOT the *.dvi file)!
 %\draftscreen
 
-%	- \noappendixtables:
-%		Purpose: Removes appendix table information from the List of Tables
-%\noappendixtables
-
-%	- \noappendixfigures:
-%		Purpose: Removes appendix figure information from the List of Figures
-%\noappendixfigures
-
 %=======================================================================
 % Include custom math commands
 %=======================================================================
@@ -148,23 +128,27 @@
 %=======================================================================
 % Start Document
 %=======================================================================
-
 \begin{document}
+
+%=======================================================================
+% Bibliography Style
+%=======================================================================
+\bibliographystyle{plain}
 
 %=======================================================================
 % Chapters
 %=======================================================================
-\include{prelude}       % Title page
-                        % Abstract
-                        % Table of Contents
-                        % List of Tables
-                        % List of Figures
-                        % List of Algorithms
-                        % Nomenclature
+\include{prelude}
 \include{intro}         % Chapter: Introduction
 \include{twophaseflow}  % Chapter: Background
 \include{mathematics}   % Chapter: Mathematical formulation
 \include{jfnk}          % Chapter: Jacobian Free Newton Krylov Overview
+
+%=======================================================================
+% Bibliography
+%=======================================================================
+%\bibliography{references}    
+
 %=======================================================================
 % Appendices
 %=======================================================================
@@ -172,12 +156,6 @@
 \begin{appendices}
 \include{models}				% Appendix: Verification Work
 \end{appendices}
-
-%=======================================================================
-% Bibliography
-%=======================================================================
-\bibliographystyle{ieeetr}
-%\bibliography{references}             
 
 %=======================================================================
 % End Document

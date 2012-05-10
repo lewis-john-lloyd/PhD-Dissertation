@@ -89,10 +89,6 @@
 \DeclareOldFontCommand{\sc}{\normalfont\scshape}{\@nomath\sc}
 
 
-
-
-
-
 %=============================================================================
 % LISTS
 %=============================================================================
@@ -245,6 +241,7 @@
 \newcounter {tocpage}
 \newcounter {lofpage}
 \newcounter {lotpage}
+\newcounter {loalpage}
 \newcounter {listofheading}
 
 %=============================================================================
@@ -326,12 +323,13 @@
   \addvspace{2.25em plus 1pt}  % space above part line
   \begingroup
   \@tempdima 3em         % width of box holding part number, used by
-    \parindent \z@ \rightskip \@pnumwidth             %% \numberline
-    \parfillskip -\@pnumwidth
-    {\large \bface       % set line in \large boldface
+  \parindent \z@ \rightskip \@pnumwidth             %% \numberline
+  \parfillskip -\@pnumwidth
+  {\large \bface       % set line in \large boldface
     \leavevmode          % TeX command to enter horizontal mode.
-    #1\hfil \hbox to\@pnumwidth{\hss #2}}\par
-    \nobreak             % Never break after part entry
+    #1\hfil \hbox to\@pnumwidth{\hss #2}
+  }\par
+  \nobreak             % Never break after part entry
   \endgroup}
 
 \def\l@chapter#1#2{\pagebreak[3]
@@ -363,19 +361,42 @@
 % page between the change to the height parameters and the start of
 % the chapter.  Isn't elegance wonderful?
 %
-%=============================================================================
-\def\tableofcontents{\@tableof{TABLE OF CONTENTS}{}{tocpage}{toc}{}}
+% =============================================================================
+\def\tableofcontents{
+  \@tableof
+  {Table Of Contents}
+  {}
+  {tocpage}
+  {toc}
+  {}
+}
 
 \def\listoffigures{
-  \@tableof{LIST OF FIGURES}{Figure}{lofpage}{lof}
-  {\protect\addcontentsline{toc}{chapter}{LIST OF FIGURES}}}
+  \@tableof
+  {List Of Figures}
+  {Figure}
+  {lofpage}
+  {lof}
+  {\protect\addcontentsline{toc}{chapter}{List Of Figures}}
+}
 
 \def\listoftables{
-  \@tableof{LIST OF TABLES}{Table}{lotpage}{lot}
-  {\protect\addcontentsline{toc}{chapter}{LIST OF TABLES}}}
-  \def\listofalgorithms{
-  \@tableof{LIST OF ALGORITHMS}{Algorithm}{lofpage}{lof}
-  {\protect\addcontentsline{toc}{chapter}{LIST OF ALGORITHMS}}}
+  \@tableof
+  {List Of Tables}
+  {Table}
+  {lotpage}
+  {lot}
+  {\protect\addcontentsline{toc}{chapter}{List Of Tables}}
+}
+
+\def\listofalgorithm{
+  \@tableof
+  {List Of Algorithms}
+  {Algorithm}
+  {loalpage}
+  {loal}
+  {\protect\addcontentsline{toc}{chapter}{List Of Algorithms}}
+}
 
 \def\@tableof#1#2#3#4#5{
 { % limit scope of following declarations!!
@@ -442,7 +463,7 @@
 %   \altbibtitle has been added to change the chapter title.
 %   This command does nothing more than change REFERENCES to BIBLIOGRAPHY
 %============================================================================
-\def\@bibchaptitle{LIST OF REFERENCES}
+\def\@bibchaptitle{List Of References}
 \def\altbibtitle{\def\@bibchaptitle{BIBLIOGRAPHY}}
 \def\thebibliography#1{
   %\separatorpage{\@bibchaptitle}
@@ -654,6 +675,20 @@
 \@namedef{endtable*}{\end@dblfloat}
 
 %=============================================================================
+% ALGORITHM TABLE
+%=============================================================================
+\newcounter{algo}[chapter]
+\def\thealgo{\thechapter.\@arabic\c@algo}
+\def\fps@algo{tbp}
+\def\ftype@algo{3}
+\def\ext@algo{loal}
+\def\fnum@algo{Algorithm \thealgo}
+\def\algo{\@float{algo}}
+\let\endalgo\end@float
+\@namedef{algo*}{\@dblfloat{algo}}
+\@namedef{endalgo*}{\end@dblfloat}
+
+%=============================================================================
 % TITLE PAGE
 %   - define \title{} \author{} \date{}
 %   - The default degree is ``Doctor of Philosophy''
@@ -681,7 +716,7 @@
    \gdef\@doctype{A dissertation}         %Default is dissertation
 \fi
 
-\gdef\@department{(Electrical Engineering)} % Default is Electical Engineering
+\gdef\@department{(Engineering Physics)} % Default is Electical Engineering
 
 \newcommand{\maketitle}{%
   \begin{titlepage}
@@ -725,9 +760,9 @@
 % the standard abstract.
 %=============================================================================
 \def\abstract{
-  \chapter*{ABSTRACT}
-  \addcontentsline{toc}{chapter}{ABSTRACT}
-  \relax\markboth{ABSTRACT}{ABSTRACT}}
+  \chapter*{Abstract}
+  \addcontentsline{toc}{chapter}{Abstract}
+  \relax\markboth{Abstract}{Abstract}}
 \def\endabstract{\par\newpage}
 
 
@@ -1160,8 +1195,8 @@
 % - start a new page with GLOSSARY centered two inches from the top
 %=============================================================================
 \def\glossary{
-  \chapter*{GLOSSARY}
-  \addcontentsline{toc}{chapter}{GLOSSARY}}
+  \chapter*{Glossary}
+  \addcontentsline{toc}{chapter}{Glossary}}
 \def\endglossary{\par\newpage}
 
 %=============================================================================
@@ -1172,8 +1207,8 @@
 % - start a new page with NOMENCLATURE centered two inches from the top
 %=============================================================================
 \def\nomenclature{\separatorpage{DISCARD THIS PAGE}
-  \chapter*{NOMENCLATURE}
-  \addcontentsline{toc}{chapter}{NOMENCLATURE}}
+  \chapter*{Nomenclature}
+  \addcontentsline{toc}{chapter}{Nomenclature}}
 \def\endnomenclature{\par\newpage}
 
 %=============================================================================
@@ -1184,8 +1219,8 @@
 % - start a new page with LIST OF SYMBOLS centered two inches from the top
 %=============================================================================
 \def\listofsymbols{\separatorpage{DISCARD THIS PAGE}
-  \chapter*{LIST OF SYMBOLS}
-  \addcontentsline{toc}{chapter}{LIST OF SYMBOLS}}
+  \chapter*{List Of Symbols}
+  \addcontentsline{toc}{chapter}{List Of Symbols}}
 \def\endlistofsymbols{\par\newpage}
 
 %=============================================================================
@@ -1209,7 +1244,7 @@
 % - start a new page with ACKNOWLEDGMENTS centered two inches from the top
 %=============================================================================
 \def\acknowledgments{
-  \chapter*{ACKNOWLEDGMENTS}
+  \chapter*{Acknowledgments}
   \doublespace}
 \def\endacknowledgments{\par\newpage}
 

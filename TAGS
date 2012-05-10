@@ -27,22 +27,760 @@ jfnk.tex,533
 \label{JacobianFreeApproximation}JacobianFreeApproximation179,8623
 \label{KrylovResidual}KrylovResidual198,10221
 
-main.tex,90
+main.tex,110
 \newcommand{\StandAlone}\StandAlone40,1265
 \renewcommand{\ttdefault}\ttdefault61,2088
+\appendix181,6373
 
-mathematics.tex,1201
-\underbrace{\vec{\dot{m}}^{n+1}_{k} -\mat{J}_{\,0}^{-1}\left(\vec{E} + \vec{I}_{k}\right)}_{\vec{\dot{m}}^{*}_{k}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{ial208,9456
-\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{m}}^{n+1}_{k} - \mat{J}^{-1}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{ial211,9766
-\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{m}}^{n+1}_{k} - \mat{J}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{ial217,10121
-\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{m}}^{n+1}_{k} - \mat{J}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \frac{\partial \vec{ial220,10447
-\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \left(\mat{I} - \mat{J}^{-1}_{\,0}\cdot \mat{\alpha}_{0}\right)\cdot\vec{x}^{n+1}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \frac{\partial \vec{ial223,10731
-The Momentum Equations, outlined in Section \ref{blarp}blarp269,13452
-\label{NewPressureLoss}NewPressureLoss283,14979
-This method has been shown to be adequate \ref{blarp}blarp315,16715
+mathematics.tex,1913
+\frac{\partial}ial76,2520
+\frac{\partial}ial77,2633
+\frac{\partial}ial78,2763
+\frac{\partial}ial79,2888
+\frac{\partial}ial99,4867
+= \Gamma'''h'_{v} + q'''_{i,v} + q'''_{gl} + q'''_{wg} + \alpha_g \frac{\partial P}ial100,5035
+\frac{\partial}ial101,5136
+= \Gamma'''h'_{v} + q'''_{i,v} + q'''_{gl} + q'''_{wg} + \alpha_g \frac{\partial P}ial102,5328
+\frac{\partial }ial122,7174
+\frac{\partial }ial124,7493
+\frac{\partial }ial126,7782
+\frac{\partial }ial140,8820
+\frac{\partial }ial142,9099
+\frac{\partial }ial144,9362
+\frac{\partial}ial174,10326
+\frac{\partial\; \vec{ial\;175,10438
+\mat{J}^{*}_{k} & = & \frac{\partial\; \vec{ial\;176,10618
+\mat{J}_{\,k}\delta \vec{x} & = & \frac{\partial\; \vec{ial\;177,10764
+0 & = & \vec{E} + \mat{L}\;\dot{\vec{M}}_{k+1} + \vec{b}\Delta \text{P}_{k} + \frac{\partial\left[ \vec{ial\left[187,11369
+\underbrace{\vec{\dot{M}}^{n+1}_{k} -\mat{J}_{\,0}^{-1}\left(\vec{E} + \vec{I}_{k}\right)}_{\vec{\dot{M}}^{*}_{k}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{ial288,17557
+\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{M}}^{n+1}_{k} - \mat{J}^{-1}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{M}}^{n+1}_{*}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{ial291,17867
+\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{m}}^{n+1}_{k} - \mat{J}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{ial297,18222
+\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{m}}^{n+1}_{k} - \mat{J}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \frac{\partial \vec{ial300,18548
+\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \left(\mat{I} - \mat{J}^{-1}_{\,0}\cdot \mat{\alpha}_{0}\right)\cdot\vec{x}^{n+1}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \frac{\partial \vec{ial303,18832
+\frac{\partial }ial326,20439
 
-models.tex,44
-\group{Model stuff} \label{merp}merp6,157
+models.tex,125
+\chapter{Model stuff} \label{merp} Model5,156
+    0 & \frac{\partial F_{ial16,699
+    0 & \frac{\partial F_{ial18,1122
+
+withesis.cls,8649
+\newcommand\@ptsize{\@ptsize32,1417
+\DeclareOption{10pt}{\renewcommand\@ptsize{\@ptsize33,1439
+\DeclareOption{11pt}{\renewcommand\@ptsize{\@ptsize34,1522
+\DeclareOption{12pt}{\renewcommand\@ptsize{\@ptsize36,1694
+\def\labelenumi{\labelenumi108,5072
+\def\theenumi{\theenumi109,5105
+\def\labelenumii{\labelenumii110,5135
+\def\theenumii{\theenumii111,5169
+\def\p@enumii{\p@enumii112,5199
+\def\labelenumiii{\labelenumiii113,5224
+\def\theenumiii{\theenumiii114,5260
+\def\p@enumiii{\p@enumiii115,5293
+\def\labelenumiv{\labelenumiv116,5331
+\def\theenumiv{\theenumiv117,5364
+\def\p@enumiv{\p@enumiv118,5394
+\def\labelitemi{\labelitemi126,5769
+\def\labelitemii{\labelitemii127,5796
+\def\labelitemiii{\labelitemiii128,5824
+\def\labelitemiv{\labelitemiv129,5850
+\def\verse{\verse137,6233
+\def\quotation{\quotation146,6626
+\def\quote{\quote154,7001
+\def\descriptionlabel#1{\descriptionlabel161,7320
+\def\description{\description162,7372
+\def\@begintheorem#1#2{\@begintheorem179,8128
+\def\@opargbegintheorem#1#2#3{\@opargbegintheorem180,8201
+  \item[\hskip \labelsep{sep181,8241
+\def\@endtheorem{\@endtheorem182,8289
+\newenvironment{titlepage}titlepage194,8720
+\tabbingsep \labelsep   % Space used by the \' command.  (See LaTeX manual.)sep211,9604
+\def\thepart          {\thepart262,12108
+\def\thechapter       {\thechapter263,12145
+\def\thesection       {\thesection264,12186
+\def\thesubsection    {\thesubsection265,12239
+\def\thesubsubsection {\thesubsubsection266,12295
+\def\theparagraph     {\theparagraph267,12357
+\def\thesubparagraph  {\thesubparagraph268,12418
+\def\@pnumwidth{\@pnumwidth310,14636
+\def\@tocrmarg {\@tocrmarg311,14660
+\def\@dotsep{\@dotsep312,14684
+\def\@tocchapterskip{\@tocchapterskip323,15285
+\def\l@part#1#2{\l@part325,15323
+\def\l@chapter#1#2{\l@chapter337,15840
+\def\l@section{\l@section341,15977
+\def\l@subsection{\l@subsection342,16026
+\def\l@subsubsection{\l@subsubsection343,16078
+\def\l@paragraph{\l@paragraph344,16133
+\def\l@subparagraph{\l@subparagraph345,16181
+\def\l@figure{\l@figure346,16232
+\def\tableofcontents{\tableofcontents367,17315
+\def\listoffigures{\listoffigures369,17385
+\def\listoftables{\listoftables373,17518
+\def\@tableof#1#2#3#4#5{\@tableof377,17647
+  \chapter*{*385,18011
+  \def\@oddhead{\@oddhead392,18202
+  \def\@evenhead{\@evenhead403,18569
+\def\@bibchaptitle{\@bibchaptitle442,20158
+\def\altbibtitle{\altbibtitle443,20197
+\def\thebibliography#1{\thebibliography444,20248
+  \chapter*{*447,20332
+  {[\arabic{enumi}]}{\settowidth\labelwidth{width452,20597
+    \advance\leftmargin\labelsep \usecounter{sep453,20669
+  \def\newblock{\newblock454,20722
+\def\theindex{\theindex473,21656
+\def\@idxitem{\@idxitem478,21905
+\def\subitem{\subitem479,21941
+\def\subsubitem{\subsubitem480,21991
+\def\endtheindex{\endtheindex481,22044
+\def\indexspace{\indexspace482,22105
+\def\footnoterule{\footnoterule492,22643
+\long\def\@makefntext#1{\@makefntext520,24116
+\def\topfraction{\topfraction540,25194
+\def\bottomfraction{\bottomfraction542,25244
+\def\textfraction{\textfraction544,25296
+\def\floatpagefraction{\floatpagefraction545,25339
+\def\dbltopfraction{\dbltopfraction547,25395
+\def\dblfloatpagefraction{\dblfloatpagefraction548,25419
+\long\def\@makecaption#1#2{\@makecaption556,25851
+\def\thefigure{\thefigure629,29212
+\def\fps@figure{\fps@figure630,29258
+\def\ftype@figure{\ftype@figure631,29279
+\def\ext@figure{\ext@figure632,29300
+\def\fnum@figure{\fnum@figure633,29321
+\def\figure{\figure634,29357
+\def\thetable{\thetable643,29682
+\def\fps@table{\fps@table644,29726
+\def\ftype@table{\ftype@table645,29746
+\def\ext@table{\ext@table646,29766
+\def\fnum@table{\fnum@table647,29786
+\def\table{\table648,29819
+\newcommand\@thesistitlemedskip{\@thesistitlemedskip664,30567
+\newcommand\@thesistitlebigskip{\@thesistitlebigskip665,30607
+\newcommand{\degree}\degree666,30646
+\newcommand{\project}\project667,30689
+\newcommand{\prelim}\prelim668,30753
+\newcommand{\thesis}\thesis669,30812
+\newcommand{\dissertation}\dissertation670,30859
+\newcommand{\department}\department671,30918
+\newcommand{\maketitle}\maketitle683,31357
+    \def\thanks##1{\thanks691,31845
+\def\abstract{\abstract724,33262
+  \chapter*{*725,33277
+\def\endabstract{\endabstract728,33381
+\def\advisortitle#1{\advisortitle741,34032
+\def\advisorname#1{\advisorname742,34077
+\def\umiabstract{\umiabstract746,34188
+\def\endumiabstract{\endumiabstract759,34641
+  \def\ps@headings{\ps@headings807,37179
+    \def\@oddfoot{\@oddfoot808,37199
+    \def\@evenhead{\@evenhead809,37254
+    \def\@oddhead{\@oddhead810,37331
+    \def\chaptermark##1{\chaptermark811,37409
+    \def\sectionmark##1{\sectionmark813,37530
+  \def\ps@headings{\ps@headings816,37713
+    \def\@oddfoot{\@oddfoot817,37733
+    \def\@oddhead{\@oddhead818,37805
+    \def\chaptermark##1{\chaptermark819,37877
+  \def\ps@thesis{\ps@thesis831,38480
+    \def\@oddfoot{\@oddfoot832,38498
+    \def\@evenhead{\@evenhead833,38570
+    \def\@oddhead{\@oddhead834,38647
+    \def\chaptermark##1{\chaptermark835,38725
+    \def\sectionmark##1{\sectionmark836,38751
+  \def\ps@thesis{\ps@thesis838,38854
+    \def\@oddfoot{\@oddfoot839,38872
+    \def\@oddhead{\@oddhead840,38944
+    \def\chaptermark##1{\chaptermark841,39016
+\def\the@ipfilectr{\the@ipfilectr860,39891
+\def\@rootfilevalue{\@rootfilevalue862,40025
+\def\savedjobname{\savedjobname863,40097
+\def\@currentipfile{\@currentipfile871,40489
+\def\include#1{\include888,41290
+\def\@currentipfile{\@currentipfile889,41316
+\@tempswatrue\if@partsw \@tempswafalse\def\@tempb{\@tempb896,41604
+\def\@currentipfile{\@currentipfile904,41975
+\newcommand{\now}\now919,42813
+\def\@draftfooter{\@draftfooter932,43288
+  \def\ps@thesisdraft{\ps@thesisdraft937,43472
+    \def\@oddfoot {\@oddfoot938,43495
+    \def\@evenfoot{\@evenfoot939,43565
+    \def\@evenhead{\@evenhead940,43599
+    \def\@oddhead{\@oddhead941,43676
+    \def\chaptermark##1{\chaptermark942,43754
+    \def\sectionmark##1{\sectionmark943,43780
+  \def\ps@thesisdraft{\ps@thesisdraft945,43883
+    \def\@oddfoot {\@oddfoot946,43906
+    \def\@evenfoot{\@evenfoot947,43976
+    \def\@oddhead{\@oddhead948,43997
+    \def\chaptermark##1{\chaptermark949,44069
+\def\ps@myheadings{\ps@myheadings955,44300
+  \def\@oddhead{\@oddhead956,44320
+  \def\@oddfoot{\@oddfoot957,44376
+  \def\@evenhead{\@evenhead958,44394
+  \def\@evenfoot{\@evenfoot959,44450
+  \def\sectionmark##1{\sectionmark960,44469
+  \def\subsectionmark##1{\subsectionmark961,44493
+\def\draftmargins{\draftmargins975,45051
+\def\draftscreen{\draftscreen1006,46037
+\def\verbatimfile#1{\verbatimfile1024,46703
+\def\separatorpage#1{\separatorpage1037,47263
+\def\@chapapp{\@chapapp1053,47705
+\def\appendix{\appendix1067,48405
+  \def\@chapstyle{\@chapstyle1069,48443
+  \def\@chapnumber{\@chapnumber1070,48471
+\def\endappendix{\endappendix1073,48584
+  \def\@chaptername##1{\@chaptername1074,48602
+  \def\@chapstyle{\@chapstyle1075,48643
+  \def\@chapnumber{\@chapnumber1076,48670
+\def\l@appendix#1#2{\l@appendix1080,48781
+\def\appendices{\appendices1084,48919
+  \def\@chaptername##1{\@chaptername1090,49112
+  \def\@chapstyle{\@chapstyle1091,49140
+  \def\@chapnumber{\@chapnumber1092,49170
+\def\l@appendices#1#2{\l@appendices1105,49734
+\def\noappendixtables{\noappendixtables1107,49799
+\def\noappendixfigures{\noappendixfigures1108,49841
+\def\@lotheading{\@lotheading1109,49884
+\def\@lofheading{\@lofheading1115,50077
+\def\@appendix#1{\@appendix1122,50272
+  \def\@chapapp{\@chapapp1126,50404
+  \def\thechapter{\thechapter1127,50430
+\def\copyrightpage{\copyrightpage1140,50955
+  \chapter*{*1144,51056
+\def\glossary{\glossary1159,51649
+  \chapter*{*1160,51664
+\def\endglossary{\endglossary1162,51730
+\def\nomenclature{\nomenclature1171,52209
+  \chapter*{*1172,52261
+\def\endnomenclature{\endnomenclature1174,52335
+\def\listofsymbols{\listofsymbols1183,52830
+  \chapter*{*1184,52883
+\def\endlistofsymbols{\endlistofsymbols1186,52963
+\def\vita{\vita1196,53464
+  \chapter*{*1198,53536
+\def\endvita{\endvita1200,53594
+\def\acknowledgments{\acknowledgments1208,54009
+  \chapter*{*1209,54031
+\def\endacknowledgments{\endacknowledgments1211,54076
+\def\dedication{\dedication1221,54514
+\def\enddedication{\enddedication1225,54573
+\def\today{\today1235,55001
+\def\theequation{\theequation1267,56253
+\def\@eqnnum{\@eqnnum1272,56544
+\newcommand{\bface}\bface1290,57467
+
+IEEEtrantools.sty,10631
+\def\IEEElabelindentfactori{\IEEElabelindentfactori204,7601
+\def\IEEElabelindentfactorii{\IEEElabelindentfactorii205,7656
+\def\IEEElabelindentfactoriii{\IEEElabelindentfactoriii206,7730
+\def\IEEElabelindentfactoriv{\IEEElabelindentfactoriv207,7783
+\def\IEEElabelindentfactorv{\IEEElabelindentfactorv208,7817
+\def\IEEElabelindentfactorvi{\IEEElabelindentfactorvi209,7850
+\def\IEEElabelindentfactor{\IEEElabelindentfactor214,8008
+\def\IEEEiedlistdecl{\IEEEiedlistdecl243,9159
+\def\IEEEcalcleftmargin#1{\IEEEcalcleftmargin251,9542
+\addtolength{\leftmargin}{\labelwidth}width252,9597
+\addtolength{\leftmargin}{\labelsep}sep253,9637
+\def\IEEEsetlabelwidth#1{\IEEEsetlabelwidth261,9948
+\def\IEEEusemathlabelsep{\IEEEusemathlabelsep268,10263
+\def\@IEEEiedjustify{\@IEEEiedjustify290,11161
+\def\IEEEiedlabeljustifyl{\IEEEiedlabeljustifyl304,11693
+\def\IEEEiedlabeljustifyc{\IEEEiedlabeljustifyc305,11749
+\def\IEEEiedlabeljustifyr{\IEEEiedlabeljustifyr306,11807
+\def\@IEEEsavelistparams{\@IEEEsavelistparams317,12204
+\edef\@IEEEiedlabelwidth{\the\labelwidth}width318,12264
+\edef\@IEEEiedlabelsep{\the\labelsep}sep319,12307
+\edef\@IEEEiedpartopsep{\the\partopsep}opsep321,12389
+\def\@IEEErestorelistparams{\@IEEErestorelistparams329,12671
+\labelwidth\@IEEEiedlabelwidth\relax%width\@IEEEiedlabelwidth\relax%330,12729
+\labelsep\@IEEEiedlabelsep\relax%sep\@IEEEiedlabelsep\relax%331,12767
+\partopsep\@IEEEiedpartopsep\relax%opsep\@IEEEiedpartopsep\relax%333,12839
+\def\itemize{\itemize356,13637
+\def\enditemize{\enditemize357,13665
+\def\enumerate{\enumerate358,13699
+\def\endenumerate{\endenumerate359,13731
+\def\description{\description360,13769
+\def\enddescription{\enddescription361,13805
+\def\IEEEitemize{\IEEEitemize366,13899
+\def\endIEEEitemize{\endIEEEitemize367,13931
+\def\IEEEenumerate{\IEEEenumerate368,13969
+\def\endIEEEenumerate{\endIEEEenumerate369,14005
+\def\IEEEdescription{\IEEEdescription370,14047
+\def\endIEEEdescription{\endIEEEdescription371,14087
+\def\@IEEEitemize{\@IEEEitemize376,14266
+\def\@IEEEenumerate{\@IEEEenumerate377,14339
+\def\@IEEEdescription{\@IEEEdescription378,14418
+\def\@endIEEEitemize{\@endIEEEitemize379,14503
+\def\@endIEEEenumerate{\@endIEEEenumerate380,14534
+\def\@endIEEEdescription{\@endIEEEdescription381,14567
+\def\@@IEEEitemize[#1]{\@@IEEEitemize[388,14814
+                \def\@IEEEiedjustify{\@IEEEiedjustify397,15380
+                \labelsep\IEEEiednormlabelsep%sep\IEEEiednormlabelsep%403,15674
+                \partopsep 0ex%opsep404,15721
+                \settowidth{\labelwidth}width413,16060
+                \else\IEEElabelindent=\IEEElabelindentfactor\labelindent%indent%424,16732
+\def\@@IEEEenumerate[#1]{\@@IEEEenumerate[439,17368
+                \def\@IEEEiedjustify{\@IEEEiedjustify448,17930
+                \labelsep\IEEEiednormlabelsep%sep\IEEEiednormlabelsep%454,18224
+                \partopsep 0ex%opsep455,18271
+                \settowidth{\labelwidth}width465,18672
+\def\@@IEEEdescription[#1]{\@@IEEEdescription[491,19969
+                \def\@IEEEiedjustify{\@IEEEiedjustify497,20369
+                \labelsep\IEEEiednormlabelsep%sep\IEEEiednormlabelsep%504,20704
+                \partopsep 0ex%opsep505,20751
+                \settowidth{\labelwidth}width518,21361
+\def\@IEEEiedmakelabel#1{\@IEEEiedmakelabel539,22445
+\makebox[\labelwidth][l]{width][l]540,22504
+\makebox[\labelwidth][c]{width][c]542,22578
+\makebox[\labelwidth][r]{width][r]543,22624
+\def\theIEEEsubequation{\theIEEEsubequation558,22879
+\def\theequationdis{\theequationdis560,22970
+\def\theIEEEsubequationdis{\theIEEEsubequationdis562,23093
+\def\@IEEEclspkgerror{\@IEEEclspkgerror578,23609
+\def\IEEEeqnarraymathstyle{\IEEEeqnarraymathstyle593,24257
+\def\IEEEeqnarraytextstyle{\IEEEeqnarraytextstyle596,24380
+\def\IEEEeqnarraydecl{\IEEEeqnarraydecl599,24461
+\def\IEEEeqnarrayboxdecl{\IEEEeqnarrayboxdecl600,24491
+\def\IEEEyesnumber{\IEEEyesnumber607,24817
+\def\IEEEnonumber{\IEEEnonumber608,24856
+\def\IEEEyessubnumber{\IEEEyessubnumber611,24897
+\def\@currentlabel{\@currentlabel614,25133
+\def\IEEEeqnarraynumspace{\IEEEeqnarraynumspace621,25388
+\long\def\IEEEeqnarraymulticol#1#2#3{\IEEEeqnarraymulticol627,25771
+\def\IEEEeqnarrayomit{\IEEEeqnarrayomit643,26705
+\def\IEEEeqnarraydefcol#1#2#3{\IEEEeqnarraydefcol648,26956
+\expandafter\def\csname @IEEEeqnarraycolPOST#1\endcsname{\csname649,27047
+\expandafter\def\csname @IEEEeqnarraycolDEF#1\endcsname{\csname650,27109
+\def\IEEEeqnarraydefcolsep#1#2{\IEEEeqnarraydefcolsep655,27314
+\expandafter\def\csname @IEEEeqnarraycolSEPDEF\romannumeral #1\endcsname{\csname656,27420
+\def\@IEEEeqnarraycolisdefined{\@IEEEeqnarraycolisdefined659,27499
+\def\@IEEEappendtoksA#1{\@IEEEappendtoksA664,27715
+\def\@IEEEappendNOEXPANDtoksA#1{\@IEEEappendNOEXPANDtoksA669,27943
+\def\@IEEEeqnarraycolSEPzero{\@IEEEeqnarraycolSEPzero706,29610
+\def\@IEEEeqnarraycolSEPcenter{\@IEEEeqnarraycolSEPcenter708,29710
+\newcommand\IEEEeqnarrayvrule[1][\arrayrulewidth]{\IEEEeqnarrayvrule[1][\arrayrulewidth]722,30459
+\def\IEEEeqnarrayseprow{\IEEEeqnarrayseprow729,30846
+\def\@IEEEeqnarrayseprow[#1]{\@IEEEeqnarrayseprow[730,30960
+\def\@@IEEEeqnarrayseprow[#1][#2]{\@@IEEEeqnarrayseprow[731,31072
+\def\IEEEeqnarrayseprowcut{\IEEEeqnarrayseprowcut747,31914
+\def\@IEEEeqnarrayseprowcut[#1]{\@IEEEeqnarrayseprowcut[751,32241
+\def\@@IEEEeqnarrayseprowcut[#1][#2]{\@@IEEEeqnarrayseprowcut[752,32362
+\def\IEEEeqnarrayrulerow{\IEEEeqnarrayrulerow769,33055
+\def\@IEEEeqnarrayrulerow[#1]{\@IEEEeqnarrayrulerow[773,33368
+\def\IEEEeqnarraydblrulerow{\IEEEeqnarraydblrulerow783,33870
+\def\@IEEEeqnarraydblrulerow[#1]{\@IEEEeqnarraydblrulerow[787,34192
+\def\@@IEEEeqnarraydblrulerow[#1][#2]{\@@IEEEeqnarraydblrulerow[789,34326
+\def\@IEEEeqnarraydblrulerowARG{\@IEEEeqnarraydblrulerowARG796,34581
+\def\@IEEEeqnarraydblrulerowARG{\@IEEEeqnarraydblrulerowARG805,34940
+\def\IEEEeqnarraydblrulerowcut{\IEEEeqnarraydblrulerowcut818,35456
+\def\@IEEEeqnarraydblrulerowcut[#1]{\@IEEEeqnarraydblrulerowcut[822,35787
+\def\@@IEEEeqnarraydblrulerowcut[#1][#2]{\@@IEEEeqnarraydblrulerowcut[824,35930
+\def\@IEEEeqnarraydblrulerowARG{\@IEEEeqnarraydblrulerowARG831,36182
+\def\@IEEEeqnarraydblrulerowARG{\@IEEEeqnarraydblrulerowARG840,36547
+\def\@IEEEeqnarrayhoptolastcolumn{\@IEEEeqnarrayhoptolastcolumn853,36870
+\def\@IEEEeqnarraymasterstrutsave{\@IEEEeqnarraymasterstrutsave882,37907
+\def\@IEEEeqnarraymasterstrutrestore{\@IEEEeqnarraymasterstrutrestore893,38315
+\def\@IEEEeqnarraystrutreset{\@IEEEeqnarraystrutreset906,38782
+\def\@IEEEeqnarrayglobalizestrutstatus{\@IEEEeqnarrayglobalizestrutstatus923,39437
+\def\IEEEeqnarraystrutsize#1#2{\IEEEeqnarraystrutsize940,40374
+\def\@IEEEeqnarraystrutsize#1#2[#3]{\@IEEEeqnarraystrutsize941,40500
+\def\@IEEEeqnarraystrutsizeARG{\@IEEEeqnarraystrutsizeARG949,40807
+\def\IEEEeqnarraystrutsizeadd#1#2{\IEEEeqnarraystrutsizeadd985,42372
+\def\@IEEEeqnarraystrutsizeadd#1#2[#3]{\@IEEEeqnarraystrutsizeadd986,42507
+\def\@IEEEeqnarraystrutsizearg{\@IEEEeqnarraystrutsizearg993,42744
+\def\@IEEEeqnarrayinsertstrut{\@IEEEeqnarrayinsertstrut1037,44344
+\def\IEEEstrut{\IEEEstrut1064,45354
+\def\@IEEEstrut[#1]{\@IEEEstrut[1065,45440
+\def\@@IEEEstrut[#1][#2]{\@@IEEEstrut[1066,45541
+\def\@@@IEEEstrut[#1][#2][#3]{\@@@IEEEstrut[1067,45641
+\def\@IEEEstrutARG{\@IEEEstrutARG1068,45687
+\def\@IEEEstrutARG{\@IEEEstrutARG1074,45804
+\def\IEEEeqnarraystrutmode{\IEEEeqnarraystrutmode1091,46273
+\def\IEEEeqnarray{\IEEEeqnarray1096,46441
+\def\endIEEEeqnarray{\endIEEEeqnarray1097,46502
+\def\@IEEEeqnarray{\@IEEEeqnarray1106,46818
+\def\@@IEEEeqnarray[#1]#2{\@@IEEEeqnarray[1107,46900
+   \def\@currentlabel{\@currentlabel1130,48107
+\def\end@IEEEeqnarray{\end@IEEEeqnarray1159,49824
+\def\@IEEEeqnarraycr{\@IEEEeqnarraycr1174,50559
+\def\@IEEEeqnarrayYCR{\@IEEEeqnarrayYCR1183,50814
+\def\@IEEEeqnarrayXCR[#1]{\@IEEEeqnarrayXCR[1185,50872
+\def\@@IEEEeqnarraycr{\@@IEEEeqnarraycr1190,50997
+\def\IEEEeqnarrayboxm{\IEEEeqnarrayboxm1246,53696
+\def\endIEEEeqnarrayboxm{\endIEEEeqnarrayboxm1247,53792
+\def\IEEEeqnarrayboxt{\IEEEeqnarrayboxt1251,53996
+\def\endIEEEeqnarrayboxt{\endIEEEeqnarrayboxt1252,54091
+\def\IEEEeqnarraybox{\IEEEeqnarraybox1256,54294
+\def\endIEEEeqnarraybox{\endIEEEeqnarraybox1258,54434
+\def\@IEEEeqnarraybox{\@IEEEeqnarraybox1269,54858
+\def\@@IEEEeqnarraybox[#1]{\@@IEEEeqnarraybox[1270,54949
+\def\@@@IEEEeqnarraybox[#1][#2]{\@@@IEEEeqnarraybox[1271,55050
+\def\@@@@IEEEeqnarraybox[#1][#2][#3]#4{\@@@@IEEEeqnarraybox[1274,55224
+   \def\@IEEEgrabfirstoken##1##2\noindent{\@IEEEgrabfirstoken1308,57335
+\def\end@IEEEeqnarraybox{\end@IEEEeqnarraybox1324,58110
+\def\@IEEEeqnarrayboxcr{\@IEEEeqnarrayboxcr1345,59083
+\def\@IEEEeqnarrayboxYCR{\@IEEEeqnarrayboxYCR1354,59439
+\def\@IEEEeqnarrayboxXCR[#1]{\@IEEEeqnarrayboxXCR[1357,59574
+\def\@IEEEbuildpreamble{\@IEEEbuildpreamble1363,59728
+\def\@IEEEBPcurglue={\@IEEEBPcurglue=1368,59999
+\def\@IEEEBPcurcolname{\@IEEEBPcurcolname1369,60045
+\def\@@IEEEbuildpreamble#1#2{\@@IEEEbuildpreamble1384,60579
+\def\@IEEEgrabfirstoken##1##2\noindent{\@IEEEgrabfirstoken1387,60771
+\def\@@IEEEfinishpreamble#1{\@@IEEEfinishpreamble1411,61909
+\def\@IEEEgetcoltype#1#2#3{\@IEEEgetcoltype1420,62308
+\def\@IEEEgrabfirstoken##1##2\noindent{\@IEEEgrabfirstoken1423,62454
+\def\@IEEEgetcurcol#1{\@IEEEgetcurcol1455,63805
+\def\@IEEEBPcurcolname{\@IEEEBPcurcolname1456,63910
+\def\@IEEEBPcurcolname{\@IEEEBPcurcolname1460,64145
+\def\@IEEEgetcurglue#1#2{\@IEEEgetcurglue1464,64250
+\def\@IEEEgrabfirstoken##1##2\noindent{\@IEEEgrabfirstoken1483,64898
+\def\@IEEEprocessNcol#1{\@IEEEprocessNcol1521,67273
+\def\@IEEEprocessGcol{\@IEEEprocessGcol1558,69223
+\def\@IEEEprocessCcol{\@IEEEprocessCcol1605,71449
+\def\IEEEPARstart#1#2{\IEEEPARstart1710,76357
+\def\@IEEEPARstartGETFIRSTWORD##1 ##2\relax{\@IEEEPARstartGETFIRSTWORD1724,77093
+\def\@IEEEtranneedspace#1#2{\@IEEEtranneedspace1806,81239
+\def\bstctlcite{\bstctlcite1824,81876
+\def\@bstctlcite[#1]#2{\@bstctlcite[1825,81944
+\def\@IEEElegacywarn#1#2{\@IEEElegacywarn1839,82310
+\def\PARstart{\PARstart1843,82482
+\let\labelindent\IEEElabelindentindent\IEEElabelindent1846,82608
+\def\calcleftmargin{\calcleftmargin1847,82641
+\def\setlabelwidth{\setlabelwidth1848,82734
+\def\usemathlabelsep{\usemathlabelsep1849,82823
+\def\iedlabeljustifyc{\iedlabeljustifyc1850,82920
+\def\iedlabeljustifyl{\iedlabeljustifyl1851,83021
+\def\iedlabeljustifyr{\iedlabeljustifyr1852,83122
+
+withe10.sty,2790
+\newcommand{\@SL}\@SL16,441
+\def\baselinestretch{\baselinestretch23,733
+\newcommand{\oneskip}\oneskip29,1056
+\newcommand{\twoskip}\twoskip30,1083
+\newcommand{\singlespace}\singlespace31,1110
+  {\renewcommand{\baselinestretch}\baselinestretch32,1136
+\newcommand{\doublespace}\doublespace33,1199
+  {\renewcommand{\baselinestretch}\baselinestretch34,1225
+\renewcommand{\normalsize}\normalsize58,2394
+\newcommand{\small}\small73,2952
+\def\@listi{\@listi78,3164
+\newcommand{\footnotesize}\footnotesize82,3282
+\def\@listi{\@listi87,3500
+\newcommand{\scriptsize}\scriptsize90,3593
+\newcommand{\tiny}\tiny91,3650
+\newcommand{\large}\large92,3701
+\newcommand{\Large}\Large93,3755
+\newcommand{\LARGE}\LARGE94,3809
+\newcommand{\huge}\huge95,3863
+\newcommand{\Huge}\Huge96,3916
+\setlength\partopsep{opsep234,11732
+\newcommand\part{\part264,13502
+\def\@part[#1]#2{\@part[274,13963
+    \refstepcounter{stepcounter276,14044
+\def\@spart#1{\@spart288,14670
+\def\@endpart{\@endpart293,14937
+\def\@makechapterhead#1{\@makechapterhead313,15952
+\def\@makeschapterhead#1{\@makeschapterhead333,16906
+\def\@appendixchapterhead#1{\@appendixchapterhead347,17673
+\def\@appendiceschapterhead#1{\@appendiceschapterhead362,18456
+\def\@chaptername#1{\@chaptername392,20068
+\def\@chapstyle{\@chapstyle393,20095
+\def\@chapnumber{\@chapnumber395,20158
+\def\chapter{\chapter399,20291
+\def\@chapter[#1]#2{\@chapter[405,20634
+    \refstepcounter{stepcounter407,20686
+  \chaptermark{mark414,20930
+\def\@schapter#1{\@schapter420,21173
+\def\section{\section449,22665
+\def\subsection{\subsection454,22962
+\def\subsubsection{\subsubsection456,23086
+\def\paragraph{\paragraph458,23216
+\def\subparagraph{\subparagraph460,23334
+\def\chaptermark#1{\chaptermark467,23724
+\labelwidth\leftmargini\advance\labelwidth-\labelsepwidth\leftmargini\advance\labelwidth-\labelsep503,25436
+\setlength\labelsep{sep504,25489
+\def\@listi{\@listi507,25560
+\def\@listii{\@listii509,25598
+  \labelwidth\leftmarginii\advance\labelwidth-\labelsepwidth\leftmarginii\advance\labelwidth-\labelsep510,25636
+\def\@listiii{\@listiii515,25783
+  \labelwidth\leftmarginiii\advance\labelwidth-\labelsepwidth\leftmarginiii\advance\labelwidth-\labelsep516,25823
+  \parsep \z@ \partopsep 1pt plus 0pt minus 1ptopsep518,25915
+\def\@listiv{\@listiv521,25984
+  \labelwidth\leftmarginiv\advance\labelwidth-\labelsep}width\leftmarginiv\advance\labelwidth-\labelsep522,26022
+\def\@listv{\@listv524,26080
+  \labelwidth\leftmarginv\advance\labelwidth-\labelsep}width\leftmarginv\advance\labelwidth-\labelsep525,26116
+\def\@listvi{\@listvi527,26173
+  \labelwidth\leftmarginvi\advance\labelwidth-\labelsep}width\leftmarginvi\advance\labelwidth-\labelsep528,26211
+
+withe12.sty,2757
+\newcommand{\@SL}\@SL16,441
+\def\baselinestretch{\baselinestretch23,733
+\newcommand{\oneskip}\oneskip29,1056
+\newcommand{\twoskip}\twoskip30,1083
+\newcommand{\singlespace}\singlespace31,1110
+  {\renewcommand{\baselinestretch}\baselinestretch32,1136
+\newcommand{\doublespace}\doublespace33,1199
+  {\renewcommand{\baselinestretch}\baselinestretch34,1225
+\renewcommand{\normalsize}\normalsize58,2394
+\newcommand{\small}\small73,2958
+\def\@listi{\@listi78,3176
+\newcommand{\footnotesize}\footnotesize82,3296
+\def\@listi{\@listi87,3515
+\newcommand{\scriptsize}\scriptsize90,3608
+\newcommand{\tiny}\tiny91,3667
+\newcommand{\large}\large92,3718
+\newcommand{\Large}\Large93,3772
+\newcommand{\LARGE}\LARGE94,3826
+\newcommand{\huge}\huge95,3880
+\setlength\partopsep{opsep235,11713
+\newcommand\part{\part265,13483
+\def\@part[#1]#2{\@part[275,13944
+    \refstepcounter{stepcounter277,14025
+\def\@spart#1{\@spart289,14651
+\def\@endpart{\@endpart294,14918
+\def\@makechapterhead#1{\@makechapterhead314,15933
+\def\@makeschapterhead#1{\@makeschapterhead334,16887
+\def\@appendixchapterhead#1{\@appendixchapterhead348,17654
+\def\@appendiceschapterhead#1{\@appendiceschapterhead363,18437
+\def\@chaptername#1{\@chaptername393,20049
+\def\@chapstyle{\@chapstyle394,20076
+\def\@chapnumber{\@chapnumber396,20139
+\def\chapter{\chapter400,20272
+\def\@chapter[#1]#2{\@chapter[406,20615
+    \refstepcounter{stepcounter408,20667
+  \chaptermark{mark415,20911
+\def\@schapter#1{\@schapter421,21154
+\def\section{\section450,22646
+\def\subsection{\subsection455,22943
+\def\subsubsection{\subsubsection457,23067
+\def\paragraph{\paragraph459,23197
+\def\subparagraph{\subparagraph461,23315
+\def\chaptermark#1{\chaptermark468,23705
+\labelwidth\leftmargini\advance\labelwidth-\labelsepwidth\leftmargini\advance\labelwidth-\labelsep504,25417
+\setlength\labelsep{sep505,25470
+\def\@listi{\@listi508,25541
+\def\@listii{\@listii510,25579
+  \labelwidth\leftmarginii\advance\labelwidth-\labelsepwidth\leftmarginii\advance\labelwidth-\labelsep511,25617
+\def\@listiii{\@listiii516,25764
+  \labelwidth\leftmarginiii\advance\labelwidth-\labelsepwidth\leftmarginiii\advance\labelwidth-\labelsep517,25804
+  \parsep \z@ \partopsep 1pt plus 0pt minus 1ptopsep519,25896
+\def\@listiv{\@listiv522,25965
+  \labelwidth\leftmarginiv\advance\labelwidth-\labelsep}width\leftmarginiv\advance\labelwidth-\labelsep523,26003
+\def\@listv{\@listv525,26061
+  \labelwidth\leftmarginv\advance\labelwidth-\labelsep}width\leftmarginv\advance\labelwidth-\labelsep526,26097
+\def\@listvi{\@listvi528,26154
+  \labelwidth\leftmarginvi\advance\labelwidth-\labelsep}width\leftmarginvi\advance\labelwidth-\labelsep529,26192
+
+withesis.sty,8679
+\def\@ptsize{\@ptsize20,1026
+\@namedef{ds@10pt}{\def\@ptsize{\@ptsize21,1089
+\@namedef{ds@11pt}{\def\@ptsize{\@ptsize22,1162
+\@namedef{ds@12pt}{\def\@ptsize{\@ptsize24,1288
+\def\ds@twoside{\ds@twoside31,1625
+\def\ds@margincheck{\ds@margincheck38,2024
+\def\ds@msthesis{\ds@msthesis49,2662
+\def\labelenumi{\labelenumi76,3949
+\def\theenumi{\theenumi77,3986
+\def\labelenumii{\labelenumii78,4021
+\def\theenumii{\theenumii79,4055
+\def\p@enumii{\p@enumii80,4085
+\def\labelenumiii{\labelenumiii81,4110
+\def\theenumiii{\theenumiii82,4146
+\def\p@enumiii{\p@enumiii83,4179
+\def\labelenumiv{\labelenumiv84,4217
+\def\theenumiv{\theenumiv85,4250
+\def\p@enumiv{\p@enumiv86,4285
+\def\labelitemi{\labelitemi94,4661
+\def\labelitemii{\labelitemii95,4688
+\def\labelitemiii{\labelitemiii96,4716
+\def\labelitemiv{\labelitemiv97,4742
+\def\verse{\verse105,5125
+\def\quotation{\quotation114,5520
+\def\quote{\quote122,5895
+\def\descriptionlabel#1{\descriptionlabel129,6215
+\def\description{\description130,6267
+\def\@begintheorem#1#2{\@begintheorem147,7024
+\def\@opargbegintheorem#1#2#3{\@opargbegintheorem148,7097
+  \item[\hskip \labelsep{sep149,7137
+\def\@endtheorem{\@endtheorem150,7185
+\def\titlepage{\titlepage162,7617
+\def\endtitlepage{\endtitlepage166,7786
+\tabbingsep \labelsep   % Space used by the \' command.  (See LaTeX manual.)sep179,8505
+\def\thepart          {\thepart230,11012
+\def\thechapter       {\thechapter231,11049
+\def\thesection       {\thesection232,11090
+\def\thesubsection    {\thesubsection233,11143
+\def\thesubsubsection {\thesubsubsection234,11199
+\def\theparagraph     {\theparagraph235,11261
+\def\thesubparagraph  {\thesubparagraph236,11322
+\def\@pnumwidth{\@pnumwidth278,13570
+\def\@tocrmarg {\@tocrmarg279,13594
+\def\@dotsep{\@dotsep280,13618
+\def\@tocchapterskip{\@tocchapterskip291,14219
+\def\l@part#1#2{\l@part293,14258
+\def\l@chapter#1#2{\l@chapter305,14786
+\def\l@section{\l@section309,14923
+\def\l@subsection{\l@subsection310,14972
+\def\l@subsubsection{\l@subsubsection311,15024
+\def\l@paragraph{\l@paragraph312,15079
+\def\l@subparagraph{\l@subparagraph313,15127
+\def\l@figure{\l@figure314,15178
+\def\tableofcontents{\tableofcontents335,16261
+\def\listoffigures{\listoffigures337,16331
+\def\listoftables{\listoftables341,16464
+\def\@tableof#1#2#3#4#5{\@tableof345,16593
+  \chapter*{*353,16958
+  \def\@oddhead{\@oddhead360,17149
+  \def\@evenhead{\@evenhead371,17518
+\def\@bibchaptitle{\@bibchaptitle410,19113
+\def\altbibtitle{\altbibtitle411,19152
+\def\thebibliography#1{\thebibliography412,19203
+  \chapter*{*415,19287
+  {[\arabic{enumi}]}{\settowidth\labelwidth{width420,19551
+    \advance\leftmargin\labelsep \usecounter{sep421,19623
+  \def\newblock{\newblock422,19676
+\def\theindex{\theindex441,20610
+\def\@idxitem{\@idxitem446,20859
+\def\subitem{\subitem447,20895
+\def\subsubitem{\subsubitem448,20945
+\def\endtheindex{\endtheindex449,20998
+\def\indexspace{\indexspace450,21059
+\def\footnoterule{\footnoterule460,21597
+\long\def\@makefntext#1{\@makefntext488,23085
+\def\topfraction{\topfraction508,24165
+\def\bottomfraction{\bottomfraction510,24215
+\def\textfraction{\textfraction512,24267
+\def\floatpagefraction{\floatpagefraction513,24310
+\def\dbltopfraction{\dbltopfraction515,24366
+\def\dblfloatpagefraction{\dblfloatpagefraction516,24390
+\long\def\@makecaption#1#2{\@makecaption524,24825
+\def\thefigure{\thefigure597,28203
+\def\fps@figure{\fps@figure598,28249
+\def\ftype@figure{\ftype@figure599,28270
+\def\ext@figure{\ext@figure600,28291
+\def\fnum@figure{\fnum@figure601,28312
+\def\figure{\figure602,28348
+\def\thetable{\thetable611,28673
+\def\fps@table{\fps@table612,28717
+\def\ftype@table{\ftype@table613,28737
+\def\ext@table{\ext@table614,28757
+\def\fnum@table{\fnum@table615,28777
+\def\table{\table616,28810
+\def\@thesistitlemedskip{\@thesistitlemedskip632,29558
+\def\@thesistitlebigskip{\@thesistitlebigskip633,29591
+\def\degree#1{\degree634,29623
+\def\project{\project635,29656
+\def\prelim{\prelim636,29711
+\def\thesis{\thesis637,29761
+\def\dissertation{\dissertation638,29799
+\def\department#1{\department639,29849
+\def\maketitle{\maketitle651,30275
+    \def\thanks##1{\thanks659,30753
+\def\abstract{\abstract692,32176
+  \chapter*{*693,32191
+\def\endabstract{\endabstract696,32295
+\def\advisortitle#1{\advisortitle709,32948
+\def\advisorname#1{\advisorname710,32993
+\def\umiabstract{\umiabstract714,33104
+\def\endumiabstract{\endumiabstract727,33531
+  \def\ps@headings{\ps@headings775,36074
+    \def\@oddfoot{\@oddfoot776,36094
+    \def\@evenhead{\@evenhead777,36149
+    \def\@oddhead{\@oddhead778,36226
+    \def\chaptermark##1{\chaptermark779,36304
+    \def\sectionmark##1{\sectionmark781,36425
+  \def\ps@headings{\ps@headings784,36608
+    \def\@oddfoot{\@oddfoot785,36628
+    \def\@oddhead{\@oddhead786,36700
+    \def\chaptermark##1{\chaptermark787,36772
+  \def\ps@thesis{\ps@thesis799,37375
+    \def\@oddfoot{\@oddfoot800,37393
+    \def\@evenhead{\@evenhead801,37465
+    \def\@oddhead{\@oddhead802,37542
+    \def\chaptermark##1{\chaptermark803,37620
+    \def\sectionmark##1{\sectionmark804,37646
+  \def\ps@thesis{\ps@thesis806,37749
+    \def\@oddfoot{\@oddfoot807,37767
+    \def\@oddhead{\@oddhead808,37839
+    \def\chaptermark##1{\chaptermark809,37911
+\def\the@ipfilectr{\the@ipfilectr828,38786
+\def\@rootfilevalue{\@rootfilevalue830,38920
+\def\savedjobname{\savedjobname831,38993
+\def\@currentipfile{\@currentipfile839,39386
+\def\include#1{\include856,40187
+\def\@currentipfile{\@currentipfile857,40213
+\@tempswatrue\if@partsw \@tempswafalse\def\@tempb{\@tempb864,40576
+\def\@currentipfile{\@currentipfile872,40947
+\newcommand{\now}\now887,41839
+\def\@draftfooter{\@draftfooter900,42314
+  \def\ps@thesisdraft{\ps@thesisdraft905,42495
+    \def\@oddfoot {\@oddfoot906,42518
+    \def\@evenfoot{\@evenfoot907,42588
+    \def\@evenhead{\@evenhead908,42622
+    \def\@oddhead{\@oddhead909,42699
+    \def\chaptermark##1{\chaptermark910,42777
+    \def\sectionmark##1{\sectionmark911,42803
+  \def\ps@thesisdraft{\ps@thesisdraft913,42906
+    \def\@oddfoot {\@oddfoot914,42929
+    \def\@evenfoot{\@evenfoot915,42999
+    \def\@oddhead{\@oddhead916,43020
+    \def\chaptermark##1{\chaptermark917,43092
+\def\ps@myheadings{\ps@myheadings923,43325
+  \def\@oddhead{\@oddhead924,43345
+  \def\@oddfoot{\@oddfoot925,43401
+  \def\@evenhead{\@evenhead926,43419
+  \def\@evenfoot{\@evenfoot927,43475
+  \def\sectionmark##1{\sectionmark928,43494
+  \def\subsectionmark##1{\subsectionmark929,43518
+\def\draftmargins{\draftmargins943,44077
+\def\draftscreen{\draftscreen974,45067
+\def\verbatimfile#1{\verbatimfile992,45735
+\def\separatorpage#1{\separatorpage1005,46297
+\def\@chapapp{\@chapapp1021,46740
+\def\appendix{\appendix1035,47440
+  \def\@chapstyle{\@chapstyle1037,47478
+  \def\@chapnumber{\@chapnumber1038,47506
+\def\endappendix{\endappendix1041,47619
+  \def\@chaptername##1{\@chaptername1042,47637
+  \def\@chapstyle{\@chapstyle1043,47678
+  \def\@chapnumber{\@chapnumber1044,47705
+\def\l@appendix#1#2{\l@appendix1048,47816
+\def\appendices{\appendices1052,47954
+  \def\@chaptername##1{\@chaptername1058,48147
+  \def\@chapstyle{\@chapstyle1059,48175
+  \def\@chapnumber{\@chapnumber1060,48205
+\def\l@appendices#1#2{\l@appendices1073,48746
+\def\noappendixtables{\noappendixtables1075,48811
+\def\noappendixfigures{\noappendixfigures1076,48853
+\def\@lotheading{\@lotheading1077,48896
+\def\@lofheading{\@lofheading1083,49090
+\def\@appendix#1{\@appendix1090,49285
+  \def\@chapapp{\@chapapp1094,49417
+  \def\thechapter{\thechapter1095,49443
+\def\copyrightpage{\copyrightpage1108,49969
+  \chapter*{*1112,50070
+\def\glossary{\glossary1127,50663
+  \chapter*{*1128,50678
+\def\endglossary{\endglossary1130,50744
+\def\nomenclature{\nomenclature1139,51223
+  \chapter*{*1140,51275
+\def\endnomenclature{\endnomenclature1142,51349
+\def\listofsymbols{\listofsymbols1151,51844
+  \chapter*{*1152,51897
+\def\endlistofsymbols{\endlistofsymbols1154,51977
+\def\vita{\vita1164,52478
+  \chapter*{*1166,52544
+\def\endvita{\endvita1168,52602
+\def\acknowledgments{\acknowledgments1176,53017
+  \chapter*{*1177,53039
+\def\endacknowledgments{\endacknowledgments1179,53084
+\def\dedication{\dedication1189,53522
+\def\enddedication{\enddedication1193,53581
+\def\today{\today1203,54009
+\def\theequation{\theequation1235,55265
+\def\@eqnnum{\@eqnnum1240,55556
+\newcommand{\bface}\bface1258,56481
 
 twophaseflow.tex,0
 

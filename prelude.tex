@@ -1,73 +1,70 @@
 %============================================================================
 % prelude.tex
 %============================================================================
-%	This files contains:
-%   - Title Page
-%	- Copyright Page
-%   - Dedication
-%   - Acknowledgments
-%   - Table of contents, List of Tables and List of Figures
-%   - Nomenclature Page
-%   - Abstract
+% This files contains:
+% Title Page
+% Abstract
+% Table of Contents
+% List of Tables
+% List of Figures
+% List of Algorithms
+% Nomenclature
+% Dedication
+% Acknowledgments
 
 %============================================================================
 % Make the page numbers Roman (i, ii, etc)
 %============================================================================
 \clearpage\pagenumbering{roman}  
 
-%============================================================================
+% ============================================================================
 % Title Page
-%============================================================================
-% Once the below are defined, use \maketitle to generate the titlepage
-%	- \title{}
-%	- \author{}
-%	- \date{}
-% 	- \advisorname{}:
-%		Name of primary thesis advisor.
-%	- \advisortitle{}:
-%		
-%	- \degree{Degree Title Here}:
-%		The default degree is ``Doctor of Philosophy'' (unless the document style msthesis is specified and then the default degree is ``Master of Science'').
-%	- \dissertation: 
-%		The default is dissertation, unless the document style msthesis was specified in which case it becomes thesis.
-%     If msthesis is specified for the MS margins, you can still have a dissertation if you specify \disseration.
-%	- \project:
-%		For a masters project report, specify \project
-%	- \prelim:
-%		For a preliminary report, specify \prelim
-%   - \thesis:
-%		For a masters thesis, specify \thesis
-%	- \department{}:
-%		The default department is ``Electrical Engineering''
-%		The department can be changed using the command \department{}
+% ============================================================================
+% \degree{Degree Title Here}: The default degree is ``Doctor of Philosophy.''
 
+% \dissertation: The default is dissertation, unless the document style msthesis was specified in which case it becomes thesis.
+
+% \title{}:
 \title{My Prelim}
+
+% \author{}:
 \author{Lewis John Lloyd}
+
+% \date{}:
 \date{2012}
+
+% \prelim: For a preliminary report, specify \prelim.
 \prelim
-\department{Nuclear Engineering and Engineering Physics}
+% \department{}: The department can be changed using the command \department{}.
+\department{Engineering Physics}
+
+% \advisorname{}: Name of primary thesis advisor.
 \advisorname{Michael Corradini}
+
+% \advisortitle{}:
 \advisortitle{Professor}
+
+% Once the above are defined, use \maketitle to generate the titlepage.
 \maketitle
 
 %============================================================================
 % Copyright Page
 %============================================================================
-%	- \copyrightpage:
-%		To include a copyright page use \copyrightpage
+% - \copyrightpage:
+% To include a copyright page use \copyrightpage
 
 %============================================================================
 % Dedication Page
 %============================================================================
 %\begin{dedication}
-% Put dedication here.
+%  Put dedication here.
 %\end{dedication}
 
 %============================================================================
 % Acknowledgement Page
 %============================================================================
 \begin{acknowledgments}
-\input{acknowledgements}
+  \input{acknowledgements}
 \end{acknowledgments}
 
 %============================================================================
@@ -79,9 +76,9 @@
 \tableofcontents
 \listoftables
 \listoffigures
-\listofalgorithms
+\listofalgorithm
 
-%============================================================================
+% ============================================================================
 % Nomenclature Page
 %============================================================================
 \input{nomenclature}
