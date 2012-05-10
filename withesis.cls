@@ -373,6 +373,9 @@
 \def\listoftables{
   \@tableof{LIST OF TABLES}{Table}{lotpage}{lot}
   {\protect\addcontentsline{toc}{chapter}{LIST OF TABLES}}}
+  \def\listofalgorithms{
+  \@tableof{LIST OF ALGORITHMS}{Algorithm}{lofpage}{lof}
+  {\protect\addcontentsline{toc}{chapter}{LIST OF ALGORITHMS}}}
 
 \def\@tableof#1#2#3#4#5{
 { % limit scope of following declarations!!
@@ -1092,7 +1095,7 @@
   \def\@chapnumber{Appendix\ \thechapter:}
   \let\@chapterhead\@appendiceschapterhead
   \let\@schapterhead\@appendiceschapterhead
-  \if@bibpresent\relax\else\separatorpage{DISCARD THIS PAGE}\fi % This
+  \if@bibpresent\relax\fi %\else\separatorpage{DISCARD THIS PAGE}\fi % This
                      % is a dirty fix.  For some reason, the TOC isn't
              % properly written unless the simple chapter with
              % sections is written.  The bibliography fixes this
