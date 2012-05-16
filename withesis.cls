@@ -26,18 +26,16 @@
 % Two-side or one-side printing.
 % \@twosidefalse                      % Default is one-sided printing.
 %=============================================================================
-\DeclareOption{twoside}{
-  \@twosidetrue 	% Defines twoside option.
-  \@mparswitchtrue	% Marginpars go on outside of page.
-}
+\DeclareOption{twoside}{\@twosidetrue % Defines twoside option.
+           \@mparswitchtrue}          % Marginpars go on outside of page.
 
 %=============================================================================
 %  Margin Check option
 % \overfullrule = 0pt                 % Default is don't mark overfull hboxes.
 %=============================================================================
-\DeclareOption{margincheck}{
-  \overfullrule 5pt   % Causes overfull hboxes to be marked.
-}
+\DeclareOption{margincheck}{\overfullrule 5pt}  % Causes overfull hboxes to be marked.
+
+
 
 %=============================================================================
 % The \ProcessOptions\relax command causes the execution of every command
@@ -63,6 +61,10 @@
 \DeclareOldFontCommand{\it}{\normalfont\itshape}{\mathit}
 \DeclareOldFontCommand{\sl}{\normalfont\slshape}{\@nomath\sl}
 \DeclareOldFontCommand{\sc}{\normalfont\scshape}{\@nomath\sc}
+
+
+
+
 
 
 %=============================================================================
@@ -207,18 +209,18 @@
 %                               reset to zero when counter OLDCTR is stepped.
 %                               Counter OLDCTR must already be defined.
 %=============================================================================
-\newcounter{part}
-\newcounter{chapter}
-\newcounter{section}[chapter]
-\newcounter{subsection}[section]
-\newcounter{subsubsection}[subsection]
-\newcounter{paragraph}[subsubsection]
-\newcounter{subparagraph}[paragraph]
-\newcounter{tocpage}
-\newcounter{lofpage}
-\newcounter{lotpage}
+\newcounter {part}
+\newcounter {chapter}
+\newcounter {section}[chapter]
+\newcounter {subsection}[section]
+\newcounter {subsubsection}[subsection]
+\newcounter {paragraph}[subsubsection]
+\newcounter {subparagraph}[paragraph]
+\newcounter {tocpage}
+\newcounter {lofpage}
+\newcounter {lotpage}
 \newcounter{loapage}
-\newcounter{listofheading}
+\newcounter {listofheading}
 
 %=============================================================================
 % For any counter CTR, \theCTR is a macro that defines the printed version
@@ -299,13 +301,12 @@
   \addvspace{2.25em plus 1pt}  % space above part line
   \begingroup
   \@tempdima 3em         % width of box holding part number, used by
-  \parindent \z@ \rightskip \@pnumwidth             %% \numberline
-  \parfillskip -\@pnumwidth
-  {\large \bface       % set line in \large boldface
+    \parindent \z@ \rightskip \@pnumwidth             %% \numberline
+    \parfillskip -\@pnumwidth
+    {\large \bface       % set line in \large boldface
     \leavevmode          % TeX command to enter horizontal mode.
-    #1\hfil \hbox to\@pnumwidth{\hss #2}
-  }\par
-  \nobreak             % Never break after part entry
+    #1\hfil \hbox to\@pnumwidth{\hss #2}}\par
+    \nobreak             % Never break after part entry
   \endgroup}
 
 \def\l@chapter#1#2{\pagebreak[3]
@@ -338,7 +339,7 @@
 % page between the change to the height parameters and the start of
 % the chapter.  Isn't elegance wonderful?
 %
-% =============================================================================
+%=============================================================================
 \def\tableofcontents{
   \@tableof
   {Table Of Contents}
@@ -376,34 +377,21 @@
 }
 
 \def\@tableof#1#2#3#4#5{
-  {
-  \@restonecolfalse
-  \if@twocolumn
-    \@restonecoltrue
-    \onecolumn
-  \fi
+{ % limit scope of following declarations!!
+  \@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn\fi
   \addtolength{\textheight}{-40pt}       % -24-16
   \addtolength{\majorheadskip}{-40pt}    % -24-16
   \addtolength{\headheight}{52pt}        %  36+16
   \addtolength{\headsep}{-12pt}          % -12
-  \separatorpage{DISCARD THIS PAGE}
   \chapter*{#1}
   #5
-
   \relax\markboth{#1}{#1}
-
   \hbox to \hsize{#2 \hfil Page}
-
   \singlespace
-
   \setcounter{#3}{0}
-  \setcounter{listofheading}{1}
-
-  \def\@oddhead{%
-    \vbox to \headheight{
-      \vspace{4pt}
-      \hbox to \hsize{\hfil\rm\thepage}
-      \vfil
+  \setcounter{listofheading}{1}  % change from 0 to 1 by mccauley, 14may93
+  \def\@oddhead{\vbox to \headheight{\vspace{4pt}
+    \hbox to \hsize{\hfil\rm\thepage} \vfil
       \ifnum \value{#3}=0
 	\setcounter{#3}{1}
       \else
@@ -417,12 +405,8 @@
       \fi%
     }%
   }
-
-  \def\@evenhead{
-    \vbox to \headheight{
-      \vspace{4pt}
-      \hbox to \hsize{\rm\thepage\hfil}
-      \vfil
+  \def\@evenhead{\vbox to \headheight{\vspace{4pt}
+    \hbox to \hsize{\rm\thepage\hfil} \vfil
       \ifnum \value{#3}=0
 	\setcounter{#3}{1}
       \else
@@ -436,14 +420,9 @@
       \fi%
     }%
   }
-
-  \@starttoc{#4}
-  \if@restonecol
-    \twocolumn
-  \fi
+  \@starttoc{#4}  \if@restonecol\twocolumn\fi
   \newpage
-  }
-}
+}}
 
 %=============================================================================
 % BIBLIOGRAPHY
@@ -714,19 +693,19 @@
 \newcommand{\dissertation}{\gdef\@doctype{A dissertation}}
 \newcommand{\department}[1]{\gdef\@department{(#1)}}
 
-\gdef\@degree{Doctor of Philosophy}    %Default is PhD
-\gdef\@doctype{A dissertation}         %Default is dissertation
+   \gdef\@degree{Doctor of Philosophy}    %Default is PhD
+   \gdef\@doctype{A dissertation}         %Default is dissertation
 
 \gdef\@department{(Engineering Physics)} % Default is Electical Engineering
 
-\newcommand{\maketitle}{
+\newcommand{\maketitle}{%
   \begin{titlepage}
     \def\thanks##1{\typeout{Warning: `thanks' deleted from thesis titlepage.}}
     \let\footnotesize\small \let\footnoterule\relax \setcounter{page}{1}
     \vspace*{0.1in}
-    \begin{center}{
-      \bf\expandafter\uppercase\expandafter{\@title}} \\[\@thesistitlebigskip]
-      by \\[\@thesistitlemedskip]
+    \begin{center}
+      {\bf\expandafter\uppercase\expandafter{\@title}} \\[\@thesistitlebigskip]
+       by \\[\@thesistitlemedskip]
       \@author \\[\@thesistitlebigskip]
       \@doctype\ submitted in partial fulfillment of \\
       the requirements for the degree of\\[\@thesistitlebigskip]
@@ -740,14 +719,9 @@
   \setcounter{footnote}{0}
   \setcounter{page}{1} %title page is NOT counted
   \let\thanks\relax
-  \let\maketitle\relax
-  \let\degree\relax
-  \let\project\relax
-  \let\prelim\relax
+  \let\maketitle\relax \let\degree\relax \let\project\relax \let\prelim\relax
   \let\department\relax
-  \gdef\@thanks{}
-  \gdef\@degree{}
-  \gdef\@doctype{}
+  \gdef\@thanks{}\gdef\@degree{}\gdef\@doctype{}
   \gdef\@department{}
 }
 
@@ -776,37 +750,28 @@
 % This page is not numbered and is delivered seperately to the thesis office.
 %=============================================================================
 
-\def\advisortitle#1{
-  \gdef\@advisortitle{#1}
-}
-
-\def\advisorname#1{
-  \gdef\@advisorname{#1}
-}
-
+\def\advisortitle#1{\gdef\@advisortitle{#1}}
+\def\advisorname#1{\gdef\@advisorname{#1}}
 \gdef\@advisortitle{Professor}
 \gdef\@advisorname{Cheer E.\ Place}
 
 \def\umiabstract{
-  \thispagestyle{empty}
-  \addtocounter{page}{-1}
-  \begin{center}{
-    \bf\expandafter\uppercase\expandafter{\@title}}\\
-    \vspace{12pt}
-    \@author \\
-    \vspace{12pt}
-    Under the supervision of \@advisortitle\ \@advisorname\\
-    At the University of Wisconsin-Madison
-  \end{center}
+             \thispagestyle{empty}
+                  \addtocounter{page}{-2}
+                \begin{center}
+                  {\bf\expandafter\uppercase\expandafter{\@title}}\\
+                  \vspace{12pt}
+                  \@author \\
+                  \vspace{12pt}
+                  Under the supervision of \@advisortitle\ \@advisorname\\
+                  At the University of Wisconsin-Madison
+                \end{center}
+               
 }
 
-\def\endumiabstract{
-  \vfill
-  \hfill
-  \@advisorname
-  \par
-  \newpage
-}
+\def\endumiabstract{\vfill \hfill\@advisorname\par \thispagestyle{empty}\newpage}
+
+
 
 %=============================================================================
 % PAGE STYLES
@@ -845,10 +810,7 @@
 % the right mark is changed by a \section command.  However, it does
 % produce somewhat anomalous results if two \bothmark's occur on the same page.
 %=============================================================================
-\mark{
-  {}
-  {}
-}   % Initializes TeX's marks
+\mark{{}{}}   % Initializes TeX's marks
 
 %=============================================================================
 % Definition of 'headings' page style
@@ -856,69 +818,19 @@
 %=============================================================================
 \if@twoside                                                  % If two-sided
   \def\ps@headings{
-    \def\@oddfoot{}	% No feet.
-    \def\@evenfoot{}	% No feet.
-    \def\@evenhead{	% Left heading.
-      \rm
-      \thepage
-      \hfil
-      \sl
-      \leftmark
-    }
-    \def\@oddhead{   	% Right heading.
-      \hbox{}
-      \sl
-      \rightmark
-      \hfil
-      \rm
-      \thepage
-    }
-    \def\chaptermark##1{
-      \markboth{
-	\uppercase{
-	  \ifnum
-	    \c@secnumdepth >\m@ne
-	    \@chapapp\
-	    \thechapter. \
-	  \fi ##1
-	}
-      }{}
-    }
-    \def\sectionmark##1{
-      \markright{
-	\uppercase{
-	  \ifnum
-	    \c@secnumdepth >\z@
-	    \thesection. \ 
-	  \fi ##1
-	}
-      }
-    }
-  }
-\else			% If one-sided
+    \def\@oddfoot{}\def\@evenfoot{}         % No feet.
+    \def\@evenhead{\rm \thepage\hfil \sl \leftmark}          % Left heading.
+    \def\@oddhead{\hbox{}\sl \rightmark \hfil \rm\thepage}   % Right heading.
+    \def\chaptermark##1{\markboth {\uppercase{\ifnum \c@secnumdepth >\m@ne
+      \@chapapp\ \thechapter. \ \fi ##1}}{}}%
+    \def\sectionmark##1{\markright {\uppercase{\ifnum \c@secnumdepth >\z@
+      \thesection. \ \fi ##1}}}}
+\else                                                        % If one-sided
   \def\ps@headings{
-    \def\@oddfoot{}	% No feet.
-    \def\@evenfoot{}	% No feet.
-    \def\@oddhead{  	% Heading.
-      \hbox{}
-      \sl
-      \rightmark
-      \hfil
-      \rm
-      \thepage
-    }
-    \def\chaptermark##1{
-      \markright{
-	\uppercase{
-	  \ifnum
-	    \c@secnumdepth >\m@ne
-	    \@chapapp\
-	    \thechapter. \ 
-	  \fi ##1
-	}
-      }
-    }
-  }
+    \def\@oddfoot{}\def\@evenfoot{}                          % No feet.
+    \def\@oddhead{\hbox {}\sl \rightmark \hfil \rm\thepage}  % Heading.
+    \def\chaptermark##1{\markright {\uppercase{\ifnum \c@secnumdepth >\m@ne
+      \@chapapp\ \thechapter. \ \fi ##1}}}}
 \fi
 
 %=============================================================================
@@ -928,36 +840,18 @@
 %  -- chaptermark and sectionmark are not needed
 %  Note use of ##1 for parameter of \def\chaptermark inside \def\ps@headings.
 %=============================================================================
-\if@twoside	% If two-sided
+\if@twoside                                                  % If two-sided
   \def\ps@thesis{
-    \def\@oddfoot{}	% No feet.
-    \def\@evenfoot{}	% No feet.
-    \def\@evenhead{	% Left heading.
-      \rm
-      \thepage
-      \hfil
-    }
-    \def\@oddhead{	% Right heading.
-      \hbox{}
-      \hfil
-      \rm
-      \thepage
-    }
+    \def\@oddfoot{}\def\@evenfoot{}                          % No feet.
+    \def\@evenhead{\rm \thepage\hfil}                        % Left heading.
+    \def\@oddhead{\hbox{}\hfil\rm\thepage}                   % Right heading.
     \def\chaptermark##1{}
-    \def\sectionmark##1{}
-  }
-\else		% If one-sided
+    \def\sectionmark##1{}}
+\else                                                        % If one-sided
   \def\ps@thesis{
-    \def\@oddfoot{}	% No feet.
-    \def\@evenfoot{}	% No feet.
-    \def\@oddhead{	% Heading.
-      \hbox{}
-      \hfil
-      \rm
-      \thepage
-    }
-    \def\chaptermark##1{}
-  }
+    \def\@oddfoot{}\def\@evenfoot{}                          % No feet.
+    \def\@oddhead{\hbox{}\hfil\rm\thepage}                   % Heading.
+    \def\chaptermark##1{}}
 \fi
 
 %=============================================================================
@@ -974,30 +868,22 @@
 %    file. An arbitrary large (number greater than the maximum number of
 %    include files) is used to denote the root file.
 %-------------------------------------------------------------------------
-\newcounter{@ipfilectr}		% current I/P file,
-\def\the@ipfilectr{		% displayed as roman numerals
-  \roman{@ipfilectr}
-}
-\newcounter{@includefilectr}	% current \include file
-\def\@rootfilevalue{1988}	% arbitrary value for root file
-\def\savedjobname{\jobname}	% save root file name as a macro
+\newcounter{@ipfilectr}                 % current I/P file,
+\def\the@ipfilectr{\roman{@ipfilectr}}  % displayed as roman numerals
+\newcounter{@includefilectr}            % current \include file
+\def\@rootfilevalue{1988}               % arbitrary value for root file
+\def\savedjobname{\jobname}             % save root file name as a macro
 
 %-----------------------------------------------------------------------
 % The name of the current I/P file is stored in macro \@currentipfile
 % and the global macro ipfile@the@ipfilectr is set to this name whenever
 % \@currentipfile changes.
 %-----------------------------------------------------------------------
-\def\@currentipfile{\jobname}	% initialize to root file
-\setcounter{@ipfilectr}{	% ditto
-  \@rootfilevalue
-}
+\def\@currentipfile{\jobname}           % initialize to root file
+\setcounter{@ipfilectr}{\@rootfilevalue}        % ditto
+\global\@namedef{ipfile@\the@ipfilectr}{\@currentipfile}
 
-\global\@namedef{
-  ipfile@\the@ipfilectr
-  }{
-  \@currentipfile
-}
-
+%
 %-----------------------------------------------------------------------
 % Redefine the \include macro (taken from LATEX.TEX of 25-JAN-1988) so
 % that when a file is \include'd
@@ -1010,48 +896,26 @@
 % 2. reset ipfilectr to \@rootfilevalue
 % 3. global macro ipfile@\the@ipfilectr set to \@currentfile
 %-----------------------------------------------------------------------
-\def\include#1{
-  \clearpage
-  \def\@currentipfile{#1}
-  \@debugoutput{
-    \string\@currentipfile = `\@currentipfile'
-  }
-  \addtocounter{@includefilectr}{1}
-  \setcounter{@ipfilectr}{
-    \value{@includefilectr}
-  }
-  \global\@namedef{ipfile@\the@ipfilectr}{\@currentipfile}
-  \if@filesw
-    \immediate\write\@mainaux{\string\@input{#1.aux}}
-  \fi
-  \@tempswatrue
-  \if@partsw
-    \@tempswafalse\def\@tempb{#1}\@for
-    \@tempa:=\@partlist\do{\ifx\@tempa\@tempb\@tempswatrue\fi}
-  \fi
-  \if@tempswa
-    \if@filesw
-      \let\@auxout=\@partaux
-      \immediate\openout\@partaux #1.aux
-      \immediate\write\@partaux{\relax}
-    \fi
-    \@input{#1.tex}
-    \clearpage
-    \@writeckpt{#1}
-    \if@filesw
-      \immediate
-      \closeout
-      \@partaux
-    \fi
-    \let\@auxout=\@mainaux
-  \else
-    \@nameuse{cp@#1}
-  \fi
-  \def\@currentipfile{\jobname}
-  \@debugoutput{\string\@currentipfile = `\@currentipfile'}
-  \setcounter{@ipfilectr}{\@rootfilevalue}
-  \global\@namedef{ipfile@\the@ipfilectr}{\@currentipfile}
-}
+\def\include#1{\clearpage
+\def\@currentipfile{#1}
+\@debugoutput{\string\@currentipfile = `\@currentipfile'}
+\addtocounter{@includefilectr}{1}
+\setcounter{@ipfilectr}{\value{@includefilectr}}
+\global\@namedef{ipfile@\the@ipfilectr}{\@currentipfile}
+%
+\if@filesw \immediate\write\@mainaux{\string\@input{#1.aux}}\fi
+\@tempswatrue\if@partsw \@tempswafalse\def\@tempb{#1}\@for
+\@tempa:=\@partlist\do{\ifx\@tempa\@tempb\@tempswatrue\fi}\fi
+\if@tempswa \if@filesw \let\@auxout=\@partaux
+\immediate\openout\@partaux #1.aux
+\immediate\write\@partaux{\relax}\fi\@input{#1.tex}\clearpage
+\@writeckpt{#1}\if@filesw\immediate\closeout\@partaux \fi
+\let\@auxout=\@mainaux\else\@nameuse{cp@#1}\fi
+\def\@currentipfile{\jobname}
+\@debugoutput{\string\@currentipfile = `\@currentipfile'}
+\setcounter{@ipfilectr}{\@rootfilevalue}
+\global\@namedef{ipfile@\the@ipfilectr}{\@currentipfile}}
+%=============================================================================
 
 %=============================================================================
 % Definition of 'thesisdraft' page style -- riedl --dfk
@@ -1061,96 +925,55 @@
 %  -- footer may be changed by changing \@draftfoot
 %  Note use of ##1 for parameter of \def\chaptermark inside \def\ps@headings.
 %=============================================================================
-\newcounter{currenthour}
-\newcounter{currentminute}
+\newcounter{currenthour} \newcounter{currentminute}
 \newcommand{\now}{
   \setcounter{currenthour}{\time}\divide \c@currenthour by 60
-  \setcounter{currentminute}{\time}\multiply \c@currenthour by 60
-  \addtocounter{currentminute}{-\c@currenthour}\divide \c@currenthour by 60
-  \ifnum		% force at least one digit in hour
-    \c@currenthour=0 0 
-  \fi
-  \thecurrenthour:	% force two digits in minute
-    \ifnum
-      \c@currentminute<10 0
-    \fi
+  \setcounter{currentminute}{\time}
+    \multiply \c@currenthour by 60
+    \addtocounter{currentminute}{-\c@currenthour}
+    \divide \c@currenthour by 60
+  \ifnum \c@currenthour=0 0 \fi    % force at least one digit in hour
+  \thecurrenthour:%
+  \ifnum \c@currentminute<10 0\fi % force two digits in minute
   \thecurrentminute
 }
 
 \def\@draftfooter{
-  {\rm DRAFT: Do Not Distribute}
-  \hfil{\now\ \today}
-  \hfil{\tt \@currentipfile.tex}
-}
+  {\rm DRAFT: Do Not Distribute}\hfil{\now\ \today}
+    \hfil{\tt \@currentipfile.tex}}
 
-\if@twoside		% If two-sided
+\if@twoside                                                  % If two-sided
   \def\ps@thesisdraft{
-    \def\@oddfoot{	% Footer
-      \@draftfooter
-    }
-    \def\@evenfoot{	% Footer
-      \@draftfooter
-    }
-    \def\@evenhead{	% Left heading.
-      \rm
-      \thepage
-      \hfil
-    }
-    \def\@oddhead{	% Right heading.
-      \hbox{}
-      \hfil
-      \rm
-      \thepage
-    }
+    \def\@oddfoot {\@draftfooter}                            % Footer
+    \def\@evenfoot{\@draftfooter}
+    \def\@evenhead{\rm \thepage\hfil}                        % Left heading.
+    \def\@oddhead{\hbox{}\hfil\rm\thepage}                   % Right heading.
     \def\chaptermark##1{}
-    \def\sectionmark##1{}
-  }
-\else			% If one-sided
+    \def\sectionmark##1{}}
+\else                                                        % If one-sided
   \def\ps@thesisdraft{
-    \def\@oddfoot{	% Footer
-      \@draftfooter
-    }
-    \def\@evenfoot{}	% Footer
-    \def\@oddhead{	% Heading
-      \hbox{}
-      \hfil
-      \rm
-      \thepage
-    }
-    \def\chaptermark##1{}
-  }
+    \def\@oddfoot {\@draftfooter}                            % Footer
+    \def\@evenfoot{}
+    \def\@oddhead{\hbox{}\hfil\rm\thepage}                   % Heading.
+    \def\chaptermark##1{}}
 \fi
 
 %=============================================================================
 % Definition of 'myheadings' page style.
 %=============================================================================
 \def\ps@myheadings{
-  \def\@oddhead{
-    \hbox{}
-    \sl
-    \rightmark
-    \hfil
-    \rm
-    \thepage
-  }
+  \def\@oddhead{\hbox{}\sl\rightmark \hfil \rm\thepage}
   \def\@oddfoot{}
-  \def\@evenhead{
-    \rm
-    \thepage
-    \hfil
-    \sl
-    \leftmark
-    \hbox{}
-  }
+  \def\@evenhead{\rm \thepage\hfil\sl\leftmark\hbox {}}
   \def\@evenfoot{}
   \def\sectionmark##1{}
-  \def\subsectionmark##1{}
-}
+  \def\subsectionmark##1{}}
 
 %=============================================================================
 % MISCELLANEOUS
 %=============================================================================
 %\def\mybox{\fbox{\hbox to 429bp {\vbox to 630bp {\null}}}}
+
 %\def\pagebox{ \setlength{\unitlength}{1.0bp}
 %             \begin{picture}(0,0)(36,558) \put(0,0){\mybox} \end{picture}
 %              \begin{picture}(0,0)(18,523.25) \put(0,0){\mybox} \end{picture}
@@ -1160,29 +983,24 @@
 
 \def\draftmargins{
   \if@msmargin % Draw box for 1.25" left margins
-    \special{!userdict
-      begin 
-	/eop-hook{
-	  gsave 0.5 setlinewidth newpath
-	  90 72 moveto 540 72 lineto 540 720 lineto 90 720 lineto
-	  90 72 lineto
-	  stroke grestore
-	  stroke grestore
-	}def 
-      end
-    }
+      \special{!userdict begin /eop-hook{
+            gsave 0.5 setlinewidth newpath
+            90 72 moveto 540 72 lineto 540 720 lineto 90 720 lineto
+            90 72 lineto
+            stroke grestore
+            stroke grestore
+           }def end
+   }
   \else % Draw box for 1" margins
-    \special{!userdict
-      begin
-	/eop-hook{
-	  gsave 0.5 setlinewidth newpath
-          72 72 moveto 540 72 lineto 540 720 lineto 72 720 lineto
-          72 72 lineto
-          stroke grestore
-	  stroke grestore
-          }def
-      end
-    }
+      \special{!userdict begin /eop-hook{
+            gsave 0.5 setlinewidth newpath
+            72 72 moveto 540 72 lineto 540 720 lineto 72 720 lineto
+            72 72 lineto
+            stroke grestore
+            stroke grestore
+           }def end
+   }
+
   \fi
 }
 
@@ -1204,15 +1022,11 @@
 % - Note that the precise layout of line breaks in this file is important!
 % - added the \singlespace - EB
 %============================================================================
-\def\verbatimfile#1{
-  \begingroup
-    \singlespace
-    \@verbatim
-    \frenchspacing
-    \@vobeyspaces
-    \input#1
-  \endgroup
+\def\verbatimfile#1{\begingroup \singlespace
+                    \@verbatim \frenchspacing \@vobeyspaces
+                    \input#1 \endgroup
 }
+
 
 %=============================================================================
 % SEPARATOR Pages
@@ -1226,13 +1040,12 @@
   \thispagestyle{empty}
   \addtocounter{page}{-1}
   \null
-  \vfil
-  \vfil
-  \begin{center}{\bface #1}\end{center}
-  \vfil
-  \vfil
-  \newpage
-}
+  \vfil\vfil
+  \begin{center}
+    {\bface #1}
+  \end{center}
+  \vfil\vfil
+  \newpage}
 
 %=============================================================================
 % \@chapapp is initially defined to be 'Chapter'.  The \appendix
@@ -1257,60 +1070,43 @@
   \def\@chapstyle{appendix}
   \def\@chapnumber{APPENDIX}
   \let\@chapterhead\@appendixchapterhead
-  \let\@schapterhead\@appendixchapterhead
-}
-
+  \let\@schapterhead\@appendixchapterhead}
 \def\endappendix{
-  \def\@chaptername##1{\uppercase{##1}}
+  \def\@chaptername##1{\uppercase {##1}}
   \def\@chapstyle{chapter}
   \def\@chapnumber{\thechapter.}
   \let\@chapterhead\@makechapterhead
-  \let\@schapterhead\@makeschapterhead
-}
+  \let\@schapterhead\@makeschapterhead}
 
-\def\l@appendix#1#2{
-  \pagebreak[3]
-  \vskip
-  \@tocchapterskip
-  \@dottedtocline{0}{0pt}{7.3em}{{\bface #1}}{#2}
-}
+\def\l@appendix#1#2{\pagebreak[3]
+  \vskip\@tocchapterskip % space above chapter line
+  \@dottedtocline{0}{0pt}{7.3em}{{\bface #1}}{#2}}
 
 \def\appendices{
   \addtocontents{toc}{
     \protect\addvspace{\@tocchapterskip}
     \hbox to \hsize{\bface APPENDICES \hfil}
-    \protect\addvspace{\@tocchapterskip}
-  }
+    \protect\addvspace{\@tocchapterskip}}
   \@appendix{Appendices}
   \def\@chaptername##1{##1}
   \def\@chapstyle{appendices}
   \def\@chapnumber{Appendix\ \thechapter:}
   \let\@chapterhead\@appendiceschapterhead
   \let\@schapterhead\@appendiceschapterhead
-  \if
-    @bibpresent
-    \relax
-  \fi
+  \if@bibpresent\relax\fi %\else\separatorpage{DISCARD THIS PAGE}\fi % This
 }
 
 \let\endappendices\endappendix
 
-\def\l@appendices#1#2{
-  \@dottedtocline{0}{1.5em}{6.5em}{#1}{#2}
-}
+\def\l@appendices#1#2{\@dottedtocline{0}{1.5em}{6.5em}{#1}{#2}}
 
-\def\noappendixtables{
-  \def\@lotheading{}
-}
+\def\noappendixtables{\def\@lotheading{}}
 \def\@lotheading{
   \addtocontents{lot}{
     \protect\stepcounter{listofheading}
     \protect\addvspace{\@tocchapterskip}
     \hbox to \hsize{Appendix \hfil}
-    \hbox to \hsize{Table \hfil}
-  }
-}
-
+    \hbox to \hsize{Table \hfil}}}
 \def\noappendixfigures{
   \def\@lofheading{}
 }
@@ -1319,9 +1115,7 @@
     \protect\stepcounter{listofheading}
     \protect\addvspace{\@tocchapterskip}
     \hbox to \hsize{Appendix \hfil}
-    \hbox to \hsize{Figure \hfil}
-  }
-}
+    \hbox to \hsize{Figure \hfil}}}
 
 \def\noappendixalgorithms{
   \def\@loaheading{}
@@ -1335,8 +1129,7 @@
   }
 }
 
-\def\@appendix#1{
-  \par
+\def\@appendix#1{\par
   \addtocontents{toc}{{\protect\setcounter{tocdepth}{0}}}
   \setcounter{chapter}{0}
   \setcounter{section}{0}
@@ -1355,15 +1148,15 @@
 %=============================================================================
 \def\copyrightpage{
   \newpage
-  \thispagestyle{empty}		% No page number
+  \thispagestyle{empty}    % No page number
   \addtocounter{page}{-1}
-  \chapter*{}			% Required for \vfill to work
+  \chapter*{}            % Required for \vfill to work
   \begin{center}
-  \vfill
-  \copyright\ Copyright by \@author\ \@date\\
+   \vfill
+   \copyright\ Copyright by \@author\ \@date\\
    All Rights Reserved
-  \end{center}
-}
+  \end{center}}
+
 
 %=============================================================================
 % GLOSSARY
@@ -1376,11 +1169,7 @@
   \chapter*{Glossary}
   \addcontentsline{toc}{chapter}{Glossary}
 }
-
-\def\endglossary{
-  \par
-  \newpage
-}
+\def\endglossary{\par\newpage}
 
 %=============================================================================
 % NOMENCLATURE
@@ -1390,15 +1179,10 @@
 % - start a new page with NOMENCLATURE centered two inches from the top
 %=============================================================================
 \def\nomenclature{
-  \separatorpage{DISCARD THIS PAGE}
   \chapter*{Nomenclature}
   \addcontentsline{toc}{chapter}{Nomenclature}
 }
-
-\def\endnomenclature{
-  \par
-  \newpage
-}
+\def\endnomenclature{\par\newpage}
 
 %=============================================================================
 % LIST OF SYMBOLS
@@ -1408,15 +1192,10 @@
 % - start a new page with LIST OF SYMBOLS centered two inches from the top
 %=============================================================================
 \def\listofsymbols{
-  \separatorpage{DISCARD THIS PAGE}
   \chapter*{List Of Symbols}
   \addcontentsline{toc}{chapter}{List Of Symbols}
 }
-
-\def\endlistofsymbols{
-  \par
-  \newpage
-}
+\def\endlistofsymbols{\par\newpage}
 
 %=============================================================================
 % VITA
@@ -1428,13 +1207,8 @@
 %=============================================================================
 \def\vita{
   \chapter*{VITA}
-  \addcontentsline{toc}{chapter}{VITA}
-}
-
-\def\endvita{
-  \par
-  \newpage
-}
+  \addcontentsline{toc}{chapter}{VITA}}
+\def\endvita{\par\newpage}
 
 %=============================================================================
 % ACKNOWLEDGMENTS
@@ -1444,13 +1218,8 @@
 %=============================================================================
 \def\acknowledgments{
   \chapter*{Acknowledgments}
-  \doublespace
-}
-
-\def\endacknowledgments{
-  \par
-  \newpage
-}
+  \doublespace}
+\def\endacknowledgments{\par\newpage}
 
 %=============================================================================
 % DEDICATION
@@ -1463,35 +1232,24 @@
 \def\dedication{
   \newpage
   \null\vfil
-  \begin{center}
-}
-
-\def\enddedication{
-  \end{center}
-  \par
-  \vfil
-  \newpage
-}
+  \begin{center}}
+\def\enddedication{\end{center}\par\vfil\newpage}
 
 %=============================================================================
 % DATE
 %=============================================================================
 \newcount\@testday
-\def\today{
-  \@testday=\day
-  \ifnum
-    \@testday>30 \advance\@testday by -30
-  \else
-    \ifnum
-      \@testday>20 \advance\@testday by -20
-    \fi
-  \fi
+\def\today{\@testday=\day
+  \ifnum\@testday>30 \advance\@testday by -30
+  \else\ifnum\@testday>20 \advance\@testday by -20
+  \fi\fi
   \number\day\ \
   \ifcase\month\or
     January \or February \or March \or April \or May \or June \or
     July \or August \or September \or October \or November \or December
-  \fi\ \number\year
+    \fi\ \number\year
 }
+
 
 \newtheorem{theorem}{Theorem}[chapter]
 \newtheorem{assertion}[theorem]{Assertion}
@@ -1510,16 +1268,12 @@
 % \newcounter{equation}
 %=============================================================================
 \@addtoreset{equation}{chapter}   % Makes \chapter reset 'equation' counter.
-\def\theequation{
-  {\rm \thechapter}.\arabic{equation}
-}
+\def\theequation{{\rm \thechapter}.\arabic{equation}}
 
 %=============================================================================
 % The macro \@eqnnum defines how equation numbers are to appear in equations.
 %=============================================================================
-\def\@eqnnum{
-  [\theequation]
-}
+\def\@eqnnum{[\theequation]}
 
 %=============================================================================
 % INITIALIZATION   -  Default initializations
@@ -1528,6 +1282,7 @@
 \pagenumbering{arabic}      % Arabic page numbers
 \onecolumn                  % Single-column.
 \raggedbottom               % Ragged bottom
+
 \global\newif\if@bibpresent   % Flag for the appendicies fix.  If bib present
                               % then the seperator page isn't needed...
 

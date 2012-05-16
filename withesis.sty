@@ -151,26 +151,11 @@
 %  start and end a page, and inhibit page numbers.  It also resets the page
 %  number to zero.  In two-column style, it still makes a one-column page.
 %=============================================================================
-\def\titlepage{
-  \@restonecolfalse
-  \if
-    @twocolumn
-    \@restonecoltrue
-    \onecolumn
-  \else
-    \newpage
-    \fi
-  \thispagestyle{empty}
+\def\titlepage{\@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn
+  \else \newpage \fi \thispagestyle{empty}
+% \c@page\z@ -- deleted: count title page in thesis
 }
-
-\def\endtitlepage{
-  \if
-    @restonecol
-    \twocolumn
-  \else
-    \newpage
-  \fi
-}
+\def\endtitlepage{\if@restonecol\twocolumn \else \newpage \fi}
 
 %=============================================================================
 % ARRAY AND TABULAR
@@ -297,55 +282,28 @@
 %=============================================================================
 \def\@tocchapterskip{1.0em plus 1pt} 
 
-\def\l@part#1#2{
-  \addpenalty{-\@highpenalty}
+\def\l@part#1#2{\addpenalty{-\@highpenalty}
   \addvspace{2.25em plus 1pt}  % space above part line
   \begingroup
-    \@tempdima 3em         % width of box holding part number, used by 
+  \@tempdima 3em         % width of box holding part number, used by 
     \parindent \z@ \rightskip \@pnumwidth             %% \numberline
-    \parfillskip -\@pnumwidth
-    {	\large 
-	\bface       % set line in \large boldface
-	\leavevmode          % TeX command to enter horizontal mode.       
-	#1\hfil \hbox to\@pnumwidth{\hss #2}
-    }
-    \par
+    \parfillskip -\@pnumwidth   
+    {\large \bface       % set line in \large boldface
+    \leavevmode          % TeX command to enter horizontal mode.       
+    #1\hfil \hbox to\@pnumwidth{\hss #2}}\par
     \nobreak             % Never break after part entry
-  \endgroup
-}
+  \endgroup}
 
-\def\l@chapter#1#2{	% space above chapter line
-  \pagebreak[3]
-  \vskip
-  \@tocchapterskip
-  \@dottedtocline{0}{0pt}{1.5em}{{\bface #1}}{#2}
-}
+\def\l@chapter#1#2{\pagebreak[3]
+  \vskip\@tocchapterskip % space above chapter line
+  \@dottedtocline{0}{0pt}{1.5em}{{\bface #1}}{#2}}
 
-\def\l@section{
-  \@dottedtocline{1}{1.5em}{2.3em}
-}
-
-\def\l@subsection{
-  \@dottedtocline{2}{3.8em}{3.2em}
-}
-
-\def\l@subsubsection{
-  \@dottedtocline{3}{7.0em}{4.1em}
-}
-
-\def\l@paragraph{
-  \@dottedtocline{4}{10em}{5em}
-}
-
-\def\l@subparagraph{
-  \@dottedtocline{5}{12em}{6em}
-}
-
-\def\l@figure{
-  \vskip 1.0em plus 1pt 
-  \@dottedtocline{0}{0em}{2.5em}
-}
-
+\def\l@section{\@dottedtocline{1}{1.5em}{2.3em}}
+\def\l@subsection{\@dottedtocline{2}{3.8em}{3.2em}}
+\def\l@subsubsection{\@dottedtocline{3}{7.0em}{4.1em}}
+\def\l@paragraph{\@dottedtocline{4}{10em}{5em}}
+\def\l@subparagraph{\@dottedtocline{5}{12em}{6em}}
+\def\l@figure{\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
 \let\l@table\l@figure
 
 %=============================================================================
@@ -383,7 +341,7 @@
   \addtolength{\majorheadskip}{-40pt}    % -24-16
   \addtolength{\headheight}{52pt}        %  36+16
   \addtolength{\headsep}{-12pt}          % -12
-  \separatorpage{DISCARD THIS PAGE}	
+%  \separatorpage{DISCARD THIS PAGE}	
   \chapter*{#1}
   #5
   \relax\markboth{#1}{#1}
@@ -472,15 +430,11 @@
 %   of the alphabet.
 %=============================================================================
 \newif\if@restonecol
-\def\theindex{
-  \@restonecoltrue\if@twocolumn\@restonecolfalse\fi
+\def\theindex{\@restonecoltrue\if@twocolumn\@restonecolfalse\fi
   \columnseprule \z@
   \columnsep 35pt\twocolumn[\@makeschapterhead{Index}]
-  \markboth{INDEX}{INDEX}
-  \thispagestyle{plain}\parindent\z@
-  \parskip\z@ plus .3pt\relax\let\item\@idxitem
-}
-
+  \markboth{INDEX}{INDEX}\thispagestyle{plain}\parindent\z@
+  \parskip\z@ plus .3pt\relax\let\item\@idxitem}
 \def\@idxitem{\par\hangindent 40pt}
 \def\subitem{\par\hangindent 40pt \hspace*{20pt}}
 \def\subsubitem{\par\hangindent 40pt \hspace*{30pt}}
@@ -1174,7 +1128,7 @@
 % - produce the table of contents entry for the nomenclature section
 % - start a new page with NOMENCLATURE centered two inches from the top
 %=============================================================================
-\def\nomenclature{\separatorpage{DISCARD THIS PAGE}
+\def\nomenclature{%\separatorpage{DISCARD THIS PAGE}
   \chapter*{NOMENCLATURE}
   \addcontentsline{toc}{chapter}{NOMENCLATURE}}
 \def\endnomenclature{\par\newpage}
@@ -1186,7 +1140,7 @@
 % - produce the table of contents entry for the list of symbols section
 % - start a new page with LIST OF SYMBOLS centered two inches from the top
 %=============================================================================
-\def\listofsymbols{\separatorpage{DISCARD THIS PAGE}
+\def\listofsymbols{%\separatorpage{DISCARD THIS PAGE}
   \chapter*{LIST OF SYMBOLS}
   \addcontentsline{toc}{chapter}{LIST OF SYMBOLS}}
 \def\endlistofsymbols{\par\newpage}
