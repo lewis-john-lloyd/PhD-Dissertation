@@ -4,7 +4,7 @@ img_extIsRegExp=false
 img_extensions=.eps .jpg .jpeg .png .pdf .ps .fig .gif
 kileprversion=2
 kileversion=2.0.85
-lastDocument=prelude.tex
+lastDocument=main.tex
 masterDocument=
 name=thesis
 pkg_extIsRegExp=false
@@ -96,6 +96,14 @@ Indentation Mode=
 Mode=LaTeX
 ReadWrite=true
 
+[document-settings,item:nomenclature.tex]
+Bookmarks=
+Encoding=UTF-8
+Highlighting=LaTeX
+Indentation Mode=
+Mode=LaTeX
+ReadWrite=true
+
 [document-settings,item:prelude.tex]
 Bookmarks=
 Encoding=UTF-8
@@ -113,14 +121,6 @@ Mode=BibTeX
 ReadWrite=false
 
 [document-settings,item:twophaseflow.tex]
-Bookmarks=
-Encoding=UTF-8
-Highlighting=LaTeX
-Indentation Mode=
-Mode=LaTeX
-ReadWrite=true
-
-[document-settings,item:withe10.sty]
 Bookmarks=
 Encoding=UTF-8
 Highlighting=LaTeX
@@ -264,10 +264,10 @@ order=-1
 
 [item:main.tex]
 archive=true
-column=0
+column=26
 encoding=UTF-8
 highlight=LaTeX
-line=85
+line=20
 mode=LaTeX
 open=true
 order=0
@@ -284,10 +284,10 @@ order=1
 
 [item:models.tex]
 archive=true
-column=40
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=12
+line=0
 mode=LaTeX
 open=true
 order=2
@@ -295,19 +295,19 @@ order=2
 [item:nomenclature.tex]
 archive=true
 column=0
-encoding=
-highlight=
+encoding=UTF-8
+highlight=LaTeX
 line=0
-mode=
-open=false
-order=-1
+mode=LaTeX
+open=true
+order=6
 
 [item:prelude.tex]
 archive=true
-column=14
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=77
+line=23
 mode=LaTeX
 open=true
 order=3
@@ -342,45 +342,35 @@ mode=LaTeX
 open=true
 order=1
 
-[item:withe10.sty]
-archive=true
-column=3
-encoding=UTF-8
-highlight=LaTeX
-line=124
-mode=LaTeX
-open=false
-order=-1
-
 [item:withe12.sty]
 archive=true
-column=0
+column=48
 encoding=UTF-8
 highlight=LaTeX
-line=0
+line=317
 mode=LaTeX
 open=false
 order=-1
 
 [item:withesis.cls]
 archive=true
-column=32
+column=11
 encoding=UTF-8
 highlight=LaTeX
-line=1104
+line=439
 mode=LaTeX
 open=true
-order=4
+order=5
 
 [item:withesis.sty]
 archive=true
-column=26
+column=40
 encoding=UTF-8
 highlight=LaTeX
-line=648
+line=1116
 mode=LaTeX
-open=false
-order=-1
+open=true
+order=4
 
 [view-settings,view=0,item:../../../usr/share/texmf-texlive/tex/latex/algorithms/algorithm.sty]
 CursorColumn=0
@@ -411,20 +401,24 @@ CursorColumn=32
 CursorLine=70
 
 [view-settings,view=0,item:main.tex]
-CursorColumn=0
-CursorLine=85
+CursorColumn=26
+CursorLine=20
 
 [view-settings,view=0,item:mathematics.tex]
 CursorColumn=0
 CursorLine=73
 
 [view-settings,view=0,item:models.tex]
-CursorColumn=40
-CursorLine=12
+CursorColumn=0
+CursorLine=0
+
+[view-settings,view=0,item:nomenclature.tex]
+CursorColumn=0
+CursorLine=0
 
 [view-settings,view=0,item:prelude.tex]
-CursorColumn=14
-CursorLine=77
+CursorColumn=0
+CursorLine=23
 
 [view-settings,view=0,item:references.bib]
 CursorColumn=70
@@ -434,18 +428,14 @@ CursorLine=722
 CursorColumn=43
 CursorLine=7
 
-[view-settings,view=0,item:withe10.sty]
-CursorColumn=3
-CursorLine=124
-
 [view-settings,view=0,item:withe12.sty]
-CursorColumn=0
-CursorLine=0
+CursorColumn=48
+CursorLine=317
 
 [view-settings,view=0,item:withesis.cls]
-CursorColumn=32
-CursorLine=1104
+CursorColumn=11
+CursorLine=439
 
 [view-settings,view=0,item:withesis.sty]
-CursorColumn=26
-CursorLine=648
+CursorColumn=40
+CursorLine=1116

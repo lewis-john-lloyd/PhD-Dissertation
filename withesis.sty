@@ -134,10 +134,6 @@
 \descriptionmargin=3em
 
 %=============================================================================
-% OTHER ENVIRONMENTS
-%=============================================================================
-
-%=============================================================================
 % THEOREM 
 % \@begintheorem ... \@endtheorem are the commands executed at the
 % beginning and end of a (user-defined) theorem-like environment.
@@ -149,21 +145,32 @@
   \item[\hskip \labelsep{\bface #1\ #2\ (#3)}]}
 \def\@endtheorem{\endtrivlist}
 
-
-
-
-
 %=============================================================================
 % TITLEPAGE
 %  In the normal environments, the titlepage environment does nothing but 
 %  start and end a page, and inhibit page numbers.  It also resets the page
 %  number to zero.  In two-column style, it still makes a one-column page.
 %=============================================================================
-\def\titlepage{\@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn
-  \else \newpage \fi \thispagestyle{empty}
-% \c@page\z@ -- deleted: count title page in thesis
+\def\titlepage{
+  \@restonecolfalse
+  \if
+    @twocolumn
+    \@restonecoltrue
+    \onecolumn
+  \else
+    \newpage
+    \fi
+  \thispagestyle{empty}
 }
-\def\endtitlepage{\if@restonecol\twocolumn \else \newpage \fi}
+
+\def\endtitlepage{
+  \if
+    @restonecol
+    \twocolumn
+  \else
+    \newpage
+  \fi
+}
 
 %=============================================================================
 % ARRAY AND TABULAR
@@ -198,22 +205,22 @@
 %=============================================================================
 % CHAPTERS AND SECTIONS
 %=============================================================================
-% DEFINE COUNTERS:
-% \newcounter{NEWCTR}[OLDCTR] : Defines NEWCTR to be a counter, which is 
-%                               reset to zero when counter OLDCTR is stepped.  
-%                               Counter OLDCTR must already be defined.
+
 %=============================================================================
-\newcounter {part}
-\newcounter {chapter}
-\newcounter {section}[chapter]
-\newcounter {subsection}[section]
-\newcounter {subsubsection}[subsection]
-\newcounter {paragraph}[subsubsection]
-\newcounter {subparagraph}[paragraph]
-\newcounter {tocpage}
-\newcounter {lofpage}
-\newcounter {lotpage}
-\newcounter {listofheading}
+% DEFINE COUNTERS:
+%=============================================================================
+\newcounter{part}
+\newcounter{chapter}
+\newcounter{section}[chapter]
+\newcounter{subsection}[section]
+\newcounter{subsubsection}[subsection]
+\newcounter{paragraph}[subsubsection]
+\newcounter{subparagraph}[paragraph]
+\newcounter{tocpage}
+\newcounter{lofpage}
+\newcounter{lotpage}
+\newcounter{loapage}
+\newcounter{listofheading}
 
 %=============================================================================
 % For any counter CTR, \theCTR is a macro that defines the printed version
@@ -290,28 +297,55 @@
 %=============================================================================
 \def\@tocchapterskip{1.0em plus 1pt} 
 
-\def\l@part#1#2{\addpenalty{-\@highpenalty}
+\def\l@part#1#2{
+  \addpenalty{-\@highpenalty}
   \addvspace{2.25em plus 1pt}  % space above part line
   \begingroup
-  \@tempdima 3em         % width of box holding part number, used by 
+    \@tempdima 3em         % width of box holding part number, used by 
     \parindent \z@ \rightskip \@pnumwidth             %% \numberline
-    \parfillskip -\@pnumwidth   
-    {\large \bface       % set line in \large boldface
-    \leavevmode          % TeX command to enter horizontal mode.       
-    #1\hfil \hbox to\@pnumwidth{\hss #2}}\par
+    \parfillskip -\@pnumwidth
+    {	\large 
+	\bface       % set line in \large boldface
+	\leavevmode          % TeX command to enter horizontal mode.       
+	#1\hfil \hbox to\@pnumwidth{\hss #2}
+    }
+    \par
     \nobreak             % Never break after part entry
-  \endgroup}
+  \endgroup
+}
 
-\def\l@chapter#1#2{\pagebreak[3]
-  \vskip\@tocchapterskip % space above chapter line
-  \@dottedtocline{0}{0pt}{1.5em}{{\bface #1}}{#2}}
+\def\l@chapter#1#2{	% space above chapter line
+  \pagebreak[3]
+  \vskip
+  \@tocchapterskip
+  \@dottedtocline{0}{0pt}{1.5em}{{\bface #1}}{#2}
+}
 
-\def\l@section{\@dottedtocline{1}{1.5em}{2.3em}}
-\def\l@subsection{\@dottedtocline{2}{3.8em}{3.2em}}
-\def\l@subsubsection{\@dottedtocline{3}{7.0em}{4.1em}}
-\def\l@paragraph{\@dottedtocline{4}{10em}{5em}}
-\def\l@subparagraph{\@dottedtocline{5}{12em}{6em}}
-\def\l@figure{\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
+\def\l@section{
+  \@dottedtocline{1}{1.5em}{2.3em}
+}
+
+\def\l@subsection{
+  \@dottedtocline{2}{3.8em}{3.2em}
+}
+
+\def\l@subsubsection{
+  \@dottedtocline{3}{7.0em}{4.1em}
+}
+
+\def\l@paragraph{
+  \@dottedtocline{4}{10em}{5em}
+}
+
+\def\l@subparagraph{
+  \@dottedtocline{5}{12em}{6em}
+}
+
+\def\l@figure{
+  \vskip 1.0em plus 1pt 
+  \@dottedtocline{0}{0em}{2.5em}
+}
+
 \let\l@table\l@figure
 
 %=============================================================================
@@ -407,8 +441,8 @@
 %   \altbibtitle has been added to change the chapter title.
 %   This command does nothing more than change REFERENCES to BIBLIOGRAPHY 
 %============================================================================
-\def\@bibchaptitle{LIST OF REFERENCES}
-\def\altbibtitle{\def\@bibchaptitle{BIBLIOGRAPHY}}
+\def\@bibchaptitle{List Of References}
+\def\altbibtitle{\def\@bibchaptitle{Bibliography}}
 \def\thebibliography#1{
   %\separatorpage{\@bibchaptitle}
   \global\@bibpresenttrue
@@ -438,11 +472,15 @@
 %   of the alphabet.
 %=============================================================================
 \newif\if@restonecol
-\def\theindex{\@restonecoltrue\if@twocolumn\@restonecolfalse\fi
+\def\theindex{
+  \@restonecoltrue\if@twocolumn\@restonecolfalse\fi
   \columnseprule \z@
   \columnsep 35pt\twocolumn[\@makeschapterhead{Index}]
-  \markboth{INDEX}{INDEX}\thispagestyle{plain}\parindent\z@
-  \parskip\z@ plus .3pt\relax\let\item\@idxitem}
+  \markboth{INDEX}{INDEX}
+  \thispagestyle{plain}\parindent\z@
+  \parskip\z@ plus .3pt\relax\let\item\@idxitem
+}
+
 \def\@idxitem{\par\hangindent 40pt}
 \def\subitem{\par\hangindent 40pt \hspace*{20pt}}
 \def\subsubitem{\par\hangindent 40pt \hspace*{30pt}}

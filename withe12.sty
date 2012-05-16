@@ -6,7 +6,6 @@
 % Adapted to UW-Madison format by Eric Benedict  (Noted with <EB>)
 \typeout{Style Option `mythe12' v1.0 <24 May 00>}
 
-
 % Some useful definitions!
 %   (inferred by context by EB, so they may be wrong... cavet emptor)
 % \z@ is the number zero
@@ -49,50 +48,78 @@
 %                  \@FONTSIZE = \@xivpt.
 %
 %=============================================================================
-%\renewcommand{\@normalsize}{\@setsize\normalsize{14.5pt}\xiipt\@xiipt
-%\abovedisplayskip 12pt plus3pt minus7pt%
-%\belowdisplayskip \abovedisplayskip
-%\abovedisplayshortskip  \z@ plus3pt%
-%\belowdisplayshortskip  6.5pt plus3.5pt minus3pt}
-
-\renewcommand{\normalsize}{\fontsize{12pt}{14.5pt}\selectfont
-\abovedisplayskip 12pt plus3pt minus7pt%
-\belowdisplayskip \abovedisplayskip
-\abovedisplayshortskip  \z@ plus3pt%
-\belowdisplayshortskip  6.5pt plus3.5pt minus3pt}
-
-%\def\small{\@setsize\small{13.6pt}\xipt\@xipt
-%\abovedisplayskip 11pt plus3pt minus6pt%
-%\belowdisplayskip \abovedisplayskip
-%\abovedisplayshortskip  \z@ plus3pt%
-%\belowdisplayshortskip  6.5pt plus3.5pt minus3pt
-%\def\@listi{\parsep 4.5pt plus 2pt minus 1pt
-%            \itemsep \parsep
-%            \topsep 9pt plus 3pt minus 5pt}}
-
-\newcommand{\small}{\fontsize{11pt}{13.6pt}\selectfont
-\abovedisplayskip 11pt plus3pt minus6pt%
-\belowdisplayskip \abovedisplayskip
-\abovedisplayshortskip  \z@ plus3pt%
+\renewcommand{\normalsize}{
+\fontsize{12pt}{14.5pt}
+\selectfont
+\abovedisplayskip 12pt plus3pt minus7pt
+\belowdisplayskip
+\abovedisplayskip
+\abovedisplayshortskip \z@ plus3pt
 \belowdisplayshortskip  6.5pt plus3.5pt minus3pt
-\def\@listi{\parsep 4.5pt plus 2pt minus 1pt
-            \itemsep \parsep
-            \topsep 9pt plus 3pt minus 5pt}}
+}
 
-\newcommand{\footnotesize}{\fontsize{10pt}{12pt}\selectfont
-\abovedisplayskip 10pt plus2pt minus5pt%
-\belowdisplayskip \abovedisplayskip
-\abovedisplayshortskip  \z@ plus3pt%
+\newcommand{\small}{
+\fontsize{11pt}{13.6pt}
+\selectfont
+\abovedisplayskip 11pt plus3pt minus6pt
+\belowdisplayskip
+\abovedisplayskip
+\abovedisplayshortskip \z@ plus3pt
+\belowdisplayshortskip  6.5pt plus3.5pt minus3pt
+\def\@listi{
+  \parsep 4.5pt plus 2pt minus 1pt
+  \itemsep
+  \parsep
+  \topsep 9pt plus 3pt minus 5pt
+  }
+}
+
+\newcommand{\footnotesize}{
+\fontsize{10pt}{12pt}
+\selectfont
+\abovedisplayskip 10pt plus2pt minus5pt
+\belowdisplayskip
+\abovedisplayskip
+\abovedisplayshortskip \z@ plus3pt
 \belowdisplayshortskip  6pt plus3pt minus3pt
-\def\@listi{\topsep 6pt plus 2pt minus 2pt\parsep 3pt plus 2pt minus 1pt
-\itemsep \parsep}}
+\def\@listi{
+  \topsep 6pt plus 2pt minus 2pt
+  \parsep 3pt plus 2pt minus 1pt
+  \itemsep
+  \parsep
+  }
+}
 
-\newcommand{\scriptsize}{\fontsize{8pt}{9.5pt}\selectfont}
-\newcommand{\tiny}{\fontsize{6pt}{7pt}\selectfont}
-\newcommand{\large}{\fontsize{14pt}{18pt}\selectfont}
-\newcommand{\Large}{\fontsize{17pt}{22pt}\selectfont}
-\newcommand{\LARGE}{\fontsize{20pt}{25pt}\selectfont}
-\newcommand{\huge}{\fontsize{25pt}{30pt}\selectfont}
+\newcommand{\scriptsize}{
+  \fontsize{8pt}{9.5pt}
+  \selectfont
+}
+
+\newcommand{\tiny}{
+  \fontsize{6pt}{7pt}
+  \selectfont
+}
+
+\newcommand{\large}{
+  \fontsize{14pt}{18pt}
+  \selectfont
+}	
+
+\newcommand{\Large}{
+\fontsize{17pt}{22pt}
+\selectfont
+}
+
+\newcommand{\LARGE}{
+\fontsize{20pt}{25pt}
+\selectfont
+}
+
+\newcommand{\huge}{
+\fontsize{25pt}{30pt}
+\selectfont
+}
+
 \let\Huge=\huge
 
 \normalsize  % Choose the normalsize font.
@@ -106,25 +133,17 @@
 \setlength\voffset{0in}
 \setlength\hoffset{0in}
 
-
 %=============================================================================
 % SIDE MARGINS:
 %=============================================================================
 \if@twoside      % Values for two-sided printing:
   \setlength\oddsidemargin{18bp}    %   Left margin on odd-numbered pages.
-  \setlength\evensidemargin{0bp}    %   Left margin on even-numbered pages.
-  \setlength\marginparwidth{68bp}   %   Width of marginal notes.
 \else            % Values for one-sided printing:
-  \if@msmargin           %  Values for MS thesis margins
-    \setlength\oddsidemargin{18bp}  %   Note that \oddsidemargin = \evensidemargin
-    \setlength\evensidemargin{18bp} % 1.25" left margin
-  \else                  %  Values for non-MS thesis margins (PhD, etc)
-    \setlength\oddsidemargin{0bp}   %   Note that \oddsidemargin = \evensidemargin
-    \setlength\evensidemargin{0bp}  % 1" left margin
-  \fi
-  \setlength\marginparwidth{68bp}
+  \setlength\oddsidemargin{0bp}    %   Left margin on odd-numbered pages.
 \fi
-% units of these changed from pt to bp by EB
+
+\setlength\evensidemargin{0bp}    %   Left margin on even-numbered pages.
+\setlength\marginparwidth{68bp}   %   Width of marginal notes.
 
 %=============================================================================
 % VERTICAL SPACING:
@@ -145,19 +164,16 @@
              % Re-defined by the tableofcontents, etc.
 % units of these changed from pt to bp by mccauley
 % top margin changed to 1 in margin by EB
+
 %=============================================================================
 % DIMENSION OF TEXT:
 %=============================================================================
-\@SL{\textheight}{8.5in}     % Height of text (including footnotes and figures,
+\@SL{\textheight}{8.5in} % Height of text (including footnotes and figures,
                                       % excluding running head and foot).
                                       % changed from 8.75 to 8.5in EB
 \addtolength{\textheight}{-\maxdepth} % to account for depth of font
                          % see p. 63 of TeXbook -- mccauley
-\if@msmargin
-   \setlength{\textwidth}{6.25in}     % Width of text line, MS Thesis is narrower
-\else
-   \setlength{\textwidth}{6.5in}      % Width of text line. Changed from 6.0 by EB
-\fi
+\setlength{\textwidth}{6.5in}      % Width of text line. Changed from 6.0 by EB
                                     % For two-column mode:
 \setlength\columnsep{10pt}          %    Space between columns
 \setlength\columnseprule{0pt}       %    Width of rule between columns.
@@ -317,14 +333,12 @@
     \topsep 0pt                       % get extra space inserted above them.
     \parskip 0pt
     \singlespace\Large\bf         % Changed \bface to \bf EB
- %   \begin{center}                    % set as centered paragraph
  Chapter
       \ifnum \c@secnumdepth >\m@ne    % IF secnumdepth > -1 THEN
         \@chapnumber\ \
       \fi
       \\[1 em]
       {#1}
- %   \end{center}
     \par\nobreak                      % TeX penalty to prevent page break.
     \vskip 20pt}}                     % Space between title and text.
 
@@ -389,10 +403,8 @@
 % automatically if required by the style.  Currently it converts the chapter
 % name to uppercase.  - removed EB
 %=============================================================================
-%\def\@chaptername#1{\uppercase {#1}}
 \def\@chaptername#1{ {#1}}
 \def\@chapstyle{chapter}
-%\def\@chapnumber{\thechapter.}  % #.
 \def\@chapnumber{\thechapter}    % # removed the period, EB
 \let\@chapterhead\@makechapterhead
 \let\@schapterhead\@makeschapterhead
@@ -400,7 +412,6 @@
 \def\chapter{\clearpage        % Starts new page.
    \global\@topnum\z@          % Prevents figures from going at top of page.
    \@afterindenttrue           % \@afterindenttrue  => indent first line
-%  \@afterindentfalse          % \@afterindentfalse => don't indent first line
    \secdef\@chapter\@schapter} % is this chapter* or chapter ?
 
 \def\@chapter[#1]#2{
@@ -466,11 +477,6 @@
 % us in defining page styles.
 %=============================================================================
 \def\chaptermark#1{}
-% \def\sectionmark#1{}           % Preloaded definitions
-% \def\subsectionmark#1{}
-% \def\subsubsectionmark#1{}
-% \def\paragraphmark#1{}
-% \def\subparagraphmark#1{}
 
 %=============================================================================
 % The value of the counter secnumdepth gives the depth of the
