@@ -2,88 +2,8 @@
 % this file is part of the example UW-Madison Thesis document
 % It demonstrates one method for incorporating program listings
 % into a document.
-\chapter{Model stuff}
+\chapter{BLARPER}
 
 Test Test Test 
-
-\begin{landscape}
-\begin{IEEEeqnarray}{lCr}
-\begin{bmatrix}
-  \begin{matrix} 
-    x & x & x & 0 & 0 & x \\ 0 & x & 0 & x & x & x \\ x & x & x & 0 & 0 & x \\ 0 & x & 0 & x & 0 & x \\ 0 & x & 0 & x & x & x \\ x & x & x & 0 & 0 & x \\
-    0 & 0 & 0 & 0 & 0 & x \\ 0 & 0 & 0 & 0 & 0 & x \\ 0 & 0 & 0 & 0 & 0 & x \\
-    0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0
-  \end{matrix} 
-& \begin{matrix} 
-    0 & \frac{\partial F_{J  ,1}}{\partial M_{g}} & 0 	\\ \frac{\partial F_{J,2}}{\partial M_{l}} & 0 & 0 	\\ 0 & \frac{\partial F_{J,3}}{\partial M_{g}} 	 & 0 	\\ \frac{\partial F_{J,4}}{\partial M_{l}} & 0 & \frac{\partial F_{J,4}}{\partial M_{e}} 	\\ 0 & 0 & \frac{\partial F_{J,5}}{\partial M_{e}} 	\\ \frac{\partial F_{J,6}}{\partial M_{l}} & 0 & 0 \\
-    x & x 					  & 0 	\\ x 					   & x & x	\\ 0 & x 					 & x	\\ 
-    0 & \frac{\partial F_{J+1,1}}{\partial M_{g}} & 0 	\\ \frac{\partial F_{J+1,2}}{\partial M_{l}} & 0 & 0 	\\ 0 & \frac{\partial F_{J+1,3}}{\partial M_{g}} & 0 	\\ \frac{\partial F_{J+1,4}}{\partial M_{l}} & 0 & \frac{\partial F_{J+1,4}}{\partial M_{e}} 	\\ 0 & 0 & \frac{\partial F_{J+1,5}}{\partial M_{e}} 	\\ \frac{\partial F_{J+1,6}}{\partial M_{l}} & 0 & 0 
-  \end{matrix} 
-& \begin{matrix}
-    0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 \\
-    0 & 0 & 0 & 0 & 0 & x \\ 0 & 0 & 0 & 0 & 0 & x \\ 0 & 0 & 0 & 0 & 0 & x \\
-    x & x & x & 0 & 0 & x \\ 0 & x & 0 & x & x & x \\ x & x & x & 0 & 0 & x \\ 0 & x & 0 & x & 0 & x \\ 0 & x & 0 & x & x & x \\ x & x & x & 0 & 0 & x
-  \end{matrix}\\
-\end{bmatrix}
-  \begin{bmatrix}
-    \delta(\alpha_g P_{nc}) \\ \delta \alpha_{g} \\ \delta(\alpha_{g} H_v) \\ \delta((1-\alpha_{g}) H_l) \\ \delta \alpha_e \\ \delta P \\ \delta M_l \\ \delta M_g \\ \delta M_e \\ \delta (\alpha_g P_{nc}) \\ \delta \alpha_{g} \\ \delta(\alpha_{g} H_v) \\ \delta((1-\alpha_{g}) H_l) \\ \delta \alpha_e \\ \delta P
-  \end{bmatrix}
-  & = & 
- -\begin{bmatrix}
-    F_{J,1} \\ F_{J,2} \\ F_{J,3} \\ F_{J,4} \\ F_{J,5} \\ F_{J,6} \\ F_{j,1} \\ F_{j,2} \\ F_{j,3} \\ F_{J+1,1} \\ F_{J+1,2} \\ F_{J+1,3} \\ F_{J+1,4} \\ F_{J+1,5} \\ F_{J+1,6}
-  \end{bmatrix}
-\end{IEEEeqnarray}
-
-\begin{IEEEeqnarray}{lCr}
-\begin{bmatrix}
-%
-   \begin{matrix} x & x & x & 0 & 0 & x \\ 0 & x & 0 & x & x & x \\ x & x & x & 0 & 0 & x \\ 0 & x & 0 & x & 0 & x \\ 0 & x & 0 & x & x & x \\ x & x & x & 0 & 0 & x \end{matrix}
- & \begin{matrix} 0 & x & 0             \\ x & 0 & 0             \\ 0 & x & 0             \\ x & 0 & x             \\ 0 & 0 & x             \\ x & 0 & 0             \end{matrix}
- & \mat{0} \\
-%
-   \begin{matrix} 0 & 0 & 0 & 0 & 0 & x \\ 0 & 0 & 0 & 0 & 0 & x \\ 0 & 0 & 0 & 0 & 0 & x \end{matrix}
- & \mat{J}^{*}
- & \begin{matrix} 0 & 0 & 0 & 0 & 0 & x \\ 0 & 0 & 0 & 0 & 0 & x \\ 0 & 0 & 0 & 0 & 0 & x \end{matrix}\\
-%
-   \mat{0}
- & \begin{matrix} 0 & x & 0             \\ x & 0 & 0             \\ 0 & x & 0             \\ x & 0 & x             \\ 0 & 0 & x             \\ x & 0 & 0             \end{matrix}
- & \begin{matrix} x & x & x & 0 & 0 & x \\ 0 & x & 0 & x & x & x \\ x & x & x & 0 & 0 & x \\ 0 & x & 0 & x & 0 & x \\ 0 & x & 0 & x & x & x \\ x & x & x & 0 & 0 & x \end{matrix}\\
-\end{bmatrix}
-\begin{bmatrix}\delta(\alpha_g P_{nc}) \\ \delta \alpha_{g} \\ \delta(\alpha_{g} H_v) \\ \delta((1-\alpha_{g}) H_l) \\ \delta \alpha_e \\ \delta P \\ \delta M_l \\ \delta M_g \\ \delta M_e \\ \delta (\alpha_g P_{nc}) \\ \delta \alpha_{g} \\ \delta(\alpha_{g} H_v) \\ \delta((1-\alpha_{g}) H_l) \\ \delta \alpha_e \\ \delta P\end{bmatrix}
-& = &
--\begin{bmatrix} F_{J,1} \\ F_{J,2} \\ F_{J,3} \\ F_{J,4} \\ F_{J,5} \\ F_{J,6} \\ F_{j,1} \\ F_{j,2} \\ F_{j,3} \\ F_{J+1,1} \\ F_{J+1,2} \\ F_{J+1,3} \\ F_{J+1,4} \\ F_{J+1,5} \\ F_{J+1,6}\end{bmatrix}
-\end{IEEEeqnarray}
-
-\begin{IEEEeqnarray}{lCr}
-\begin{bmatrix}
-%
-\begin{matrix} x & x & x & 0 & 0 & x \\ 0 & x & 0 & x & x & x \\ x & x & x & 0 & 0 & x \\ 0 & x & 0 & x & 0 & x \\ 0 & x & 0 & x & x & x \\ x & x & x & 0 & 0 & x \end{matrix}
- & \begin{matrix} 0 & x & 0 \\ x & 0 & 0 \\ 0 & x & 0 \\ x & 0 & x \\ 0 & 0 & x \\ x & 0 & 0 \end{matrix}
- & \begin{matrix} 0 \end{matrix}\\
-%
-\begin{matrix} 0 & 0 & 0 & 0 & 0 & x \\ 0 & 0 & 0 & 0 & 0 & x \\ 0 & 0 & 0 & 0 & 0 & x \end{matrix}
- & \mat{J}^{*}
- & \begin{matrix} 0 & 0 & 0 & 0 & 0 & x \\ 0 & 0 & 0 & 0 & 0 & x \\ 0 & 0 & 0 & 0 & 0 & x \end{matrix}\\
-%
-\begin{matrix} 0 \end{matrix}
- & \begin{matrix} 0 & x & 0 \\ x & 0 & 0 \\ 0 & x & 0 \\ x & 0 & x \\ 0 & 0 & x \\ x & 0 & 0 \end{matrix}
- & \begin{matrix} x & x & x & 0 & 0 & x \\ 0 & x & 0 & x & x & x \\ x & x & x & 0 & 0 & x \\ 0 & x & 0 & x & 0 & x \\ 0 & x & 0 & x & x & x \\ x & x & x & 0 & 0 & x \end{matrix}\\
-\end{bmatrix} \begin{bmatrix}\delta(\alpha_g P_{nc}) \\ \delta \alpha_{g} \\ \delta(\alpha_{g} H_v) \\ \delta((1-\alpha_{g}) H_l) \\ \delta \alpha_e \\ \delta P \\ \delta M_l \\ \delta M_g \\ \delta M_e \\ \delta (\alpha_g P_{nc}) \\ \delta \alpha_{g} \\ \delta(\alpha_{g} H_v) \\ \delta((1-\alpha_{g}) H_l) \\ \delta \alpha_e \\ \delta P\end{bmatrix}& = & -\begin{bmatrix} F_{J,1} \\ F_{J,2} \\ F_{J,3} \\ F_{J,4} \\ F_{J,5} \\ F_{J,6} \\ F_{j,1} \\ F_{j,2} \\ F_{j,3} \\ F_{J+1,1} \\ F_{J+1,2} \\ F_{J+1,3} \\ F_{J+1,4} \\ F_{J+1,5} \\ F_{J+1,6}\end{bmatrix}
-\end{IEEEeqnarray}
-
-\begin{IEEEeqnarray}{lCr}
-\begin{bmatrix}
-\begin{matrix} x & x & x & 0 & 0 & x \\ 0 & x & 0 & x & x & x \\ x & x & x & 0 & 0 & x \\ 0 & x & 0 & x & 0 & x \\ 0 & x & 0 & x & x & x \\ x & x & x & 0 & 0 & x \end{matrix} & \begin{matrix} 0 & x & 0 \\ x & 0 & 0 \\ 0 & x & 0 \\ x & 0 & x \\ 0 & 0 & x \\ x & 0 & 0 \end{matrix} & \begin{matrix} 0 \end{matrix}\\
-\begin{matrix} 0 & 0 & 0 & 0 & 0 & -\frac{d M_l}{d P} \\ 0 & 0 & 0 & 0 & 0 & -\frac{d M_g}{d P} \\ 0 & 0 & 0 & 0 & 0 & -\frac{d M_e}{d P} \end{matrix} & \mat{I} & \begin{matrix} 0 & 0 & 0 & 0 & 0 & \frac{d M_l}{d P} \\ 0 & 0 & 0 & 0 & 0 & \frac{d M_g}{d P} \\ 0 & 0 & 0 & 0 & 0 & \frac{d M_e}{d P} \end{matrix}\\
-\begin{matrix} 0 \end{matrix} & \begin{matrix} 0 & x & 0 \\ x & 0 & 0 \\ 0 & x & 0 \\ x & 0 & x \\ 0 & 0 & x \\ x & 0 & 0 \end{matrix} & \begin{matrix} x & x & x & 0 & 0 & x \\ 0 & x & 0 & x & x & x \\ x & x & x & 0 & 0 & x \\ 0 & x & 0 & x & 0 & x \\ 0 & x & 0 & x & x & x \\ x & x & x & 0 & 0 & x \end{matrix}\\
-\end{bmatrix} \begin{bmatrix}\delta(\alpha_g P_{nc}) \\ \delta \alpha_{g} \\ \delta(\alpha_{g} H_v) \\ \delta((1-\alpha_{g}) H_l) \\ \delta \alpha_e \\ \delta P \\ \delta M_l \\ \delta M_g \\ \delta M_e \\ \delta (\alpha_g P_{nc}) \\ \delta \alpha_{g} \\ \delta(\alpha_{g} H_v) \\ \delta((1-\alpha_{g}) H_l) \\ \delta \alpha_e \\ \delta P\end{bmatrix}& = & -\begin{bmatrix} F_{J,1} \\ F_{J,2} \\ F_{J,3} \\ F_{J,4} \\ F_{J,5} \\ F_{J,6} \\ F_{j,1} \\ F_{j,2} \\ F_{j,3} \\ F_{J+1,1} \\ F_{J+1,2} \\ F_{J+1,3} \\ F_{J+1,4} \\ F_{J+1,5} \\ F_{J+1,6}\end{bmatrix}
-\end{IEEEeqnarray}
-
-\begin{IEEEeqnarray}{lCr}
-\begin{bmatrix}
-\begin{matrix} x & x & x & 0 & 0 & x-\frac{d M_g}{d P} \\ 0 & x & 0 & x & x & x-\frac{d M_l}{d P} \\ x & x & x & 0 & 0 & x-\frac{d M_g}{d P} \\ 0 & x & 0 & x & 0 & x-\frac{d M_l}{d P}-\frac{d M_e}{d P} \\ 0 & x & 0 & x & x & x-\frac{d M_e}{d P} \\ x & x & x & 0 & 0 & x-\frac{d M_l}{d P} \\ 0 & 0 & 0 & 0 & 0 & \frac{d M_g}{d P} \\ 0 & 0 & 0 & 0 & 0 & \frac{d M_l}{d P} \\ 0 & 0 & 0 & 0 & 0 & \frac{d M_g}{d P} \\ 0 & 0 & 0 & 0 & 0 & \frac{d M_g}{d P} + \frac{d M_g}{d P} \\ 0 & 0 & 0 & 0 & 0 & \frac{d M_e}{d P} \\ 0 & 0 & 0 & 0 & 0 & \frac{d M_l}{d P}\end{matrix}  & \begin{matrix} 0 & 0 & 0 & 0 & 0 & \frac{d M_g}{d P} \\ 0 & 0 & 0 & 0 & 0 & \frac{d M_l}{d P} \\ 0 & 0 & 0 & 0 & 0 & \frac{d M_g}{d P} \\ 0 & 0 & 0 & 0 & 0 & \frac{d M_g}{d P} + \frac{d M_g}{d P} \\ 0 & 0 & 0 & 0 & 0 & \frac{d M_e}{d P} \\ 0 & 0 & 0 & 0 & 0 & \frac{d M_l}{d P} \\ x & x & x & 0 & 0 & x-\frac{d M_g}{d P} \\ 0 & x & 0 & x & x & x-\frac{d M_l}{d P} \\ x & x & x & 0 & 0 & x-\frac{d M_g}{d P} \\ 0 & x & 0 & x & 0 & x-\frac{d M_l}{d P}-\frac{d M_e}{d P} \\ 0 & x & 0 & x & x & x-\frac{d M_e}{d P} \\ x & x & x & 0 & 0 & x-\frac{d M_l}{d P}\end{matrix}\\
-\end{bmatrix}\begin{bmatrix}\delta(\alpha_g P_{nc}) \\ \delta \alpha_{g} \\ \delta(\alpha_{g} H_v) \\ \delta((1-\alpha_{g}) H_l) \\ \delta \alpha_e \\ \delta P \\ \delta (\alpha_g P_{nc}) \\ \delta \alpha_{g} \\ \delta(\alpha_{g} H_v) \\ \delta((1-\alpha_{g}) H_l) \\ \delta \alpha_e \\ \delta P\end{bmatrix}
-\end{IEEEeqnarray}
-\end{landscape}
 \pagebreak
 

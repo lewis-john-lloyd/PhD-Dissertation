@@ -62,11 +62,6 @@
 \DeclareOldFontCommand{\sl}{\normalfont\slshape}{\@nomath\sl}
 \DeclareOldFontCommand{\sc}{\normalfont\scshape}{\@nomath\sc}
 
-
-
-
-
-
 %=============================================================================
 % LISTS
 %=============================================================================
@@ -79,17 +74,19 @@
 %  ... \labelenumiv.  The expansion of \p@enumN\theenumN defines the
 %  output of a \ref command.
 %=============================================================================
-\def\labelenumi{\arabic{enumi}.}
-\def\theenumi{\arabic{enumi}}
-\def\labelenumii{(\alph{enumii})}
-\def\theenumii{\alph{enumii}}
-\def\p@enumii{\theenumi}
-\def\labelenumiii{\roman{enumiii}.}
-\def\theenumiii{\roman{enumiii}}
-\def\p@enumiii{\theenumi(\theenumii)}
-\def\labelenumiv{\Alph{enumiv}.}
-\def\theenumiv{\Alph{enumiv}}
-\def\p@enumiv{\p@enumiii\theenumiii}
+\def\labelenumi{   \arabic{enumi  }. }
+\def\labelenumii{  (\alph{ enumii }) }
+\def\labelenumiii{ \roman{ enumiii}. }
+\def\labelenumiv{  \Alph{  enumiv }. }
+
+\def\theenumi{   \arabic{ enumi}  }
+\def\theenumii{  \alph{   enumii} }
+\def\theenumiii{ \roman{  enumiii}}
+\def\theenumiv{  \Alph{   enumiv} }
+
+\def\p@enumii{  \theenumi             }
+\def\p@enumiii{ \theenumi(\theenumii) }
+\def\p@enumiv{  \p@enumiii\theenumiii }
 
 %=============================================================================
 % ITEMIZE
@@ -97,10 +94,10 @@
 % \labelitemiii, and \labelitemiv, which define the labels of the various
 % itemization levels.
 %=============================================================================
-\def\labelitemi{$\bullet$}
-\def\labelitemii{\bface --}
-\def\labelitemiii{$\ast$}
-\def\labelitemiv{$\cdot$}
+\def\labelitemi{   $\bullet$ }
+\def\labelitemii{  \bface -- }
+\def\labelitemiii{ $\ast$    }
+\def\labelitemiv{  $\cdot$   }
 
 %=============================================================================
 % VERSE
@@ -154,10 +151,6 @@
 \def\@opargbegintheorem#1#2#3{\trivlist
   \item[\hskip \labelsep{\bface #1\ #2\ (#3)}]}
 \def\@endtheorem{\endtrivlist}
-
-
-
-
 
 %=============================================================================
 % TITLEPAGE
@@ -219,8 +212,8 @@
 \newcounter {tocpage}
 \newcounter {lofpage}
 \newcounter {lotpage}
-\newcounter{loapage}
 \newcounter {listofheading}
+\newcounter {loapage}
 
 %=============================================================================
 % For any counter CTR, \theCTR is a macro that defines the printed version
@@ -309,18 +302,16 @@
     \nobreak             % Never break after part entry
   \endgroup}
 
-\def\l@chapter#1#2{\pagebreak[3]
-  \vskip\@tocchapterskip % space above chapter line
-  \@dottedtocline{0}{0pt}{1.5em}{{\bface #1}}{#2}}
-
+\def\l@chapter#1#2{\pagebreak[3]\vskip\@tocchapterskip\@dottedtocline{0}{0pt}{1.5em}{{\bface #1}}{#2}}
 \def\l@section{\@dottedtocline{1}{1.5em}{2.3em}}
 \def\l@subsection{\@dottedtocline{2}{3.8em}{3.2em}}
 \def\l@subsubsection{\@dottedtocline{3}{7.0em}{4.1em}}
 \def\l@paragraph{\@dottedtocline{4}{10em}{5em}}
 \def\l@subparagraph{\@dottedtocline{5}{12em}{6em}}
+
 \def\l@figure{\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
-\let\l@table\l@figure
-\let\l@algo\l@figure
+\def\l@table{ \vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
+\def\l@algo{  \vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
 
 %=============================================================================
 % TABLE OF CONTENTS; LIST OF FIGURES; LIST OF TABLES
@@ -340,41 +331,10 @@
 % the chapter.  Isn't elegance wonderful?
 %
 %=============================================================================
-\def\tableofcontents{
-  \@tableof
-  {Table Of Contents}
-  {}
-  {tocpage}
-  {toc}
-  {}
-}
-
-\def\listoffigures{
-  \@tableof
-  {List Of Figures}
-  {Figure}
-  {lofpage}
-  {lof}
-  {\protect\addcontentsline{toc}{chapter}{List Of Figures}}
-}
-
-\def\listoftables{
-  \@tableof
-  {List Of Tables}
-  {Table}
-  {lotpage}
-  {lot}
-  {\protect\addcontentsline{toc}{chapter}{List Of Tables}}
-}
-
-\def\listofalgorithm{
-  \@tableof
-  {List Of Algorithms}
-  {Algorithm}
-  {loapage}
-  {loa}
-  {\protect\addcontentsline{toc}{chapter}{List Of Algorithms}}
-}
+\def\tableofcontents{ \@tableof{Table Of Contents }{         }{tocpage}{toc}{                                                          }}
+\def\listoffigures{   \@tableof{List Of Figures   }{Figure   }{lofpage}{lof}{\protect\addcontentsline{toc}{chapter}{List Of Figures   }}}
+\def\listoftables{    \@tableof{List Of Tables    }{Table    }{lotpage}{lot}{\protect\addcontentsline{toc}{chapter}{List Of Tables    }}}
+\def\listofalgorithm{\@tableof{List Of Algorithms}{Algorithm}{loapage}{loa}{\protect\addcontentsline{toc}{chapter}{List Of Algorithms}}}
 
 \def\@tableof#1#2#3#4#5{
 { % limit scope of following declarations!!
@@ -395,12 +355,6 @@
       \ifnum \value{#3}=0
 	\setcounter{#3}{1}
       \else
-	\ifnum \value{listofheading}=1
-	  \stepcounter{listofheading}
-	\fi
-	\ifnum \value{listofheading}=2
-	  \hbox to \hsize{Appendix\hfil} \vspace{4pt}
-	\fi
 	\hbox to \hsize{#2 \hfil Page}
       \fi%
     }%
@@ -410,12 +364,6 @@
       \ifnum \value{#3}=0
 	\setcounter{#3}{1}
       \else
-	\ifnum \value{listofheading}=1
-	  \stepcounter{listofheading}
-	\fi
-	\ifnum \value{listofheading}=2
-	  \hbox to \hsize{Appendix\hfil} \vspace{4pt}
-	\fi
 	\hbox to \hsize{#2 \hfil Page}
       \fi%
     }%
@@ -451,7 +399,6 @@
 \def\@bibchaptitle{List Of References}
 \def\altbibtitle{\def\@bibchaptitle{BIBLIOGRAPHY}}
 \def\thebibliography#1{
-  %\separatorpage{\@bibchaptitle}
   \global\@bibpresenttrue
   \chapter*{\@bibchaptitle\markboth{\@bibchaptitle}{\@bibchaptitle}}
   \addcontentsline{toc}{chapter}{\@bibchaptitle}
@@ -567,68 +514,33 @@
   \singlespace\centering
   #1\ \ #2}
 
-%=============================================================================
-% ORIGINAL \@makecaption - Centering OR Flushleft if long.
-% Thesis office doesn't really like this version.
-%=============================================================================
-% \long\def\@makecaption#1#2{
-%   \vskip 10pt
-%   \setbox\@tempboxa\hbox{#1\ \ #2}
-%   \ifdim \wd\@tempboxa >\hsize           % IF   longer than one line:
-%     {\singlespace \unhbox\@tempboxa\par} % THEN set as ordinary paragraph.
-%   \else                                  % ELSE center.
-%        \hbox to\hsize{\hfil\box\@tempboxa\hfil}
-%   \fi}
-%=============================================================================
 
 %=============================================================================
-% NEW \@makecaption - Thesis Format may not like the new format
-%=============================================================================
-% \newlength\@capnumlen
-% \newlength\@captionlen
-% \long\def\@makecaption#1#2{
-%   \vskip 10pt
-%   \setbox\@tempboxa\hbox{#1\ \ #2}
-%   \ifdim \wd\@tempboxa >\hsize           % IF   longer than one line:
-%   { \parindent 0pt
-%     \singlespace\normalsize
-%     \setlength{\@captionlen}{\hsize}
-%     \settowidth{\@capnumlen}{#1\ \ }
-%     \addtolength{\@captionlen}{-\@capnumlen}
-%     #1\ \ \parbox[t]{\@captionlen}{\noindent#2}
-%     \par\nobreak}                        % TeX penalty to prevent page break.
-%   \else                                  % ELSE center.
-%        \hbox to\hsize{\hfil\box\@tempboxa\hfil}
-%   \fi}
-%=============================================================================
-
-%=============================================================================
-% To define a float of type TYPE (e.g., TYPE = figure), the document style
-% must define the following.
+% To define a float of type TYPE (e.g., TYPE = figure), the document style must define the following.
+%  \fps@TYPE{placement}
+%	The default placement specifier for floats of type TYPE.
+%	E.g., \fps@table{tbp}
 %
-%  \fps@TYPE   : The default placement specifier for floats of type TYPE.
+%  \ftype@TYPE
+%	The type number for floats of type TYPE.
+%	Each TYPE has associated a unique positive TYPE NUMBER, which is a power of two.
+%	E.g., \ftype@figure{1} or \ftype@table{2}
 %
-%  \ftype@TYPE : The type number for floats of type TYPE.  Each TYPE has
-%                associated a unique positive TYPE NUMBER, which is a power
-%                of two.  E.g., figures might have type number 1, tables type
-%                number 2, programs type number 4, etc.
+%  \ext@TYPE
+%	The file extension indicating the file on which the contents list for float type TYPE is stored.
+%	E.g., \ext@figure = 'lof'.
 %
-%  \ext@TYPE   : The file extension indicating the file on which the
-%                contents list for float type TYPE is stored.  For example,
-%                \ext@figure = 'lof'.
+%  \fnum@TYPE
+%	A macro to generate the figure number for a caption.
+%	E.g., \fnum@TYPE == Figure \thefigure.
 %
-%  \fnum@TYPE  : A macro to generate the figure number for a caption.
-%                For example, \fnum@TYPE == Figure \thefigure.
+%  The actual float-making environment commands--e.g., the commands \figure and \endfigure--are defined in terms of the macros \@float and \end@float, which are described below.
 %
-%  The actual float-making environment commands--e.g., the commands
-%  \figure and \endfigure--are defined in terms of the macros \@float
-%  and \end@float, which are described below.
-%
-%  \@float{TYPE}[PLACEMENT] : Macro to begin a float environment for a
-%     single-column float of type TYPE with PLACEMENT as the placement
-%     specifier.  The default value of PLACEMENT is defined by \fps@TYPE.
-%     The environment is ended by \end@float.
-%     E.g., \figure == \@float{figure}, \endfigure == \end@float.
+%  \@float{TYPE}[PLACEMENT]
+%	Macro to begin a float environment for a single-column float of type TYPE with PLACEMENT as the placement specifier.
+%	The default value of PLACEMENT is defined by \fps@TYPE.
+%	The environment is ended by \end@float.
+%	E.g., \figure == \@float{figure}, \endfigure == \end@float.
 %=============================================================================
 
 %=============================================================================
@@ -660,12 +572,12 @@
 \@namedef{endtable*}{\end@dblfloat}
 
 %=============================================================================
-% ALGORITHM TABLE
+% ALGORITHM
 %=============================================================================
 \newcounter{algo}[chapter]
 \def\thealgo{\thechapter.\@arabic\c@algo}
 \def\fps@algo{tbp}
-\def\ftype@algo{3}
+\def\ftype@algo{4}
 \def\ext@algo{loa}
 \def\fnum@algo{Algorithm \thealgo}
 \def\algo{\@float{algo}}
@@ -693,10 +605,9 @@
 \newcommand{\dissertation}{\gdef\@doctype{A dissertation}}
 \newcommand{\department}[1]{\gdef\@department{(#1)}}
 
-   \gdef\@degree{Doctor of Philosophy}    %Default is PhD
-   \gdef\@doctype{A dissertation}         %Default is dissertation
-
-\gdef\@department{(Engineering Physics)} % Default is Electical Engineering
+\gdef\@degree{Doctor of Philosophy}		% Default is Ph.D.
+\gdef\@doctype{A dissertation}			% Default is dissertation.
+\gdef\@department{(Engineering Physics)}	% Default is Nuclear Engineering.
 
 \newcommand{\maketitle}{%
   \begin{titlepage}
@@ -753,26 +664,22 @@
 \def\advisortitle#1{\gdef\@advisortitle{#1}}
 \def\advisorname#1{\gdef\@advisorname{#1}}
 \gdef\@advisortitle{Professor}
-\gdef\@advisorname{Cheer E.\ Place}
+\gdef\@advisorname{Michael\ Corradini}
 
 \def\umiabstract{
-             \thispagestyle{empty}
-                  \addtocounter{page}{-2}
-                \begin{center}
-                  {\bf\expandafter\uppercase\expandafter{\@title}}\\
-                  \vspace{12pt}
-                  \@author \\
-                  \vspace{12pt}
-                  Under the supervision of \@advisortitle\ \@advisorname\\
-                  At the University of Wisconsin-Madison
-                \end{center}
-               
+  \thispagestyle{empty}
+  \addtocounter{page}{-2}
+  \begin{center}
+    {\bf\expandafter\uppercase\expandafter{\@title}}\\
+    \vspace{12pt}
+    \@author \\
+    \vspace{12pt}
+    Under the supervision of \@advisortitle\ \@advisorname\\
+    At the University of Wisconsin-Madison
+  \end{center}             
 }
 
 \def\endumiabstract{\vfill \hfill\@advisorname\par \thispagestyle{empty}\newpage}
-
-
-
 %=============================================================================
 % PAGE STYLES
 %=============================================================================
@@ -1065,40 +972,52 @@
 %       to look different from chapter titles and headings.
 %    -- produce special toc, lot and lof entries
 %=============================================================================
-\def\appendix{
-  \@appendix{Appendix}
-  \def\@chapstyle{appendix}
-  \def\@chapnumber{APPENDIX}
-  \let\@chapterhead\@appendixchapterhead
-  \let\@schapterhead\@appendixchapterhead}
-\def\endappendix{
+\def\l@appendices#1#2{                                     \@dottedtocline{0}{1.5em}{6.5em}{        #1 }{#2}}
+\def\l@appendix#1#2{  \pagebreak[3] \vskip\@tocchapterskip \@dottedtocline{0}{0pt  }{7.3em}{{\bface #1}}{#2}}
+
+%\def\@appendix#1{\par
+%  \addtocontents{toc}{{\protect\setcounter{tocdepth}{0}}}
+%  \setcounter{chapter}{0}
+%  \setcounter{section}{0}
+%  \def \@chapapp{APPENDIX}
+%  \def \thechapter{\Alph{chapter}}
+%  \@lotheading
+%  \@lofheading
+%}
+
+%\def\appendix{
+%  \@appendix{Appendix}
+%  \def \@chapstyle{appendix}
+%  \def \@chapnumber{APPENDIX}
+%  \let \@chapterhead  \@appendixchapterhead
+%  \let \@schapterhead \@appendixchapterhead}
+
+%\def\endappendix{
+%  \def\@chaptername##1{\uppercase {##1}}
+%  \def\@chapstyle{chapter}
+%  \def\@chapnumber{\thechapter.}
+%  \let\@chapterhead\@makechapterhead
+%  \let\@schapterhead\@makeschapterhead}
+
+\def\appendices{
+  \addtocontents{toc}{\protect\addvspace{\@tocchapterskip} \hbox to \hsize{\bface APPENDICES \hfil} \protect\addvspace{\@tocchapterskip}}
+  \addtocontents{toc}{{\protect\setcounter{tocdepth}{0}}}  
+  \setcounter{chapter}{2}
+  \setcounter{section}{0}
+  \def \thechapter{\Alph{chapter}}
+  \def \@chaptername{}
+  \def \@chapstyle{appendices}
+  \def \@chapnumber{Appendix\ \thechapter:}
+  \let \@chapterhead  \@appendiceschapterhead
+  \let \@schapterhead \@appendiceschapterhead
+  \if @bibpresent \relax \fi}
+%
+\def\endappendices{
   \def\@chaptername##1{\uppercase {##1}}
   \def\@chapstyle{chapter}
   \def\@chapnumber{\thechapter.}
   \let\@chapterhead\@makechapterhead
   \let\@schapterhead\@makeschapterhead}
-
-\def\l@appendix#1#2{\pagebreak[3]
-  \vskip\@tocchapterskip % space above chapter line
-  \@dottedtocline{0}{0pt}{7.3em}{{\bface #1}}{#2}}
-
-\def\appendices{
-  \addtocontents{toc}{
-    \protect\addvspace{\@tocchapterskip}
-    \hbox to \hsize{\bface APPENDICES \hfil}
-    \protect\addvspace{\@tocchapterskip}}
-  \@appendix{Appendices}
-  \def\@chaptername##1{##1}
-  \def\@chapstyle{appendices}
-  \def\@chapnumber{Appendix\ \thechapter:}
-  \let\@chapterhead\@appendiceschapterhead
-  \let\@schapterhead\@appendiceschapterhead
-  \if@bibpresent\relax\fi %\else\separatorpage{DISCARD THIS PAGE}\fi % This
-}
-
-\let\endappendices\endappendix
-
-\def\l@appendices#1#2{\@dottedtocline{0}{1.5em}{6.5em}{#1}{#2}}
 
 \def\noappendixtables{\def\@lotheading{}}
 \def\@lotheading{
@@ -1107,9 +1026,8 @@
     \protect\addvspace{\@tocchapterskip}
     \hbox to \hsize{Appendix \hfil}
     \hbox to \hsize{Table \hfil}}}
-\def\noappendixfigures{
-  \def\@lofheading{}
-}
+
+\def\noappendixfigures{\def\@lofheading{}}
 \def\@lofheading{
   \addtocontents{lof}{
     \protect\stepcounter{listofheading}
@@ -1117,27 +1035,13 @@
     \hbox to \hsize{Appendix \hfil}
     \hbox to \hsize{Figure \hfil}}}
 
-\def\noappendixalgorithms{
-  \def\@loaheading{}
-}
+\def\noappendixalgorithms{\def\@loaheading{}}
 \def\@loaheading{
   \addtocontents{loa}{
     \protect\stepcounter{listofheading}
     \protect\addvspace{\@tocchapterskip}
     \hbox to \hsize{Appendix \hfil}
-    \hbox to \hsize{Algorithm \hfil}
-  }
-}
-
-\def\@appendix#1{\par
-  \addtocontents{toc}{{\protect\setcounter{tocdepth}{0}}}
-  \setcounter{chapter}{0}
-  \setcounter{section}{0}
-  \def\@chapapp{APPENDIX}
-  \def\thechapter{\Alph{chapter}}
-  \@lotheading
-  \@lofheading
-}
+    \hbox to \hsize{Algorithm \hfil}}}
 
 %=============================================================================
 % COPYRIGHTPAGE

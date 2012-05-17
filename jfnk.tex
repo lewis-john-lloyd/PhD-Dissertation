@@ -27,7 +27,7 @@ In the Jacobian-Free Newton Krylov framework, the following procedure is taken:
 %---------------------------------------------------------------------------------------------------
 %            Nonlinear Function
 %---------------------------------------------------------------------------------------------------
-\begin{algorithm}
+\begin{algo}
 \setlength{\baselineskip}{0.625\baselineskip}
 \label{TransientLoop}
 \caption{Transient Loop}
@@ -44,9 +44,9 @@ In the Jacobian-Free Newton Krylov framework, the following procedure is taken:
     \Calculate Courant Numbers 
 \EndLoop{\;$n = n+1$}
 \end{algorithmic}
-\end{algorithm}
+\end{algo}
 
-\begin{algorithm}
+\begin{algo}
 \setlength{\baselineskip}{0.625\baselineskip}
 \label{ModifiedNewtonsAlgorithm}
 \caption{Modified Newton's Method - Frozen Jacobian}
@@ -76,7 +76,7 @@ In the Jacobian-Free Newton Krylov framework, the following procedure is taken:
   \EndIf
 \EndLoop \quad $k = k+1$
 \end{algorithmic}
-\end{algorithm}
+\end{algo}
 
 
 \subgroup{Non-linear Function}
@@ -131,7 +131,7 @@ Using \eqref{TaylorSeriesExpansion}, equation \eqref{NonlinearFunction} can be r
 
 Solving for \Vec{\delta x} in \eqref{NewtonsMethod} constitutes one Newton step.
 
-\begin{algorithm}
+\begin{algo}
 \setlength{\baselineskip}{0.625\baselineskip}
 \caption{Newton's Method}
 \begin{algorithmic}[1]
@@ -148,7 +148,7 @@ Solving for \Vec{\delta x} in \eqref{NewtonsMethod} constitutes one Newton step.
     \State $k := k + 1$ \Comment{Increment index.}
 \EndWhile
 \end{algorithmic}
-\end{algorithm}
+\end{algo}
 %---------------------------------------------------------------------------------------------------
 %            Krylov Solver
 %---------------------------------------------------------------------------------------------------
