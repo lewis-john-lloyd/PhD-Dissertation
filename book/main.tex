@@ -1,25 +1,31 @@
 \documentclass[10pt,letterpaper]{amsbook}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
-\numberwithin{equation}{chapter}
-\numberwithin{figure}{chapter}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{float}
+\numberwithin{equation}{chapter}
+\numberwithin{figure}{chapter}
+\numberwithin{section}{chapter}
 %\usepackage{titlepic}
 %\floatstyle{boxed} 
 %\restylefloat{figure}
 %\titlepic{\includegraphics[width=0.5\textwidth]{images/title_page.jpg}}
-\DeclareRobustCommand{\degreeC}[1]{$#1\,^{\circ}\mathrm{C}$}
+\include{customcommands}
 \title{Fundamental of Multiphase Flow}
 \author{Prof. Michael L. Corradini\\
 	Department of Engineering Physics\\
 	University of Wisconsin - Madison}
+
 \begin{document}
 \maketitle
 \tableofcontents
 \listoffigures
 \include{chapters/chapter01}
 \include{chapters/chapter02}
+
+\bibliographystyle{ieeetr}
+\bibliography{ref}
+
 \end{document}

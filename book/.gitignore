@@ -1,2 +1,8 @@
-build
 *.bak
+*.bbl
+*.to*
+*.lo*
+*.aux
+*.gz
+*.pdf
+*.blg
