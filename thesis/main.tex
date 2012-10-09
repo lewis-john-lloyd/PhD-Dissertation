@@ -100,7 +100,6 @@
 %					This is only visible in the *.ps file (NOT the *.dvi file)!
 %\draftmargins
 
-
 %	- \draftscreen:
 %		Purpose:	The word ``DRAFT'' can be diagonally printed across the page using the \draftscreen command.
 %					This command uses dvip's beginning-of-page hook.
@@ -132,16 +131,19 @@
 %=======================================================================
 % Bibliography Style
 %=======================================================================
-\bibliographystyle{plain}
+\bibliographystyle{ieeetrans}
+\bibliography{../references/references}
 
 %=======================================================================
 % Chapters
 %=======================================================================
-\include{prelude}
-\include{intro}         % Chapter: Introduction
-\include{twophaseflow}  % Chapter: Background
-\include{mathematics}   % Chapter: Mathematical formulation
-\include{jfnk}          % Chapter: Jacobian Free Newton Krylov Overview
+\include{prelude}       % Frontmatter
+\include{context}       % Chapter: Context of the problem.
+\include{literature}    % Chapter: Pertinent research.
+\include{justification} % Chapter: Proof of worthiness. 
+\include{proposal}      % Chapter: Proposal of research.
+%\include{mathematics}  % Chapter: Mathematical formulation
+%\include{jfnk}         % Chapter: Jacobian Free Newton Krylov Overview
 
 %=======================================================================
 % Bibliography
@@ -154,9 +156,8 @@
 %\appendix
 \begin{appendices}
 
-\include{models}				% Appendix: Verification Work
-\include{models2}
-\include{models3}
+\include{semi_implicit}		 % Appendix: Verification Work
+\include{nonlinear_solver}   %      
 
 \end{appendices}
 
