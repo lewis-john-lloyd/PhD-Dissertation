@@ -70,8 +70,10 @@
 % pdflscape: This package allows for pages to be rotated within the document.
 \usepackage{pdflscape}
 
+\usepackage{trace}
+\traceon
 % hyperref: The package hyperref allows for hyperlinks within the document.
-\usepackage[bookmarks,pdfauthor={Lewis John Lloyd},colorlinks,citecolor=black,filecolor=black,linkcolor=black,urlcolor=black]{hyperref}
+%\usepackage[bookmarks,pdfauthor={Lewis John Lloyd},colorlinks,citecolor=black,filecolor=black,linkcolor=black,urlcolor=black]{hyperref}
 
 %========================================================================
 %  Draft Control Commands
@@ -105,7 +107,7 @@
 %					This command uses dvip's beginning-of-page hook.
 %					This is only visible in the *.ps file (NOT the *.dvi file)!
 %\draftscreen
-
+\setcounter{errorcontextlines}{999}
 %=======================================================================
 % Include custom math commands
 %=======================================================================
@@ -129,12 +131,6 @@
 \begin{document}
 
 %=======================================================================
-% Bibliography Style
-%=======================================================================
-\bibliographystyle{ieeetrans}
-\bibliography{../references/references}
-
-%=======================================================================
 % Chapters
 %=======================================================================
 \include{prelude}       % Frontmatter
@@ -148,7 +144,8 @@
 %=======================================================================
 % Bibliography
 %=======================================================================
-%\bibliography{../references}    
+\bibliographystyle{ieeetrans}
+\bibliography{../references/references}
 
 %=======================================================================
 % Appendices
@@ -156,6 +153,7 @@
 %\appendix
 \begin{appendices}
 
+\include{models}
 \include{semi_implicit}		 % Appendix: Verification Work
 \include{nonlinear_solver}   %      
 
