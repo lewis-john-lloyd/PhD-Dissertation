@@ -48,8 +48,6 @@
 \ProcessOptions\relax
 \RequirePackage{withe12}
 
-
-
 %=============================================================================
 %  Set up the font definition a la Standard LaTeX
 %
@@ -204,6 +202,7 @@
 %=============================================================================
 \newcounter {part}
 \newcounter {chapter}
+\newcounter {appendixc}
 \newcounter {section}[chapter]
 \newcounter {subsection}[section]
 \newcounter {subsubsection}[subsection]
@@ -1001,13 +1000,13 @@
 
 \def\appendices{
   \addtocontents{toc}{\protect\addvspace{\@tocchapterskip} \hbox to \hsize{\bface APPENDICES \hfil} \protect\addvspace{\@tocchapterskip}}
-  \addtocontents{toc}{{\protect\setcounter{tocdepth}{0}}}  
-  \setcounter{chapter}{2}
-  \setcounter{section}{0}
-  \def \thechapter{\Alph{chapter}}
+  \addtocontents{toc}{{\protect\setcounter{tocdepth}{0}}}
+  \setcounter{appendixc}{1}
+%  \setcounter{section}{0}
+  \def \thechapter{\Alph{appendixc}}
   \def \@chaptername{}
-  \def \@chapstyle{appendices}
-  \def \@chapnumber{Appendix\ \thechapter:}
+  \def \@chapstyle{appendixc}
+  \def \@chapnumber{Appendix\hfill \thechapter:}
   \let \@chapterhead  \@appendiceschapterhead
   \let \@schapterhead \@appendiceschapterhead
   \if @bibpresent \relax \fi}
