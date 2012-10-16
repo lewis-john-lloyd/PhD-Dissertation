@@ -971,8 +971,9 @@
 %       to look different from chapter titles and headings.
 %    -- produce special toc, lot and lof entries
 %=============================================================================
-\def\l@appendices#1#2{                                     \@dottedtocline{0}{1.5em}{6.5em}{        #1 }{#2}}
-\def\l@appendix#1#2{  \pagebreak[3] \vskip\@tocchapterskip \@dottedtocline{0}{0pt  }{7.3em}{{\bface #1}}{#2}}
+\def\l@appendices#1#2{\@dottedtocline{0}{1.5em}{6.5em}{#1}{#2}}
+\def\l@appendixc#1#2{\@dottedtocline{0}{1.5em}{6.5em}{#1}{#2}}
+\def\l@appendix#1#2{\pagebreak[3] \vskip\@tocchapterskip \@dottedtocline{0}{0pt  }{7.3em}{{\bface #1}}{#2}}
 
 %\def\@appendix#1{\par
 %  \addtocontents{toc}{{\protect\setcounter{tocdepth}{0}}}
@@ -1003,10 +1004,13 @@
   \addtocontents{toc}{{\protect\setcounter{tocdepth}{0}}}
   \setcounter{appendixc}{1}
 %  \setcounter{section}{0}
+	\makeatletter
+	\providecommand*{\toclevel@appendixc}{0}
+	\makeatother
   \def \thechapter{\Alph{appendixc}}
   \def \@chaptername{}
   \def \@chapstyle{appendixc}
-  \def \@chapnumber{Appendix\hfill \thechapter:}
+  \def \@chapnumber{Appendix \thechapter:}
   \let \@chapterhead  \@appendiceschapterhead
   \let \@schapterhead \@appendiceschapterhead
   \if @bibpresent \relax \fi}
