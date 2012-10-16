@@ -6,3 +6,6 @@
 *.gz
 *.pdf
 *.blg
+*.out
+*.dvi
+*.bak

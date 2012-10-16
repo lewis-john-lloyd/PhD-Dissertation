@@ -302,11 +302,11 @@
   \endgroup}
 
 \def\l@chapter#1#2{\pagebreak[3]\vskip\@tocchapterskip\@dottedtocline{0}{0pt}{1.5em}{{\bface #1}}{#2}}
-\def\l@section{\@dottedtocline{1}{1.5em}{2.3em}}
-\def\l@subsection{\@dottedtocline{2}{3.8em}{3.2em}}
-\def\l@subsubsection{\@dottedtocline{3}{7.0em}{4.1em}}
-\def\l@paragraph{\@dottedtocline{4}{10em}{5em}}
-\def\l@subparagraph{\@dottedtocline{5}{12em}{6em}}
+\def\l@section{      \@dottedtocline{1}{ 1.5em}{2.3em}}
+\def\l@subsection{   \@dottedtocline{2}{ 3.8em}{3.2em}}
+\def\l@subsubsection{\@dottedtocline{3}{ 7.0em}{4.1em}}
+\def\l@paragraph{    \@dottedtocline{4}{10.0em}{5.0em}}
+\def\l@subparagraph{ \@dottedtocline{5}{12.0em}{6.0em}}
 
 \def\l@figure{\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
 \def\l@table{ \vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
@@ -330,7 +330,7 @@
 % the chapter.  Isn't elegance wonderful?
 %
 %=============================================================================
-\def\tableofcontents{ \@tableof{Table Of Contents }{         }{tocpage}{toc}{                                                          }}
+\def\tableofcontents{ \@tableof{Table Of Contents }{         }{tocpage}{toc}{}}
 \def\listoffigures{   \@tableof{List Of Figures   }{Figure   }{lofpage}{lof}{\protect\addcontentsline{toc}{chapter}{List Of Figures   }}}
 \def\listoftables{    \@tableof{List Of Tables    }{Table    }{lotpage}{lot}{\protect\addcontentsline{toc}{chapter}{List Of Tables    }}}
 \def\listofalgorithm{\@tableof{List Of Algorithms}{Algorithm}{loapage}{loa}{\protect\addcontentsline{toc}{chapter}{List Of Algorithms}}}
@@ -403,17 +403,24 @@
   \addcontentsline{toc}{chapter}{\@bibchaptitle}
   \vspace{0.375in}    % added to match 4 line requirement
   \interlinepenalty=10000 % added to prevent breaking of bib entries
-  \singlespace\list
-  {[\arabic{enumi}]}{\settowidth\labelwidth{[#1]}\leftmargin\labelwidth
-    \advance\leftmargin\labelsep \usecounter{enumi}}
+  \singlespace
+	\list{[\@arabic\c@enumi]}
+		 {
+		\settowidth\labelwidth{[#1]}
+		\leftmargin\labelwidth
+		\advance\leftmargin\labelsep
+		\usecounter{enumi}
+		\let\p@enumi\@empty
+        \renewcommand\theenumi{\@arabic\c@enumi}
+		  }
   \def\newblock{\hskip .11em plus .33em minus -.07em}
   \sloppy
   \sfcode`\.=1000\relax}
 \let\endthebibliography=\endlist
 
 %=============================================================================
-% \def\@biblabel#1{[#1]\hfill}  % Produces the label for \bibitem[...]
-% \def\@cite#1{[#1]}            % Produces the output of the \cite command.
+%\def\@biblabel#1{[#1]\hfill}  % Produces the label for \bibitem[...]
+%\def\@cite#1{[#1]}            % Produces the output of the \cite command.
 %=============================================================================
 
 %=============================================================================
