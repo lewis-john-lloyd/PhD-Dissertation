@@ -50,7 +50,6 @@
 
 %=============================================================================
 %  Set up the font definition a la Standard LaTeX
-%
 %=============================================================================
 \DeclareOldFontCommand{\rm}{\normalfont\rmfamily}{\mathrm}
 \DeclareOldFontCommand{\sf}{\normalfont\sffamily}{\mathsf}
@@ -228,6 +227,7 @@
 %=============================================================================
 \def\thepart          {\Roman{part}}
 \def\thechapter       {\arabic{chapter}}
+\def\theappendixc     {\Alph{chapter}}
 \def\thesection       {\thechapter.\arabic{section}}
 \def\thesubsection    {\thesection.\arabic{subsection}}
 \def\thesubsubsection {\thesubsection.\arabic{subsubsection}}
@@ -330,10 +330,10 @@
 % the chapter.  Isn't elegance wonderful?
 %
 %=============================================================================
-\def\tableofcontents{ \@tableof{Table Of Contents }{         }{tocpage}{toc}{}}
-\def\listoffigures{   \@tableof{List Of Figures   }{Figure   }{lofpage}{lof}{\protect\addcontentsline{toc}{chapter}{List Of Figures   }}}
-\def\listoftables{    \@tableof{List Of Tables    }{Table    }{lotpage}{lot}{\protect\addcontentsline{toc}{chapter}{List Of Tables    }}}
-\def\listofalgorithm{\@tableof{List Of Algorithms}{Algorithm}{loapage}{loa}{\protect\addcontentsline{toc}{chapter}{List Of Algorithms}}}
+\def\tableofcontents{ \@tableof{Table of Contents }{         }{tocpage}{toc}{                                                          }}
+\def\listoffigures{   \@tableof{List of Figures   }{Figure   }{lofpage}{lof}{\protect\addcontentsline{toc}{chapter}{List of Figures   }}}
+\def\listoftables{    \@tableof{List of Tables    }{Table    }{lotpage}{lot}{\protect\addcontentsline{toc}{chapter}{List of Tables    }}}
+\def\listofalgorithm{ \@tableof{List of Algorithms}{Algorithm}{loapage}{loa}{\protect\addcontentsline{toc}{chapter}{List of Algorithms}}}
 
 \def\@tableof#1#2#3#4#5{
 { % limit scope of following declarations!!
@@ -395,8 +395,7 @@
 %   \altbibtitle has been added to change the chapter title.
 %   This command does nothing more than change REFERENCES to BIBLIOGRAPHY
 %============================================================================
-\def\@bibchaptitle{List Of References}
-\def\altbibtitle{\def\@bibchaptitle{BIBLIOGRAPHY}}
+\def\@bibchaptitle{List of References}
 \def\thebibliography#1{
   \global\@bibpresenttrue
   \chapter*{\@bibchaptitle\markboth{\@bibchaptitle}{\@bibchaptitle}}
@@ -1007,21 +1006,22 @@
 %  \let\@schapterhead\@makeschapterhead}
 
 \def\appendices{
-  \addtocontents{toc}{\protect\addvspace{\@tocchapterskip} \hbox to \hsize{\bface APPENDICES \hfil} \protect\addvspace{\@tocchapterskip}}
+  \addtocontents{toc}{\protect\addvspace{\@tocchapterskip} \hbox to \hsize{\bface Appendices \hfil} \protect\addvspace{\@tocchapterskip}}
   \addtocontents{toc}{{\protect\setcounter{tocdepth}{0}}}
-  \setcounter{appendixc}{1}
-%  \setcounter{section}{0}
-	\makeatletter
-	\providecommand*{\toclevel@appendixc}{0}
-	\makeatother
-  \def \thechapter{\Alph{appendixc}}
+  \makeatletter
+  \providecommand*{\toclevel@appendixc}{0}
+  \makeatother
+  \setcounter{chapter}{0}
+  \def \@chapapp{chapter}
   \def \@chaptername{}
   \def \@chapstyle{appendixc}
-  \def \@chapnumber{Appendix \thechapter:}
+  \def \@chapnumber{Appendix \theappendixc:}
   \let \@chapterhead  \@appendiceschapterhead
   \let \@schapterhead \@appendiceschapterhead
-  \if @bibpresent \relax \fi}
-%
+  \if @bibpresent \relax \fi
+  
+  }
+
 \def\endappendices{
   \def\@chaptername##1{\uppercase {##1}}
   \def\@chapstyle{chapter}
@@ -1132,6 +1132,7 @@
 %=============================================================================
 \def\acknowledgments{
   \chapter*{Acknowledgments}
+  \addcontentsline{toc}{chapter}{Acknowledgments}
   \doublespace}
 \def\endacknowledgments{\par\newpage}
 

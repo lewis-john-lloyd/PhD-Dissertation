@@ -8,351 +8,337 @@
 %	- Jacobian-Free Methodology
 
 %============================================================================
-\group{Mathematical Formulation}
-% Begin Chapter
-%============================================================================
-As mentioned earlier, most reactor safety-analysis codes depend upon three discrete sets of physics.
-These include, but are not necessarily limited to, two-phase hydrodynamics, heat-transfer between the fluid and a solid structure, and a nuclear power source.
-The different physical phenomena are represented by a system of PDEs and ODEs that constitute a set of balance laws for mass, momentum, and energy.
-This system encompasses different scales in both space and time.
-\pagebreak
-%============================================================================
-\subgroup{Hydrodynamic Conservation Equations}
-% Hydro. Cons. Eqns.
-%============================================================================
-\begin{minipage}{0.42\textwidth}
-\begin{center}\textbf{Conserved Variables}\end{center}
-\begin{align}
-\Vec{q} & = 
-\begin{bmatrix} 
-\alpha \rho_g  \\
-\alpha \left( \rho_v + \rho_g \right)\\
-\left(1-\alpha\right) \rho_l \\
-\alpha_e \rho_l \\
-\alpha \left( \rho_v + \rho_g \right) \Vec{U}_v \\
-\left( 1-\alpha \right) \rho_l \Vec{U}_l \\
-\alpha_e \rho_l \Vec{U}_e \\
-\alpha \left( \rho_v H_v+ \rho_g H_g \right)\\
-\left( 1 -\alpha \right) \rho_l H_l
-\end{bmatrix} 
-\end{align}
-\end{minipage}
-\begin{minipage}{0.42\textwidth}
-\begin{center}\textbf{Independent Variables}\end{center}
-\begin{align}
-\Vec{x} & = \begin{bmatrix}
-\alpha \\
-\alpha_e \\
-P \\
-\alpha P_g \\
-\alpha \left( \rho_v + \rho_g \right) \Vec{U}_v \\
-\left( 1-\alpha \right) \rho_l \Vec{U}_l \\
-\alpha_e  \rho_l \Vec{U}_e \\
-\alpha H_v \\
-\left( 1-\alpha \right) H_l
-\end{bmatrix}
-\end{align}
-\end{minipage}
+\chapter{Mathematical Formulation}
 
-Note that $\displaystyle \Vec{q}=f(\Vec{x})$.
+\section{Hydrodynamic Conservation Equations}
 
-\subsubgroup{Continuity Equations}
-\subsubsubgroup{Mass}
-\begin{align}
-\Vec{x} & = \begin{bmatrix}
-\alpha \\
-\alpha_e \\
-P \\
-\alpha P_g \\
-\alpha \left( \rho_v + \rho_g \right) \Vec{U}_v \\
-\left( 1-\alpha \right) \rho_l \Vec{U}_l \\
-\alpha_e  \rho_l \Vec{U}_e \\
-\alpha H_v \\
-\left( 1-\alpha \right) H_l
-\end{bmatrix}
-\end{align}
+\begin{minipage}{0.42\textwidth}
+ \begin{center}\textbf{Conserved Variables}\end{center}
+ \begin{align}
+ \Vec{q} & = 
+ \begin{bmatrix} 
+ \alpha \rho_g  \\
+ \alpha \left( \rho_v + \rho_g \right)\\
+ \left(1-\alpha\right) \rho_l \\
+ \alpha_e \rho_l \\
+ \alpha \left( \rho_v + \rho_g \right) \Vec{U}_v \\
+ \left( 1-\alpha \right) \rho_l \Vec{U}_l \\
+ \alpha_e \rho_l \Vec{U}_e \\
+ \alpha \left( \rho_v H_v+ \rho_g H_g \right)\\
+ \left( 1 -\alpha \right) \rho_l H_l
+ \end{bmatrix} 
+ \end{align}
+ \end{minipage}
+ \begin{minipage}{0.42\textwidth}
+ \begin{center}\textbf{Independent Variables}\end{center}
+ \begin{align}
+ \Vec{x} & = \begin{bmatrix}
+ \alpha \\
+ \alpha_e \\
+ P \\
+ \alpha P_g \\
+ \alpha \left( \rho_v + \rho_g \right) \Vec{U}_v \\
+ \left( 1-\alpha \right) \rho_l \Vec{U}_l \\
+ \alpha_e  \rho_l \Vec{U}_e \\
+ \alpha H_v \\
+ \left( 1-\alpha \right) H_l
+ \end{bmatrix}
+ \end{align}
+ \end{minipage}
+
+%% Note that $\displaystyle \Vec{q}=f(\Vec{x})$.
+
+\subsection{Continuity Equations}
+
+\subsubsection{Mass}
+
+ \begin{align}
+ \Vec{x} & = \begin{bmatrix}
+ \alpha \\
+ \alpha_e \\
+ P \\
+ \alpha P_g \\
+ \alpha \left( \rho_v + \rho_g \right) \Vec{U}_v \\
+ \left( 1-\alpha \right) \rho_l \Vec{U}_l \\
+ \alpha_e  \rho_l \Vec{U}_e \\
+ \alpha H_v \\
+ \left( 1-\alpha \right) H_l
+ \end{bmatrix}
+ \end{align}
 
 \begin{IEEEeqnarray}{lCr}
-\frac{\partial}{\partial t} \alpha_g \rho_g + \nabla\cdot\left(\alpha_g\rho_g\vec{U}_g\right) & = & \Gamma''' \\
-\frac{\partial}{\partial t} \alpha_l \rho_l + \nabla\cdot\left(\alpha_l\rho_l\vec{U}_l\right) & = & -(1-\eta) \Gamma''' - S''' \\
-\frac{\partial}{\partial t} \alpha_e \rho_l + \nabla\cdot\left(\alpha_e\rho_l\vec{U}_e\right) & = & -\eta \Gamma''' + S'''\\
-\frac{\partial}{\partial t} \alpha_g \rho_{nc} + \nabla\cdot\left(\alpha_g\rho_{nc}\vec{U}_g\right) & = & \Gamma''' 
-\end{IEEEeqnarray}
+ \frac{\partial}{\partial t} \alpha_g \rho_g + \nabla\cdot\left(\alpha_g\rho_g\vec{U}_g\right) & = & \Gamma''' \\
+ \frac{\partial}{\partial t} \alpha_l \rho_l + \nabla\cdot\left(\alpha_l\rho_l\vec{U}_l\right) & = & -(1-\eta) \Gamma''' - S''' \\
+ \frac{\partial}{\partial t} \alpha_e \rho_l + \nabla\cdot\left(\alpha_e\rho_l\vec{U}_e\right) & = & -\eta \Gamma''' + S'''\\
+ \frac{\partial}{\partial t} \alpha_g \rho_{nc} + \nabla\cdot\left(\alpha_g\rho_{nc}\vec{U}_g\right) & = & \Gamma''' 
+ \end{IEEEeqnarray}
 
 \begin{IEEEeqnarray}{lCl}
-% Here is the vapor mass equation.
-(\alpha \rho_v)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha \rho_{v})^{*}}{<\alpha \rho_v>}\right]^{n} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha \rho_{v})^{*}}{<\alpha \rho_v>}\right]^{n} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}}\right] & & \nonumber \\
-= (\alpha \rho_v)^{n} + \frac{\Delta t}{V_c} \Gamma^{\,n+1} & & \\
-% Here is the gas mass equation.
-(\alpha \rho_g)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha \rho_{g})^{*}}{<\alpha \rho_g>}\right]^{n} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha \rho_{g})^{*}}{<\alpha \rho_g>}\right]^{n} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}}\right] & & \nonumber \\
-= (\alpha \rho_g)^{n} & &  \\
-% Here is the continuous liquid mass equation.
-(\alpha_l \rho_l)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha_l \rho_{l})^{*}}{<\alpha_l \rho_l>}\right]^{n} \dot{\vec{M}}^{n+1}_{l}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha_l \rho_{l})^{*}}{<\alpha_l \rho_l>}\right]^{n} \dot{\vec{W}}^{n+1}_{l}\cdot \vec{\hat{n}}\right] & & \nonumber \\
-= (\alpha_l \rho_l)^{n} + \frac{\Delta t}{V_c} \left(S_{D}^{n+1} - (1-\eta^{n})\Gamma^{\,n+1}_{l} - S_{E}^{n+1}\right) & & \\
-% Here is the entrained liquid mass equation.
-(\alpha_e \rho_l)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha_e \rho_{l})^{*}}{<\alpha_e \rho_l>}\right]^{n} \dot{\vec{M}}^{n+1}_{e}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha_e \rho_{l})^{*}}{<\alpha_e \rho_l>}\right]^{n} \dot{\vec{W}}^{n+1}_{e}\cdot \vec{\hat{n}}\right] & & \nonumber \\
-= (\alpha_e \rho_l)^{n} + \frac{\Delta t}{V_c} \left(S_{E}^{n+1} - \eta^{n}\Gamma^{\,n+1}_{e} - S_{D}^{n+1}\right)& & 
-\end{IEEEeqnarray}
+ % Here is the vapor mass equation.
+ (\alpha \rho_v)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha \rho_{v})^{*}}{<\alpha \rho_v>}\right]^{n} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha \rho_{v})^{*}}{<\alpha \rho_v>}\right]^{n} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}}\right] & & \nonumber \\
+ = (\alpha \rho_v)^{n} + \frac{\Delta t}{V_c} \Gamma^{\,n+1} & & \\
+ % Here is the gas mass equation.
+ (\alpha \rho_g)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha \rho_{g})^{*}}{<\alpha \rho_g>}\right]^{n} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha \rho_{g})^{*}}{<\alpha \rho_g>}\right]^{n} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}}\right] & & \nonumber \\
+ = (\alpha \rho_g)^{n} & &  \\
+ % Here is the continuous liquid mass equation.
+ (\alpha_l \rho_l)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha_l \rho_{l})^{*}}{<\alpha_l \rho_l>}\right]^{n} \dot{\vec{M}}^{n+1}_{l}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha_l \rho_{l})^{*}}{<\alpha_l \rho_l>}\right]^{n} \dot{\vec{W}}^{n+1}_{l}\cdot \vec{\hat{n}}\right] & & \nonumber \\
+ = (\alpha_l \rho_l)^{n} + \frac{\Delta t}{V_c} \left(S_{D}^{n+1} - (1-\eta^{n})\Gamma^{\,n+1}_{l} - S_{E}^{n+1}\right) & & \\
+ % Here is the entrained liquid mass equation.
+ (\alpha_e \rho_l)^{n+1} + \frac{\Delta t}{V_c}\left[\sum_{J} \left[\frac{(\alpha_e \rho_{l})^{*}}{<\alpha_e \rho_l>}\right]^{n} \dot{\vec{M}}^{n+1}_{e}\cdot \vec{\hat{n}} + \sum_{K} \left[\frac{(\alpha_e \rho_{l})^{*}}{<\alpha_e \rho_l>}\right]^{n} \dot{\vec{W}}^{n+1}_{e}\cdot \vec{\hat{n}}\right] & & \nonumber \\
+ = (\alpha_e \rho_l)^{n} + \frac{\Delta t}{V_c} \left(S_{E}^{n+1} - \eta^{n}\Gamma^{\,n+1}_{e} - S_{D}^{n+1}\right)& & 
+ \end{IEEEeqnarray}
 
-\subsubsubgroup{Energy}
+\subsubsection{Energy}
+
 \begin{IEEEeqnarray}{Cr}
-\frac{\partial}{\partial t}\left(\alpha_g (\rho_v h_v+\rho_{nc} h_{nc})\right)+\nabla\cdot\left(\alpha_g(\rho_v h_v + \rho_{nc} h_{nc}) \vec{U}_g\right) & \nonumber \\
-= \Gamma'''h'_{v} + q'''_{i,v} + q'''_{gl} + q'''_{wg} + \alpha_g \frac{\partial P}{\partial t} & \\
-\frac{\partial}{\partial t}\left((\alpha_e +\alpha_l) \rho_l h_l\right)+\nabla\cdot\left(\alpha_l\rho_l h_l \vec{U}_l\right)+\nabla\cdot\left(\alpha_e\rho_l h_l \vec{U}_e\right)  \nonumber \\
-= \Gamma'''h'_{v} + q'''_{i,v} + q'''_{gl} + q'''_{wg} + \alpha_g \frac{\partial P}{\partial t} &
-\end{IEEEeqnarray}
+ \frac{\partial}{\partial t}\left(\alpha_g (\rho_v h_v+\rho_{nc} h_{nc})\right)+\nabla\cdot\left(\alpha_g(\rho_v h_v + \rho_{nc} h_{nc}) \vec{U}_g\right) & \nonumber \\
+ = \Gamma'''h'_{v} + q'''_{i,v} + q'''_{gl} + q'''_{wg} + \alpha_g \frac{\partial P}{\partial t} & \\
+ \frac{\partial}{\partial t}\left((\alpha_e +\alpha_l) \rho_l h_l\right)+\nabla\cdot\left(\alpha_l\rho_l h_l \vec{U}_l\right)+\nabla\cdot\left(\alpha_e\rho_l h_l \vec{U}_e\right)  \nonumber \\
+ = \Gamma'''h'_{v} + q'''_{i,v} + q'''_{gl} + q'''_{wg} + \alpha_g \frac{\partial P}{\partial t} &
+ \end{IEEEeqnarray}
 
 \begin{IEEEeqnarray}{ll}
-% Here be the gas equations.
- & (\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) )^{n+1} - \alpha_{g}^{n}P^{\;n+1} \nonumber \\
-+& \frac{\Delta t}{V_c} \sum_{J} \left(\frac{(\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) )^{*}}{<\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) >}\right)^{n} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} \nonumber \\
-+& \frac{\Delta t}{V_c} \sum_{K} \left(\frac{(\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) )^{*}}{<\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) >}\right)^{n} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}} \nonumber \\
-=& (\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) )^{n} - \alpha_{g}^{n}P^{\;n} + \frac{\Delta t}{V_c}\left(q^{n}_{wg} + q^{n}_{i,v} + \Gamma^{\,n}h'^{\,n}_{v} + q^{n}_{gl}\right)\\
-% Here be the liquid equations.
- & ((\alpha_e +\alpha_l) \rho_l h_l)^{n+1} - (\alpha_e +\alpha_l)^{n}P^{\;n+1} \nonumber \\
-+& \frac{\Delta t}{V_c} \sum_{J}\left[  \left(\frac{(\alpha_l \rho_l h_l )^{*}}{<\alpha_l \rho_l h_l >}\right)^{n} \dot{\vec{M}}^{n+1}_{l}\cdot \vec{\hat{n}}+ \left(\frac{(\alpha_e \rho_l h_l )^{*}}{<\alpha_e \rho_l h_l >}\right)^{n} \dot{\vec{M}}^{n+1}_{e}\cdot \vec{\hat{n}}\right] \nonumber \\
-+& \frac{\Delta t}{V_c} \sum_{K}\left[  \left(\frac{(\alpha_l \rho_l h_l )^{*}}{<\alpha_l \rho_l h_l >}\right)^{n} \dot{\vec{W}}^{n+1}_{l}\cdot \vec{\hat{n}}+ \left(\frac{(\alpha_e \rho_l h_l )^{*}}{<\alpha_e \rho_l h_l >}\right)^{n} \dot{\vec{W}}^{n+1}_{e}\cdot \vec{\hat{n}}\right] \nonumber \\
-=& ((\alpha_e +\alpha_l) \rho_l h_l)^{n} - (\alpha_e +\alpha_l)^{n}P^{\;n} + \frac{\Delta t}{V_c}\left(q^{n}_{wl} + q^{n}_{i,l} -\Gamma^{\,n}h'^{\,n}_{l} - q^{n}_{gl}\right)
-\end{IEEEeqnarray}
+ % Here be the gas equations.
+  & (\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) )^{n+1} - \alpha_{g}^{n}P^{\;n+1} \nonumber \\
+ +& \frac{\Delta t}{V_c} \sum_{J} \left(\frac{(\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) )^{*}}{<\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) >}\right)^{n} \dot{\vec{M}}^{n+1}_{v}\cdot \vec{\hat{n}} \nonumber \\
+ +& \frac{\Delta t}{V_c} \sum_{K} \left(\frac{(\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) )^{*}}{<\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) >}\right)^{n} \dot{\vec{W}}^{n+1}_{v}\cdot \vec{\hat{n}} \nonumber \\
+ =& (\alpha_g (\rho_v h_v + \rho_{nc} h_{nc}) )^{n} - \alpha_{g}^{n}P^{\;n} + \frac{\Delta t}{V_c}\left(q^{n}_{wg} + q^{n}_{i,v} + \Gamma^{\,n}h'^{\,n}_{v} + q^{n}_{gl}\right)\\
+ % Here be the liquid equations.
+  & ((\alpha_e +\alpha_l) \rho_l h_l)^{n+1} - (\alpha_e +\alpha_l)^{n}P^{\;n+1} \nonumber \\
+ +& \frac{\Delta t}{V_c} \sum_{J}\left[  \left(\frac{(\alpha_l \rho_l h_l )^{*}}{<\alpha_l \rho_l h_l >}\right)^{n} \dot{\vec{M}}^{n+1}_{l}\cdot \vec{\hat{n}}+ \left(\frac{(\alpha_e \rho_l h_l )^{*}}{<\alpha_e \rho_l h_l >}\right)^{n} \dot{\vec{M}}^{n+1}_{e}\cdot \vec{\hat{n}}\right] \nonumber \\
+ +& \frac{\Delta t}{V_c} \sum_{K}\left[  \left(\frac{(\alpha_l \rho_l h_l )^{*}}{<\alpha_l \rho_l h_l >}\right)^{n} \dot{\vec{W}}^{n+1}_{l}\cdot \vec{\hat{n}}+ \left(\frac{(\alpha_e \rho_l h_l )^{*}}{<\alpha_e \rho_l h_l >}\right)^{n} \dot{\vec{W}}^{n+1}_{e}\cdot \vec{\hat{n}}\right] \nonumber \\
+ =& ((\alpha_e +\alpha_l) \rho_l h_l)^{n} - (\alpha_e +\alpha_l)^{n}P^{\;n} + \frac{\Delta t}{V_c}\left(q^{n}_{wl} + q^{n}_{i,l} -\Gamma^{\,n}h'^{\,n}_{l} - q^{n}_{gl}\right)
+ \end{IEEEeqnarray}
 
-\subsubgroup{Momentum}
-\subsubsubgroup{Axial Momentum}
+\subsubsection{Momentum}
 
-\begin{IEEEeqnarray}{lr}
-\frac{\partial }{\partial t} \left(\alpha_g (\rho_v + \rho_{nc}) \Vec{U}_g \right) + \nabla\cdot\left(\alpha_g (\rho_v + \rho_{nc}) \vec{U}_g \vec{U}_g \right) = &\nonumber \\
--\alpha_g\;\nabla P + \alpha_g (\rho_v + \rho_{nc}) \vec{g} - \tau^{'}_{wg}-\tau^{'}_{I_{gl}} - \tau^{'}_{I_{ge}} + \Gamma''' \vec{U}^{'} & \\
-\frac{\partial }{\partial t} \left(\alpha_l \rho_l \Vec{U}_l \right) + \nabla\cdot\left(\alpha_l \rho_l \vec{U}_l \vec{U}_l \right) = &\nonumber \\
--\alpha_l\;\nabla P + \alpha_l \rho_l \vec{g} - \tau^{'}_{wl} + \tau^{'}_{I_{gl}} -\left((1-\eta)\Gamma'''\vec{U}'\right) - S'''\vec{U}'& \\
-\frac{\partial }{\partial t} \left(\alpha_e \rho_l \Vec{U}_e \right) + \nabla\cdot\left(\alpha_e \rho_l \vec{U}_e \vec{U}_e \right) = &\nonumber \\
--\alpha_e\;\nabla P + \alpha_e \rho_l \vec{g} - \tau^{'}_{wl} + \tau^{'}_{I_{ge}} -\left(\eta\Gamma'''\vec{U}'\right) + S'''\vec{U}'&
-\end{IEEEeqnarray}
+\subsubsection{Axial Momentum}
+
+ \begin{IEEEeqnarray}{lr}
+ \frac{\partial }{\partial t} \left(\alpha_g (\rho_v + \rho_{nc}) \Vec{U}_g \right) + \nabla\cdot\left(\alpha_g (\rho_v + \rho_{nc}) \vec{U}_g \vec{U}_g \right) = &\nonumber \\
+ -\alpha_g\;\nabla P + \alpha_g (\rho_v + \rho_{nc}) \vec{g} - \tau^{'}_{wg}-\tau^{'}_{I_{gl}} - \tau^{'}_{I_{ge}} + \Gamma''' \vec{U}^{'} & \\
+ \frac{\partial }{\partial t} \left(\alpha_l \rho_l \Vec{U}_l \right) + \nabla\cdot\left(\alpha_l \rho_l \vec{U}_l \vec{U}_l \right) = &\nonumber \\
+ -\alpha_l\;\nabla P + \alpha_l \rho_l \vec{g} - \tau^{'}_{wl} + \tau^{'}_{I_{gl}} -\left((1-\eta)\Gamma'''\vec{U}'\right) - S'''\vec{U}'& \\
+ \frac{\partial }{\partial t} \left(\alpha_e \rho_l \Vec{U}_e \right) + \nabla\cdot\left(\alpha_e \rho_l \vec{U}_e \vec{U}_e \right) = &\nonumber \\
+ -\alpha_e\;\nabla P + \alpha_e \rho_l \vec{g} - \tau^{'}_{wl} + \tau^{'}_{I_{ge}} -\left(\eta\Gamma'''\vec{U}'\right) + S'''\vec{U}'&
+ \end{IEEEeqnarray}
+
+ \begin{IEEEeqnarray}{rCl}
+ F_g(\Vec{x}^{n+1}) & = & \overbrace{E_g({\Vec{x}^{n}})}^{\text{Purely explicit terms}}-\overbrace{A_{mom,j}\Delta z_j\left[ \alpha_g^n\frac{P_{J+1}^{n+1}-P_{J}^{n+1}}{\Delta z_j}\right]}^{\text{Semi-Implicit Pressure Term}}  \\
+ & - & \overbrace{A_{mom,j}\Delta z_j\left[ \frac{dP}{dz}\bigg|_{w,g}^{*}+\frac{dP}{dz}\bigg|_{i,lg}^{*}+\frac{dP}{dz}\bigg|_{i,eg}^{*}\right]}^{\text{Semi-Implicit Drag Terms}}\nonumber \\
+ & + & \overbrace{\mathcal{S}p^{n+1}_{g,j}}^{\text{Implicit Source Term}} -\overbrace{\frac{\left(M_{g,j}^{n+1}-M_{g,j}^{n}\right)}{\Delta t}\Delta z}^{\text{Time rate of change}}\nonumber \\
+ & = &  0 \nonumber
+ \end{IEEEeqnarray}
+
+\subsubsection{Transverse Momentum}
+
+ \begin{IEEEeqnarray}{lr}
+ \frac{\partial }{\partial t} \left(\alpha_g (\rho_v + \rho_{nc}) \Vec{V}_g \right) + \nabla\cdot\left(\alpha_g (\rho_v + \rho_{nc}) \vec{V}_g \vec{V}_g \right) = &\nonumber \\
+ -\alpha_g\;\nabla P - \tau^{'}_{wg}-\tau^{'}_{I_{gl}} - \tau^{'}_{I_{ge}} + \Gamma''' \vec{U}^{'} & \\
+ \frac{\partial }{\partial t} \left(\alpha_l \rho_l \Vec{V}_l \right) + \nabla\cdot\left(\alpha_l \rho_l \vec{V}_l \vec{V}_l \right) = &\nonumber \\
+ -\alpha_l\;\nabla P - \tau^{'}_{wl} + \tau^{'}_{I_{gl}} -\left((1-\eta)\Gamma'''\vec{U}'\right) - S'''\vec{U}'& \\
+ \frac{\partial }{\partial t} \left(\alpha_e \rho_l \Vec{V}_e \right) + \nabla\cdot\left(\alpha_e \rho_l \vec{V}_e \vec{V}_e \right) = &\nonumber \\
+ -\alpha_e\;\nabla P - \tau^{'}_{wl} + \tau^{'}_{I_{ge}} -\left(\eta\Gamma'''\vec{U}'\right) + S'''\vec{U}'&
+ \end{IEEEeqnarray}
+
+
+
+\section{Discrete Hydrodynamic Equations}
+
+\subsection{Axial Momentum}
+
+ Linearization of the axial momentum equations in COBRA-IE.
 
 \begin{IEEEeqnarray}{rCl}
-F_g(\Vec{x}^{n+1}) & = & \overbrace{E_g({\Vec{x}^{n}})}^{\text{Purely explicit terms}}-\overbrace{A_{mom,j}\Delta z_j\left[ \alpha_g^n\frac{P_{J+1}^{n+1}-P_{J}^{n+1}}{\Delta z_j}\right]}^{\text{Semi-Implicit Pressure Term}}  \\
-& - & \overbrace{A_{mom,j}\Delta z_j\left[ \frac{dP}{dz}\bigg|_{w,g}^{*}+\frac{dP}{dz}\bigg|_{i,lg}^{*}+\frac{dP}{dz}\bigg|_{i,eg}^{*}\right]}^{\text{Semi-Implicit Drag Terms}}\nonumber \\
-& + & \overbrace{\mathcal{S}p^{n+1}_{g,j}}^{\text{Implicit Source Term}} -\overbrace{\frac{\left(M_{g,j}^{n+1}-M_{g,j}^{n}\right)}{\Delta t}\Delta z}^{\text{Time rate of change}}\nonumber \\
-& = &  0 \nonumber
-\end{IEEEeqnarray}
+  \vec{x}_k & = \begin{bmatrix}
+   \dot{\vec{M}}_k \\
+   \Delta \text{P}_k
+ \end{bmatrix}\ & = \begin{bmatrix}
+ \dot{M}_{l,k}\\
+ \dot{M}_{g,k}\\
+ \dot{M}_{e,k}\\
+ \Delta \text{P}_{k}
+ \end{bmatrix}
+ \end{IEEEeqnarray}
 
-\subsubsubgroup{Transverse Momentum}
+ Note: 
 
-\begin{IEEEeqnarray}{lr}
-\frac{\partial }{\partial t} \left(\alpha_g (\rho_v + \rho_{nc}) \Vec{V}_g \right) + \nabla\cdot\left(\alpha_g (\rho_v + \rho_{nc}) \vec{V}_g \vec{V}_g \right) = &\nonumber \\
--\alpha_g\;\nabla P - \tau^{'}_{wg}-\tau^{'}_{I_{gl}} - \tau^{'}_{I_{ge}} + \Gamma''' \vec{U}^{'} & \\
-\frac{\partial }{\partial t} \left(\alpha_l \rho_l \Vec{V}_l \right) + \nabla\cdot\left(\alpha_l \rho_l \vec{V}_l \vec{V}_l \right) = &\nonumber \\
--\alpha_l\;\nabla P - \tau^{'}_{wl} + \tau^{'}_{I_{gl}} -\left((1-\eta)\Gamma'''\vec{U}'\right) - S'''\vec{U}'& \\
-\frac{\partial }{\partial t} \left(\alpha_e \rho_l \Vec{V}_e \right) + \nabla\cdot\left(\alpha_e \rho_l \vec{V}_e \vec{V}_e \right) = &\nonumber \\
--\alpha_e\;\nabla P - \tau^{'}_{wl} + \tau^{'}_{I_{ge}} -\left(\eta\Gamma'''\vec{U}'\right) + S'''\vec{U}'&
-\end{IEEEeqnarray}
-
-
-%============================================================================
-\subgroup{Discrete Hydrodynamic Equations}
-% Hydro. Cons. Eqns.
-\pagebreak
-%============================================================================
-\subsubgroup{Axial Momentum}
-
-Linearization of the axial momentum equations in COBRA-IE.
-
-\begin{IEEEeqnarray}{rCl}
- \vec{x}_k & = \begin{bmatrix}
-  \dot{\vec{M}}_k \\
-  \Delta \text{P}_k
-\end{bmatrix}\ & = \begin{bmatrix}
-\dot{M}_{l,k}\\
-\dot{M}_{g,k}\\
-\dot{M}_{e,k}\\
-\Delta \text{P}_{k}
-\end{bmatrix}
-\end{IEEEeqnarray}
-
-Note: 
-
-\begin{IEEEeqnarray}{rCCCr}
-\vec{L}(\vec{x}_{k}) & = & \mat{L}\;\dot{\vec{M}}_{k} + \vec{b}\Delta\text{P}_{k} \nonumber \\
-\frac{\partial}{\partial \Delta\text{P}_{k}}\left[\vec{b} \Delta \text{P}_{k}\right] & = & \vec{b} \nonumber \\
-\frac{\partial\; \vec{N}(\vec{x}_{k})}{\partial \vec{x}_{k}} & = & \frac{\partial\; \vec{N}(\vec{x}_{k})}{\partial \dot{\vec{M}}_{k}} & = & \mat{N}(\dot{\vec{M}}_{k}) \nonumber \\
-\mat{J}^{*}_{k} & = & \frac{\partial\; \vec{F}(\vec{x}_{k})}{\partial \dot{\vec{M}_{k}}} & = & \mat{L} + \mat{N}(\dot{\vec{M}}_{k})  \nonumber \\
-\mat{J}_{\,k}\delta \vec{x} & = & \frac{\partial\; \vec{F}(\vec{x}_{k})}{\partial \vec{x}_{k}}\delta\vec{x} & = & \mat{J}^{*}_{\,k}\delta(\dot{\vec{M}}) + \vec{b}\delta(\Delta \text{P})\nonumber
-\end{IEEEeqnarray}
+ \begin{IEEEeqnarray}{rCCCr}
+ \vec{L}(\vec{x}_{k}) & = & \mat{L}\;\dot{\vec{M}}_{k} + \vec{b}\Delta\text{P}_{k} \nonumber \\
+ \frac{\partial}{\partial \Delta\text{P}_{k}}\left[\vec{b} \Delta \text{P}_{k}\right] & = & \vec{b} \nonumber \\
+ \frac{\partial\; \vec{N}(\vec{x}_{k})}{\partial \vec{x}_{k}} & = & \frac{\partial\; \vec{N}(\vec{x}_{k})}{\partial \dot{\vec{M}}_{k}} & = & \mat{N}(\dot{\vec{M}}_{k}) \nonumber \\
+ \mat{J}^{*}_{k} & = & \frac{\partial\; \vec{F}(\vec{x}_{k})}{\partial \dot{\vec{M}_{k}}} & = & \mat{L} + \mat{N}(\dot{\vec{M}}_{k})  \nonumber \\
+ \mat{J}_{\,k}\delta \vec{x} & = & \frac{\partial\; \vec{F}(\vec{x}_{k})}{\partial \vec{x}_{k}}\delta\vec{x} & = & \mat{J}^{*}_{\,k}\delta(\dot{\vec{M}}) + \vec{b}\delta(\Delta \text{P})\nonumber
+ \end{IEEEeqnarray}
 
 Current View Point
 
 \begin{IEEEeqnarray}{rCl}
-0 & = & \vec{F}(\vec{x}_{k+1}) \nonumber \\
-0 & = & \vec{F}(\vec{x}_{k+1}) =  \vec{E} + \vec{L}(\vec{x}_{k+1}) + \vec{N}(\vec{x}_{k+1})  \nonumber \\
-0 & = & \vec{E} + \vec{L}(\vec{x}_{k+1}) + \vec{N}(\vec{x}_{k+1}) \nonumber \\
-0 & = & \vec{E} + \mat{L}\;\dot{\vec{M}}_{k+1} + \vec{b}\Delta\text{P}_{k+1} + \vec{N}(\vec{x}_{k+1}) \nonumber \\
-0 & = & \vec{E} + \mat{L}\;\dot{\vec{M}}_{k+1} + \vec{b}\Delta \text{P}_{k} + \frac{\partial\left[ \vec{b}\Delta\text{P}_{k+1}\right]}{\partial\,\Delta \text{P}_{k+1}}\delta(\Delta \text{P}) + \vec{N}(\vec{x}_{k}) + \frac{\partial \left[ \vec{N}(\vec{x}_{k+1})\right]}{\partial\, \vec{x}_{k+1}}\left[\vec{x}_{k+1}-\vec{x}_{k}\right] \nonumber
-\end{IEEEeqnarray}
+ 0 & = & \vec{F}(\vec{x}_{k+1}) \nonumber \\
+ 0 & = & \vec{F}(\vec{x}_{k+1}) =  \vec{E} + \vec{L}(\vec{x}_{k+1}) + \vec{N}(\vec{x}_{k+1})  \nonumber \\
+ 0 & = & \vec{E} + \vec{L}(\vec{x}_{k+1}) + \vec{N}(\vec{x}_{k+1}) \nonumber \\
+ 0 & = & \vec{E} + \mat{L}\;\dot{\vec{M}}_{k+1} + \vec{b}\Delta\text{P}_{k+1} + \vec{N}(\vec{x}_{k+1}) \nonumber \\
+ 0 & = & \vec{E} + \mat{L}\;\dot{\vec{M}}_{k+1} + \vec{b}\Delta \text{P}_{k} + \frac{\partial\left[ \vec{b}\Delta\text{P}_{k+1}\right]}{\partial\,\Delta \text{P}_{k+1}}\delta(\Delta \text{P}) + \vec{N}(\vec{x}_{k}) + \frac{\partial \left[ \vec{N}(\vec{x}_{k+1})\right]}{\partial\, \vec{x}_{k+1}}\left[\vec{x}_{k+1}-\vec{x}_{k}\right] \nonumber
+ \end{IEEEeqnarray}
 
-\begin{IEEEeqnarray}{rCl}
- \mat{L}\;\dot{\vec{M}}_{k+1} + \mat{N}(\dot{\vec{M}}_{k})\;\dot{\vec{M}}_{k+1} & = & -\vec{E} - \vec{b}\Delta \text{P}_{k} - \vec{N}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) + \mat{N}(\dot{\vec{M}}_{k})\dot{\vec{M}}_{k} \nonumber \\
- \left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\dot{\vec{M}}_{k+1} & = & - \left[\vec{E} + \vec{b}\Delta \text{P}_{k} + \vec{N}(\vec{x}_{k}) - \mat{N}(\dot{\vec{M}}_{k})\;\dot{\vec{M}}_{k}\right] - \vec{b}\delta(\Delta \text{P}) \nonumber \\
- \mat{J}^{*}_{\,k}\; \dot{\vec{M}}_{k+1} & = &  -\vec{f} - \vec{b}\delta(\Delta \text{P}) \nonumber \\
-\dot{\vec{M}}_{k+1} & = &  \underbrace{-\mat{J}_{\,k}^{-*}\;\vec{f}}_{\dot{\vec{M}}^{\widetilde{n+1}}_{\,k}} \underbrace{- \mat{J}^{-*}_{\,k}\;\vec{b}}_{\frac{d \dot{\vec{M}}_{k}}{d \Delta \text{P}}}\delta(\Delta \text{P}) \nonumber \\
-\dot{\vec{M}}_{k+1} & = &  \dot{\vec{M}}^{\widetilde{n+1}}_{\,k} + \frac{d \dot{\vec{M}}_{k}}{d \Delta \text{P}}\delta(\Delta \text{P}) \nonumber 
-\end{IEEEeqnarray}
+ \begin{IEEEeqnarray}{rCl}
+  \mat{L}\;\dot{\vec{M}}_{k+1} + \mat{N}(\dot{\vec{M}}_{k})\;\dot{\vec{M}}_{k+1} & = & -\vec{E} - \vec{b}\Delta \text{P}_{k} - \vec{N}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) + \mat{N}(\dot{\vec{M}}_{k})\dot{\vec{M}}_{k} \nonumber \\
+  \left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\dot{\vec{M}}_{k+1} & = & - \left[\vec{E} + \vec{b}\Delta \text{P}_{k} + \vec{N}(\vec{x}_{k}) - \mat{N}(\dot{\vec{M}}_{k})\;\dot{\vec{M}}_{k}\right] - \vec{b}\delta(\Delta \text{P}) \nonumber \\
+  \mat{J}^{*}_{\,k}\; \dot{\vec{M}}_{k+1} & = &  -\vec{f} - \vec{b}\delta(\Delta \text{P}) \nonumber \\
+ \dot{\vec{M}}_{k+1} & = &  \underbrace{-\mat{J}_{\,k}^{-*}\;\vec{f}}_{\dot{\vec{M}}^{\widetilde{n+1}}_{\,k}} \underbrace{- \mat{J}^{-*}_{\,k}\;\vec{b}}_{\frac{d \dot{\vec{M}}_{k}}{d \Delta \text{P}}}\delta(\Delta \text{P}) \nonumber \\
+ \dot{\vec{M}}_{k+1} & = &  \dot{\vec{M}}^{\widetilde{n+1}}_{\,k} + \frac{d \dot{\vec{M}}_{k}}{d \Delta \text{P}}\delta(\Delta \text{P}) \nonumber 
+ \end{IEEEeqnarray}
 
 Relation between Newton step and current formulation.
 
-\begin{IEEEeqnarray}{rCl}
-\left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\dot{\vec{M}}_{k+1} & = & - \left[\vec{E} + \mat{L}\;\dot{\vec{M}}_{k} + \vec{b}\Delta \text{P}_{k} + \vec{N}(\vec{x}_{k}) \right] - \vec{b}\delta(\Delta \text{P}) + \mat{L}\;\dot{\vec{M}}_{k} + \mat{N}(\dot{\vec{M}}_{k})\;\dot{\vec{M}}_{k} \nonumber \\
-\left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\dot{\vec{M}}_{k+1} & = & - \vec{F}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) + \left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\;\dot{\vec{M}}_{k} \nonumber \\
-\mat{J}^{*}_{\,k}\,\dot{\vec{M}}_{k+1} & = & - \vec{F}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) + \mat{J}^{*}_{\,k}\;\dot{\vec{M}}_{k} \nonumber \\
-\dot{\vec{M}}_{k+1} & = & \underbrace{\dot{\vec{M}}_{k} - \mat{J}_{\,k}^{-*} \vec{F}(\vec{x}_{k})}_{\dot{\vec{M}}^{\widetilde{n+1}}_{\,k}} \underbrace{- \mat{J}_{\,k}^{-1}\vec{b}}_{\frac{d \dot{\vec{M}}_{k}}{d \Delta \text{P}}}\delta\text{P} \nonumber \\
-\dot{\vec{M}}_{k+1} & = &  \dot{\vec{M}}^{\widetilde{n+1}}_{\,k} + \frac{d \dot{\vec{M}}_{k}}{d \Delta \text{P}}\delta(\Delta \text{P}) \nonumber 
-\end{IEEEeqnarray}
+ \begin{IEEEeqnarray}{rCl}
+ \left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\dot{\vec{M}}_{k+1} & = & - \left[\vec{E} + \mat{L}\;\dot{\vec{M}}_{k} + \vec{b}\Delta \text{P}_{k} + \vec{N}(\vec{x}_{k}) \right] - \vec{b}\delta(\Delta \text{P}) + \mat{L}\;\dot{\vec{M}}_{k} + \mat{N}(\dot{\vec{M}}_{k})\;\dot{\vec{M}}_{k} \nonumber \\
+ \left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\dot{\vec{M}}_{k+1} & = & - \vec{F}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) + \left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\;\dot{\vec{M}}_{k} \nonumber \\
+ \mat{J}^{*}_{\,k}\,\dot{\vec{M}}_{k+1} & = & - \vec{F}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) + \mat{J}^{*}_{\,k}\;\dot{\vec{M}}_{k} \nonumber \\
+ \dot{\vec{M}}_{k+1} & = & \underbrace{\dot{\vec{M}}_{k} - \mat{J}_{\,k}^{-*} \vec{F}(\vec{x}_{k})}_{\dot{\vec{M}}^{\widetilde{n+1}}_{\,k}} \underbrace{- \mat{J}_{\,k}^{-1}\vec{b}}_{\frac{d \dot{\vec{M}}_{k}}{d \Delta \text{P}}}\delta\text{P} \nonumber \\
+ \dot{\vec{M}}_{k+1} & = &  \dot{\vec{M}}^{\widetilde{n+1}}_{\,k} + \frac{d \dot{\vec{M}}_{k}}{d \Delta \text{P}}\delta(\Delta \text{P}) \nonumber 
+ \end{IEEEeqnarray}
+
 
 Equivalence with a Newton step.
 
-\begin{IEEEeqnarray}{rCl}
-\left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\dot{\vec{M}}_{k+1} & = & - \left[\vec{E} + \mat{L}\;\dot{\vec{M}}_{k} + \vec{b}\Delta \text{P}_{k} + \vec{N}(\vec{x}_{k}) \right] - \vec{b}\delta(\Delta \text{P}) + \mat{L}\;\dot{\vec{M}}_{k} + \mat{N}(\dot{\vec{M}}_{k})\;\dot{\vec{M}}_{k} \nonumber \\
-\left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\dot{\vec{M}}_{k+1} & = & - \vec{F}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) + \left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\;\dot{\vec{M}}_{k} \nonumber \\
-\mat{J}^{*}_{\,k}\,\dot{\vec{M}}_{k+1} & = & - \vec{F}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) + \mat{J}^{*}_{\,k}\;\dot{\vec{M}}_{k} \nonumber \\
-\mat{J}^{*}_{\,k}\,\left[\dot{\vec{M}}_{k+1}-\dot{\vec{M}}_{k} \right] & = & - \vec{F}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) \nonumber \\
-\mat{J}^{*}_{\,k}\,\delta(\dot{\vec{M}}) + \vec{b}\delta(\Delta \text{P})  & = & - \vec{F}(\vec{x}_{k})  \nonumber \\
-\mat{J}_{\,k}\,\delta\vec{x} + \vec{b}\delta(\Delta \text{P})  & = & - \vec{F}(\vec{x}_{k})  \nonumber 
-\end{IEEEeqnarray}
+ \begin{IEEEeqnarray}{rCl}
+ \left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\dot{\vec{M}}_{k+1} & = & - \left[\vec{E} + \mat{L}\;\dot{\vec{M}}_{k} + \vec{b}\Delta \text{P}_{k} + \vec{N}(\vec{x}_{k}) \right] - \vec{b}\delta(\Delta \text{P}) + \mat{L}\;\dot{\vec{M}}_{k} + \mat{N}(\dot{\vec{M}}_{k})\;\dot{\vec{M}}_{k} \nonumber \\
+ \left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\dot{\vec{M}}_{k+1} & = & - \vec{F}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) + \left[\mat{L} + \mat{N}(\dot{\vec{M}}_{k})\right]\;\dot{\vec{M}}_{k} \nonumber \\
+ \mat{J}^{*}_{\,k}\,\dot{\vec{M}}_{k+1} & = & - \vec{F}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) + \mat{J}^{*}_{\,k}\;\dot{\vec{M}}_{k} \nonumber \\
+ \mat{J}^{*}_{\,k}\,\left[\dot{\vec{M}}_{k+1}-\dot{\vec{M}}_{k} \right] & = & - \vec{F}(\vec{x}_{k}) - \vec{b}\delta(\Delta \text{P}) \nonumber \\
+ \mat{J}^{*}_{\,k}\,\delta(\dot{\vec{M}}) + \vec{b}\delta(\Delta \text{P})  & = & - \vec{F}(\vec{x}_{k})  \nonumber \\
+ \mat{J}_{\,k}\,\delta\vec{x} + \vec{b}\delta(\Delta \text{P})  & = & - \vec{F}(\vec{x}_{k})  \nonumber 
+ \end{IEEEeqnarray}
 
-\begin{align}
-\begin{bmatrix} 
-\DerivParOne{\vec{I}_{l}}{\vec{\dot{M}}_{l}} & \DerivParOne{\vec{I}_{l}}{\vec{\dot{M}}_{g}}  & \DerivParOne{\vec{I}_{l}}{\vec{\dot{M}}_{e}} & \DerivParOne{\vec{I}_{l}}{\Delta P}\\
-\DerivParOne{\vec{I}_{g}}{\vec{\dot{M}}_{l}} & \DerivParOne{\vec{I}_{g}}{\vec{\dot{M}}_{g}}  & \DerivParOne{\vec{I}_{g}}{\vec{\dot{M}}_{e}} & \DerivParOne{\vec{I}_{g}}{\Delta P}\\
-\DerivParOne{\vec{I}_{e}}{\vec{\dot{M}}_{l}} & \DerivParOne{\vec{I}_{e}}{\vec{\dot{M}}_{g}}  & \DerivParOne{\vec{I}_{e}}{\vec{\dot{M}}_{e}} & \DerivParOne{\vec{I}_{e}}{\Delta P}
-\end{bmatrix}_{0}
-\cdot
-\begin{bmatrix}
-\Delta \vec{\dot{M}}_l \\
-\Delta \vec{\dot{M}}_g \\
-\Delta \vec{\dot{M}}_e \\
-\Delta P
-\end{bmatrix}_{k\rightarrow k+1} & =
--\begin{bmatrix}
-\vec{E}_{l} \\
-\vec{E}_{g} \\
-\vec{E}_{e}
-\end{bmatrix} -
-\begin{bmatrix}
-\vec{I}_{l} \\
-\vec{I}_{g} \\
-\vec{I}_{e}
-\end{bmatrix}_{k} \\ 
-% HERE IS A SEPERATE EQUATION
-\begin{bmatrix} 
-\DerivParOne{\vec{I}_{l}}{\vec{\dot{M}}_{l}} & \DerivParOne{\vec{I}_{l}}{\vec{\dot{M}}_{g}}  & \DerivParOne{\vec{I}_{l}}{\vec{\dot{M}}_{e}} \\
-\DerivParOne{\vec{I}_{g}}{\vec{\dot{M}}_{l}} & \DerivParOne{\vec{I}_{g}}{\vec{\dot{M}}_{g}}  & \DerivParOne{\vec{I}_{g}}{\vec{\dot{M}}_{e}} \\
-\DerivParOne{\vec{I}_{e}}{\vec{\dot{M}}_{l}} & \DerivParOne{\vec{I}_{e}}{\vec{\dot{M}}_{g}}  & \DerivParOne{\vec{I}_{e}}{\vec{\dot{M}}_{e}}
-\end{bmatrix}_{0}
-\cdot
-\begin{bmatrix}
-\Delta \vec{\dot{M}}_l \\
-\Delta \vec{\dot{M}}_g \\
-\Delta \vec{\dot{M}}_e
-\end{bmatrix}_{k\rightarrow k+1} & =
--\vec{E} -
-\vec{I}_{k} -
-\begin{bmatrix}
-\DerivParOne{\vec{I}_{l}}{\Delta P} \\
-\DerivParOne{\vec{I}_{g}}{\Delta P} \\
-\DerivParOne{\vec{I}_{e}}{\Delta P}
-\end{bmatrix}_{0}
-\Delta P_{k \rightarrow k+1} \\
-% HERE IS A SEPERATE EQUATION
-\mat{J}_{\,0}
-\cdot
-\begin{bmatrix}
-\Delta \vec{\dot{M}}_l \\
-\Delta \vec{\dot{M}}_g \\
-\Delta \vec{\dot{M}}_e
-\end{bmatrix}_{k\rightarrow k+1} & =
--\vec{E} -
-\vec{I}_{k} -
-\vec{p}_{0}
-\Delta P_{k \rightarrow k+1} \\
-% HERE IS A SEPERATE EQUATION
-\begin{bmatrix}
-\Delta \vec{\dot{M}}_l \\
-\Delta \vec{\dot{M}}_g \\
-\Delta \vec{\dot{M}}_e
-\end{bmatrix}_{k\rightarrow k+1} & =
--\mat{J}_{\,0}^{-1}\left(\vec{E} + \vec{I}_{k}\right) -
-\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0} \Delta P_{k \rightarrow k+1} \\
-% HERE IS A SEPERATE EQUATION
-\vec{\dot{M}}^{n+1}_{k+1}- \vec{\dot{M}}^{n+1}_{k} & =
--\mat{J}_{\,0}^{-1}\left(\vec{E} + \vec{I}_{k}\right) -
-\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0} \Delta P_{k \rightarrow k+1}\\
-% HERE IS A SEPERATE EQUATION
-\vec{\dot{M}}^{n+1}_{k+1} & =
-\underbrace{\vec{\dot{M}}^{n+1}_{k} -\mat{J}_{\,0}^{-1}\left(\vec{E} + \vec{I}_{k}\right)}_{\vec{\dot{M}}^{*}_{k}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{\dot{M}}}{\partial \Delta P}} \Delta P_{k \rightarrow k+1} \\
-% HERE IS A SEPERATE EQUATION
-\vec{\dot{M}}^{n+1}_{k+1} & =
-\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{M}}^{n+1}_{k} - \mat{J}^{-1}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{M}}^{n+1}_{*}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{\dot{M}}}{\partial \Delta P}} \Delta P_{k \rightarrow k+1}
+ \begin{align}
+ \begin{bmatrix} 
+ \DerivParOne{\vec{I}_{l}}{\vec{\dot{M}}_{l}} & \DerivParOne{\vec{I}_{l}}{\vec{\dot{M}}_{g}}  & \DerivParOne{\vec{I}_{l}}{\vec{\dot{M}}_{e}} & \DerivParOne{\vec{I}_{l}}{\Delta P}\\
+ \DerivParOne{\vec{I}_{g}}{\vec{\dot{M}}_{l}} & \DerivParOne{\vec{I}_{g}}{\vec{\dot{M}}_{g}}  & \DerivParOne{\vec{I}_{g}}{\vec{\dot{M}}_{e}} & \DerivParOne{\vec{I}_{g}}{\Delta P}\\
+ \DerivParOne{\vec{I}_{e}}{\vec{\dot{M}}_{l}} & \DerivParOne{\vec{I}_{e}}{\vec{\dot{M}}_{g}}  & \DerivParOne{\vec{I}_{e}}{\vec{\dot{M}}_{e}} & \DerivParOne{\vec{I}_{e}}{\Delta P}
+ \end{bmatrix}_{0}
+ \cdot
+ \begin{bmatrix}
+ \Delta \vec{\dot{M}}_l \\
+ \Delta \vec{\dot{M}}_g \\
+ \Delta \vec{\dot{M}}_e \\
+ \Delta P
+ \end{bmatrix}_{k\rightarrow k+1} & =
+ -\begin{bmatrix}
+ \vec{E}_{l} \\
+ \vec{E}_{g} \\
+ \vec{E}_{e}
+ \end{bmatrix} -
+ \begin{bmatrix}
+ \vec{I}_{l} \\
+ \vec{I}_{g} \\
+ \vec{I}_{e}
+ \end{bmatrix}_{k} \\ 
+ % HERE IS A SEPERATE EQUATION
+ \begin{bmatrix} 
+ \DerivParOne{\vec{I}_{l}}{\vec{\dot{M}}_{l}} & \DerivParOne{\vec{I}_{l}}{\vec{\dot{M}}_{g}}  & \DerivParOne{\vec{I}_{l}}{\vec{\dot{M}}_{e}} \\
+ \DerivParOne{\vec{I}_{g}}{\vec{\dot{M}}_{l}} & \DerivParOne{\vec{I}_{g}}{\vec{\dot{M}}_{g}}  & \DerivParOne{\vec{I}_{g}}{\vec{\dot{M}}_{e}} \\
+ \DerivParOne{\vec{I}_{e}}{\vec{\dot{M}}_{l}} & \DerivParOne{\vec{I}_{e}}{\vec{\dot{M}}_{g}}  & \DerivParOne{\vec{I}_{e}}{\vec{\dot{M}}_{e}}
+ \end{bmatrix}_{0}
+ \cdot
+ \begin{bmatrix}
+ \Delta \vec{\dot{M}}_l \\
+ \Delta \vec{\dot{M}}_g \\
+ \Delta \vec{\dot{M}}_e
+ \end{bmatrix}_{k\rightarrow k+1} & =
+ -\vec{E} -
+ \vec{I}_{k} -
+ \begin{bmatrix}
+ \DerivParOne{\vec{I}_{l}}{\Delta P} \\
+ \DerivParOne{\vec{I}_{g}}{\Delta P} \\
+ \DerivParOne{\vec{I}_{e}}{\Delta P}
+ \end{bmatrix}_{0}
+ \Delta P_{k \rightarrow k+1} \\
+ % HERE IS A SEPERATE EQUATION
+ \mat{J}_{\,0}
+ \cdot
+ \begin{bmatrix}
+ \Delta \vec{\dot{M}}_l \\
+ \Delta \vec{\dot{M}}_g \\
+ \Delta \vec{\dot{M}}_e
+ \end{bmatrix}_{k\rightarrow k+1} & =
+ -\vec{E} -
+ \vec{I}_{k} -
+ \vec{p}_{0}
+ \Delta P_{k \rightarrow k+1} \\
+ % HERE IS A SEPERATE EQUATION
+ \begin{bmatrix}
+ \Delta \vec{\dot{M}}_l \\
+ \Delta \vec{\dot{M}}_g \\
+ \Delta \vec{\dot{M}}_e
+ \end{bmatrix}_{k\rightarrow k+1} & =
+ -\mat{J}_{\,0}^{-1}\left(\vec{E} + \vec{I}_{k}\right) -
+ \mat{J}_{\,0}^{-1} \cdot \vec{p}_{0} \Delta P_{k \rightarrow k+1} \\
+ % HERE IS A SEPERATE EQUATION
+ \vec{\dot{M}}^{n+1}_{k+1}- \vec{\dot{M}}^{n+1}_{k} & =
+ -\mat{J}_{\,0}^{-1}\left(\vec{E} + \vec{I}_{k}\right) -
+ \mat{J}_{\,0}^{-1} \cdot \vec{p}_{0} \Delta P_{k \rightarrow k+1}\\
+ % HERE IS A SEPERATE EQUATION
+ \vec{\dot{M}}^{n+1}_{k+1} & =
+ \underbrace{\vec{\dot{M}}^{n+1}_{k} -\mat{J}_{\,0}^{-1}\left(\vec{E} + \vec{I}_{k}\right)}_{\vec{\dot{M}}^{*}_{k}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{\dot{M}}}{\partial \Delta P}} \Delta P_{k \rightarrow k+1} \\
+ % HERE IS A SEPERATE EQUATION
+ \vec{\dot{M}}^{n+1}_{k+1} & =
+ \underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{M}}^{n+1}_{k} - \mat{J}^{-1}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{M}}^{n+1}_{*}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{\dot{M}}}{\partial \Delta P}} \Delta P_{k \rightarrow k+1}
+ \end{align}
+
+ \begin{align}
+ % HERE IS A SEPERATE EQUATION
+ \vec{\dot{m}}^{n+1}_{k+1} & =
+ \underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{m}}^{n+1}_{k} - \mat{J}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{\dot{m}}}{\partial \Delta P}} \Delta P_{k \rightarrow k+1} \\
+ % HERE IS A SEPERATE EQUATION
+ \vec{\dot{m}}^{n+1}_{k+1} & =
+ \underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{m}}^{n+1}_{k} - \mat{J}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \frac{\partial \vec{\dot{m}}}{\partial \Delta P}\bigg|_{0} \Delta P_{k \rightarrow k+1} \\
+ % HERE IS A SEPERATE EQUATION
+ \vec{\dot{m}}^{n+1}_{k+1} & =
+ \underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \left(\mat{I} - \mat{J}^{-1}_{\,0}\cdot \mat{\alpha}_{0}\right)\cdot\vec{x}^{n+1}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \frac{\partial \vec{\dot{m}}}{\partial \Delta P}\bigg|_{0} \Delta P_{k \rightarrow k+1}
 \end{align}
 
-\begin{align}
-% HERE IS A SEPERATE EQUATION
-\vec{\dot{m}}^{n+1}_{k+1} & =
-\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{m}}^{n+1}_{k} - \mat{J}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \underbrace{\mat{J}_{\,0}^{-1} \cdot \vec{p}_{0}}_{\frac{\partial \vec{\dot{m}}}{\partial \Delta P}} \Delta P_{k \rightarrow k+1} \\
-% HERE IS A SEPERATE EQUATION
-\vec{\dot{m}}^{n+1}_{k+1} & =
-\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \vec{\dot{m}}^{n+1}_{k} - \mat{J}_{\,0}\cdot \vec{I}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \frac{\partial \vec{\dot{m}}}{\partial \Delta P}\bigg|_{0} \Delta P_{k \rightarrow k+1} \\
-% HERE IS A SEPERATE EQUATION
-\vec{\dot{m}}^{n+1}_{k+1} & =
-\underbrace{-\mat{J}_{\,0}^{-1}\cdot \vec{E} + \left(\mat{I} - \mat{J}^{-1}_{\,0}\cdot \mat{\alpha}_{0}\right)\cdot\vec{x}^{n+1}_{k}}_{\vec{\dot{m}}^{n+1}_{*}} - \frac{\partial \vec{\dot{m}}}{\partial \Delta P}\bigg|_{0} \Delta P_{k \rightarrow k+1}
-\end{align}
 
+ \begin{align}
+ \Mat{J}_{0} & \equiv -\frac{2 A_{mom}\Delta t}{\Delta z}\cdot \nonumber \\
+ &\cdot \begin{bmatrix} 
+ K^{n}_{w,l} + \frac{K^{n}_{i,lg}}{\Ave{\alpha\rho}^{n}_{l}} +\frac{1}{2} &  -\frac{K^{n}_{i,lg}}{\Ave{\alpha\rho}^{n}_{g}} & 0\\
+ -\frac{K^{n}_{i,lg}}{\Ave{\alpha\rho}^{n}_{l}} &  K^{n}_{w,g} + \frac{K^{n}_{i,lg}}{\Ave{\alpha\rho}^{n}_{g}}+\frac{K^{n}_{i,eg}}{\Ave{\alpha\rho}^{n}_{g}} +\frac{1}{2} & -\frac{K^{n}_{i,eg}}{\Ave{\alpha\rho}^{n}_{e}}\\
+ 0 & -\frac{K^{n}_{i,eg}}{\Ave{\alpha\rho}^{n}_{g}} &  K^{k}_{w,e} + \frac{K^{n}_{i,eg}}{\Ave{\alpha\rho}^{n}_{e}}+\frac{1}{2}\\
+ \end{bmatrix}
+ \end{align}
 
-\begin{align}
-\Mat{J}_{0} & \equiv -\frac{2 A_{mom}\Delta t}{\Delta z}\cdot \nonumber \\
-&\cdot \begin{bmatrix} 
-K^{n}_{w,l} + \frac{K^{n}_{i,lg}}{\Ave{\alpha\rho}^{n}_{l}} +\frac{1}{2} &  -\frac{K^{n}_{i,lg}}{\Ave{\alpha\rho}^{n}_{g}} & 0\\
--\frac{K^{n}_{i,lg}}{\Ave{\alpha\rho}^{n}_{l}} &  K^{n}_{w,g} + \frac{K^{n}_{i,lg}}{\Ave{\alpha\rho}^{n}_{g}}+\frac{K^{n}_{i,eg}}{\Ave{\alpha\rho}^{n}_{g}} +\frac{1}{2} & -\frac{K^{n}_{i,eg}}{\Ave{\alpha\rho}^{n}_{e}}\\
-0 & -\frac{K^{n}_{i,eg}}{\Ave{\alpha\rho}^{n}_{g}} &  K^{k}_{w,e} + \frac{K^{n}_{i,eg}}{\Ave{\alpha\rho}^{n}_{e}}+\frac{1}{2}\\
-\end{bmatrix}
-\end{align}
-
-\subsubgroup{Linearization}
+\section{Linearization}
 The semi-implicit method, with a single Newton Step linearizes about the old time value and solves for a single delta. This has several ramifications.
 
-\subsubsubgroup{Wall Drag}
+\subsection{Wall Drag}
 The beginning equation to formulate the wall drag is shown in Eqn.
 
-\begin{IEEEeqnarray}{rCl}
-\frac{dP}{dz}\bigg\vert^{n+1}_{k} & \equiv & \left(\frac{f^{n}}{D_h}+\frac{K_{form}}{\Delta z}\right) \left(\frac{1}{2 \rho^{n}}\right) \left(\frac{\dot{\vec{m}}^{n+1}_{k}}{A_{mom}}\right)^{2}\\
- & = & \left[\left(\frac{f^{n}}{D_h}+\frac{K_{form}}{\Delta z}\right) \left(\frac{1}{2 A^2_{mom} \rho^{n}}\right)\right] \left[\dot{\vec{m}}^{n+1}_{k}\right]^2\\
-  & = & \left[K^{n}\right] \left[\dot{\vec{m}}^{n+1}_{k}\right]^2\\
-\frac{\partial }{\partial_{\dot{\vec{m}}^{n+1}_{k}}} \left(\frac{dP}{dz}\bigg\vert^{n+1}_{k}\right) & = & \left[K^{n}\right]2\left[ \dot{\vec{m}}_{k}^{n+1}\right]
-\end{IEEEeqnarray}
+ \begin{IEEEeqnarray}{rCl}
+ \frac{dP}{dz}\bigg\vert^{n+1}_{k} & \equiv & \left(\frac{f^{n}}{D_h}+\frac{K_{form}}{\Delta z}\right) \left(\frac{1}{2 \rho^{n}}\right) \left(\frac{\dot{\vec{m}}^{n+1}_{k}}{A_{mom}}\right)^{2}\\
+  & = & \left[\left(\frac{f^{n}}{D_h}+\frac{K_{form}}{\Delta z}\right) \left(\frac{1}{2 A^2_{mom} \rho^{n}}\right)\right] \left[\dot{\vec{m}}^{n+1}_{k}\right]^2\\
+   & = & \left[K^{n}\right] \left[\dot{\vec{m}}^{n+1}_{k}\right]^2\\
+ \frac{\partial }{\partial_{\dot{\vec{m}}^{n+1}_{k}}} \left(\frac{dP}{dz}\bigg\vert^{n+1}_{k}\right) & = & \left[K^{n}\right]2\left[ \dot{\vec{m}}_{k}^{n+1}\right]
+ \end{IEEEeqnarray}
 
-The Momentum Equations, outlined in Section contain an implicit wall drag. This means that we need to evaluate the wall drag at the future time value.
-To do this in the semi-implicit methodology requires that we linearize the future value using Newton's Method.
-The current implementation uses the following derivation.
+ The Momentum Equations, outlined in Section contain an implicit wall drag. This means that we need to evaluate the wall drag at the future time value.
+ To do this in the semi-implicit methodology requires that we linearize the future value using Newton's Method.
+ The current implementation uses the following derivation.
 
-Modifying this derivation to take into account the multiple Newton Steps results in the equations shown below.
-For brevity, the phase index, $_k$, is dropped from this derivation.
-Once the linearization starts, the index, $_k$, will refer to Newton iteration.
+ Modifying this derivation to take into account the multiple Newton Steps results in the equations shown below.
+ For brevity, the phase index, $_k$, is dropped from this derivation.
+ Once the linearization starts, the index, $_k$, will refer to Newton iteration.
 
-%============================================================================
-\subgroup{Structural Thermal Energy Equations}
-% Heat Structures
-%============================================================================
-
-%============================================================================
-\subgroup{Newton's Method}
-% Newton's Method
-%============================================================================
-
-COBRA currently uses a single linearized Newton step to solve the hydrodynamic equations.
-This method has been shown to be adequate given a small enough time step.
-One potential improvement that can be made to the current method is multiple Newton steps being taken with a frozen Jacobian.
-The Jacobian will be evaluated at the old time value and not updated during the Newton process.
+\section{Newton's Method}
 
 
-%============================================================================
-\subgroup{Krylov Solvers}
-% Krylov Solvers
-%============================================================================
+ COBRA currently uses a single linearized Newton step to solve the hydrodynamic equations.
+ This method has been shown to be adequate given a small enough time step.
+ One potential improvement that can be made to the current method is multiple Newton steps being taken with a frozen Jacobian.
+ The Jacobian will be evaluated at the old time value and not updated during the Newton process.
+
+
+\section{Krylov Solvers}
+
 To solve a give newton iteraete, a Krylov subspace based method is used.
-This methodology eliminates the requirement of analytically forming the Jacobian.
+ This methodology eliminates the requirement of analytically forming the Jacobian.
