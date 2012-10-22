@@ -115,6 +115,7 @@
 \setlength\headheight{12bp}    %    Height of box containing running head.
 \setlength\headsep{24bp}       %    Space between running head and text.
 \setlength\topskip{12bp}       %    '\baselineskip' for first line of page.
+
                               % Bottom of page:
 \setlength\footskip{24bp}      %    Distance from baseline of box containing foot
                                %    to baseline of last line of text.
@@ -238,29 +239,35 @@
 %=============================================================================
 % CHAPTERS AND SECTIONS
 %=============================================================================
-\newcommand\part{\cleardoublepage   % Starts new page.
-  \thispagestyle{plain}      % Page style of part page is 'plain'
-  \if@twocolumn              % IF two-column style
-    \onecolumn               %  THEN \onecolumn
-    \@tempswatrue            %       @tempswa := true
-  \else \@tempswafalse \fi   %  ELSE @tempswa := false
-  \hbox{}\vfil               % Add fil glue to center title
-  \bgroup  \centering        % BEGIN centering
-  \secdef\@part\@spart}
+\newcommand\part{
+	\cleardoublepage   % Starts new page.
+  	\thispagestyle{plain}      % Page style of part page is 'plain'
+  	\if@twocolumn              % IF two-column style
+    	\onecolumn               %  THEN \onecolumn
+    	\@tempswatrue            %       @tempswa := true
+  	\else
+  		\@tempswafalse
+  	\fi   %  ELSE @tempswa := false
+  	\hbox{}\vfil\bgroup\centering        % BEGIN centering
+  	\secdef\@part\@spart
+  	}
 
 \def\@part[#1]#2{
-  \ifnum \c@secnumdepth >-2\relax        % IF secnumdepth > -2
-    \refstepcounter{part}                %   THEN step part counter
-    \addcontentsline{toc}{part}{\thepart %        add toc line
-    \hspace{1em}#1}\else                 %   ELSE add unnumbered line
-    \addcontentsline{toc}{part}{#1}\fi   % FI
-  \markboth{}{}
-  \ifnum \c@secnumdepth >-2\relax        % IF secnumdepth > -2
-    \huge\bface Part \thepart            %   THEN Print 'Part' and number
-    \par                                 %         in \huge bold.
-    \vskip 20pt \fi                      %        Add space before title.
-  \Huge \bface                           % Print Title in \Huge bold.
-  #1\@endpart}
+	\ifnum \c@secnumdepth >-2\relax        % IF secnumdepth > -2
+  		\refstepcounter{part}                %   THEN step part counter
+	    \addcontentsline{toc}{part}{\thepart\hspace{1em}#1}
+    \else  %   ELSE add unnumbered line
+    	\addcontentsline{toc}{part}{#1}
+    \fi   % FI
+	\markboth{}{}
+	\ifnum \c@secnumdepth >-2\relax        % IF secnumdepth > -2
+		\huge\bface Part \thepart            %   THEN Print 'Part' and number
+		\par                                 %         in \huge bold.
+		\vskip 20pt
+	\fi                      %        Add space before title.
+	\Huge\bface#1
+	\@endpart
+	}
 
 \def\@spart#1{\Huge \bface #1\@endpart}  % Print title in \Huge boldface
 
@@ -376,10 +383,10 @@
 
 \def\@chapter[#1]#2{
   \ifnum \c@secnumdepth >\m@ne
+    \refstepcounter{appendixc}
     \refstepcounter{chapter}
     \typeout{\@chapapp\space\thechapter. #2}
-    \addcontentsline{toc}{\@chapstyle}{\protect
-    \numberline{\@chapnumber}{\@chaptername{#1}}}
+    \addcontentsline{toc}{\@chapstyle}{\protect\numberline{\@chapnumber}{\@chaptername{#1}}}
   \else
     \addcontentsline{toc}{\@chapstyle}{\@chaptername{#1}}
   \fi

@@ -71,10 +71,10 @@
 %  ... \labelenumiv.  The expansion of \p@enumN\theenumN defines the
 %  output of a \ref command.
 %=============================================================================
-\def\labelenumi{   \arabic{enumi  }. }
-\def\labelenumii{  (\alph{ enumii }) }
-\def\labelenumiii{ \roman{ enumiii}. }
-\def\labelenumiv{  \Alph{  enumiv }. }
+\newcommand{\labelenumi  }{ \arabic{enumi}.   }
+\newcommand{\labelenumii }{ (\alph{ enumii }) }
+\newcommand{\labelenumiii}{ \roman{ enumiii}. }
+\newcommand{\labelenumiv }{ \Alph{  enumiv }. }
 
 \def\theenumi{   \arabic{ enumi}  }
 \def\theenumii{  \alph{   enumii} }
@@ -91,10 +91,10 @@
 % \labelitemiii, and \labelitemiv, which define the labels of the various
 % itemization levels.
 %=============================================================================
-\def\labelitemi{   $\bullet$ }
-\def\labelitemii{  \bface -- }
-\def\labelitemiii{ $\ast$    }
-\def\labelitemiv{  $\cdot$   }
+\newcommand{\labelitemi}{   $\bullet$ }
+\newcommand{\labelitemii}{  \bface -- }
+\newcommand{\labelitemiii}{ $\ast$    }
+\newcommand{\labelitemiv}{  $\cdot$   }
 
 %=============================================================================
 % VERSE
@@ -155,11 +155,16 @@
 %  start and end a page, and inhibit page numbers.  It also resets the page
 %  number to zero.  In two-column style, it still makes a one-column page.
 %=============================================================================
-\newenvironment{titlepage}
- {\@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn
-  \else \newpage \fi \thispagestyle{empty}
+\newenvironment{titlepage}{
+	\@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn
+	\else
+		\newpage
+	\fi
+	\thispagestyle{empty}
 % \c@page\z@ -- deleted: count title page in thesis
-}{\if@restonecol\twocolumn \else \newpage \fi}
+	}{
+	\if@restonecol\twocolumn \else \newpage \fi
+	}
 
 %=============================================================================
 % ARRAY AND TABULAR
@@ -225,37 +230,38 @@
 %  \Alph{COUNTER}   : Value of COUNTER printed as an upper-case letter:
 %                           1 = A, 2 = B, etc.
 %=============================================================================
-\def\thepart          {\Roman{part}}
-\def\thechapter       {\arabic{chapter}}
-\def\theappendixc     {\Alph{chapter}}
-\def\thesection       {\thechapter.\arabic{section}}
-\def\thesubsection    {\thesection.\arabic{subsection}}
-\def\thesubsubsection {\thesubsection.\arabic{subsubsection}}
-\def\theparagraph     {\thesubsubsection.\arabic{paragraph}}
-\def\thesubparagraph  {\theparagraph.\arabic{subparagraph}}
+\renewcommand{\thepart}{\Roman{part}}
+\renewcommand{\thechapter}{\arabic{chapter}}
+\renewcommand{\theappendixc}{\Alph{appendixc}}
+\renewcommand{\thesection}{\thechapter.\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+\renewcommand{\theparagraph}{\thesubsubsection.\arabic{paragraph}}
+\renewcommand{\thesubparagraph}{\theparagraph.\arabic{subparagraph}}
 
 %=============================================================================
 % TABLE OF CONTENTS, ETC.
 %=============================================================================
 % A \subsection command writes a
 %       \contentsline{subsection}{TITLE}{PAGE}
-% command on the .toc file, where TITLE contains the contents of the
-% entry and PAGE is the page number.  If subsections are being numbered,
-% then TITLE will be of the form
+% command on the .toc file, where TITLE contains the contents of the entry and PAGE is the page number.
+%
+% If subsections are being numbered, then TITLE will be of the form
 %       \numberline{NUM}{HEADING}
-% where NUM is the number produced by \thesubsection.  Other sectioning
-% commands work similarly.
+% where NUM is the number produced by \thesubsection.
+% Other sectioning commands work similarly.
 %
 % A \caption command in a 'figure' environment writes
-%    \contentsline{figure}{\numberline{NUM}{CAPTION}}{PAGE}
-% on the .lof file, where NUM is the number produced by \thefigure and
-% CAPTION is the figure caption.  It works similarly for a 'table' environment.
+%		\contentsline{figure}{\numberline{NUM}{CAPTION}}{PAGE}
+% on the .lof file, where NUM is the number produced by \thefigure and CAPTION is the figure caption.
+% It works similarly for a 'table' environment.
 %
-% The command \contentsline{NAME} expands to \l@NAME.  So, to specify
-% the table of contents, we must define \l@chapter, \l@section,
-% \l@subsection, ... ; to specify the list of figures, we must define
-% \l@figure; and so on.  Most of these can be defined with the
-% \@dottedtocline command, which works as follows.
+% The command \contentsline{NAME} expands to \l@NAME.
+% So, to specify the table of contents, we must define \l@chapter, \l@section, \l@subsection, etc.
+% To specify the list of figures, we must define \l@figure; and so on for other tables.
+% Most of these can be defined with the
+%		\@dottedtocline
+% command, which works as follows:
 %
 % \@dottedtocline{LEVEL}{INDENT}{NUMWIDTH}{TITLE}{PAGE}
 %    LEVEL    : An entry is produced only if LEVEL < or = value of
@@ -280,14 +286,12 @@
 \setcounter{tocdepth}{2}
 
 %=============================================================================
-% The value of \@tocchapterskip when the table of contents is
-% formatted is the only value that matters.  Changing this value on
-% the fly probably won't do what you want.  Re-defining \l@chapter has
-% the same problem.  The only way around the problem I've thought of
-% is to write the spacing commands directly into the toc file from the
-% chapter command, as is done by \appendix, for instance.
+% The value of \@tocchapterskip when the table of contents is formatted is the only value that matters.
+% Changing this value on the fly probably won't do what you want.
+% Re-defining \l@chapter has the same problem.
+% The only way around the problem I've thought of is to write the spacing commands directly into the toc file from the chapter command, as is done by \appendix, for instance.
 %=============================================================================
-\def\@tocchapterskip{1.0em plus 1pt}
+\newcommand{\@tocchapterskip}{1.0em plus 1pt}
 
 \def\l@part#1#2{\addpenalty{-\@highpenalty}
   \addvspace{2.25em plus 1pt}  % space above part line
@@ -301,16 +305,33 @@
     \nobreak             % Never break after part entry
   \endgroup}
 
-\def\l@chapter#1#2{\pagebreak[3]\vskip\@tocchapterskip\@dottedtocline{0}{0pt}{1.5em}{{\bface #1}}{#2}}
-\def\l@section{      \@dottedtocline{1}{ 1.5em}{2.3em}}
-\def\l@subsection{   \@dottedtocline{2}{ 3.8em}{3.2em}}
-\def\l@subsubsection{\@dottedtocline{3}{ 7.0em}{4.1em}}
-\def\l@paragraph{    \@dottedtocline{4}{10.0em}{5.0em}}
-\def\l@subparagraph{ \@dottedtocline{5}{12.0em}{6.0em}}
-
-\def\l@figure{\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
-\def\l@table{ \vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
-\def\l@algo{  \vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
+\newcommand{\l@chapter}[2]{
+	\pagebreak[3]\vskip\@tocchapterskip\@dottedtocline{0}{0pt}{1.5em}{{\bface #1}}{#2}
+	}
+\newcommand{\l@section}{
+	\@dottedtocline{1}{ 1.5em}{2.3em}
+	}
+\newcommand{\l@subsection}{
+	\@dottedtocline{2}{ 3.8em}{3.2em}
+	}
+\newcommand{\l@subsubsection}{
+	\@dottedtocline{3}{ 7.0em}{4.1em}
+	}
+\newcommand{\l@paragraph}{
+	\@dottedtocline{4}{10.0em}{5.0em}
+	}
+\newcommand{\l@subparagraph}{
+	\@dottedtocline{5}{12.0em}{6.0em}
+	}
+\newcommand{\l@figure}{
+	\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}
+	}
+\newcommand{\l@table}{
+	\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}
+	}
+\newcommand{\l@algo}{
+	\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}
+	}
 
 %=============================================================================
 % TABLE OF CONTENTS; LIST OF FIGURES; LIST OF TABLES
@@ -330,18 +351,22 @@
 % the chapter.  Isn't elegance wonderful?
 %
 %=============================================================================
-\def\tableofcontents{ \@tableof{Table of Contents }{         }{tocpage}{toc}{                                                          }}
-\def\listoffigures{   \@tableof{List of Figures   }{Figure   }{lofpage}{lof}{\protect\addcontentsline{toc}{chapter}{List of Figures   }}}
-\def\listoftables{    \@tableof{List of Tables    }{Table    }{lotpage}{lot}{\protect\addcontentsline{toc}{chapter}{List of Tables    }}}
-\def\listofalgorithm{ \@tableof{List of Algorithms}{Algorithm}{loapage}{loa}{\protect\addcontentsline{toc}{chapter}{List of Algorithms}}}
+\newcommand{\tableofcontents}{
+	\@tableof{Table of Contents }{}{tocpage}{toc}{}
+	}
+\newcommand{\listoffigures}{
+	\@tableof{List of Figures}{Figure}{lofpage}{lof}{\protect\addcontentsline{toc}{chapter}{List of Figures}}
+	}
+\newcommand{\listoftables}{
+	\@tableof{List of Tables}{Table}{lotpage}{lot}{\protect\addcontentsline{toc}{chapter}{List of Tables}}
+	}
+\newcommand{\listofalgorithm}{
+	\@tableof{List of Algorithms}{Algorithm}{loapage}{loa}{\protect\addcontentsline{toc}{chapter}{List of Algorithms}}
+	}
 
 \def\@tableof#1#2#3#4#5{
 { % limit scope of following declarations!!
   \@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn\fi
-  \addtolength{\textheight}{-40pt}       % -24-16
-  \addtolength{\majorheadskip}{-40pt}    % -24-16
-  \addtolength{\headheight}{52pt}        %  36+16
-  \addtolength{\headsep}{-12pt}          % -12
   \chapter*{#1}
   #5
   \relax\markboth{#1}{#1}
@@ -395,7 +420,7 @@
 %   \altbibtitle has been added to change the chapter title.
 %   This command does nothing more than change REFERENCES to BIBLIOGRAPHY
 %============================================================================
-\def\@bibchaptitle{List of References}
+\newcommand{\@bibchaptitle}{List of References}
 \def\thebibliography#1{
   \global\@bibpresenttrue
   \chapter*{\@bibchaptitle\markboth{\@bibchaptitle}{\@bibchaptitle}}
@@ -648,12 +673,14 @@
 % the author and title in a standard format.  After these lines comes
 % the standard abstract.
 %=============================================================================
-\def\abstract{
+\newenvironment{abstract}{
   \chapter*{Abstract}
   \addcontentsline{toc}{chapter}{Abstract}
   \relax
-  \markboth{Abstract}{Abstract}}
-\def\endabstract{\par\newpage}
+  \markboth{Abstract}{Abstract}
+  }{
+  \par\newpage
+  }
 
 
 %=============================================================================
@@ -671,20 +698,20 @@
 \gdef\@advisortitle{Professor}
 \gdef\@advisorname{Michael\ Corradini}
 
-\def\umiabstract{
-  \thispagestyle{empty}
-  \addtocounter{page}{-2}
-  \begin{center}
-    {\bf\expandafter\uppercase\expandafter{\@title}}\\
-    \vspace{12pt}
-    \@author \\
-    \vspace{12pt}
-    Under the supervision of \@advisortitle\ \@advisorname\\
-    At the University of Wisconsin-Madison
-  \end{center}             
-}
-
-\def\endumiabstract{\vfill \hfill\@advisorname\par \thispagestyle{empty}\newpage}
+\newenvironment{umiabstract}{
+	\thispagestyle{empty}
+	\addtocounter{page}{-2}
+	\begin{center}
+    	{\bf\expandafter\uppercase\expandafter{\@title}}\\
+		\vspace{12pt}
+		\@author \\
+		\vspace{12pt}
+		Under the supervision of \@advisortitle\ \@advisorname\\
+		At the University of Wisconsin-Madison
+	\end{center}             
+	}{
+	\vfill \hfill\@advisorname\par \thispagestyle{empty}\newpage
+	}
 %=============================================================================
 % PAGE STYLES
 %=============================================================================
@@ -977,81 +1004,66 @@
 %       to look different from chapter titles and headings.
 %    -- produce special toc, lot and lof entries
 %=============================================================================
-\def\l@appendices#1#2{\@dottedtocline{0}{1.5em}{6.5em}{#1}{#2}}
-\def\l@appendixc#1#2{\@dottedtocline{0}{1.5em}{6.5em}{#1}{#2}}
-\def\l@appendix#1#2{\pagebreak[3] \vskip\@tocchapterskip \@dottedtocline{0}{0pt  }{7.3em}{{\bface #1}}{#2}}
+\newcommand{\l@appendices}[2]{
+	\@dottedtocline{0}{1.5em}{6.5em}{#1}{#2}
+	}
+\newcommand{\l@appendixc}[2]{
+	\@dottedtocline{0}{1.5em}{6.5em}{#1}{#2}
+	}
+\newcommand{\l@appendix}[2]{
+	\pagebreak[3] \vskip\@tocchapterskip \@dottedtocline{0}{0pt  }{7.3em}{{\bface #1}}{#2}
+	}
 
-%\def\@appendix#1{\par
-%  \addtocontents{toc}{{\protect\setcounter{tocdepth}{0}}}
-%  \setcounter{chapter}{0}
-%  \setcounter{section}{0}
-%  \def \@chapapp{APPENDIX}
-%  \def \thechapter{\Alph{chapter}}
-%  \@lotheading
-%  \@lofheading
-%}
-
-%\def\appendix{
-%  \@appendix{Appendix}
-%  \def \@chapstyle{appendix}
-%  \def \@chapnumber{APPENDIX}
-%  \let \@chapterhead  \@appendixchapterhead
-%  \let \@schapterhead \@appendixchapterhead}
-
-%\def\endappendix{
-%  \def\@chaptername##1{\uppercase {##1}}
-%  \def\@chapstyle{chapter}
-%  \def\@chapnumber{\thechapter.}
-%  \let\@chapterhead\@makechapterhead
-%  \let\@schapterhead\@makeschapterhead}
-
-\def\appendices{
+\newenvironment{appendices}{
   \addtocontents{toc}{\protect\addvspace{\@tocchapterskip} \hbox to \hsize{\bface Appendices \hfil} \protect\addvspace{\@tocchapterskip}}
   \addtocontents{toc}{{\protect\setcounter{tocdepth}{0}}}
-  \makeatletter
   \providecommand*{\toclevel@appendixc}{0}
-  \makeatother
-  \setcounter{chapter}{0}
-  \def \@chapapp{chapter}
-  \def \@chaptername{}
-  \def \@chapstyle{appendixc}
-  \def \@chapnumber{Appendix \theappendixc:}
+  \setcounter{appendixc}{0}
+  \renewcommand{\@chapapp    }{appendixc}
+  \renewcommand{\@chaptername}{}
+  \renewcommand{\@chapstyle  }{appendixc}
+  \renewcommand{\@chapnumber }{Appendix \theappendixc :}
   \let \@chapterhead  \@appendiceschapterhead
   \let \@schapterhead \@appendiceschapterhead
-  \if @bibpresent \relax \fi
-  
-  }
-
-\def\endappendices{
+  \if @bibpresent \relax \fi  
+  }{
   \def\@chaptername##1{\uppercase {##1}}
   \def\@chapstyle{chapter}
   \def\@chapnumber{\thechapter.}
   \let\@chapterhead\@makechapterhead
-  \let\@schapterhead\@makeschapterhead}
+  \let\@schapterhead\@makeschapterhead
+  }
 
-\def\noappendixtables{\def\@lotheading{}}
-\def\@lotheading{
-  \addtocontents{lot}{
-    \protect\stepcounter{listofheading}
-    \protect\addvspace{\@tocchapterskip}
-    \hbox to \hsize{Appendix \hfil}
-    \hbox to \hsize{Table \hfil}}}
+\newcommand{\@lotheading}{
+	\addtocontents{lot}{
+  		\protect\stepcounter{listofheading}
+  		\protect\addvspace{\@tocchapterskip}
+  		\hbox to \hsize{Appendix \hfil}
+  		\hbox to \hsize{Table \hfil}
+  		}
+	}
 
-\def\noappendixfigures{\def\@lofheading{}}
-\def\@lofheading{
-  \addtocontents{lof}{
-    \protect\stepcounter{listofheading}
-    \protect\addvspace{\@tocchapterskip}
-    \hbox to \hsize{Appendix \hfil}
-    \hbox to \hsize{Figure \hfil}}}
+\newcommand{\@lofheading}{
+	\addtocontents{lof}{
+    	\protect\stepcounter{listofheading}
+	    \protect\addvspace{\@tocchapterskip}
+    	\hbox to \hsize{Appendix \hfil}
+	    \hbox to \hsize{Figure \hfil}
+    	}
+	}
 
-\def\noappendixalgorithms{\def\@loaheading{}}
-\def\@loaheading{
-  \addtocontents{loa}{
-    \protect\stepcounter{listofheading}
-    \protect\addvspace{\@tocchapterskip}
-    \hbox to \hsize{Appendix \hfil}
-    \hbox to \hsize{Algorithm \hfil}}}
+\newcommand{\@loaheading}{
+	\addtocontents{loa}{
+    	\protect\stepcounter{listofheading}
+	    \protect\addvspace{\@tocchapterskip}
+    	\hbox to \hsize{Appendix \hfil}
+	    \hbox to \hsize{Algorithm \hfil}
+		}
+	}
+
+\newcommand{\noappendixtables    }{ \renewcommand{\@lotheading}{}}
+\newcommand{\noappendixfigures   }{ \renewcommand{\@lofheading}{}}
+\newcommand{\noappendixalgorithms}{ \renewcommand{\@loaheading}{}}
 
 %=============================================================================
 % COPYRIGHTPAGE
@@ -1060,17 +1072,17 @@
 % - start a new page with no number
 % - place the copyright text centered at the bottom.
 %=============================================================================
-\def\copyrightpage{
-  \newpage
-  \thispagestyle{empty}    % No page number
-  \addtocounter{page}{-1}
-  \chapter*{}            % Required for \vfill to work
-  \begin{center}
-   \vfill
-   \copyright\ Copyright by \@author\ \@date\\
-   All Rights Reserved
-  \end{center}}
-
+\newcommand{\copyrightpage}{
+	\newpage
+	\thispagestyle{empty}    % No page number
+	\addtocounter{page}{-1}
+	\chapter*{}            % Required for \vfill to work
+	\begin{center}
+		\vfill
+		\copyright\ Copyright by \@author\ \@date\\
+		All Rights Reserved
+	\end{center}
+	}
 
 %=============================================================================
 % GLOSSARY
@@ -1079,11 +1091,12 @@
 % - produce the table of contents entry for the glossary
 % - start a new page with GLOSSARY centered two inches from the top
 %=============================================================================
-\def\glossary{
-  \chapter*{Glossary}
-  \addcontentsline{toc}{chapter}{Glossary}
-}
-\def\endglossary{\par\newpage}
+\renewenvironment{glossary}{
+	\chapter*{Glossary}
+	\addcontentsline{toc}{chapter}{Glossary}
+	}{
+	\par\newpage
+	}
 
 %=============================================================================
 % NOMENCLATURE
