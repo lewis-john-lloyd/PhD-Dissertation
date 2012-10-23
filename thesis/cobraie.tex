@@ -1,0 +1,34 @@
+\chapter{Software}
+
+\section{Safety Analysis Codes}
+The ability to simulate the thermal-hydraulic behavior of a nuclear reactor core during postulated accidents and their follow-on mitigation/recovery measures is at the heart of safety analysis.
+To be able to model the complex phenomena involved, many software codes have been developed since the 1960s.
+In general, the these safety codes can be divided into several large categories. There are those codes that have extensive models available for large steam system components: RELAP \cite{RELAP}, TRACE \cite{TRACE}, and MELCOR are a few.
+There are also those that have extensive modeling capabilities for in-core physics: COBRA \cite{Thurgood1983c} and VIPRE are two examples.
+While there is definitely overlap between the capabilities of the various codes, each has its own particular strength and weaknesses.
+This work deals with a variant of the COBRA family of codes, known as COBRA-IE.
+
+\section{COBRA-IE}
+COBRA-IE stands for COlant Boiling in Rod Arrays - Integrated Environment.
+The Integrated Environment suffix indicated that this version of COBRA has, among other differences, been outfitted to couple with a various other codes in a systematic way using a generic semi-implicit coupling technique \cite{Weaver2002}.
+
+COBRA-IE solves the two-phase, three-field conservation equations.
+These equations include the following conservation of mass equations: non-condensable gas, continuous liquid film, entrained liquid droplets, and total gas mass.
+Being that COBRA-IE was developed primarily as a sub-channel analysis tool, there is an assumption that the primary flow path is axial, where axial is defined as inline with the gravity vector.
+There is the ability to model "gap" flow orthogonal to the primary axial flow direction.
+The conservation of momentum is applied in each flow direction to the three-fields: continuous liquid films, entrained liquid droplets, and total gaseous flow.
+For the conservation of energy, COBRA-IE tracks the combined fluid energy and the combined gas energy.
+In total, there are twelve physical conservation equations that are used for the fluid-mechanic solution within COBRA.
+
+COBRA utilizes a staggered mesh strategy for generating the domain of the problem. 
+With the staggered mesh, there are "continuity" meshes and there are "momentum" meshes; see figure \ref{cobra_topology}.
+In addition, there is an advection equation for Interfacial Area Transport. 
+
+\section{Solution Strategy - Legacy Mode}
+The current solution algorithm in COBRA-IE, which is based off of the semi-implicit methodology of Liles and Reed \cite{Liles1978}, is shown in algorithm \ref{algo:semi_implicit}.
+
+
+\section{Solution Strategy - Nonlinear Mode}
+
+
+

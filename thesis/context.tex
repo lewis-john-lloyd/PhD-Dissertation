@@ -1,19 +1,17 @@
 \chapter{Introduction}
 In the United States, the primary responsibility of nuclear power plant designers, builders, operators, and regulators is to ensure the safety of the public during both normal operations and severe accidents.
 
-\section{Nuclear Reactor Safety}
-\subsection{Large Break Loss of Coolant Accident}
+\section{Large Break Loss of Coolant Accident}
 Of primary use in the field of nuclear reactor safety analysis is simulation.
 The ability to predict the behavior of reactors during off-normal events is the key to the licensing and the operation of nuclear power plants.
 Within the United States, this simulation capacity is provided by a relatively small number of main stream software suites, among which are the RELAP variants, COBRA variants, and MELCOR.
 While each of these software products varies in their models and implementations, the underlying numeric techniques and capabilities are similar.
-\subsection{Station Blackout}
 
-\section{Safety Analysis Codes}
+\section{Thesis Thrust}
 The objective of this dissertation is the design, implementation, and evaluation of a practical non-linear solution framework for reactor safety systems codes.
 Specifically, an efficient and reliable solution methodology to the two-phase, three-field, fluid-dynamics and the solid-structure heat transfer system of coupled non-linear partial differential equations is sought.
 The specific methodology should be capable of obtaining a consistent solution to the system of PDEs while also possessing. \cite{Aktas1996}
-\subsection{RELAP}
-\subsection{TRACE}
-\subsection{COBRA}
 The limiting behavior of nuclear reactors occurs during the end portion of a severe accident.
+The primary point of investigation is the use of domain decomposition for the purpose of refining the solution to the nonlinear conservation within COBRA-IE.
+The domain decomposition will take place utilizing a generic semi-implicit coupling methodology \cite{Weaver2002}.
+The ability to isolate a subdomain of the problem and increase ability of the software to resolve the complex nonlinear physics that occur near the quench front of a reflood transient.
