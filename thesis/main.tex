@@ -59,7 +59,7 @@
 \usepackage{IEEEtrantools}
 
 % algorithm: This package provides the algorithm environment.
-% \usepackage[ruled,chapter]{algorithm}
+%\usepackage[ruled,chapter]{algorithm}
 
 % algpseudocode: This package provides the pseudocode algorithm environment.
 \usepackage{algpseudocode}
@@ -158,9 +158,8 @@
 \include{prelude}       % Frontmatter
 \include{context}       % Chapter: Context of the problem.
 \include{cobraie}       % Chapter: Pertinent research.
-\include{justification} % Chapter: Proof of worthiness. 
+\include{convergence}   % Chapter: Proof of worthiness. 
 \include{proposal}      % Chapter: Proposal of research.
-\include{mathematics}   % Chapter: Mathematical formulation
 
 %=======================================================================
 % Bibliography
@@ -173,9 +172,9 @@
 %=======================================================================
 \begin{appendices}
 
-\include{models}             % Appendix: 
-\include{semi_implicit}      % Appendix: 
-\include{nonlinear_solver}   % Appendix: 
+\include{conservation_equations}   % Appendix: Conservation Equations
+\include{nonlinear_mathematics}    % Appendix: Nonlinear Math
+\include{numerical_experiments}    % Appendix: Input Decks
 
 \end{appendices}
 

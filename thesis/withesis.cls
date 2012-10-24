@@ -14,7 +14,7 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{withesis}[2000/07/24 Univ. of Wisconsin-Madison Thesis Format]
 \typeout{Document Class `withesis' v2.0 <24 July 00>}
-
+\RequirePackage{float}
 
 %=============================================================================
 %  Set up the paper size
@@ -614,7 +614,9 @@
 \let\endalgo\end@float
 \@namedef{algo*}{\@dblfloat{algo}}
 \@namedef{endalgo*}{\end@dblfloat}
-
+%\floatstyle{ruled}
+%\newfloat{algorithm}{H}{loa}[chapter]
+%\floatname{algorithm}{Algorithm:} 
 %=============================================================================
 % TITLE PAGE
 %   - define \title{} \author{} \date{}
