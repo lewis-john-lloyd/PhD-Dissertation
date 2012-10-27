@@ -1,6 +1,12 @@
-\chapter{Numerical Experiment}
-\label{chap:numerical_experiments}
+\chapter{Scaling and Convergence}
+\label{chap:scaling_and_convergence}
 To evaluate the interplay between temporal convergence and nonlinear convergence, the following test procedure was proposed and executed.
+
+\section{Scaling}
+Until this point, the definition of convergence, in the previously mentioned nonlinear sense, has been left purposely vague.
+To determine if a simulation has converged, traditionally a delta value is used.
+
+
 
 \section{Procedure}
 Three test problems were examined to determine the effect of temporal refinement on nonlinear convergence.
@@ -9,17 +15,17 @@ After the initial simulation is completed, the simulation is run again with a ma
 This procedure is iterated until the maximum time-step size reaches 1.0E-6.
 This cut-off was chosen for practical constraints.
 
-\section{GE Level Swell}
-\subsection{Experimental Setup}
-\subsection{COBRA-IE Input Deck Description}
+\section{Single Phase Flow in a Pipe}
+\subsection{Model}
+\subsubsection{Input Deck Description}
 \subsection{Results}
 
-\section{}
-\subsection{Experimental Setup}
-\subsection{COBRA-IE Input Deck Description}
+\section{Flashing in a Pipe}
+\subsection{Model}
+\subsubsection{Input Deck Description}
 \subsection{Results}
 
-\section{}
+\section{GE LOFT}
 \subsection{Experimental Setup}
 \subsection{COBRA-IE Input Deck Description}
 \subsection{Results}

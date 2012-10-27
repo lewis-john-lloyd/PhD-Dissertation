@@ -15,10 +15,50 @@ This work deals with a variant of the COBRA family of codes, known as COBRA-IE.
 COBRA-IE stands for COlant Boiling in Rod Arrays - Integrated Environment.
 The Integrated Environment suffix indicated that this version of COBRA has, among other differences, been outfitted to couple with a various other codes in a systematic way using a generic semi-implicit coupling technique \cite{Weaver2002}.
 
-COBRA-IE solves the two-phase, three-field conservation equations.
-These equations include the following conservation of mass equations: non-condensable gas, continuous liquid film, entrained liquid droplets, and total gas mass.
-Being that COBRA-IE was developed primarily as a sub-channel analysis tool, there is an assumption that the primary flow path is axial, where axial is defined as inline with the gravity vector.
-There is the ability to model "gap" flow orthogonal to the primary axial flow direction.
+\subsection{Conservation Equations}
+One of the primary uses of COBRA is to simulate conditions where dispersed liquid within the flow could have a large impact upon the thermal-hydraulics performance of the nuclear reactor core.
+The reason for this is because COBRA models the two-phase flow behavior using two discrete phases, liquid and gas, but allows for multiple fields within a phase.
+In a one-dimensional simulation, there will be nine governing conservation equations for fluid-mechanics.
+There are four equations representing the conservation of mass of the non-condensable gases \eqref{eqn:conservation_of_ncg}, the continuous liquid field \eqref{eqn:conservation_of_continuous_liquid}, the dispersed liquid field \eqref{eqn:conservation_of_dispersed_liquid}, and the total gaseous phase \eqref{eqn:conservation_of_total_gas}. 
+
+\begin{equation}
+\label{eqn:conservation_of_ncg}
+2 + 2 = 4
+\end{equation}
+\begin{equation}
+\label{eqn:conservation_of_continuous_liquid}
+2 + 2 = 4
+\end{equation}
+\begin{equation}
+\label{eqn:conservation_of_dispersed_liquid}
+2 + 2 = 4
+\end{equation}
+\begin{equation}
+\label{eqn:conservation_of_total_gas}
+2 + 2 = 4
+\end{equation}
+
+The $\Gamma$ terms represent the net condensation/evaporation between the liquid phases and the vapor phase.
+$\S$ represents the net rate of deposition/entrainment between the continuous liquid field and the dispersed liquid field.
+Note that the mass conservation equations are formulated in conservative form, this is a stark contrast between COBRA and some other common system analysis codes \cite{TRACE, RELAP} that use non-conservative forms of their mass conservation laws.
+
+COBRA uses two equations for phasic conservation of energy: the conservation of energy for the total liquid phase, \eqref{eqn:conservation_of_liq_energy}; and the conservation of energy for the total gaseous phase, \eqref{eqn:conservation_of_gas_energy}.
+Several assumptions underlie these two equations.
+The continuous liquid film is considered to be thermodynamic equilibrium with the dispersed liquid at a given point.
+
+\begin{equation}
+\label{eqn:conservation_of_liq_energy}
+2 + 2 = 3
+\end{equation} 
+
+\begin{equation}
+\label{eqn:conservation_of_gas_energy}
+2 + 4  + 3 = 2
+\end{equation}
+
+Being that COBRA was developed primarily as a sub-channel analysis tool, there is an assumption that the primary flow path is defined as inline with the gravity vector, which will be referred to as axial flow.
+However, there is also the ability to model "gaps," flow orthogonal to the axial direction.
+Another assumption is that the non-condensable gases are in mechanical equilibrium with the vapor field.
 The conservation of momentum is applied in each flow direction to the three-fields: continuous liquid films, entrained liquid droplets, and total gaseous flow.
 For the conservation of energy, COBRA-IE tracks the combined fluid energy and the combined gas energy.
 In total, there are twelve physical conservation equations that are used for the fluid-mechanic solution within COBRA.
@@ -35,7 +75,7 @@ The conservation equations for mass and energy are solved at the center of the c
 The conservation equations for momentum are solved at the center of the momentum cells.
 The edges of the continuity cells align with the center of the momentum cells and vice-verca.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \caption{COBRA-IE Staggered Mesh}
 \label{fig:staggered_mesh}
 \begin{center}
