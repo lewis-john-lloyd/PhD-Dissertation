@@ -17,30 +17,38 @@ The Integrated Environment suffix indicated that this version of COBRA has, amon
 
 \subsection{Conservation Equations}
 One of the primary uses of COBRA is to simulate conditions where dispersed liquid within the flow could have a large impact upon the thermal-hydraulics performance of the nuclear reactor core.
-The reason for this is because COBRA models the two-phase flow behavior using two discrete phases, liquid and gas, but allows for multiple fields within a phase.
-In a one-dimensional simulation, there will be nine governing conservation equations for fluid-mechanics.
-There are four equations representing the conservation of mass of the non-condensable gases \eqref{eqn:conservation_of_ncg}, the continuous liquid field \eqref{eqn:conservation_of_continuous_liquid}, the dispersed liquid field \eqref{eqn:conservation_of_dispersed_liquid}, and the total gaseous phase \eqref{eqn:conservation_of_total_gas}. 
+The reason for this is because COBRA models the two-phase flow behavior using two discrete phases, liquid and gas, but allows for multiple fields within a given phase.
+The ability to track different fields within a phase manifests itself in two important primary ways: the ability to account for the effects of con-condensable gases on condensation, and the ability to model the impact upon heat transfer by dispersed liquid droplets.
+
+
+There are four equations representing the conservation of mass of the non-condensable gases, the continuous liquid field, the dispersed liquid field, and the total gaseous phase.
+The general conservation of mass equation \eqref{eqn:conservation_of_mass} will yield each of the four conservation equations given appropriate assumptions and definitions for certain terms.
 
 \begin{equation}
-\label{eqn:conservation_of_ncg}
-2 + 2 = 4
-\end{equation}
-\begin{equation}
-\label{eqn:conservation_of_continuous_liquid}
-2 + 2 = 4
-\end{equation}
-\begin{equation}
-\label{eqn:conservation_of_dispersed_liquid}
-2 + 2 = 4
-\end{equation}
-\begin{equation}
-\label{eqn:conservation_of_total_gas}
-2 + 2 = 4
+\label{eqn:conservation_of_mass}
+\frac{\partial \alpha_k \rho_k }{\partial t } + \nabla \cdot \left( \alpha_k \rho_k \vec{U}_k \right) = \Gamma^{'''}_k + S^{'''}_k + s_k
 \end{equation}
 
-The $\Gamma$ terms represent the net condensation/evaporation between the liquid phases and the vapor phase.
-$\S$ represents the net rate of deposition/entrainment between the continuous liquid field and the dispersed liquid field.
-Note that the mass conservation equations are formulated in conservative form, this is a stark contrast between COBRA and some other common system analysis codes \cite{TRACE, RELAP} that use non-conservative forms of their mass conservation laws.
+The left hand side of \eqref{eqn:conservation_of_mass} represents the Lagrangian derivative of the a given field $_k$.
+The three terms on the right hand side represent inter-field, $S^{'''}_k$, inter-phase, $\Gamma_k$,  and external, $s_k$, sources or sinks of mass.
+Since there are two liquid fields, the net phasic mass transfer, $\Gamma$, is apportioned between the continuous liquid field and the dispersed liquid field.
+This division is given by \eqref{eqn:apportionment_of_mass_transfer}, where $\eta$ is a state dependent apportionment factor.
+
+\begin{equation}
+\label{eqn:apportionment_of_mass_transfer}
+\Gamma = \Gamma_g = -( \Gamma_e + \Gamma_l ) =  \eta \Gamma + (1 - \eta)\Gamma
+\end{equation}
+
+The inter-field transfer of mass occurs only between the continuous and dispersed liquids, \eqref{eqn:entrainment_deentrainment}.
+
+\begin{equation}
+\label{eqn:entrainment_deentrainment}
+S^{'''}_l + S^{'''}_e = 0
+\end{equation}
+
+Assumption that reduces the complexity of the conservation equations include the assumptions that mechanical equilibrium between the non-condensable gas field and the total gaseous field, $\vec{U}_{ncg} = \vec{U}_g$, thermal-equilibrium between different fields with the same phase, $ $, Dalton's law is applicable between the two gaseous fields, and that, most importantly, all fields share an equilibrium pressure.
+
+Note that the momentum conservation equations are formulated in conservative form, this is a stark contrast between COBRA and some other common system analysis codes \cite{TRACE, RELAP} that use non-conservative forms for their momentum conservation laws.
 
 COBRA uses two equations for phasic conservation of energy: the conservation of energy for the total liquid phase, \eqref{eqn:conservation_of_liq_energy}; and the conservation of energy for the total gaseous phase, \eqref{eqn:conservation_of_gas_energy}.
 Several assumptions underlie these two equations.
@@ -65,6 +73,9 @@ In total, there are twelve physical conservation equations that are used for the
 
 
 In addition, there is an advection equation for Interfacial Area Transport.
+
+In a one-dimensional simulation, there will be nine governing conservation equations for fluid-mechanics.
+
 
 \section{Topology}
 \label{sect:cobra_topology}
