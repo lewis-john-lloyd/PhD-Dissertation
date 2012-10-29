@@ -1,13 +1,192 @@
 \chapter{Introduction}
+\label{chap:intro}
 In the United States, the primary responsibility of nuclear power plant designers, builders, operators, and regulators is to ensure the safety of the public during both normal operations and severe accidents.
+The ability to simulate the thermal-hydraulic behavior of a nuclear reactor core during postulated accidents and their follow-on mitigation/recovery measures is at the heart of safety analysis.
+To be able to model the complex phenomena involved, many software codes have been developed since the 1960s.
+In general, the these safety codes can be divided into several large categories. There are those codes that have extensive models available for large steam system components: RELAP \cite{RELAP}, TRACE \cite{TRACE}, and MELCOR are a few.
+There are also those that have extensive modeling capabilities for in-core physics: COBRA \cite{Thurgood1983c} and VIPRE are two examples.
+While there is definitely overlap between the capabilities of the various codes, each has its own particular strength and weaknesses.
+This work deals with a variant of the COBRA family of codes, known as COBRA-IE.
 
-\section{Safety Analysis}
+\section{Two Phase Flow}
+\label{sect:two_phase_flow}
+
+
+\section{Physics}
+\label{sect:cobra_physics}
+COBRA-IE stands for COlant Boiling in Rod Arrays - Integrated Environment.
+The Integrated Environment suffix indicated that this version of COBRA has, among other differences, been outfitted to couple with a various other codes in a systematic way using a generic semi-implicit coupling technique \cite{Weaver2002}.
+
+\subsection{Conservation Equations}
+One of the primary uses of COBRA is to simulate conditions where dispersed liquid within the flow could have a large impact upon the thermal-hydraulics performance of the nuclear reactor core.
+The reason for this is because COBRA models the two-phase flow behavior using two discrete phases, liquid and gas, but allows for multiple fields within a given phase.
+The ability to track different fields within a phase manifests itself in two important primary ways: the ability to account for the effects of con-condensable gases on condensation, and the ability to model the impact upon heat transfer by dispersed liquid droplets.
+
+
+There are four equations representing the conservation of mass of the non-condensable gases, the continuous liquid field, the dispersed liquid field, and the total gaseous phase.
+The general conservation of mass equation \eqref{eqn:conservation_of_mass} will yield each of the four conservation equations given appropriate assumptions and definitions for certain terms.
+
+\begin{equation}
+\label{eqn:conservation_of_mass}
+\frac{\partial \alpha_k \rho_k }{\partial t } + \nabla \cdot \left( \alpha_k \rho_k \vec{U}_k \right) = \Gamma^{'''}_k + S^{'''}_k + s_k
+\end{equation}
+
+The left hand side of \eqref{eqn:conservation_of_mass} represents the Lagrangian derivative of the a given field $_k$.
+The three terms on the right hand side represent inter-field, $S^{'''}_k$, inter-phase, $\Gamma_k$,  and external, $s_k$, sources or sinks of mass.
+Since there are two liquid fields, the net phasic mass transfer, $\Gamma$, is apportioned between the continuous liquid field and the dispersed liquid field.
+This division is given by \eqref{eqn:apportionment_of_mass_transfer}, where $\eta$ is a state dependent apportionment factor.
+
+\begin{equation}
+\label{eqn:apportionment_of_mass_transfer}
+\Gamma = \Gamma_g = -( \Gamma_e + \Gamma_l ) =  \eta \Gamma + (1 - \eta)\Gamma
+\end{equation}
+
+The inter-field transfer of mass occurs only between the continuous and dispersed liquids, \eqref{eqn:entrainment_deentrainment}.
+
+\begin{equation}
+\label{eqn:entrainment_deentrainment}
+S^{'''}_l + S^{'''}_e = 0
+\end{equation}
+
+Assumption that reduces the complexity of the conservation equations include the assumptions that mechanical equilibrium between the non-condensable gas field and the total gaseous field, $\vec{U}_{ncg} = \vec{U}_g$, thermal-equilibrium between different fields with the same phase, $ $, Dalton's law is applicable between the two gaseous fields, and that, most importantly, all fields share an equilibrium pressure.
+
+Note that the momentum conservation equations are formulated in conservative form, this is a stark contrast between COBRA and some other common system analysis codes \cite{TRACE, RELAP} that use non-conservative forms for their momentum conservation laws.
+
+COBRA uses two equations for phasic conservation of energy: the conservation of energy for the total liquid phase, \eqref{eqn:conservation_of_liq_energy}; and the conservation of energy for the total gaseous phase, \eqref{eqn:conservation_of_gas_energy}.
+Several assumptions underlie these two equations.
+The continuous liquid film is considered to be thermodynamic equilibrium with the dispersed liquid at a given point.
+
+\begin{equation}
+\label{eqn:conservation_of_liq_energy}
+2 + 2 = 3
+\end{equation} 
+
+\begin{equation}
+\label{eqn:conservation_of_gas_energy}
+2 + 4  + 3 = 2
+\end{equation}
+
+Being that COBRA was developed primarily as a sub-channel analysis tool, there is an assumption that the primary flow path is defined as inline with the gravity vector, which will be referred to as axial flow.
+However, there is also the ability to model "gaps," flow orthogonal to the axial direction.
+Another assumption is that the non-condensable gases are in mechanical equilibrium with the vapor field.
+The conservation of momentum is applied in each flow direction to the three-fields: continuous liquid films, entrained liquid droplets, and total gaseous flow.
+For the conservation of energy, COBRA-IE tracks the combined fluid energy and the combined gas energy.
+In total, there are twelve physical conservation equations that are used for the fluid-mechanic solution within COBRA.
+
+
+In addition, there is an advection equation for Interfacial Area Transport.
+
+In a one-dimensional simulation, there will be nine governing conservation equations for fluid-mechanics.
+
+
+
+
+\section{Numeric Discretization}
+\label{sect:numeric_methods}
+
+The partial differential equations that represent the conservation laws discussed in \sect{sect:cobra_physics} are discretized using a technique known as the semi-implicit methodology \cite{Liles1978}.
+The primary purpose of the semi-implicit methodology is to eliminate the sonic courant limitation placed upon time step size that exists in purely explicit discretization \cite{someone}. \ref{algo:semi_implicit}.
+
+\subsection{Staggered Grid}
+\label{subsect:topology}
+
+
+COBRA utilizes a staggered mesh strategy for generating the domain of the problem. 
+With the staggered mesh, there are "continuity" meshes and there are "momentum" meshes; see \fig{fig:staggered_mesh}.
+The conservation equations for mass and energy are solved at the center of the continuity cells.
+The conservation equations for momentum are solved at the center of the momentum cells.
+The edges of the continuity cells align with the center of the momentum cells and vice-verca.
+
+\begin{figure}[ht]
+\caption{COBRA-IE Staggered Mesh}
+\label{fig:staggered_mesh}
+\begin{center}
+\begin{tikzpicture}
+\draw (-3,0) rectangle +(1,5);
+\draw (0,-1) rectangle +(1,1) (0,0) rectangle +(1,1) (0,1) rectangle +(1,1) (0, 2) rectangle +(1,1) (0,3) rectangle +(1,1) (0,4) rectangle +(1,1) (0, 5) rectangle +(1,1);
+\draw[dashed] (3,-0.5) rectangle +(1,1) (3,0.5) rectangle +(1,1) (3,1.5) rectangle +(1,1) (3, 2.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3, 4.5) rectangle +(1,1) ;
+\draw[dashed] (-3,0) -- (4,0);
+\draw[dashed] (-3,5) -- (4,5);
+\end{tikzpicture}
+\end{center}
+\end{figure}
+
+
+
+\subsection{Explicit}
+\label{subsect:numerics_explicit}
+
+
+\subsection{Semi-Implicit}
+\label{subsect:numerics_semi_implicit}
+
+
+\subsection{SETS}
+\label{subsect:numerics_sets}
+
+\subsection{Nearly Implicit}
+\label{subsect:numerics_nearly_implicit}
+
+\begin{algo}[H]
+\caption{Semi-Implicit Linear Solution Algorithm}
+\label{algo:semi_implicit}
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Require $\Vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Take a Time Step
+    \Set $\vec{x}^{n}$        
+    \Calculate $\Delta t$ 
+    \State $t^{n+1} : = t^{n} + \Delta t$
+    \BlackBox Solve for $\vec{x}^{n+1}$ 
+    \Test CCFL \Comment{Time-step Failure Mechanism (ccfl\_fail) }
+    \BlackBox Interfacial Area Transport Equation
+    \Calculate Courant Numbers 
+\EndLoop{\;$n = n+1$}
+\end{algorithmic}
+\end{algo}
+
+\subsection{Fully Implicit}
+\label{subsect:numerics_fully_implicit}
+
+\section{Code Coupling}
+\label{sect:code_coupling}
+
+\subsection{Explicit}
+\label{subsect:coupling_explicit}
+
+\subsection{Semi-Implicit}
+\label{subsect:coupling_semi_implicit}
+
+\subsection{Implicit}
+\label{subsect:coupling_implicit}
+
+\section{Nonlinearities}
+\label{sect:nonlinearities}
+
+\subsection{Single-shot Linearization}
+\label{subsect:single_shot}
+
+\subsection{Newton's Method}
+\label{subsect:newtons_method}
+
 
 \section{Temporal Convergence}
+\label{sect:temporal_convergence}
 Of primary use in the field of nuclear reactor safety analysis is simulation.
 The ability to predict the behavior of reactors during off-normal events is the key to the licensing and the operation of nuclear power plants.
 Within the United States, this simulation capacity is provided by a relatively small number of main stream software suites, among which are the RELAP variants, COBRA variants, and MELCOR.
 While each of these software products varies in their models and implementations, the underlying numeric techniques and capabilities are similar.
+
+\subsection{Time Step Selection}
+\label{subsect:time_step_selection}
+
+
+\subsection{Time Step Failure}
+\label{subsect:time_step_failure}
+
+\section{Review}
+\label{sect:review}
 
 \section{Research Objective}
 The objective of this dissertation is the design, implementation, and evaluation of a practical non-linear solution framework for reactor safety systems codes.
@@ -17,4 +196,3 @@ The limiting behavior of nuclear reactors occurs during the end portion of a sev
 The primary point of investigation is the use of domain decomposition for the purpose of refining the solution to the nonlinear conservation within COBRA-IE.
 The domain decomposition will take place utilizing a generic semi-implicit coupling methodology \cite{Weaver2002}.
 The ability to isolate a subdomain of the problem and increase ability of the software to resolve the complex nonlinear physics that occur near the quench front of a reflood transient.
-k

@@ -3,14 +3,17 @@
 To evaluate the interplay between temporal convergence and nonlinear convergence, the following test procedure was proposed and executed.
 
 \section{Scaling}
+\label{sect:scaling}
 Until this point, the definition of convergence, in the previously mentioned nonlinear sense, has been left purposely vague.
 To determine if a simulation has converged, traditionally a delta value is used.
 
 
 
-\section{Procedure}
+\section{Nonlinear Convergence vs. Temporal Convergence}
+\label{sect:nonlinear_temporal_convergence}
+
 Three test problems were examined to determine the effect of temporal refinement on nonlinear convergence.
-In each of the examples, an initial simulation is run subject to the time-step selection algorithm in COBRA, see \sect{sect:time_step_selection}.
+In each of the examples, an initial simulation is run subject to the time-step selection algorithm in COBRA, see \sect{subsect:time_step_selection}.
 After the initial simulation is completed, the simulation is run again with a maximum time-step size set to one-half of the smallest time-step size of the previous run.
 This procedure is iterated until the maximum time-step size reaches 1.0E-6.
 This cut-off was chosen for practical constraints.
@@ -30,7 +33,5 @@ This cut-off was chosen for practical constraints.
 \subsection{COBRA-IE Input Deck Description}
 \subsection{Results}
 
-\section{Conclusions}
 
-
-
+\section{Review}
