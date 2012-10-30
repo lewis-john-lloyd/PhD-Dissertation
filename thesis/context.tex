@@ -1,21 +1,65 @@
 \chapter{Introduction}
 \label{chap:intro}
-In the United States, the primary responsibility of nuclear power plant designers, builders, operators, and regulators is to ensure the safety of the public during both normal operations and severe accidents.
-The ability to simulate the thermal-hydraulic behavior of a nuclear reactor core during postulated accidents and their follow-on mitigation/recovery measures is at the heart of safety analysis.
-To be able to model the complex phenomena involved, many software codes have been developed since the 1960s.
-In general, the these safety codes can be divided into several large categories. There are those codes that have extensive models available for large steam system components: RELAP \cite{RELAP}, TRACE \cite{TRACE}, and MELCOR are a few.
-There are also those that have extensive modeling capabilities for in-core physics: COBRA \cite{Thurgood1983c} and VIPRE are two examples.
-While there is definitely overlap between the capabilities of the various codes, each has its own particular strength and weaknesses.
-This work deals with a variant of the COBRA family of codes, known as COBRA-IE.
+In the United States, the primary responsibility of nuclear power plant designers, builders, operators, and regulators is to ensure the safety of the public during both normal operations and during severe accidents.
+Part of that responsibility is the evaluation of a given reactor design's ability to effectively cool its nuclear core during a design basis accident.
+The ability to analysis the thermal-hydraulic behavior of a nuclear reactor core during postulated accidents and the follow-on mitigation and recovery measures is at the heart of safety analysis.
+The diverse conditions experienced by the reactor during severe accidents necessitates the inclusion of a wide array of physics during safety analyses.
+Among the physics of interest are, to name only a few broad categories, fluid-mechanics, neutron transport and diffusion, structural mechanics, and radio-chemistry.
+For each of these disciplines there are dedicated pieces of software under continual development to improve their predictive capabilities.
+The work that follows will deal with one particular piece of physics: fluid-mechanics.
+In particular, it will deal with the software that simulates the thermal-hydraulic behavior of the reactor core.
+
+Within the United States, there are several codes that are widely available for simulating the thermal-hydraulic response of a nuclear power plant.
+These safety codes can be divided into two large categories: system analysis codes, and sub-channel analysis codes.
+While there is a swath of overlap between the capabilities of these two catagories, each has its own particular strengths and weaknesses.
+The system analysis code often have extensive models available for large components such as steam generators, pumps, valves, containment, etc.
+RELAP \cite{RELAP}, TRACE \cite{TRACE}, and MELCOR \cite{MELCOR} are three of the more well known of these system level safety analysis codes.
+Other codes have extensive modeling capabilities for in-core physics: COBRA \cite{Thurgood1983c} and VIPRE \cite{VIPRE} are two examples of these sub-channel codes.
+For a complete analysis both codes are traditionally used in concert to provide an integrated overview of the system response.
+The work present
+The differences between these various codes will be reviewed in the following section to compare and contrast current practices in safety analysis codes and where possible future improvements can be made.
 
 \section{Two Phase Flow}
 \label{sect:two_phase_flow}
+Central to each of these aforementioned thermal hydraulic safety codes is the particular formulation that is used to represent the working fluid within the reactor.
+Within the United States, all operating commercial reactors are of a light water reactor (LWR) design.
+There are two types of LWR designs within the US, pressurized water reactors (PWRs) and boiling water reactors (BWRs).
+In both cases, the safety analysis requires the modeling of water as both a fluid and as a gas.
+This fact has driven the development of safety software that can model the behavior of water under a extensive range of thermodynamic states, including multiple-phases.
+Two-phase flow is a subset of fluid-mechanics that is particularly well suited for modeling this situation.
 
+\subsection{General Assumptions}
+\label{subsect:assumptions}
+Consider \fig{fig:pipe_with_bubbles}; this is a stylized cross-sectional diagram of a flowing steam-water mixture within a pipe.
 
-\section{Physics}
-\label{sect:cobra_physics}
-COBRA-IE stands for COlant Boiling in Rod Arrays - Integrated Environment.
-The Integrated Environment suffix indicated that this version of COBRA has, among other differences, been outfitted to couple with a various other codes in a systematic way using a generic semi-implicit coupling technique \cite{Weaver2002}.
+\begin{figure}[ht]
+\caption{Two phase flow within a pipe.}
+\label{fig:pipe_with_bubbles}
+\begin{center}
+\begin{tikzpicture}
+\draw (4,-4) -- +(4,4);
+\end{tikzpicture}
+\end{center}
+\end{figure}
+
+The level of resolution sought for safety analysis codes does not include the resolution of exact interfaces between phases.
+Of interest is the average behavior of the flow in a given location.
+The definition of average in the above sentence can have several meanings.
+There are spatial\cite{Todreas}, temporal \cite{Ishi}, and ensemble averaging techniques \cite{Drew1998}, each of which has their own physical interpretations.
+The following general equations result from the averaging processes discussed above with several assumptions thrown in for good luck.
+
+\begin{equation}
+\label{eqn:conservation_of_mass}
+\frac{\partial \alpha_k \rho_k }{\partial t } + \nabla \cdot \left( \alpha_k \rho_k \vec{U}_k \right) = \Gamma^{'''}_k + S^{'''}_k + s_k
+\end{equation}
+\begin{equation}
+\label{eqn:conservation_of_momentum}
+\frac{\partial \alpha_k \rho_k \vec{U} }{\partial t } + \nabla \cdot \left( \alpha_k \rho_k \vec{U}_k \vec{U}_k \right) = -\alpha_k \nabla P + \alpha_k \vec{g} \Gamma^{'''}_k + S^{'''}_k + s_k
+\end{equation}
+\begin{equation}
+\label{eqn:conservation_of_energy}
+\frac{\partial \alpha_k \rho_k }{\partial t } + \nabla \cdot \left( \alpha_k \rho_k \vec{U}_k \right) = \Gamma^{'''}_k + S^{'''}_k + s_k
+\end{equation}
 
 \subsection{Conservation Equations}
 One of the primary uses of COBRA is to simulate conditions where dispersed liquid within the flow could have a large impact upon the thermal-hydraulics performance of the nuclear reactor core.
@@ -90,7 +134,6 @@ The primary purpose of the semi-implicit methodology is to eliminate the sonic c
 \subsection{Staggered Grid}
 \label{subsect:topology}
 
-
 COBRA utilizes a staggered mesh strategy for generating the domain of the problem. 
 With the staggered mesh, there are "continuity" meshes and there are "momentum" meshes; see \fig{fig:staggered_mesh}.
 The conservation equations for mass and energy are solved at the center of the continuity cells.
@@ -98,7 +141,7 @@ The conservation equations for momentum are solved at the center of the momentum
 The edges of the continuity cells align with the center of the momentum cells and vice-verca.
 
 \begin{figure}[ht]
-\caption{COBRA-IE Staggered Mesh}
+\caption{A staggered mesh.}
 \label{fig:staggered_mesh}
 \begin{center}
 \begin{tikzpicture}
@@ -111,11 +154,10 @@ The edges of the continuity cells align with the center of the momentum cells an
 \end{center}
 \end{figure}
 
-
-
 \subsection{Explicit}
 \label{subsect:numerics_explicit}
-
+Given the physical layout discussed in section \ref{subsect:topology}, the next choice is the numerical approximation to the partial differential equations from section \ref{sect:two_phase_flow}.
+In particular, each of the 
 
 \subsection{Semi-Implicit}
 \label{subsect:numerics_semi_implicit}
