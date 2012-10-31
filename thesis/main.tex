@@ -84,7 +84,13 @@
 
 
 %\usepackage{chicago}
-\usepackage{cite}
+%\usepackage{cite}
+\usepackage[numbers, sort&compress]{natbib}
+\renewcommand{\bibname}{List of References}
+\let\oldbibsection\bibsection
+\renewcommand{\bibsection}{\oldbibsection\addcontentsline{toc}{chapter}{List of References}\singlespace}
+%\setlength\bibitemsep{0.0pt}
+%\setlength{\bibsep}{0.0pt}
 %\usepackage{trace}
 %\traceon
 
@@ -166,7 +172,7 @@
 %=======================================================================
 % Bibliography
 %=======================================================================
-\bibliographystyle{IEEEtran}
+\bibliographystyle{plainnat}
 \bibliography{../references/references}
 
 %=======================================================================

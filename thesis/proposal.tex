@@ -1,26 +1,35 @@
 \chapter{Future Work}
 \label{chap:future}
-
-\section{Nonlinear Solver}
-\label{sect:future_nonlinear_solver}
-
-Given the results from \chap{chap:scaling_and_convergence}, the next step will be to implement the aforementioned internal coupling to COBRA-IE.
-Upon completion of the implementation, a rigourous testing of the coupling will be completed.
-After the infrastructure is in place, the selective nonlinear refinement will be implemented.
-At that point, the experiments defined in \chap{chap:scaling_and_convergence} will be run again with the domain decomposition selectively hard coded to the region of the problems identified as having a large nonlinear residual.
-Along the way possible metrics for automated detection and refinement may be investigated as time allows.
-Another possible use of this methodology will be the adaptation of a fully implicit solution scheme in the selected subdomain.
-This would provide a way to selectively remove courant limitations from the problem.
-
+In the last two sections, the current state of thermal-hydraulic safety codes has over viewed.
+The primary directions of research has been shown.
 
 \section{Intra-code Coupling}
 \label{sect:future_intracode_coupling}
 
+Given the results from \chap{chap:scaling_and_convergence}, the next step will be to implement an algorithm similar to the one discussed in \sect{sect:code_coupling}.
+The details of the derivation will need to be reworked to account for the different flow variables.
+
+Upon completion of the implementation, a rigorous testing of the coupling methodology will be conducted.
+This testing will be similar to that conducted by \citet{Weaver2002}.
+
+\subsection{Testing}
+A simple test problem will be constructed to test the geometric coupling implementation.
+
+
+\section{Improve Nonlinear Solver Efficiency}
+\label{sect:future_nonlinear_solver}
+After the infrastructure is in place, the selective nonlinear refinement will be implemented.
+
+\section{Selective Nonlinear Refinement}
+\labe{sect:selective_nonlinear_refinement}
 
 
 \section{Evaluation}
 \label{sect:future_eval}
 
+
+\section{Time Line}
+\label{sect:future_eval}
 
 
 

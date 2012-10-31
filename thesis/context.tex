@@ -37,7 +37,7 @@ Consider \fig{fig:pipe_with_bubbles}; this is a stylized cross-sectional diagram
 \label{fig:pipe_with_bubbles}
 \begin{center}
 \begin{tikzpicture}
-\draw (4,-4) -- +(4,4);
+\draw (-4,4) -- +(4,4);
 \end{tikzpicture}
 \end{center}
 \end{figure}
@@ -45,7 +45,7 @@ Consider \fig{fig:pipe_with_bubbles}; this is a stylized cross-sectional diagram
 The level of resolution sought for safety analysis codes does not include the resolution of exact interfaces between phases.
 Of interest is the average behavior of the flow in a given location.
 The definition of average in the above sentence can have several meanings.
-There are spatial\cite{Todreas}, temporal \cite{Ishi}, and ensemble averaging techniques \cite{Drew1998}, each of which has their own physical interpretations.
+There are spatial\cite{Todreas2011}, temporal \cite{Ishi}, and ensemble averaging techniques \cite{Drew1998}, each of which has their own physical interpretations.
 The following general equations result from the averaging processes discussed above with several assumptions thrown in for good luck.
 
 \begin{equation}
@@ -103,7 +103,7 @@ The continuous liquid film is considered to be thermodynamic equilibrium with th
 \begin{equation}
 \label{eqn:conservation_of_liq_energy}
 2 + 2 = 3
-\end{equation} 
+\end{equation}
 
 \begin{equation}
 \label{eqn:conservation_of_gas_energy}
@@ -134,7 +134,7 @@ The primary purpose of the semi-implicit methodology is to eliminate the sonic c
 \subsection{Staggered Grid}
 \label{subsect:topology}
 
-COBRA utilizes a staggered mesh strategy for generating the domain of the problem. 
+COBRA utilizes a staggered mesh strategy for generating the domain of the problem.
 With the staggered mesh, there are "continuity" meshes and there are "momentum" meshes; see \fig{fig:staggered_mesh}.
 The conservation equations for mass and energy are solved at the center of the continuity cells.
 The conservation equations for momentum are solved at the center of the momentum cells.
@@ -157,7 +157,7 @@ The edges of the continuity cells align with the center of the momentum cells an
 \subsection{Explicit}
 \label{subsect:numerics_explicit}
 Given the physical layout discussed in section \ref{subsect:topology}, the next choice is the numerical approximation to the partial differential equations from section \ref{sect:two_phase_flow}.
-In particular, each of the 
+In particular, each of the
 
 \subsection{Semi-Implicit}
 \label{subsect:numerics_semi_implicit}
@@ -177,13 +177,13 @@ In particular, each of the
 \Require $\Vec{x}^{0}$ and $t^{0}$
 \Set $n = 0$
 \Loop \; Take a Time Step
-    \Set $\vec{x}^{n}$        
-    \Calculate $\Delta t$ 
+    \Set $\vec{x}^{n}$
+    \Calculate $\Delta t$
     \State $t^{n+1} : = t^{n} + \Delta t$
-    \BlackBox Solve for $\vec{x}^{n+1}$ 
+    \BlackBox Solve for $\vec{x}^{n+1}$
     \Test CCFL \Comment{Time-step Failure Mechanism (ccfl\_fail) }
     \BlackBox Interfacial Area Transport Equation
-    \Calculate Courant Numbers 
+    \Calculate Courant Numbers
 \EndLoop{\;$n = n+1$}
 \end{algorithmic}
 \end{algo}
@@ -205,6 +205,8 @@ In particular, each of the
 
 \section{Nonlinearities}
 \label{sect:nonlinearities}
+Building upon the previous research, 
+
 
 \subsection{Single-shot Linearization}
 \label{subsect:single_shot}
@@ -226,6 +228,15 @@ While each of these software products varies in their models and implementations
 
 \subsection{Time Step Failure}
 \label{subsect:time_step_failure}
+There are two common methods for dealing with a potentially poor time-step in sub-channel codes: prediction and mitigation.
+The predictive methodology is the less commonly applied of the two methods.
+It uses information about the explicit portion of the nonlinear residual to identify situations where the linearization point may be poor.
+In COBRA, this particular method is used only for the prediction of non-condenable gas appearance.
+
+Mitigation, the second method, is the more common and actively used strategy.
+This strategy can be further subdivided into two catagories: limiting and failure. 
+There is an extensive set of limiting criteria.
+
 
 \section{Review}
 \label{sect:review}
@@ -236,5 +247,6 @@ Specifically, an efficient and reliable solution methodology to the two-phase, t
 The specific methodology should be capable of obtaining a consistent solution to the system of PDEs while also possessing. \cite{Aktas1996}
 The limiting behavior of nuclear reactors occurs during the end portion of a severe accident.
 The primary point of investigation is the use of domain decomposition for the purpose of refining the solution to the nonlinear conservation within COBRA-IE.
-The domain decomposition will take place utilizing a generic semi-implicit coupling methodology \cite{Weaver2002}.
+The domain decomposition will take place utilizing a generic semi-implicit coupling methodology developed by \citet{Weaver2002}.
 The ability to isolate a subdomain of the problem and increase ability of the software to resolve the complex nonlinear physics that occur near the quench front of a reflood transient.
+This methodology will hopefully increase the predictive capabilities of safety analysis codes while keeping the computational overhead as low as reasonable possible. 

@@ -421,13 +421,14 @@
 %   This command does nothing more than change REFERENCES to BIBLIOGRAPHY
 %============================================================================
 \newcommand{\@bibchaptitle}{List of References}
-\def\thebibliography#1{
-  \global\@bibpresenttrue
-  \chapter*{\@bibchaptitle\markboth{\@bibchaptitle}{\@bibchaptitle}}
-  \addcontentsline{toc}{chapter}{\@bibchaptitle}
-  \vspace{0.375in}    % added to match 4 line requirement
-  \interlinepenalty=10000 % added to prevent breaking of bib entries
-  \singlespace
+\newcommand{\newblock}{\hskip .11em plus .33em minus -.07em}
+\newenvironment{thebibliography}[1]{
+	\global\@bibpresenttrue
+	\chapter*{\@bibchaptitle\markboth{\@bibchaptitle}{\@bibchaptitle}}
+	\addcontentsline{toc}{chapter}{\@bibchaptitle}
+	\vspace{0.375in}    % added to match 4 line requirement
+	\interlinepenalty=10000 % added to prevent breaking of bib entries
+	\singlespace
 	\list{[\@arabic\c@enumi]}
 		 {
 		\settowidth\labelwidth{[#1]}
@@ -435,18 +436,18 @@
 		\advance\leftmargin\labelsep
 		\usecounter{enumi}
 		\let\p@enumi\@empty
-        \renewcommand\theenumi{\@arabic\c@enumi}
-		  }
-  \def\newblock{\hskip .11em plus .33em minus -.07em}
-  \sloppy
-  \sfcode`\.=1000\relax}
-\let\endthebibliography=\endlist
-
-%=============================================================================
-%\def\@biblabel#1{[#1]\hfill}  % Produces the label for \bibitem[...]
-%\def\@cite#1{[#1]}            % Produces the output of the \cite command.
-%=============================================================================
-
+        \renewcommand{\theenumi}{\@arabic\c@enumi}
+		}
+	\sloppy
+	\sfcode`\.=1000\relax
+	}{
+	\endlist
+	}
+%
+%%=============================================================================
+%%\def\@biblabel#1{[#1]\hfill}  % Produces the label for \bibitem[...]
+%%\def\@cite#1{[#1]}            % Produces the output of the \cite command.
+%%=============================================================================
 %=============================================================================
 % THEINDEX ENVIRONMENT
 %   Produces double column format, with each paragraph a separate entry.
@@ -1107,11 +1108,12 @@
 % - produce the table of contents entry for the nomenclature section
 % - start a new page with NOMENCLATURE centered two inches from the top
 %=============================================================================
-\def\nomenclature{
-  \chapter*{Nomenclature}
-  \addcontentsline{toc}{chapter}{Nomenclature}
-}
-\def\endnomenclature{\par\newpage}
+\newenvironment{nomenclature}{
+	\chapter*{Nomenclature}
+	\addcontentsline{toc}{chapter}{Nomenclature}
+	}{
+	\par\newpage
+	}
 
 %=============================================================================
 % LIST OF SYMBOLS
