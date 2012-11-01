@@ -1,10 +1,16 @@
 \chapter{Introduction}
 \label{chap:intro}
-In the United States, the primary responsibility of nuclear power plant designers, builders, operators, and regulators is to ensure the safety of the public during both normal operations and during severe accidents.
-Part of that responsibility is the evaluation of a given reactor design's ability to effectively cool its nuclear core during a design basis accident.
-The ability to analysis the thermal-hydraulic behavior of a nuclear reactor core during postulated accidents and the follow-on mitigation and recovery measures is at the heart of safety analysis.
-The diverse conditions experienced by the reactor during severe accidents necessitates the inclusion of a wide array of physics during safety analyses.
-Among the physics of interest are, to name only a few broad categories, fluid-mechanics, neutron transport and diffusion, structural mechanics, and radio-chemistry.
+In the United States, the goal of Nuclear Power Plant (NPP) designers, builders, operators, and regulators is to ensure the safety of the public during both normal operations and during severe accidents.
+It is the responsibility of the Nuclear Regulatory Commission to issue licenses for the construction and operation of nuclear reactors.
+Chapter 1 of Title 10 of the Code of Federal Regulations (10CFR) details the process by which an applicant can obtain an operating licesce for the construction of a NPP.
+One of the requirements laid out in Part 50 of 10CFR (10CFR50) is the requirement for a safety analysis report (SAR).
+Depending upon the license being pursued by the applicant, either a Preliminary Safety Analysis Report (PSAR) or a Final Safety Analysis Report (FSAR).
+The PSAR is required for the issuance of a site construction license, while the FSAR is required for the issuance of either an operating license or a combined license.
+For reactors that use light water, $H_2 O$, as a primary coolant, Light Water Reactors (LWR), both types of SARs require that the applicant provide information an evaluation of their Emergency Core Cooling System (ECCS) during postulated loss-of-coolant accidents (LOCA).
+This evaluation must conform with section 46 of 10CFR50, which requires that the applicant perform analyses for "a number of postulated loss-of-coolant accidents of different sizes, locations, and other properties sufficient to provide assurance that the most severe postulated loss-of-coolant accidents are calculated."
+This requirement necessitates that the designers and operators of NPP possess the ability to model the thermal-hydraulic behavior within the core of a reactor during severe accidents.  
+The diverse physical conditions experienced by the reactor during severe accidents necessitates the inclusion of a wide array of physics during safety analyses.
+Among the physics of interest are fluid-mechanics, neutron transport, structural mechanics, and radio-chemistry.
 For each of these disciplines there are dedicated pieces of software under continual development to improve their predictive capabilities.
 The work that follows will deal with one particular piece of physics: fluid-mechanics.
 In particular, it will deal with the software that simulates the thermal-hydraulic behavior of the reactor core.
@@ -13,10 +19,9 @@ Within the United States, there are several codes that are widely available for 
 These safety codes can be divided into two large categories: system analysis codes, and sub-channel analysis codes.
 While there is a swath of overlap between the capabilities of these two catagories, each has its own particular strengths and weaknesses.
 The system analysis code often have extensive models available for large components such as steam generators, pumps, valves, containment, etc.
-RELAP \cite{RELAP}, TRACE \cite{TRACE}, and MELCOR \cite{MELCOR} are three of the more well known of these system level safety analysis codes.
-Other codes have extensive modeling capabilities for in-core physics: COBRA \cite{Thurgood1983c} and VIPRE \cite{VIPRE} are two examples of these sub-channel codes.
+RELAP \cite{RELAP}, TRACE \cite{TRACE}, and MELCOR \cite{Summers1994} are three of the more well known of these system level safety analysis codes.
+Other codes have extensive modeling capabilities for in-core physics: COBRA \cite{Thurgood1983c} and VIPRE are two examples of these sub-channel codes.
 For a complete analysis both codes are traditionally used in concert to provide an integrated overview of the system response.
-The work present
 The differences between these various codes will be reviewed in the following section to compare and contrast current practices in safety analysis codes and where possible future improvements can be made.
 
 \section{Two Phase Flow}
@@ -45,7 +50,7 @@ Consider \fig{fig:pipe_with_bubbles}; this is a stylized cross-sectional diagram
 The level of resolution sought for safety analysis codes does not include the resolution of exact interfaces between phases.
 Of interest is the average behavior of the flow in a given location.
 The definition of average in the above sentence can have several meanings.
-There are spatial\cite{Todreas2011}, temporal \cite{Ishi}, and ensemble averaging techniques \cite{Drew1998}, each of which has their own physical interpretations.
+There are spatial, temporal, and ensemble averaging techniques, each of which has their own physical interpretations\cite{Drew1998, Todreas2011}.
 The following general equations result from the averaging processes discussed above with several assumptions thrown in for good luck.
 
 \begin{equation}
@@ -69,11 +74,6 @@ The ability to track different fields within a phase manifests itself in two imp
 
 There are four equations representing the conservation of mass of the non-condensable gases, the continuous liquid field, the dispersed liquid field, and the total gaseous phase.
 The general conservation of mass equation \eqref{eqn:conservation_of_mass} will yield each of the four conservation equations given appropriate assumptions and definitions for certain terms.
-
-\begin{equation}
-\label{eqn:conservation_of_mass}
-\frac{\partial \alpha_k \rho_k }{\partial t } + \nabla \cdot \left( \alpha_k \rho_k \vec{U}_k \right) = \Gamma^{'''}_k + S^{'''}_k + s_k
-\end{equation}
 
 The left hand side of \eqref{eqn:conservation_of_mass} represents the Lagrangian derivative of the a given field $_k$.
 The three terms on the right hand side represent inter-field, $S^{'''}_k$, inter-phase, $\Gamma_k$,  and external, $s_k$, sources or sinks of mass.
@@ -128,9 +128,6 @@ In a one-dimensional simulation, there will be nine governing conservation equat
 \section{Numeric Discretization}
 \label{sect:numeric_methods}
 
-The partial differential equations that represent the conservation laws discussed in \sect{sect:cobra_physics} are discretized using a technique known as the semi-implicit methodology \cite{Liles1978}.
-The primary purpose of the semi-implicit methodology is to eliminate the sonic courant limitation placed upon time step size that exists in purely explicit discretization \cite{someone}. \ref{algo:semi_implicit}.
-
 \subsection{Staggered Grid}
 \label{subsect:topology}
 
@@ -162,12 +159,9 @@ In particular, each of the
 \subsection{Semi-Implicit}
 \label{subsect:numerics_semi_implicit}
 
-
-\subsection{SETS}
-\label{subsect:numerics_sets}
-
-\subsection{Nearly Implicit}
-\label{subsect:numerics_nearly_implicit}
+The partial differential equations that represent the conservation laws discussed in \sect{sect:two_phase_flow} are discretized using a technique known as the semi-implicit methodology \cite{Liles1978}.
+A primary reason for using the semi-implicit methodology, as stated by \citet{Liles1978}, is to eliminate the sonic Courant limit of the purely explicit scheme discussed in \ref{subsect:numerics_explicit}
+A generic algorithm used for is \ref{algo:semi_implicit}.
 
 \begin{algo}[H]
 \caption{Semi-Implicit Linear Solution Algorithm}
@@ -187,6 +181,13 @@ In particular, each of the
 \EndLoop{\;$n = n+1$}
 \end{algorithmic}
 \end{algo}
+
+
+\subsection{SETS}
+\label{subsect:numerics_sets}
+
+\subsection{Nearly Implicit}
+\label{subsect:numerics_nearly_implicit}
 
 \subsection{Fully Implicit}
 \label{subsect:numerics_fully_implicit}
