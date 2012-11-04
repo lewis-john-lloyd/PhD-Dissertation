@@ -12,26 +12,24 @@ This requirement necessitates that the designers and operators of NPP possess th
 The diverse physical conditions experienced by the reactor during severe accidents necessitates the inclusion of a wide array of physics during safety analyses.
 Among the physics of interest are fluid-mechanics, neutron transport, structural mechanics, and radio-chemistry.
 For each of these disciplines there are dedicated pieces of software under continual development to improve their predictive capabilities.
-The work that follows will deal with one particular piece of physics: fluid-mechanics.
-In particular, it will deal with the software that simulates the thermal-hydraulic behavior of the reactor core.
+The work that follows is concerned with the mathematical formulation and solution of the equations governing the thermal-hydraulic behavior of the reactor core.
 
 Within the United States, there are several codes that are widely available for simulating the thermal-hydraulic response of a nuclear power plant.
 These safety codes can be divided into two large categories: system analysis codes, and sub-channel analysis codes.
-While there is a swath of overlap between the capabilities of these two catagories, each has its own particular strengths and weaknesses.
+While there is a swath of overlap between the capabilities of these two categories, each has its own particular strengths and weaknesses.
 The system analysis code often have extensive models available for large components such as steam generators, pumps, valves, containment, etc.
 RELAP \cite{RELAP}, TRACE \cite{TRACE}, and MELCOR \cite{Summers1994} are three of the more well known of these system level safety analysis codes.
 Other codes have extensive modeling capabilities for in-core physics: COBRA \cite{Thurgood1983c} and VIPRE are two examples of these sub-channel codes.
 For a complete analysis both codes are traditionally used in concert to provide an integrated overview of the system response.
-The differences between these various codes will be reviewed in the following section to compare and contrast current practices in safety analysis codes and where possible future improvements can be made.
+The differences between these various codes will be reviewed in the following section to compare current practices, examine recent research, and illustrate where future research could be directed.
 
 \section{Two Phase Flow}
 \label{sect:two_phase_flow}
-Central to each of these aforementioned thermal hydraulic safety codes is the particular formulation that is used to represent the working fluid within the reactor.
 Within the United States, all operating commercial reactors are of a light water reactor (LWR) design.
 There are two types of LWR designs within the US, pressurized water reactors (PWRs) and boiling water reactors (BWRs).
 In both cases, the safety analysis requires the modeling of water as both a fluid and as a gas.
 This fact has driven the development of safety software that can model the behavior of water under a extensive range of thermodynamic states, including multiple-phases.
-Two-phase flow is a subset of fluid-mechanics that is particularly well suited for modeling this situation.
+There are several formulations of the governing conservation equations used to predict the thermal-hydraulic response of the nuclear reactor core to transient plant conditions. 
 
 \subsection{General Assumptions}
 \label{subsect:assumptions}
@@ -185,6 +183,8 @@ A generic algorithm used for is \ref{algo:semi_implicit}.
 
 \subsection{SETS}
 \label{subsect:numerics_sets}
+To overcome the material courant limit exhibited by the semi-implicit method, several alternatives have been developed.
+One alternative, known as the the stability-enhancing two-step method (SETS) \cite{Mahaffy1982}, eliminates the material courant limit by introducing multiple iterative refinement of the solution within a given time-step.
 
 \subsection{Nearly Implicit}
 \label{subsect:numerics_nearly_implicit}
