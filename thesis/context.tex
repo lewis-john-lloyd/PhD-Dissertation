@@ -20,16 +20,22 @@ While there is a swath of overlap between the capabilities of these two categori
 The system analysis code often have extensive models available for large components such as steam generators, pumps, valves, containment, etc.
 RELAP \cite{RELAP}, TRACE \cite{TRACE}, and MELCOR \cite{Summers1994} are three of the more well known of these system level safety analysis codes.
 Other codes have extensive modeling capabilities for in-core physics: COBRA \cite{Thurgood1983c} and VIPRE are two examples of these sub-channel codes.
-For a complete analysis both codes are traditionally used in concert to provide an integrated overview of the system response.
-The differences between these various codes will be reviewed in the following section to compare current practices, examine recent research, and illustrate where future research could be directed.
-
-\section{Two Phase Flow}
-\label{sect:two_phase_flow}
+Current analysis best practice involves both codes used in concert to provide an integrated overview of the system response.
 Within the United States, all operating commercial reactors are of a light water reactor (LWR) design.
 There are two types of LWR designs within the US, pressurized water reactors (PWRs) and boiling water reactors (BWRs).
 In both cases, the safety analysis requires the modeling of water as both a fluid and as a gas.
 This fact has driven the development of safety software that can model the behavior of water under a extensive range of thermodynamic states, including multiple-phases.
-There are several formulations of the governing conservation equations used to predict the thermal-hydraulic response of the nuclear reactor core to transient plant conditions. 
+There are several formulations of the governing conservation equations used to predict the thermal-hydraulic response of the nuclear reactor core to transient plant conditions.
+The differences between these various codes will be reviewed in the following section to compare current practices, examine recent research, and illustrate where future research could be directed.
+
+
+
+\section{Governing Partial Differential Equations}
+\label{subsect:pdes}
+
+The following work deals with a two-phase, three-field formulation of two-phase flow.
+
+
 
 \subsection{General Assumptions}
 \label{subsect:assumptions}
@@ -115,13 +121,9 @@ The conservation of momentum is applied in each flow direction to the three-fiel
 For the conservation of energy, COBRA-IE tracks the combined fluid energy and the combined gas energy.
 In total, there are twelve physical conservation equations that are used for the fluid-mechanic solution within COBRA.
 
-
 In addition, there is an advection equation for Interfacial Area Transport.
 
 In a one-dimensional simulation, there will be nine governing conservation equations for fluid-mechanics.
-
-
-
 
 \section{Numeric Discretization}
 \label{sect:numeric_methods}
@@ -183,8 +185,8 @@ A generic algorithm used for is \ref{algo:semi_implicit}.
 
 \subsection{SETS}
 \label{subsect:numerics_sets}
-To overcome the material courant limit exhibited by the semi-implicit method, several alternatives have been developed.
-One alternative, known as the the stability-enhancing two-step method (SETS) \cite{Mahaffy1982}, eliminates the material courant limit by introducing multiple iterative refinement of the solution within a given time-step.
+To overcome the material Courant limit exhibited by the semi-implicit method, several alternatives have been developed.
+One alternative, known as the the stability-enhancing two-step method (SETS) \cite{Mahaffy1982}, eliminates the material Courant limit by introducing multiple iterative refinement of the solution within a given time-step.
 
 \subsection{Nearly Implicit}
 \label{subsect:numerics_nearly_implicit}
@@ -215,7 +217,6 @@ Building upon the previous research,
 \subsection{Newton's Method}
 \label{subsect:newtons_method}
 
-
 \section{Temporal Convergence}
 \label{sect:temporal_convergence}
 Of primary use in the field of nuclear reactor safety analysis is simulation.
@@ -226,7 +227,6 @@ While each of these software products varies in their models and implementations
 \subsection{Time Step Selection}
 \label{subsect:time_step_selection}
 
-
 \subsection{Time Step Failure}
 \label{subsect:time_step_failure}
 There are two common methods for dealing with a potentially poor time-step in sub-channel codes: prediction and mitigation.
@@ -235,9 +235,8 @@ It uses information about the explicit portion of the nonlinear residual to iden
 In COBRA, this particular method is used only for the prediction of non-condenable gas appearance.
 
 Mitigation, the second method, is the more common and actively used strategy.
-This strategy can be further subdivided into two catagories: limiting and failure. 
+This strategy can be further subdivided into two categories: limiting and failure.
 There is an extensive set of limiting criteria.
-
 
 \section{Review}
 \label{sect:review}
@@ -250,4 +249,4 @@ The limiting behavior of nuclear reactors occurs during the end portion of a sev
 The primary point of investigation is the use of domain decomposition for the purpose of refining the solution to the nonlinear conservation within COBRA-IE.
 The domain decomposition will take place utilizing a generic semi-implicit coupling methodology developed by \citet{Weaver2002}.
 The ability to isolate a subdomain of the problem and increase ability of the software to resolve the complex nonlinear physics that occur near the quench front of a reflood transient.
-This methodology will hopefully increase the predictive capabilities of safety analysis codes while keeping the computational overhead as low as reasonable possible. 
+This methodology will hopefully increase the predictive capabilities of safety analysis codes while keeping the computational overhead as low as reasonable possible.
