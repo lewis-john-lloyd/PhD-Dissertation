@@ -14,32 +14,24 @@ Among the physics of interest are fluid-mechanics, neutron transport, structural
 For each of these disciplines there are dedicated pieces of software under continual development to improve their predictive capabilities.
 The work that follows is concerned with the mathematical formulation and solution of the equations governing the thermal-hydraulic behavior of the reactor core.
 
+All operating commercial reactors within the United States are of a light water reactor (LWR) design.
+There are two types of LWR designs within the US, pressurized water reactors (PWRs) and boiling water reactors (BWRs).
+In both cases, the safety analysis requires the modeling of water as both a fluid and as a gas.
+This fact has driven the development of safety software that can model the behavior of water under a extensive range of thermodynamic states, including multiple-phases.
+There are several formulations of the governing conservation equations used to predict the thermal-hydraulic response of the nuclear reactor core to transient plant conditions.
+
 Within the United States, there are several codes that are widely available for simulating the thermal-hydraulic response of a nuclear power plant.
 These safety codes can be divided into two large categories: system analysis codes, and sub-channel analysis codes.
 While there is a swath of overlap between the capabilities of these two categories, each has its own particular strengths and weaknesses.
 The system analysis code often have extensive models available for large components such as steam generators, pumps, valves, containment, etc.
 RELAP \cite{RELAP}, TRACE \cite{TRACE}, and MELCOR \cite{Summers1994} are three of the more well known of these system level safety analysis codes.
 Other codes have extensive modeling capabilities for in-core physics: COBRA \cite{Thurgood1983c} and VIPRE are two examples of these sub-channel codes.
-Current analysis best practice involves both codes used in concert to provide an integrated overview of the system response.
-Within the United States, all operating commercial reactors are of a light water reactor (LWR) design.
-There are two types of LWR designs within the US, pressurized water reactors (PWRs) and boiling water reactors (BWRs).
-In both cases, the safety analysis requires the modeling of water as both a fluid and as a gas.
-This fact has driven the development of safety software that can model the behavior of water under a extensive range of thermodynamic states, including multiple-phases.
-There are several formulations of the governing conservation equations used to predict the thermal-hydraulic response of the nuclear reactor core to transient plant conditions.
-The differences between these various codes will be reviewed in the following section to compare current practices, examine recent research, and illustrate where future research could be directed.
+The differences between these various codes will be reviewed to compare current practices, examine recent research directions, and provide a context for the current work.
 
-
-
-\section{Governing Partial Differential Equations}
-\label{subsect:pdes}
-
-The following work deals with a two-phase, three-field formulation of two-phase flow.
-
-
-
-\subsection{General Assumptions}
-\label{subsect:assumptions}
-Consider \fig{fig:pipe_with_bubbles}; this is a stylized cross-sectional diagram of a flowing steam-water mixture within a pipe.
+\section{Two-Phase Flow}
+\label{sect:two_phase_flow}
+The ability to model a fluid that undergoes phase change is a requirement of safety analysis codes for LWR.
+A common aspect of the safety codes mentioned in this work is that they are based upon average quantities.
 
 \begin{figure}[ht]
 \caption{Two phase flow within a pipe.}
@@ -51,11 +43,28 @@ Consider \fig{fig:pipe_with_bubbles}; this is a stylized cross-sectional diagram
 \end{center}
 \end{figure}
 
-The level of resolution sought for safety analysis codes does not include the resolution of exact interfaces between phases.
-Of interest is the average behavior of the flow in a given location.
+There is no motivation to capture the interface between phases.
+The modeling is accomplished via numerical solutions to a set of conservation laws.
+The particular forms of the conservation laws can vary from code to code and is influenced by the assumptions that are made by the code developers.
+The heart of the issue is the engineering judgment required to determine which physics are of sufficient importance to include, which physical closure laws can be experimentally determined, and what computational complexity is acceptable.
+
+\subsection{Averaged Equations}
+\label{subsect:assumptions}
+There are several general assumptions that are made to reduce the complexity of the governing conservation laws of two-phase flow.
+The first physically motivated simplification is that the exact interface between phases is not necessary for reactor safety.
+This simplification allows averaging assumptions to be made.
+Since the exact deterministic behavior of the fluid is no longer required, the governing equations will be subjected to an averaging procedure to produce conservation laws for average quantities.
+There are several types of averaging that have been used to motivate the conservation laws.
 The definition of average in the above sentence can have several meanings.
 There are spatial, temporal, and ensemble averaging techniques, each of which has their own physical interpretations\cite{Drew1998, Todreas2011}.
-The following general equations result from the averaging processes discussed above with several assumptions thrown in for good luck.
+
+\subsection{Governing Partial Differential Equations}
+\label{subsect:pdes}
+Additional assumptions have been made, and they wi
+The conservation laws of interest are composed of four conservation of mass equations.
+The following work deals with a two-phase, three-field formulation of two-phase flow.
+
+The following equations result from an area-averaging process as discussed above.
 
 \begin{equation}
 \label{eqn:conservation_of_mass}
@@ -70,11 +79,9 @@ The following general equations result from the averaging processes discussed ab
 \frac{\partial \alpha_k \rho_k }{\partial t } + \nabla \cdot \left( \alpha_k \rho_k \vec{U}_k \right) = \Gamma^{'''}_k + S^{'''}_k + s_k
 \end{equation}
 
-\subsection{Conservation Equations}
 One of the primary uses of COBRA is to simulate conditions where dispersed liquid within the flow could have a large impact upon the thermal-hydraulics performance of the nuclear reactor core.
 The reason for this is because COBRA models the two-phase flow behavior using two discrete phases, liquid and gas, but allows for multiple fields within a given phase.
 The ability to track different fields within a phase manifests itself in two important primary ways: the ability to account for the effects of con-condensable gases on condensation, and the ability to model the impact upon heat transfer by dispersed liquid droplets.
-
 
 There are four equations representing the conservation of mass of the non-condensable gases, the continuous liquid field, the dispersed liquid field, and the total gaseous phase.
 The general conservation of mass equation \eqref{eqn:conservation_of_mass} will yield each of the four conservation equations given appropriate assumptions and definitions for certain terms.
@@ -131,7 +138,7 @@ In a one-dimensional simulation, there will be nine governing conservation equat
 \subsection{Staggered Grid}
 \label{subsect:topology}
 
-COBRA utilizes a staggered mesh strategy for generating the domain of the problem.
+The computational grid utilized in this work is a known as a staggered mesh.
 With the staggered mesh, there are "continuity" meshes and there are "momentum" meshes; see \fig{fig:staggered_mesh}.
 The conservation equations for mass and energy are solved at the center of the continuity cells.
 The conservation equations for momentum are solved at the center of the momentum cells.
@@ -151,17 +158,95 @@ The edges of the continuity cells align with the center of the momentum cells an
 \end{center}
 \end{figure}
 
-\subsection{Explicit}
+\subsection{Method-Of-Lines}
 \label{subsect:numerics_explicit}
-Given the physical layout discussed in section \ref{subsect:topology}, the next choice is the numerical approximation to the partial differential equations from section \ref{sect:two_phase_flow}.
-In particular, each of the
+There are single-step temporal integration techniques.
+There are multi-step methods.
+Given the PDEs from \sect{subsect:pdes}, the Method-Of-Lines is used for the temporal integration \cite{LeVeque2007}.
+The MOL methodology starts by spatially discritizing \eqref{equations_for_Stuff}, while leaving the temporal derivatives continuous.
+Using the topological definitions from \sect{subsect:topology}, the system of conservation laws for the global domain can be represented by \eqref{eqn:MOL_1}, where $\vec{X}(t)$ is the temporally continuous vector of conserved quantities defined at grid points.
+The generic function, $\vec{G}$, on the RHS of \eqref{eqn:MOL_1} represents the all of the terms in \eqref{stuff} expect the temporal derivative.
+\begin{equation}
+\label{eqn:MOL_1}
+\frac{\partial \vec{X}(t)_j}{\partial t} = \vec{G}(\vec{X}(t))
+\end{equation}
 
-\subsection{Semi-Implicit}
-\label{subsect:numerics_semi_implicit}
+Within the safety analysis framework, the temporal derivative is approximated by a simple difference scheme, \eqref{eqn:simple_partial_t}.
+\begin{equation}
+\label{eqn:simple_partial_t}
+\frac{\partial \vec{X}(t)_j}{\partial t} = \frac{ \vec{X}^{n+1}_{j} - \vec{X}^{n}_{j}}{t^{n+1}-t^{n}}, \quad \vec{X}^{n+1}_j = \vec{X}(t^{n+1})_j
+\end{equation}
 
-The partial differential equations that represent the conservation laws discussed in \sect{sect:two_phase_flow} are discretized using a technique known as the semi-implicit methodology \cite{Liles1978}.
-A primary reason for using the semi-implicit methodology, as stated by \citet{Liles1978}, is to eliminate the sonic Courant limit of the purely explicit scheme discussed in \ref{subsect:numerics_explicit}
-A generic algorithm used for is \ref{algo:semi_implicit}.
+Where the continuous time variable is now evaluated at discrete points, $t^0, t^1, \ldots, t^N$, numbered zero through $N$, where $t^N$ represents the final time of interest.
+The choice of temporal discretization of $\vec{G}$ is what leads to several methods of interest.
+
+\subsubsection{Explicit}
+\label{subsubsect:numerics_explicit}
+The least computationally expensive MOL variant is known as a the fully explicit method.
+The terminology explicit refers to the fact that the unknowns at $t^{n+1}$, $\vec{X}^{n+1}$, are function of the values at the present time $\vec{X}^{n}$ only.
+This particular temporal approximation of $\vec{G}$, along with \eqref{eqn:MOL_1} and \eqref{eqn:simple_partial_t}, generates the explicit method for two phase flow, \eqref{eqn:explicit_two_phase}.
+
+\begin{equation}
+\label{eqn:explicit_two_phase}
+\frac{ \vec{X}^{n+1}_{j} - \vec{X}^{n}_{j}}{t^{n+1}-t^{n}} = \vec{G}(\vec{X}^{n})
+\end{equation}
+
+While this particular methodology is the least computationally expensive, it has a severe weakness in the context of two-phase flow.
+The weakness is Courant-Friedrichs-Lewy (CFL) limit imposed upon the time step.
+The CFL limit is a relationship between the physical and temporal discretizations and characteristic time-scales of the problem of interest.
+For the case of \eqref{eqn:explicit_two_phase}, the CFL limit is given in \eqref{eqn:cfl_explicit}.
+
+\begin{equation}
+\label{eqn:cfl_explicit}
+\Delta t_j \lesssim \frac{\Delta x_j}{|\vec{u}_j|+|c_j|}
+\end{equation}
+
+Where $c$ represented the speed of sound within the fluid of interest, and $\vec{u}$ is the magnitude of a given phasic velocity.
+The $\Delta t_j$ is calculated at every point within the domain using known local fluid conditions.
+The $\Delta t$ chosen for $t^{n} \rightarrow t^{n+1}$ time-step is most restrictive value over the domain.
+
+\begin{equation}
+\label{eqn:global_cfl}
+\Delta t = \min_{j \in \Omega} \Delta t_j
+\end{equation}
+
+States in words, the maximum permissible time-step size for the explicit method is limited by the local speed of sound.
+This is a severe penalty on computational run-time.
+There are no physics of interest that are attempting to be modeled on the time-scale of the inverse speed of sound.
+This limitation of the explicit method prompted the development of alternative methods that were capable of exceeding this limitation.
+
+\subsubsection{Implicit}
+\label{subsubsect:numerics_fully_implicit}
+The CFL limit discussed in section \ref{subsubsect:numerics_explicit} is a product of the explicit functional dependence of the $\vec{G}$ from \eqref{eqn:MOL_1} upon only $t^n$ variables.
+A simple, but computationally expensive, way to eliminate the CFL limit is to utilize a fully-implicit formulation.
+A fully-implicit formulation is one where $\vec{G}$ is function only of unknown variables, \eqref{eqn:implicit_MOL}.
+
+\begin{equation}
+\label{eqn:implicit_MOL}
+\frac{ \vec{X}^{n+1}_{j} - \vec{X}^{n}_{j}}{t^{n+1}-t^{n}} = \vec{G}(\vec{X}^{n+1})
+\end{equation}
+
+This particular formulation has the advantage of not being limited by a CFL number.
+However, recall that the CFL is for stability purposes only, not accuracy.
+In addition, the solution of \eqref{eqn:implicit_MOL} is computationally expense as that $\vec{G}(\vec{X}^{n+1})$ is a highly nonlinear function requiring the use of nonlinear solvers to obtain a solution.
+
+\subsubsection{Semi-Implicit}
+\label{subsubsect:numerics_semi_implicit}
+
+The existance of the sonic CFL limitation led to the development of the semi-implicit methodology \cite{Liles1978}.
+The $\vec{G}$ in \eqref{eqn:MOL_1} is modified and combined with \eqref{eqn:simple_partial_t} to produce \eqref{eqn:semi_implict_MOL}.
+
+\begin{equation}
+\label{eqn:semi_implicit_MOL}
+\frac{ \vec{X}^{n+1}_{j} - \vec{X}^{n}_{j}}{t^{n+1}-t^{n}} = \vec{G}(\vec{X}^{n},\vec{X}^{n+1})
+\end{equation}
+
+$\vec{G}$ is now a function of both known and unknown variables, hence the name semi-implicit. 
+The particular formulation of the semi-implicit methodology is of importance to later sections, so a detailed description of the conservation laws from \sect{sect:two_phase} is provided in equation \eqref{eqnarray:semi_implicit}.
+
+\begin{IEEEeqnarray}{lCl}
+2 & = & 2
+\end{IEEEeqnarray}
 
 \begin{algo}[H]
 \caption{Semi-Implicit Linear Solution Algorithm}
@@ -190,9 +275,6 @@ One alternative, known as the the stability-enhancing two-step method (SETS) \ci
 
 \subsection{Nearly Implicit}
 \label{subsect:numerics_nearly_implicit}
-
-\subsection{Fully Implicit}
-\label{subsect:numerics_fully_implicit}
 
 \section{Code Coupling}
 \label{sect:code_coupling}
