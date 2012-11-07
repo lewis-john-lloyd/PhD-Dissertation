@@ -234,7 +234,7 @@ In addition, the solution of \eqref{eqn:implicit_MOL} is computationally expense
 \label{subsubsect:numerics_semi_implicit}
 
 The existance of the sonic CFL limitation led to the development of the semi-implicit methodology \cite{Liles1978}.
-The $\vec{G}$ in \eqref{eqn:MOL_1} is modified and combined with \eqref{eqn:simple_partial_t} to produce \eqref{eqn:semi_implict_MOL}.
+To obtain the semi-implicit formulation, the $\vec{G}$ in \eqref{eqn:MOL_1} is modified and combined with \eqref{eqn:simple_partial_t} to produce \eqref{eqn:semi_implict_MOL}.
 
 \begin{equation}
 \label{eqn:semi_implicit_MOL}
@@ -267,37 +267,61 @@ The particular formulation of the semi-implicit methodology is of importance to 
 \end{algorithmic}
 \end{algo}
 
+\subsection{Multi-stage Methods}
+\label{subsect:numerics_multistep}
+An alternative formulation for the temporal derivative is a multi-stage method.
+These methods involve predictor and corrector steps.
 
-\subsection{SETS}
-\label{subsect:numerics_sets}
+
+\subsubsection{SETS}
+\label{subsubsect:numerics_sets}
 To overcome the material Courant limit exhibited by the semi-implicit method, several alternatives have been developed.
 One alternative, known as the the stability-enhancing two-step method (SETS) \cite{Mahaffy1982}, eliminates the material Courant limit by introducing multiple iterative refinement of the solution within a given time-step.
 
-\subsection{Nearly Implicit}
-\label{subsect:numerics_nearly_implicit}
+\subsubsection{Nearly Implicit}
+\label{subsubsect:numerics_nearly_implicit}
+Another multi-stage method is called the Nearly-Implicit method.
 
-\section{Code Coupling}
+\section{Domain Coupling}
 \label{sect:code_coupling}
+There are several options to couple the specialized capabilities of system analysis codes to the detailed physics of a subchannel analysis code.
+These methodologies, are constantly evolving.
+The types of methods follow the layout of method of lines.
 
 \subsection{Explicit}
 \label{subsect:coupling_explicit}
+The first coupling methodology proposed was explicit coupling.
+This methodology involved passing information between two different codes at the beginning of a time-step.
+
 
 \subsection{Semi-Implicit}
 \label{subsect:coupling_semi_implicit}
+The desire to overcome the instabilities outlined in the previous section, a semi-implicit methodology was proposed that made use of Parallel Virtual Machine (PVM).
+PVM is a piece of software that was developed for the purpose of passing information between programs running in parallel \citet{someone}. 
+The ability to pass information between software is key to the semi-implicit stuff. 
 
 \subsection{Implicit}
 \label{subsect:coupling_implicit}
+The concept of implicitly coupling different physics is sufficiently attractive. 
 
-\section{Nonlinearities}
+
+\section{Implicit Nonlinearities}
 \label{sect:nonlinearities}
-Building upon the previous research, 
-
-
-\subsection{Single-shot Linearization}
-\label{subsect:single_shot}
+In section \sect{sect:numeric_methods}, several numeric methods for the discritization of the equations \eqref{eqn:conservation_of_energy} were demonstrated.
+For the two-phase flow equations of interest, the conserved variables at $t^{n+1}$ are nonlinear functions of the indepedent parameters.
+These temporal nonlinearities exist in all numeric methods.
+For those methods that has any implicit variables on the RHS, there are additional nonlinearities introduced.
+In order to deal with these nonlinearities, there are two general branches of solution techniques.
+A choice can be made to not resolve the nonlinearities, or an iterative procedure can be introduced to resolve the nonlinearities of interest.
 
 \subsection{Newton's Method}
 \label{subsect:newtons_method}
+The primary method used to resolve the non-linearities in the governing equations is the use of a Newton's method.
+Newton's method is an optimization algorithm that is particularly well suited for algebriac-equations
+
+\subsection{Single-shot Linearization}
+\label{subsect:single_shot}
+If the nonlinearities in the numeric method are not resolved.
 
 \section{Temporal Convergence}
 \label{sect:temporal_convergence}
