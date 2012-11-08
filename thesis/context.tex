@@ -28,43 +28,82 @@ RELAP \cite{RELAP}, TRACE \cite{TRACE}, and MELCOR \cite{Summers1994} are three 
 Other codes have extensive modeling capabilities for in-core physics: COBRA \cite{Thurgood1983c} and VIPRE are two examples of these sub-channel codes.
 The differences between these various codes will be reviewed to compare current practices, examine recent research directions, and provide a context for the current work.
 
+\section{Geometry of Interest}
+\label{sect:topology}
+Being that COBRA was developed primarily as a sub-channel analysis tool, there is an assumption that the primary flow path is defined as inline with the gravity vector, which will be referred to as axial flow.
+However, there is also the ability to model "gaps," flow orthogonal to the axial direction.
+
+The computational grid utilized in this work is a known as a staggered mesh.
+With the staggered mesh, there are "continuity" meshes and there are "momentum" meshes; see \fig{fig:staggered_mesh}.
+The conservation equations for mass and energy are solved at the center of the continuity cells.
+The conservation equations for momentum are solved at the center of the momentum cells.
+The edges of the continuity cells align with the center of the momentum cells and vice-verca.
+
+\begin{figure}[ht]
+\caption{A staggered mesh.}
+\label{fig:staggered_mesh}
+\begin{center}
+\begin{tikzpicture}
+\draw (-3,0) rectangle +(1,5);
+\draw (0,-1) rectangle +(1,1) (0,0) rectangle +(1,1) (0,1) rectangle +(1,1) (0, 2) rectangle +(1,1) (0,3) rectangle +(1,1) (0,4) rectangle +(1,1) (0, 5) rectangle +(1,1);
+\draw[dashed] (3,-0.5) rectangle +(1,1) (3,0.5) rectangle +(1,1) (3,1.5) rectangle +(1,1) (3, 2.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3, 4.5) rectangle +(1,1) ;
+\draw[dashed] (-3,0) -- (4,0);
+\draw[dashed] (-3,5) -- (4,5);
+\end{tikzpicture}
+\end{center}
+\end{figure}
+
 \section{Two-Phase Flow}
 \label{sect:two_phase_flow}
-The ability to model a fluid that undergoes phase change is a requirement of safety analysis codes for LWR.
-A common aspect of the safety codes mentioned in this work is that they are based upon average quantities.
+Since the primary scenario of interest in safety analysis codes involve light-water, $H_2 O$, undergoing phase change, the governing equations of interest in this work are those of multi-fluid flow \cite{Drew1998}.
+In particular, they fall under the category of two-phase flow.
+An importance factor in LOCA analysis is the impact of entrained liquid upon the thermal-hydraulic performance of the nuclear reactor core.
+The two fields of the liquid phase are a continuous liquid field, and an entrained droplet field.
+The ability to track different fields within a phase manifests itself in two important primary ways: the ability to account for the effects of con-condensable gases on condensation, and the ability to model the impact upon heat transfer by dispersed liquid droplets.
+The gaseous phase in composed of a non-condensable gas and a vapor field. 
+The ability to resolve interfaces between the various fields exactly is not desired, so the governing conservation laws are of averaged quantities.
 
 \begin{figure}[ht]
 \caption{Two phase flow within a pipe.}
 \label{fig:pipe_with_bubbles}
 \begin{center}
 \begin{tikzpicture}
-\draw (-4,4) -- +(4,4);
+\draw (-4,0) -- +(4,0);
 \end{tikzpicture}
 \end{center}
 \end{figure}
 
-There is no motivation to capture the interface between phases.
-The modeling is accomplished via numerical solutions to a set of conservation laws.
-The particular forms of the conservation laws can vary from code to code and is influenced by the assumptions that are made by the code developers.
-The heart of the issue is the engineering judgment required to determine which physics are of sufficient importance to include, which physical closure laws can be experimentally determined, and what computational complexity is acceptable.
-
 \subsection{Averaged Equations}
-\label{subsect:assumptions}
-There are several general assumptions that are made to reduce the complexity of the governing conservation laws of two-phase flow.
+\label{subsect:averaged_equations}
 The first physically motivated simplification is that the exact interface between phases is not necessary for reactor safety.
 This simplification allows averaging assumptions to be made.
 Since the exact deterministic behavior of the fluid is no longer required, the governing equations will be subjected to an averaging procedure to produce conservation laws for average quantities.
 There are several types of averaging that have been used to motivate the conservation laws.
 The definition of average in the above sentence can have several meanings.
-There are spatial, temporal, and ensemble averaging techniques, each of which has their own physical interpretations\cite{Drew1998, Todreas2011}.
+There are spatial, temporal, and ensemble averaging techniques, each of which has their own physical interpretations \cite{Drew1998, Todreas2011}.
+If a particular interpretation is required in a particular scenario, it will be given, otherwise, no distinction will be made between the averaging procedures.
 
-\subsection{Governing Partial Differential Equations}
-\label{subsect:pdes}
-Additional assumptions have been made, and they wi
-The conservation laws of interest are composed of four conservation of mass equations.
-The following work deals with a two-phase, three-field formulation of two-phase flow.
+\subsection{Assumptions}
+\label{subsect:assumptions}
+Given the four fields of interest, there are twelve conservation equations, one each of mass, momentum, and energy for each of the four fields, to describe the time-dependent behavior of the system.
+In addition, closure relationships would be necessary to describe the interactions between the various fields and their interfacial transfer terms.
+However, additional assumptions are made to reduce the number of required conservation laws and the number of corresponding closure relationships.
+The following is a list of assumptions that are made to reduce the complexity of the governing equations.
 
-The following equations result from an area-averaging process as discussed above.
+\begin{itemize}
+\item{
+Thermodynamic and pressure equilibrium exists between the continuous liquid film and the entrained liquid droplets.
+This basis for this assumption is that while the entrained droplets are here being modeled by a separate set of governing equations that those of the continuous liquid field, in reality the droplets are constantly entraining and depositing with the continuous liquid field. 
+}
+\item{
+The liquid and gaseous phases are in pressure equilibrium.
+}
+\item{
+The two gaseous phases are fully mixed and in mechanical equilibrium.
+As a result of this assumption, the gases move with the same average velocities and obey Dalton's Law of partial pressures.
+However, the gases retains separate thermodynamics states.
+}
+\end{itemize}
 
 \begin{equation}
 \label{eqn:conservation_of_mass}
@@ -78,10 +117,6 @@ The following equations result from an area-averaging process as discussed above
 \label{eqn:conservation_of_energy}
 \frac{\partial \alpha_k \rho_k }{\partial t } + \nabla \cdot \left( \alpha_k \rho_k \vec{U}_k \right) = \Gamma^{'''}_k + S^{'''}_k + s_k
 \end{equation}
-
-One of the primary uses of COBRA is to simulate conditions where dispersed liquid within the flow could have a large impact upon the thermal-hydraulics performance of the nuclear reactor core.
-The reason for this is because COBRA models the two-phase flow behavior using two discrete phases, liquid and gas, but allows for multiple fields within a given phase.
-The ability to track different fields within a phase manifests itself in two important primary ways: the ability to account for the effects of con-condensable gases on condensation, and the ability to model the impact upon heat transfer by dispersed liquid droplets.
 
 There are four equations representing the conservation of mass of the non-condensable gases, the continuous liquid field, the dispersed liquid field, and the total gaseous phase.
 The general conservation of mass equation \eqref{eqn:conservation_of_mass} will yield each of the four conservation equations given appropriate assumptions and definitions for certain terms.
@@ -121,8 +156,6 @@ The continuous liquid film is considered to be thermodynamic equilibrium with th
 2 + 4  + 3 = 2
 \end{equation}
 
-Being that COBRA was developed primarily as a sub-channel analysis tool, there is an assumption that the primary flow path is defined as inline with the gravity vector, which will be referred to as axial flow.
-However, there is also the ability to model "gaps," flow orthogonal to the axial direction.
 Another assumption is that the non-condensable gases are in mechanical equilibrium with the vapor field.
 The conservation of momentum is applied in each flow direction to the three-fields: continuous liquid films, entrained liquid droplets, and total gaseous flow.
 For the conservation of energy, COBRA-IE tracks the combined fluid energy and the combined gas energy.
@@ -134,29 +167,6 @@ In a one-dimensional simulation, there will be nine governing conservation equat
 
 \section{Numeric Discretization}
 \label{sect:numeric_methods}
-
-\subsection{Staggered Grid}
-\label{subsect:topology}
-
-The computational grid utilized in this work is a known as a staggered mesh.
-With the staggered mesh, there are "continuity" meshes and there are "momentum" meshes; see \fig{fig:staggered_mesh}.
-The conservation equations for mass and energy are solved at the center of the continuity cells.
-The conservation equations for momentum are solved at the center of the momentum cells.
-The edges of the continuity cells align with the center of the momentum cells and vice-verca.
-
-\begin{figure}[ht]
-\caption{A staggered mesh.}
-\label{fig:staggered_mesh}
-\begin{center}
-\begin{tikzpicture}
-\draw (-3,0) rectangle +(1,5);
-\draw (0,-1) rectangle +(1,1) (0,0) rectangle +(1,1) (0,1) rectangle +(1,1) (0, 2) rectangle +(1,1) (0,3) rectangle +(1,1) (0,4) rectangle +(1,1) (0, 5) rectangle +(1,1);
-\draw[dashed] (3,-0.5) rectangle +(1,1) (3,0.5) rectangle +(1,1) (3,1.5) rectangle +(1,1) (3, 2.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3, 4.5) rectangle +(1,1) ;
-\draw[dashed] (-3,0) -- (4,0);
-\draw[dashed] (-3,5) -- (4,5);
-\end{tikzpicture}
-\end{center}
-\end{figure}
 
 \subsection{Method-Of-Lines}
 \label{subsect:numerics_explicit}

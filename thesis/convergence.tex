@@ -1,8 +1,8 @@
 \chapter{Scaling and Convergence}
 \label{chap:scaling_and_convergence}
-An excerpt from a well used literature
-The impact of this single-shot linearization upon temporal convergence will now be investigated.
-However, prior to discussing the numerical experiments that were conducted to ferret out the impact of not resolving the nonlinearities, the scaling used to both calculate and determine nonlinear convergence needs to be addressed.
+The question of temporal convergence, as outlined in \sect{subsect:temporal_convergence}, is linked not only to the particular method used for approximating the temporal derivative in \eqref{eqn:conservation_equations}, but also to the degree to which the nonlinearities are resolved over that time-step. 
+In order to determine the degree to which a state vector, $\vec{x}$, satisfies \eqref{eqn:conservaton_equations}, the use of the nonlinear residual, $\vec{F}$, is required.
+However, due to the formulation of the residual vector, the magnitudes of residuals can vary by orders of magnitude.
 
 \section{Physics Based Scaling}
 \label{sect:scaling}
