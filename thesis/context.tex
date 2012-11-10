@@ -1,12 +1,13 @@
 \chapter{Introduction}
 \label{chap:intro}
 In the United States, the goal of Nuclear Power Plant (NPP) designers, builders, operators, and regulators is to ensure the safety of the public during both normal operations and during severe accidents.
-It is the responsibility of the Nuclear Regulatory Commission to issue licenses for the construction and operation of nuclear reactors.
-Chapter 1 of Title 10 of the Code of Federal Regulations (10CFR) details the process by which an applicant can obtain an operating licesce for the construction of a NPP.
-One of the requirements laid out in Part 50 of 10CFR (10CFR50) is the requirement for a safety analysis report (SAR).
-Depending upon the license being pursued by the applicant, either a Preliminary Safety Analysis Report (PSAR) or a Final Safety Analysis Report (FSAR).
-The PSAR is required for the issuance of a site construction license, while the FSAR is required for the issuance of either an operating license or a combined license.
-For reactors that use light water, $H_2 O$, as a primary coolant, Light Water Reactors (LWR), both types of SARs require that the applicant provide information an evaluation of their Emergency Core Cooling System (ECCS) during postulated loss-of-coolant accidents (LOCA).
+It is the responsibility of the Nuclear Regulatory Commission (NRC) to issue licenses for the construction and operation of nuclear reactors.
+Chapter 1 of Title 10 of the Code of Federal Regulations (10CFR) details the regulatory procedures that govern the NRC.
+Part 50 of 10CFR (10CFR50), lays out the process by which an applicant can obtain both construction and operating licenses for NPPs.
+One documents required by 10CFR50 is the a safety analysis report (SAR) prior to the issuance of any license.
+Depending upon the particular license being pursued by the applicant, either a Preliminary Safety Analysis Report (PSAR) or a Final Safety Analysis Report (FSAR) is required.
+The PSAR is required for the issuance of a site construction license, while the FSAR is required for the issuance of either an operating license or a combined (construction and operating) license.
+For reactors that use light water, $H_2 O$, as a primary coolant, Light Water Reactors (LWR), both types of SARs require that the applicant provide an evaluation of their Emergency Core Cooling System (ECCS) during postulated loss-of-coolant accidents (LOCA).
 This evaluation must conform with section 46 of 10CFR50, which requires that the applicant perform analyses for "a number of postulated loss-of-coolant accidents of different sizes, locations, and other properties sufficient to provide assurance that the most severe postulated loss-of-coolant accidents are calculated."
 This requirement necessitates that the designers and operators of NPP possess the ability to model the thermal-hydraulic behavior within the core of a reactor during severe accidents.  
 The diverse physical conditions experienced by the reactor during severe accidents necessitates the inclusion of a wide array of physics during safety analyses.
@@ -14,9 +15,9 @@ Among the physics of interest are fluid-mechanics, neutron transport, structural
 For each of these disciplines there are dedicated pieces of software under continual development to improve their predictive capabilities.
 The work that follows is concerned with the mathematical formulation and solution of the equations governing the thermal-hydraulic behavior of the reactor core.
 
-All operating commercial reactors within the United States are of a light water reactor (LWR) design.
+All operating commercial reactors within the United States are of a LWR design.
 There are two types of LWR designs within the US, pressurized water reactors (PWRs) and boiling water reactors (BWRs).
-In both cases, the safety analysis requires the modeling of water as both a fluid and as a gas.
+In both cases, the safety analyses required for licensing necessitates the modeling of water in both its fluid and its gaseous phase.
 This fact has driven the development of safety software that can model the behavior of water under a extensive range of thermodynamic states, including multiple-phases.
 There are several formulations of the governing conservation equations used to predict the thermal-hydraulic response of the nuclear reactor core to transient plant conditions.
 
@@ -25,19 +26,25 @@ These safety codes can be divided into two large categories: system analysis cod
 While there is a swath of overlap between the capabilities of these two categories, each has its own particular strengths and weaknesses.
 The system analysis code often have extensive models available for large components such as steam generators, pumps, valves, containment, etc.
 RELAP \cite{RELAP}, TRACE \cite{TRACE}, and MELCOR \cite{Summers1994} are three of the more well known of these system level safety analysis codes.
-Other codes have extensive modeling capabilities for in-core physics: COBRA \cite{Thurgood1983c} and VIPRE are two examples of these sub-channel codes.
-The differences between these various codes will be reviewed to compare current practices, examine recent research directions, and provide a context for the current work.
-
+Other codes have extensive modeling capabilities for in-core heat-transfer and fluid-mechanics: COBRA \cite{Thurgood1983c} and VIPRE are two examples of these sub-channel codes.
+In the work that follows, the governing physics and the computational framework of interest will be taken from a variant of the aforementioned COBRA sub-channel analysis code.
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Geometry of Interest}
 \label{sect:topology}
-Being that COBRA was developed primarily as a sub-channel analysis tool, there is an assumption that the primary flow path is defined as inline with the gravity vector, which will be referred to as axial flow.
-However, there is also the ability to model "gaps," flow orthogonal to the axial direction.
+All operating power reactors within the US are designed so that both core coolant channels and nuclear fuel rods are vertically oriented.
+Being that COBRA was developed primarily as a sub-channel analysis tool for US NPPs, there is an assumption that the primary flow direction is inline with the gravity vector, which will be referred to as axial flow.
+Computationally, the geometry of a LWR is broken up into discrete "channels," which are representative thermal-hydraulic sub-units of the whole core flow.
 
 The computational grid utilized in this work is a known as a staggered mesh.
 With the staggered mesh, there are "continuity" meshes and there are "momentum" meshes; see \fig{fig:staggered_mesh}.
-The conservation equations for mass and energy are solved at the center of the continuity cells.
-The conservation equations for momentum are solved at the center of the momentum cells.
-The edges of the continuity cells align with the center of the momentum cells and vice-verca.
+Thermodynamic variables are defined at the center of the continuity volumes, while flow-rates at the center of the momentum volumes.
+The edges of the continuity volumes align with the center of the momentum cells.
 
 \begin{figure}[ht]
 \caption{A staggered mesh.}
@@ -53,14 +60,22 @@ The edges of the continuity cells align with the center of the momentum cells an
 \end{center}
 \end{figure}
 
+While COBRA has the ability to operate in a multidimensional mode via "gaps," flow orthogonal to the axial direction, those capabilities are not relevant to the current work, so a detailed discussion of those capabilities will be omitted.
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Two-Phase Flow}
 \label{sect:two_phase_flow}
-Since the primary scenario of interest in safety analysis codes involve light-water, $H_2 O$, undergoing phase change, the governing equations of interest in this work are those of multi-fluid flow \cite{Drew1998}.
+Since the primary scenario of interest in safety analysis codes involve light-water, $H_2 O$, undergoing phase change, the governing equations of interest in this work are those of multicomponent fluids \cite{Drew1998}.
 In particular, they fall under the category of two-phase flow.
 An importance factor in LOCA analysis is the impact of entrained liquid upon the thermal-hydraulic performance of the nuclear reactor core.
 The two fields of the liquid phase are a continuous liquid field, and an entrained droplet field.
-The ability to track different fields within a phase manifests itself in two important primary ways: the ability to account for the effects of con-condensable gases on condensation, and the ability to model the impact upon heat transfer by dispersed liquid droplets.
-The gaseous phase in composed of a non-condensable gas and a vapor field. 
+The ability to track different fields within a phase manifests itself in two important primary ways: the ability to account for the effects of \ncgs on condensation, and the ability to model the impact upon heat transfer by dispersed liquid droplets.
+The gaseous phase in composed of a \ncg gas and a vapor field. 
 The ability to resolve interfaces between the various fields exactly is not desired, so the governing conservation laws are of averaged quantities.
 
 \begin{figure}[ht]
@@ -86,7 +101,7 @@ If a particular interpretation is required in a particular scenario, it will be 
 \subsection{Assumptions}
 \label{subsect:assumptions}
 Given the four fields of interest, there are twelve conservation equations, one each of mass, momentum, and energy for each of the four fields, to describe the time-dependent behavior of the system.
-In addition, closure relationships would be necessary to describe the interactions between the various fields and their interfacial transfer terms.
+In addition, closure relationships would be necessary to describe the interactions between the various fields and their inter-facial transfer terms.
 However, additional assumptions are made to reduce the number of required conservation laws and the number of corresponding closure relationships.
 The following is a list of assumptions that are made to reduce the complexity of the governing equations.
 
@@ -103,70 +118,228 @@ The two gaseous phases are fully mixed and in mechanical equilibrium.
 As a result of this assumption, the gases move with the same average velocities and obey Dalton's Law of partial pressures.
 However, the gases retains separate thermodynamics states.
 }
+\item{
+The viscous dissipation of momentum in the axial flow direction is neglected.
+This assumption also removes the generation of energy via viscous dissipation.
+}
+\item{
+The wall-shear effects of viscosity are accounted for via empirically based friction correlations.
+}
 \end{itemize}
 
-\begin{equation}
-\label{eqn:conservation_of_mass}
-\frac{\partial \alpha_k \rho_k }{\partial t } + \nabla \cdot \left( \alpha_k \rho_k \vec{U}_k \right) = \Gamma^{'''}_k + S^{'''}_k + s_k
-\end{equation}
-\begin{equation}
-\label{eqn:conservation_of_momentum}
-\frac{\partial \alpha_k \rho_k \vec{U} }{\partial t } + \nabla \cdot \left( \alpha_k \rho_k \vec{U}_k \vec{U}_k \right) = -\alpha_k \nabla P + \alpha_k \vec{g} \Gamma^{'''}_k + S^{'''}_k + s_k
-\end{equation}
-\begin{equation}
-\label{eqn:conservation_of_energy}
-\frac{\partial \alpha_k \rho_k }{\partial t } + \nabla \cdot \left( \alpha_k \rho_k \vec{U}_k \right) = \Gamma^{'''}_k + S^{'''}_k + s_k
-\end{equation}
+\subsection{Governing Equations}
+\label{subsect:pdes}
 
-There are four equations representing the conservation of mass of the non-condensable gases, the continuous liquid field, the dispersed liquid field, and the total gaseous phase.
-The general conservation of mass equation \eqref{eqn:conservation_of_mass} will yield each of the four conservation equations given appropriate assumptions and definitions for certain terms.
+There are four equations representing the conservation of mass of the \ncg field, the continuous liquid field, the dispersed liquid field, and the water vapor field.
 
-The left hand side of \eqref{eqn:conservation_of_mass} represents the Lagrangian derivative of the a given field $_k$.
-The three terms on the right hand side represent inter-field, $S^{'''}_k$, inter-phase, $\Gamma_k$,  and external, $s_k$, sources or sinks of mass.
-Since there are two liquid fields, the net phasic mass transfer, $\Gamma$, is apportioned between the continuous liquid field and the dispersed liquid field.
-This division is given by \eqref{eqn:apportionment_of_mass_transfer}, where $\eta$ is a state dependent apportionment factor.
+\begin{IEEEeqnarray}{rCl}
+\label{eqn:conservation_of_ncg}
+\frac{\partial \left(\alpha_g \rho_{ncg}\right) }{\partial t } + \nabla \cdot \left( \alpha_g \rho_{ncg} \vec{u}_g \right) & = & s_{m,ncg} \\
+\label{eqn:conservation_of_vap}
+\frac{\partial \left(\alpha_g \rho_v \right)}{\partial t } + \nabla \cdot \left( \alpha_g \rho_v \vec{u}_g \right)         & = & \Gamma^{'''} + s_{m,v} \\
+\label{eqn:conservation_of_liq}
+\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \right)         & = & -(1-\eta)\Gamma^{'''} - S^{'''} + s_{m,l} \\
+\label{eqn:conservation_of_ent}
+\frac{\partial \left(\alpha_e \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_e \rho_l \vec{u}_e \right)         & = & -\eta\Gamma^{'''} + S^{'''}+ s_{m,e}
+\end{IEEEeqnarray}
+
+The left hand sides of \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:conservation_of_ent} represent the Lagrangian derivative for the given field.
+The terms on the right hand side represent the volumetric inter-field ($S^{'''}$), inter-phase ($\Gamma^{'''}$),  and external ($s_k$) sources or sinks of mass.
+Since there are two liquid fields, the net phasic mass transfer between the water-vapor field and the liquid fields, $\Gamma^{'''}$, is apportioned between the continuous liquid field and the dispersed liquid field.
 
 \begin{equation}
 \label{eqn:apportionment_of_mass_transfer}
-\Gamma = \Gamma_g = -( \Gamma_e + \Gamma_l ) =  \eta \Gamma + (1 - \eta)\Gamma
+\Gamma^{'''} = \Gamma^{'''}_v = -( \Gamma^{'''}_e + \Gamma^{'''}_l ) =  \eta \Gamma^{'''} + (1 - \eta)\Gamma^{'''} = \Gamma^{'''}
 \end{equation}
 
-The inter-field transfer of mass occurs only between the continuous and dispersed liquids, \eqref{eqn:entrainment_deentrainment}.
+This division is given by \eqref{eqn:apportionment_of_mass_transfer}, where $\eta$ is an apportionment factor.
+The inter-field transfer of mass occurs only between the continuous and dispersed liquid fields, \eqref{eqn:entrainment_deentrainment}.
 
 \begin{equation}
 \label{eqn:entrainment_deentrainment}
 S^{'''}_l + S^{'''}_e = 0
 \end{equation}
 
-Assumption that reduces the complexity of the conservation equations include the assumptions that mechanical equilibrium between the non-condensable gas field and the total gaseous field, $\vec{U}_{ncg} = \vec{U}_g$, thermal-equilibrium between different fields with the same phase, $ $, Dalton's law is applicable between the two gaseous fields, and that, most importantly, all fields share an equilibrium pressure.
+Within the conservation of mass equations, several assumptions from section \ref{subsect:assumptions} are evident.
+The mechanical equilibrium of the \ncg and the vapor fields manifest in a singular velocity for the two fields, $\vec{u}_g$, where the $_g$ subscript denotes the total gaseous phase.
+Dalton's Law allows the two gaseous fields to occupy the same volume, thus providing for a singular volume fraction, $\alpha_g$.
+The thermodynamic equilibrium of the two liquid fields result in only one liquid density, $\rho_l$.
 
-Note that the momentum conservation equations are formulated in conservative form, this is a stark contrast between COBRA and some other common system analysis codes \cite{TRACE, RELAP} that use non-conservative forms for their momentum conservation laws.
+In addition to the conservation of mass, there are conservation of energy equations for each of the two phases, \eqref{eqn:con_energy_gas} -- \eqref{eqn:con_energy_liq}.
 
-COBRA uses two equations for phasic conservation of energy: the conservation of energy for the total liquid phase, \eqref{eqn:conservation_of_liq_energy}; and the conservation of energy for the total gaseous phase, \eqref{eqn:conservation_of_gas_energy}.
-Several assumptions underlie these two equations.
-The continuous liquid film is considered to be thermodynamic equilibrium with the dispersed liquid at a given point.
+\begin{IEEEeqnarray}{rCl}
+\label{eqn:con_energy_gas}
+\frac{\partial \left( \alpha_g \{\rho_g h_g\} \right)}{\partial t } + \nabla \cdot \left(  \alpha_g \{\rho_g h_g\} \vec{u}_g \right) & =& \nonumber \\
+\Gamma^{'''} h^{'}_v + q^{'''}_{i,v} + q^{'''}_{gl}  + q^{'''}_{wg} + \alpha_g\frac{\partial P}{\partial t} + s_{e,g}  & &\\
+\label{eqn:con_energy_liq}
+\frac{\partial \left( (1 - \alpha_g) \rho_l h_l \right) }{\partial t } + \nabla \cdot \left( \alpha_l \rho_l h_l \vec{u}_l \right) + \nabla \cdot \left( \alpha_e \rho_l h_l \vec{u}_e \right)& = & \nonumber \\
+-\Gamma^{'''} h^{'}_l +  q^{'''}_{i,l} - q^{'''}_{gl}  + q^{'''}_{wl} + (1 - \alpha_g) \frac{\partial P}{\partial t} + s_{e,l}  & &
+\end{IEEEeqnarray}
+
+The conservation of energy equations used in this work are formulated such that the conserved quantities are the phasic enthalpies, $\alpha_k \rho_k h_k$.
+Under the assumption of thermodynamic equilibrium for the two liquid fields, there is a single liquid enthalpy for the two fields.
+The gaseous phasic enthalpy, however, is defined according to \eqref{eqn:gaseous_enthalpy}.
 
 \begin{equation}
-\label{eqn:conservation_of_liq_energy}
-2 + 2 = 3
+\label{eqn:gaseous_enthalpy}
+\{\rho_g h_g\} = \rho_v h_v + rho_{ncg} h_{ncg}
 \end{equation}
+
+The various terms on the right hand sides of \eqref{eqn:con_energy_gas} and \eqref{eqn:con_energy_liq} are defined as follows.
+\begin{itemize}
+\item{
+$\Gamma^{'''} h^{'}_k$:
+ energy transfer due to the phase change of water.
+ The effective enthalpies, $h^{'}_k$, are dependent upon the mechanism of phase change.
+}
+\item{
+$q^{'''}_{i,k}$:
+energy transfer between the liquid fields and the vapor field.
+}
+\item{
+$q^{'''}_{gl}$:
+energy transfer between the liquid fields and the \ncgs.
+}
+\item{
+$q^{'''}_{wk}$:
+ energy transfer between solid-structure and a given phase.
+}
+\item{
+$\alpha_k \frac{\partial P}{\partial t}$:
+ pressure work done by a given phase $k$.
+ The liquid volume fraction is the sum of the continuous and the entrained liquid field's volume fractions.
+}
+\item{
+$s_{e,k}$:
+ external source/sink of energy for a given field $k$.
+}
+\end{itemize}
+
+The conservation of momentum equations, \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent}, are expressed in vector notation; however, only axial flow is considered in the current work.
+Dalton's Law and the assumed mechanical equilibrium between the two gaseous fields enable the use of a single momentum conservation for the net gaseous phase.
+
+\begin{IEEEeqnarray}{rCl}
+\label{eqn:con_mom_liq}
+\frac{\partial \left( \alpha_l \rho_l \vec{u}_l \right )}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \vec{u}_l \right) & = & \nonumber \\
+ -\alpha_l \nabla P + \alpha_l \rho_l \vec{g} - \vec{\tau}^{'}_{wl} + \vec{\tau}^{'}_{i,gl} - (1 - \eta)\Gamma^{'''}\vec{u}^{'} - S^{'''}\vec{u}^{'} + s_{p,l} & & \\
+\label{eqn:con_mom_gas}
+\frac{\partial \left( \alpha_g \rho_g \vec{u}_g \right) }{\partial t } + \nabla \cdot \left( \alpha_g \rho_g \vec{u}_g \vec{u}_g \right) & = & \nonumber \\
+ -\alpha_g \nabla P + \alpha_g \rho_g \vec{g} - \vec{\tau}^{'}_{wg} - \vec{\tau}^{'}_{i,gl} - \vec{\tau}^{'}_{i,ge} + \Gamma^{'''}\vec{u}^{'} + s_{p,g} & & \\
+\label{eqn:con_mom_ent}
+\frac{\partial \left( \alpha_e \rho_l \vec{u}_e \right) }{\partial t } + \nabla \cdot \left( \alpha_e \rho_l \vec{u}_e \vec{u}_e \right) & = & \nonumber \\
+ -\alpha_e \nabla P + \alpha_e \rho_l \vec{g} - \vec{\tau}^{'}_{wl} + \vec{\tau}^{'}_{i,ge} - \eta \Gamma^{'''}\vec{u}^{'} + S^{'''}\vec{u}^{'} + s_{p,l} & &
+\end{IEEEeqnarray}
+
+The $\rho_g$ used in \eqref{eqn:con_mom_gas} is defined by \eqref{eqn:gaseous_density}.
 
 \begin{equation}
-\label{eqn:conservation_of_gas_energy}
-2 + 4  + 3 = 2
+\label{eqn:gaseous_density}
+\rho_g = \rho_{ncg} + \rho_v
 \end{equation}
 
-Another assumption is that the non-condensable gases are in mechanical equilibrium with the vapor field.
-The conservation of momentum is applied in each flow direction to the three-fields: continuous liquid films, entrained liquid droplets, and total gaseous flow.
-For the conservation of energy, COBRA-IE tracks the combined fluid energy and the combined gas energy.
-In total, there are twelve physical conservation equations that are used for the fluid-mechanic solution within COBRA.
+The material derivative of the fluid momentum is represented by the left hand sides of \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent}.
+The right hand sides represent various surface, boundary, and body forces that act upon the fluid.
+The following a quick description of each term.
 
-In addition, there is an advection equation for Interfacial Area Transport.
+\begin{itemize}
+\item{
+$\alpha_k \nabla P$:
+pressure gradient acting on field $k$.
+}
+\item{
+$\alpha_k \rho_k \vec{g}$:
+gravity body force acting upon field $k$.
+}
+\item{
+$\vec{\tau}^{'}_{wk}$:
+ shear forces from contact between field $k$ and the channel walls. 
+}
+\item{
+$\vec{\tau}^{'}_{i,k_1\,k_2}$:
+ shear forces from the interface between fields $k_1$ and $k_2$. 
+}
+\item{
+$\Gamma^{'''}\vec{u}^{'}$:
+ momentum contribution from the exchange of mass due to the phase change of water.
+ The $\vec{u}^{'}$ term depends upon the net inter-phase transfer of mass.
+}
+\item{
+$S^{'''}\vec{u}^{'}$:
+ momentum contribution from the exchange of mass between the two liquid fields.
+ The $\vec{u}^{'}$ term depends upon the net inter-field transfer of mass.
+}
+\item{
+$s_{p,k}$:
+ external sources/sinks of momentum for field $k$.
+}
+\end{itemize}
 
-In a one-dimensional simulation, there will be nine governing conservation equations for fluid-mechanics.
+Note that the momentum conservation equations are formulated such that the temporal derivatives are of the conserved quantities, which is referred to as a conservative formulation.
+This formulation will be retained during the numerical discretization process.
+Other common system analysis codes \cite{TRACE, RELAP} use different non-conservative variants of the above equations for their momentum conservation laws.
 
+It will be useful to refer to the collection of continuous conservation laws, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:conservation_of_ent}, \eqref{eqn:con_energy_gas} -- \eqref{eqn:con_energy_liq}, and \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent}, as a vector of equations.
+To accomplish this, \eqref{eqn:conservation_equations} defines such a system.
+The vector, $\vec{G}$, represents the full conservation equations minus the temporal derivatives of the conserved quantities.
+\begin{equation}
+\label{eqn:conservation_equations}
+\frac{\partial \left( \vec{x} \right)}{\partial t} = \vec{G}(\vec{x}(t))
+\end{equation}
+
+The vector, $\vec{x}$, of conserved quantities is defined in \eqref{eqn:conserved_variables}.
+
+\begin{equation}
+\label{eqn:conserved_variables}
+\vec{x} = [\alpha_g \rho_{ncg}, \alpha_g \rho_v, \alpha_l \rho_l, \alpha_e \rho_l, \alpha_g \rho_g h_g, (1 - \alpha_g) \rho_l h_l, \alpha_g \rho_g \vec{u}_g, \alpha_l \rho_l \vec{u}_l, \alpha_e \rho_e \vec{u}_e]^{T}
+\end{equation}
+
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Numeric Discretization}
 \label{sect:numeric_methods}
+Recalling the staggered grid from section \ref{sect:topology}, the six scalar conservation laws, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:con_energy_liq}, are defined such that the conserved quantities are centered on the continuity volumes.
+The three momentum conservation laws, \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent}, are centered on the momentum volumes.
+The labeling scheme for the spatial discretization is shown in figure \ref{fig:vertical_pipe_with_cells}, which shows a segment of a vertical channel.
+
+\begin{figure}[ht]
+\caption{Illustration of indexing scheme.}
+\label{fig:vertical_pipe_with_cells}
+\begin{center}
+\begin{tikzpicture}
+\draw (-2,-3) rectangle +(2,2);
+\node[anchor=center] at (-1,-2) {j-1};
+\draw (-2,-1) rectangle +(2,2);
+\node[anchor=center] at (-1, 0) {j};
+\draw (-2, 1) rectangle +(2,2);
+\node[anchor=center] at (-1, 2) {j+1};
+\draw[dashed] (-0,-2) rectangle +(2,2);
+\node[anchor=center] at (1, -1) {j};
+\draw[dashed] (-0, 0) rectangle +(2,2);
+\node[anchor=center] at (1, 1) {j+1};
+\node[anchor=north] at (-1, -3) {Continuity};
+\node[anchor=north] at (1, -2) {Momentum};
+\end{tikzpicture}
+\end{center}
+\end{figure}
+
+A continuity cell, $j$, is overlapped by two momentum cells, $j$ and $j-1$.
+Variables are indexed by the mesh on which their conservation equation is defined.
+
+For the flux terms evaluated on a volume edge, the advected quantity in each equation is evaluated using a 1st order upwind method \cite{Tannehill1997}.
+A generic formulation for this scheme is given by \ref{eqn:upwind_donoring}.
+The velocity, $v_j$, defined at the center of the momentum cell that aligns with the edge of continuity cell determines the value for the donored advected quantity, $<a>_{j,d}$.
+
+\begin{equation}
+\label{eqn:upwind_donoring}
+<a>_{j, d} = \begin{cases} a_{j-1} &  v \geq 0 \\ a_{j} & v < 0 \end{cases}
+\end{equation}
+
+Given the
 
 \subsection{Method-Of-Lines}
 \label{subsect:numerics_explicit}
@@ -174,7 +347,7 @@ There are single-step temporal integration techniques.
 There are multi-step methods.
 Given the PDEs from \sect{subsect:pdes}, the Method-Of-Lines is used for the temporal integration \cite{LeVeque2007}.
 The MOL methodology starts by spatially discritizing \eqref{equations_for_Stuff}, while leaving the temporal derivatives continuous.
-Using the topological definitions from \sect{subsect:topology}, the system of conservation laws for the global domain can be represented by \eqref{eqn:MOL_1}, where $\vec{X}(t)$ is the temporally continuous vector of conserved quantities defined at grid points.
+Using the topological definitions from \sect{sect:topology}, the system of conservation laws for the global domain can be represented by \eqref{eqn:MOL_1}, where $\vec{X}(t)$ is the temporally continuous vector of conserved quantities defined at grid points.
 The generic function, $\vec{G}$, on the RHS of \eqref{eqn:MOL_1} represents the all of the terms in \eqref{stuff} expect the temporal derivative.
 \begin{equation}
 \label{eqn:MOL_1}
@@ -291,7 +464,13 @@ One alternative, known as the the stability-enhancing two-step method (SETS) \ci
 \subsubsection{Nearly Implicit}
 \label{subsubsect:numerics_nearly_implicit}
 Another multi-stage method is called the Nearly-Implicit method.
-
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Domain Coupling}
 \label{sect:code_coupling}
 There are several options to couple the specialized capabilities of system analysis codes to the detailed physics of a subchannel analysis code.
@@ -306,15 +485,20 @@ This methodology involved passing information between two different codes at the
 
 \subsection{Semi-Implicit}
 \label{subsect:coupling_semi_implicit}
-The desire to overcome the instabilities outlined in the previous section, a semi-implicit methodology was proposed that made use of Parallel Virtual Machine (PVM).
-PVM is a piece of software that was developed for the purpose of passing information between programs running in parallel \citet{someone}. 
+The desire to overcome the instabilities outlined in the previous section, a semi-implicit coupling methodology was proposed that made use of Parallel Virtual Machine (PVM).
+PVM is a piece of software developed for the purpose of passing information between programs running in parallel \cite{Geist1994}. 
 The ability to pass information between software is key to the semi-implicit stuff. 
 
 \subsection{Implicit}
 \label{subsect:coupling_implicit}
 The concept of implicitly coupling different physics is sufficiently attractive. 
-
-
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Implicit Nonlinearities}
 \label{sect:nonlinearities}
 In section \sect{sect:numeric_methods}, several numeric methods for the discritization of the equations \eqref{eqn:conservation_of_energy} were demonstrated.
@@ -326,13 +510,19 @@ A choice can be made to not resolve the nonlinearities, or an iterative procedur
 
 \subsection{Newton's Method}
 \label{subsect:newtons_method}
-The primary method used to resolve the non-linearities in the governing equations is the use of a Newton's method.
-Newton's method is an optimization algorithm that is particularly well suited for algebriac-equations
+The primary method used to resolve the non-linearities in the governing equations is the use of a Newton's method \cite{Deuflhard2004}.
+Newton's method is an optimization algorithm that is particularly well suited for discretized systems of PDEs.
 
 \subsection{Single-shot Linearization}
 \label{subsect:single_shot}
 If the nonlinearities in the numeric method are not resolved.
-
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Temporal Convergence}
 \label{sect:temporal_convergence}
 Of primary use in the field of nuclear reactor safety analysis is simulation.
@@ -348,15 +538,27 @@ While each of these software products varies in their models and implementations
 There are two common methods for dealing with a potentially poor time-step in sub-channel codes: prediction and mitigation.
 The predictive methodology is the less commonly applied of the two methods.
 It uses information about the explicit portion of the nonlinear residual to identify situations where the linearization point may be poor.
-In COBRA, this particular method is used only for the prediction of non-condenable gas appearance.
+In COBRA, this particular method is used only for the prediction of \ncg appearance.
 
 Mitigation, the second method, is the more common and actively used strategy.
 This strategy can be further subdivided into two categories: limiting and failure.
 There is an extensive set of limiting criteria.
-
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Review}
 \label{sect:review}
-
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Research Objective}
 The objective of this dissertation is the design, implementation, and evaluation of a practical non-linear solution framework for reactor safety systems codes.
 Specifically, an efficient and reliable solution methodology to the two-phase, three-field, fluid-dynamics and the solid-structure heat transfer system of coupled non-linear partial differential equations is sought.
