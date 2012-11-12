@@ -1,23 +1,34 @@
 \chapter{Work Proposal}
-\label{chap:future}
+\label{chap:proposal}
+To evaluate the proposed methodology, several objectives will be pursued.
+The coding of the physics based scaling for the nonlinear residual will be examined and modified as necessary to address the convergence issues such as false non-convergence.
+An appropriate scaling of the Newton updates for convergence testing both within the linesearch algorithm and in the Newton loop will be determined.
+The domain decomposition algorithm will be mathematically developed, coded, and evaluated.
+Once the preceding three objectives have been met, a test problem will be developed to test the nonlinear refinement code as applied to a predetermined subdomain.
+After the algorithmic framework has been evaluated, several geometrically complex problems with high local-nonlinearities will be developed to obtain temporal-convergence benchmarks of the legacy methodology.
+The same problems will then be evaluated using the proposed algorithm to determine the efficacy of temporal-convergence criteria.
+Upon completion of the temporal-convergence tests, run time tests will be conducted to determine any performance gains or losses as a result of the proposed methodology.
+Parametric studies will then be conducted to determine the impact of nonlinear convergence tolerances, geometric residual imbalances, and residual thresholds for activation of nonlinear refinements.
+
+\section{Scaling Evaluation}
+\label{sect:proposal_scaling}
 
 
-\section{Intra-code Coupling}
-\label{sect:future_intracode_coupling}
-
-Given the results from \chap{chap:scaling_and_convergence}, the next step will be to implement an algorithm similar to the one discussed in \sect{sect:code_coupling}.
+\section{Domain Decomposition}
+\label{sect:domain_coupling}
+The first step will be to implement a variation of the semi-implicit domain coupling algorithm presented in \sect{sect:code_coupling}.
 The details of the derivation will need to be reworked to account for the different flow variables.
 
 Upon completion of the implementation, a rigorous testing of the coupling methodology will be conducted.
 This testing will be similar to that conducted by \citet{Weaver2002}.
 
 \subsection{Testing}
-A simple test problem will be constructed to test the geometric coupling implementation.
+\label{subsect:domain_testing}
+To evaluate the domain decomposition capabilitites, a geometric test problem will need to be developed.
+This problem should have a singular characteristic: multiple geometric components.
+The problem will be a single phase run
+The test problem will be run in legacy mode to obtain a standard solution.
 
-
-\section{Improve Nonlinear Solver Efficiency}
-\label{sect:future_nonlinear_solver}
-After the infrastructure is in place, the selective nonlinear refinement will be implemented.
 
 \section{Selective Nonlinear Refinement}
 \label{sect:selective_nonlinear_refinement}
@@ -29,8 +40,6 @@ After the infrastructure is in place, the selective nonlinear refinement will be
 
 \section{Time Line}
 \label{sect:time_line}
-
-
 
 
 
