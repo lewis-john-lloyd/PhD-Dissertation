@@ -293,7 +293,7 @@
 %=============================================================================
 \newcommand{\@tocchapterskip}{1.0em plus 1pt}
 
-\def\l@part#1#2{\addpenalty{-\@highpenalty}
+\newcommand{\l@part}[2]{\addpenalty{-\@highpenalty}
   \addvspace{2.25em plus 1pt}  % space above part line
   \begingroup
   \@tempdima 3em         % width of box holding part number, used by
@@ -308,30 +308,14 @@
 \newcommand{\l@chapter}[2]{
 	\pagebreak[3]\vskip\@tocchapterskip\@dottedtocline{0}{0pt}{1.5em}{{\bface #1}}{#2}
 	}
-\newcommand{\l@section}{
-	\@dottedtocline{1}{ 1.5em}{2.3em}
-	}
-\newcommand{\l@subsection}{
-	\@dottedtocline{2}{ 3.8em}{3.2em}
-	}
-\newcommand{\l@subsubsection}{
-	\@dottedtocline{3}{ 7.0em}{4.1em}
-	}
-\newcommand{\l@paragraph}{
-	\@dottedtocline{4}{10.0em}{5.0em}
-	}
-\newcommand{\l@subparagraph}{
-	\@dottedtocline{5}{12.0em}{6.0em}
-	}
-\newcommand{\l@figure}{
-	\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}
-	}
-\newcommand{\l@table}{
-	\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}
-	}
-\newcommand{\l@algo}{
-	\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}
-	}
+\newcommand{\l@section       }{\@dottedtocline{1}{ 1.5em}{2.3em}}
+\newcommand{\l@subsection    }{\@dottedtocline{2}{ 3.8em}{3.2em}}
+\newcommand{\l@subsubsection }{\@dottedtocline{3}{ 7.0em}{4.1em}}
+\newcommand{\l@paragraph     }{\@dottedtocline{4}{10.0em}{5.0em}}
+\newcommand{\l@subparagraph  }{\@dottedtocline{5}{12.0em}{6.0em}}
+\newcommand{\l@figure}{\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
+\newcommand{\l@table }{\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
+\newcommand{\l@algo  }{\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
 
 %=============================================================================
 % TABLE OF CONTENTS; LIST OF FIGURES; LIST OF TABLES
@@ -351,22 +335,17 @@
 % the chapter.  Isn't elegance wonderful?
 %
 %=============================================================================
-\newcommand{\tableofcontents}{
-	\@tableof{Table of Contents }{}{tocpage}{toc}{}
-	}
-\newcommand{\listoffigures}{
-	\@tableof{List of Figures}{Figure}{lofpage}{lof}{\protect\addcontentsline{toc}{chapter}{List of Figures}}
-	}
-\newcommand{\listoftables}{
-	\@tableof{List of Tables}{Table}{lotpage}{lot}{\protect\addcontentsline{toc}{chapter}{List of Tables}}
-	}
-\newcommand{\listofalgorithm}{
-	\@tableof{List of Algorithms}{Algorithm}{loapage}{loa}{\protect\addcontentsline{toc}{chapter}{List of Algorithms}}
-	}
+\newcommand{\tableofcontents}{\@tableof{Table of Contents }{         }{tocpage}{toc}{                                                          }}
+\newcommand{\listoffigures  }{\@tableof{List of Figures   }{Figure   }{lofpage}{lof}{\protect\addcontentsline{toc}{chapter}{List of Figures}   }}
+\newcommand{\listoftables   }{\@tableof{List of Tables    }{Table    }{lotpage}{lot}{\protect\addcontentsline{toc}{chapter}{List of Tables}    }}
+\newcommand{\listofalgorithm}{\@tableof{List of Algorithms}{Algorithm}{loapage}{loa}{\protect\addcontentsline{toc}{chapter}{List of Algorithms}}}
 
-\def\@tableof#1#2#3#4#5{
-{ % limit scope of following declarations!!
+\newcommand{\@tableof}[5]{{ % limit scope of following declarations!!
   \@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn\fi
+  \addtolength{\textheight}{-40pt}       % -24-16
+  \addtolength{\majorheadskip}{-40pt}    % -24-16
+  \addtolength{\headheight}{52pt}        %  36+16
+  \addtolength{\headsep}{-12pt}          % -12
   \chapter*{#1}
   #5
   \relax\markboth{#1}{#1}
@@ -374,24 +353,22 @@
   \singlespace
   \setcounter{#3}{0}
   \setcounter{listofheading}{1}  % change from 0 to 1 by mccauley, 14may93
-  \def\@oddhead{\vbox to \headheight{\vspace{4pt}
+  \renewcommand{\@oddhead}{\vbox to \headheight{\vspace{3pt}
     \hbox to \hsize{\hfil\rm\thepage} \vfil
-      \ifnum \value{#3}=0
-	\setcounter{#3}{1}
-      \else
-	\hbox to \hsize{#2 \hfil Page}
-      \fi%
-    }%
-  }
-  \def\@evenhead{\vbox to \headheight{\vspace{4pt}
+    \ifnum \value{#3}=0
+	    \setcounter{#3}{1}
+    \else
+	    \hbox to \hsize{#2 \hfil Page}
+    \fi
+    }}
+  \renewcommand{\@evenhead}{\vbox to \headheight{\vspace{3pt}
     \hbox to \hsize{\rm\thepage\hfil} \vfil
-      \ifnum \value{#3}=0
-	\setcounter{#3}{1}
-      \else
-	\hbox to \hsize{#2 \hfil Page}
-      \fi%
-    }%
-  }
+    \ifnum \value{#3}=0
+	    \setcounter{#3}{1}
+    \else
+	    \hbox to \hsize{#2 \hfil Page}
+    \fi
+    }}
   \@starttoc{#4}  \if@restonecol\twocolumn\fi
   \newpage
 }}

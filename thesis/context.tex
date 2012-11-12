@@ -337,7 +337,25 @@ For example, the velocity $u_j$ would be spatially located at the boundary betwe
 Recalling the staggered grid from \sect{sect:topology}, the six scalar conservation laws, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:con_energy_liq}, are integrated over each continuity volume.
 The assumption in these integrals is that the value of the conserved quantities and all thermodynamically related variables are constant within a given cell.
 \fig{fig:constant_value} shows a graphical representation of this idea for a generic function $f(x)$ over several spatial continuity meshes.
+
+\begin{figure}[ht]
+\caption{Constant variable values within computational volumes.}
+\label{fig:constant_value}
+\begin{center}
+Picture goes here.
+\end{center}
+\end{figure}
+
 For illustrative purposes,  the \eqref{eqn:conservation_of_liq} will be integrated over a given volume, $j$, as shown in \fig{fig:single_volume}.
+
+\begin{figure}[ht]
+\caption{Single volume over which integration is done.}
+\label{fig:single_volume}
+\begin{center}
+Picture goes here.
+\end{center}
+\end{figure}
+
 The continuity volume has a constant cross-sectional area, $A_{c,j}$, and a length of $\Delta x$.
 
 \begin{IEEEeqnarray}{lcl}
@@ -378,7 +396,7 @@ u_{k,j+\frac{1}{2}} = \frac{1}{2}\left(u_{k,j} + u_{k, j+1}\right)
 
 \subsection{Temporal Approximations}
 \label{subsect:temporal_approx}
-Once the governing conservation equations have been spatial discretized utilitizing the methodology outlined above, the temporal derivatives need to be numerically approximated.
+Once the governing conservation equations have been spatial discretized utilizing the methodology outlined above, the temporal derivatives need to be numerically approximated.
 Using the spatially discrete approximations defined in \sect{subsect:spatial_approx}, the temporally continuous differential equations,\eqref{eqn:conservation_equations}, are now semi-discrete approximations given by \eqref{eqn:temporal_semi_discrete}, where $\vec{G}$ now represents the spatially discrete version of $\vec{g}$.
 
 \begin{equation}
@@ -386,14 +404,14 @@ Using the spatially discrete approximations defined in \sect{subsect:spatial_app
 \frac{\partial \left( \vec{y} \right)}{\partial t} = \vec{G}(\vec{x}(t))
 \end{equation}
 
-Within the subchannel analysis framework, the temporal derivative is approximated by a simple difference scheme, \eqref{eqn:simple_partial_t}.
+Within the current subchannel analysis framework, the temporal derivative is simply approximated by a one-step difference scheme, \eqref{eqn:simple_partial_t}.
 \begin{equation}
 \label{eqn:simple_partial_t}
 \frac{\partial \vec{y}(t)_j}{\partial t} = \frac{ \vec{y}^{n+1}_{j} - \vec{y}^{n}_{j}}{t^{n+1}-t^{n}}, \quad \vec{y}^{n+1}_j = \vec{y}(t^{n+1})_j
 \end{equation}
 
 Where the continuous time variable is now evaluated at discrete points, $t^0, t^1, \ldots, t^N$, numbered zero through $N$, where $t^N$ represents the final time of interest.
-The choice of temporal discretization of $\vec{G}$ is what leads to several methods of interest.
+The choice of temporal discretization for the various components of $\vec{G}$ and the number of stages utilized is what leads to various methods of interest.
 
 \subsubsection{Explicit}
 \label{subsubsect:numerics_explicit}
@@ -581,7 +599,7 @@ While each of these software products varies in their models and implementations
 
 \subsection{Time Step Selection}
 \label{subsect:time_step_selection}
-
+BLARPER!
 \subsection{Time Step Failure}
 \label{subsect:time_step_failure}
 There are two common methods for dealing with a potentially poor time-step in sub-channel codes: prediction and mitigation.
@@ -601,6 +619,7 @@ There is an extensive set of limiting criteria.
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Review}
 \label{sect:review}
+Marbles!
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------

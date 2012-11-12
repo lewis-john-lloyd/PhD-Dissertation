@@ -27,74 +27,35 @@
 %=====================================================================
 % Packageges
 %=====================================================================
-% 	- inputenc
-%		Purpos: fonts
-%\usepackage[latin1]{inputenc}
-
-% epsfig: The package epsfig is used to bring in the Encapsulated PostScript figures into the document.
 \usepackage{epsfig}
-
 \usepackage{amssymb,amsmath}
-
-% verbatim:
 \usepackage{verbatim}
-
-% pfg/TikZ: The package tikz is used to create graphics.
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows}
 
-% times: The package times is used to change the fonts to Times Roman; however because the times typewriter font looks odd, the original LaTeX Computer Modern font is kept for the typewriter font using \renewcommand{\ttdefault}{cmtt}.
-%	Times Roman is a PostScript font and therefore, the document cannot be correctly viewed from the *.dvi file. 
-%	It should be converted to a *.ps file first and then viewed with a PostScript previewer.
 \usepackage{times}
 \renewcommand{\ttdefault}{cmtt}
 
-% syntonly: The package syntonly checks the syntax of document without actually generating files.
-\usepackage{syntonly}
-% Activated by the \syntaxonly flag.
-%\syntaxonly
-
-
-% amsmath: The package amsmath includes most useful math stuff.
-\usepackage{amsmath}
-
-% IEEEtrantools: This package provides the IEEEeqnarray environment.
 \usepackage{IEEEtrantools}
-
-% algorithm: This package provides the algorithm environment.
-%\usepackage[ruled,chapter]{algorithm}
-
-% algpseudocode: This package provides the pseudocode algorithm environment.
 \usepackage{algpseudocode}
-
-% pdflscape: This package allows for pages to be rotated within the document.
 \usepackage{pdflscape}
 \usepackage[absolute]{textpos}
-\usepackage{fancyhdr}
 
+\usepackage{fancyhdr}
 \setlength{\TPHorizModule}{1in}
 \setlength{\TPVertModule}{1in}
-
 \fancypagestyle{lscape}{% 
 \fancyhf{} % clear all header and footer fields 
 \fancyfoot[LO]{\begin{textblock}{1}(1,   1){\rotatebox{90}{\thepage}}\end{textblock}}
 \fancyfoot[LE]{\begin{textblock}{1}(1,10.5){\rotatebox{90}{\thepage}}\end{textblock}}
 }
-
 \renewcommand{\headrulewidth}{0pt} 
 \renewcommand{\footrulewidth}{0pt}
 
-
-%\usepackage{chicago}
-%\usepackage{cite}
 \usepackage[numbers, sort&compress]{natbib}
 \renewcommand{\bibname}{List of References}
 \let\oldbibsection\bibsection
-\renewcommand{\bibsection}{\oldbibsection\addcontentsline{toc}{chapter}{List of References}\singlespace}
-%\setlength\bibitemsep{0.0pt}
-%\setlength{\bibsep}{0.0pt}
-%\usepackage{trace}
-%\traceon
+\renewcommand{\bibsection}{\oldbibsection\addcontentsline{toc}{chapter}{List of References}\singlespace\raggedright}
 
 \usepackage[bookmarks,
 	bookmarksdepth=2,
@@ -104,59 +65,19 @@
 	filecolor=black, %
 	linkcolor=black, %
 	urlcolor=black]{hyperref}
-	
 \usepackage{lipsum}
-
-\usepackage{cleveref}
 \usepackage{booktabs}
 \usepackage{multirow}
 
-%========================================================================
-%  Draft Control Commands
-%========================================================================
-%	- \psdraft
-%		Purpose: 	Causes the \psfig or \epsfig commands to draw a box and label the box with the postscript file name instead of reading in the full postscript figure.  
-%					This can save time and toner when printing drafts.
-%\psdraft
-
-
-% 	- \psfull
-%		Purpose: Causes the inclusion of the postscript figures
-%\psfull
-
-
-%	- \pagestyle{thesisdraft}:
-%		Purpose: Changes the header and footer
-%		Options:
-%			{thesisdraft} 	Casues the header and footer to be: DRAFT: Do Not Distribute        <time><Date>        <input file name>
-%			{thesis}		Casues the header and footer to be the correct format
 \pagestyle{thesis}
-
-%  	- \draftmargins:
-%		Purpose:	The page margins can be marked with a post-script box using the \draftmargins command.
-%					This command uses dvips's end-of-page hook.
-%					This is only visible in the *.ps file (NOT the *.dvi file)!
-%\draftmargins
-
-%	- \draftscreen:
-%		Purpose:	The word ``DRAFT'' can be diagonally printed across the page using the \draftscreen command.
-%					This command uses dvip's beginning-of-page hook.
-%					This is only visible in the *.ps file (NOT the *.dvi file)!
-%\draftscreen
+\draftscreen
 \setcounter{errorcontextlines}{999}
-%=======================================================================
+
 % Include custom math commands
-%=======================================================================
 \input{commandsmath}
-
-%=======================================================================
 % Include custom tikz commands
-%=======================================================================
 \input{commandstikz}
-
-%=======================================================================
 % Include custom variables based on ifthen commands
-%=======================================================================
 \input{commandsgeneral}
 
 \noappendixtables                % Don't have appendix tables
@@ -188,6 +109,7 @@
 
 \include{input_decks}        % Appendix: Input Decks
 \include{residual_functions} % Appendix: Nonlinear Math
+\include{newton}             % Appendix: Newton Formulation
 
 \end{appendices}
 
