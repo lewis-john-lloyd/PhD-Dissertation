@@ -128,7 +128,7 @@ The wall-shear effects of viscosity are accounted for via empirically based fric
 \end{itemize}
 
 \subsection{Governing Equations}
-\label{subsect:pdes}
+\label{subsect:governing_equations}
 
 There are four equations representing the conservation of mass of the \ncg field, the continuous liquid field, the dispersed liquid field, and the water vapor field.
 
@@ -160,7 +160,7 @@ The inter-field transfer of mass occurs only between the continuous and disperse
 S^{'''}_l + S^{'''}_e = 0
 \end{equation}
 
-Within the conservation of mass equations, several assumptions from section \ref{subsect:assumptions} are evident.
+Within the conservation of mass equations, several assumptions from \sect{subsect:assumptions} are evident.
 The mechanical equilibrium of the \ncg and the vapor fields manifest in a singular velocity for the two fields, $\vec{u}_g$, where the $_g$ subscript denotes the total gaseous phase.
 Dalton's Law allows the two gaseous fields to occupy the same volume, thus providing for a singular volume fraction, $\alpha_g$.
 The thermodynamic equilibrium of the two liquid fields result in only one liquid density, $\rho_l$.
@@ -283,14 +283,14 @@ To accomplish this, \eqref{eqn:conservation_equations} defines such a system.
 The vector, $\vec{G}$, represents the full conservation equations minus the temporal derivatives of the conserved quantities.
 \begin{equation}
 \label{eqn:conservation_equations}
-\frac{\partial \left( \vec{x} \right)}{\partial t} = \vec{G}(\vec{x}(t))
+\frac{\partial \left( \vec{y} \right)}{\partial t} = \vec{g}(\vec{y}(t))
 \end{equation}
 
-The vector, $\vec{x}$, of conserved quantities is defined in \eqref{eqn:conserved_variables}.
+The vector, $\vec{y}$, of conserved quantities is defined in \eqref{eqn:conserved_variables}.
 
 \begin{equation}
 \label{eqn:conserved_variables}
-\vec{x} = [\alpha_g \rho_{ncg}, \alpha_g \rho_v, \alpha_l \rho_l, \alpha_e \rho_l, \alpha_g \rho_g h_g, (1 - \alpha_g) \rho_l h_l, \alpha_g \rho_g \vec{u}_g, \alpha_l \rho_l \vec{u}_l, \alpha_e \rho_e \vec{u}_e]^{T}
+\vec{y} = [\alpha_g \rho_{ncg}, \alpha_g \rho_v, \alpha_l \rho_l, \alpha_e \rho_l, \alpha_g \rho_g h_g, (1 - \alpha_g) \rho_l h_l, \alpha_g \rho_g \vec{u}_g, \alpha_l \rho_l \vec{u}_l, \alpha_e \rho_e \vec{u}_e]^{T}
 \end{equation}
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -300,11 +300,18 @@ The vector, $\vec{x}$, of conserved quantities is defined in \eqref{eqn:conserve
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Numeric Discretization}
-\label{sect:numeric_methods}
-Recalling the staggered grid from section \ref{sect:topology}, the six scalar conservation laws, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:con_energy_liq}, are defined such that the conserved quantities are centered on the continuity volumes.
-The three momentum conservation laws, \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent}, are centered on the momentum volumes.
-The labeling scheme for the spatial discretization is shown in figure \ref{fig:vertical_pipe_with_cells}, which shows a segment of a vertical channel.
+\section{Numeric Approximation}
+\label{sect:numeric_approximation}
+The set of conservation laws, \eqref{eqn:conserved_variables}, governing the fluid-mechanics within the geometry of interest do not have a general closed form solution.
+As such, a methodology needs to be adopted to numerically approximate their solutions.
+
+\subsection{Spatial Approximations}
+\label{subsect:spatial_approx}
+In this work, the finite-volume methodology was chosen to discretize the governing equations \cite{LeVeque2002}.
+The labeling scheme for the volumes are shown in\fig{fig:vertical_pipe_with_cells}, which shows a segment of a vertical channel.
+A continuity cell, $j$, is spatially overlapped by two momentum cells, $j$ and $j-1$.
+Variables are indexed by the mesh on which their conservation equations are defined.
+For example, the velocity $u_j$ would be spatially located at the boundary between the continuity cells $j$ and $j-1$.
 
 \begin{figure}[ht]
 \caption{Illustration of indexing scheme.}
@@ -327,37 +334,62 @@ The labeling scheme for the spatial discretization is shown in figure \ref{fig:v
 \end{center}
 \end{figure}
 
-A continuity cell, $j$, is overlapped by two momentum cells, $j$ and $j-1$.
-Variables are indexed by the mesh on which their conservation equation is defined.
+Recalling the staggered grid from \sect{sect:topology}, the six scalar conservation laws, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:con_energy_liq}, are integrated over each continuity volume.
+The assumption in these integrals is that the value of the conserved quantities and all thermodynamically related variables are constant within a given cell.
+\fig{fig:constant_value} shows a graphical representation of this idea for a generic function $f(x)$ over several spatial continuity meshes.
+For illustrative purposes,  the \eqref{eqn:conservation_of_liq} will be integrated over a given volume, $j$, as shown in \fig{fig:single_volume}.
+The continuity volume has a constant cross-sectional area, $A_{c,j}$, and a length of $\Delta x$.
 
-For the flux terms evaluated on a volume edge, the advected quantity in each equation is evaluated using a 1st order upwind method \cite{Tannehill1997}.
-A generic formulation for this scheme is given by \ref{eqn:upwind_donoring}.
-The velocity, $v_j$, defined at the center of the momentum cell that aligns with the edge of continuity cell determines the value for the donored advected quantity, $<a>_{j,d}$.
+\begin{IEEEeqnarray}{lcl}
+\int_{V_j}\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } & + & \nabla \cdot \left( \alpha_l \rho_l u_l \right) \mathrm{d}V = \int_{V_j} \left(-(1-\eta)\Gamma^{'''} - S^{'''} + s_{m,l}\right) \mathrm{d}V \nonumber \\
+V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\int_{V_j}\nabla \cdot \left( \alpha_l \rho_l u_l \right) \mathrm{d}V -(1-\eta_j)\Gamma_j^{'''}V_j - S_j^{'''}V_j + s_{m,l,j}V_j \nonumber \\
+V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -A_{m,j}\left[\alpha_l \rho_l u_l \right]_{x_{j-\frac{1}{2}}}^{x_{j+\frac{1}{2}}} -(1-\eta_j)\Gamma_j^{'''}V_j - S_j^{'''}V_j + s_{m,l,j}V_j \nonumber \\
+\label{eqn:spatially_discrete_liq_m_con}
+V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -A_{m,j}\left( <\alpha_l \rho_l>_{d,j+\frac{1}{2}} u_{l,j+1} - <\alpha_l \rho_l>_{d,j-\frac{1}{2}} u_{l,j} \right) \nonumber \\
+& & -(1-\eta)\Gamma^{'''}V - S^{'''}V + s_{m,l}V
+\end{IEEEeqnarray}
+
+For the mass-flux terms evaluated on the continuity volume edge, the advected quantity is evaluated using a 1st order upwind method \cite{Tannehill1997}.
+The velocity and cross-sectional area utilized in the continuity flux terms, $u_j$ and $A_{m,j}$, have the values defined at the center of the momentum volume that aligns with the edge of continuity volumes.
+The sign of the velocity at the volume boundary determines the value of the donored quantity, $<a>_{d,j-\frac{1}{2}}$.
+A generic formulation for this scheme is given by \eqref{eqn:upwind_donoring}.
+The same general procedure is used for the other five scalar conservation equations.
 
 \begin{equation}
 \label{eqn:upwind_donoring}
-<a>_{j, d} = \begin{cases} a_{j-1} &  v \geq 0 \\ a_{j} & v < 0 \end{cases}
+<a>_{d, j-\frac{1}{2}} = \begin{cases} a_{j-1} &  u_j \geq 0 \\ a_{j} & u_j < 0 \end{cases}
 \end{equation}
 
-Given the
-
-\subsection{Method-Of-Lines}
-\label{subsect:numerics_explicit}
-There are single-step temporal integration techniques.
-There are multi-step methods.
-Given the PDEs from \sect{subsect:pdes}, the Method-Of-Lines is used for the temporal integration \cite{LeVeque2007}.
-The MOL methodology starts by spatially discritizing \eqref{equations_for_Stuff}, while leaving the temporal derivatives continuous.
-Using the topological definitions from \sect{sect:topology}, the system of conservation laws for the global domain can be represented by \eqref{eqn:MOL_1}, where $\vec{X}(t)$ is the temporally continuous vector of conserved quantities defined at grid points.
-The generic function, $\vec{G}$, on the RHS of \eqref{eqn:MOL_1} represents the all of the terms in \eqref{stuff} expect the temporal derivative.
+The three momentum conservation laws, \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent}, are integrated over their momentum volume.
+The cross section area for a momentum volume, $A_{m,j}$, can be defined independently of the two cross-sectional areas of the adjoining continuity volumes.
+The momentum flux terms, \eqref{eqn:momentum_flux_terms}, are treated similarly to the flux terms in the continuity equations.
 \begin{equation}
-\label{eqn:MOL_1}
-\frac{\partial \vec{X}(t)_j}{\partial t} = \vec{G}(\vec{X}(t))
+\label{eqn:momentum_flux_terms}
+-\min\left(A_{m,j}, A_{m,j+1}\right)\left[<\alpha_l \rho_l u_l>_{d} u_l\right]_{x_{j-\frac{1}{2}}}^{x_{j+\frac{1}{2}}}
+\end{equation}
+There are two primary differences.
+First, the momentum area 
+The second difference is that the velocity that is used to determine the origination of the donored quantity is the arithmetic mean of the velocities from the two adjacent momentum volumes, \eqref{eqn:average_advecting_vel}.
+
+\begin{equation}
+\label{eqn:average_advecting_vel}
+u_{k,j+\frac{1}{2}} = \frac{1}{2}\left(u_{k,j} + u_{k, j+1}\right)
 \end{equation}
 
-Within the safety analysis framework, the temporal derivative is approximated by a simple difference scheme, \eqref{eqn:simple_partial_t}.
+\subsection{Temporal Approximations}
+\label{subsect:temporal_approx}
+Once the governing conservation equations have been spatial discretized utilitizing the methodology outlined above, the temporal derivatives need to be numerically approximated.
+Using the spatially discrete approximations defined in \sect{subsect:spatial_approx}, the temporally continuous differential equations,\eqref{eqn:conservation_equations}, are now semi-discrete approximations given by \eqref{eqn:temporal_semi_discrete}, where $\vec{G}$ now represents the spatially discrete version of $\vec{g}$.
+
+\begin{equation}
+\label{eqn:temporal_semi_discrete}
+\frac{\partial \left( \vec{y} \right)}{\partial t} = \vec{G}(\vec{x}(t))
+\end{equation}
+
+Within the subchannel analysis framework, the temporal derivative is approximated by a simple difference scheme, \eqref{eqn:simple_partial_t}.
 \begin{equation}
 \label{eqn:simple_partial_t}
-\frac{\partial \vec{X}(t)_j}{\partial t} = \frac{ \vec{X}^{n+1}_{j} - \vec{X}^{n}_{j}}{t^{n+1}-t^{n}}, \quad \vec{X}^{n+1}_j = \vec{X}(t^{n+1})_j
+\frac{\partial \vec{y}(t)_j}{\partial t} = \frac{ \vec{y}^{n+1}_{j} - \vec{y}^{n}_{j}}{t^{n+1}-t^{n}}, \quad \vec{y}^{n+1}_j = \vec{y}(t^{n+1})_j
 \end{equation}
 
 Where the continuous time variable is now evaluated at discrete points, $t^0, t^1, \ldots, t^N$, numbered zero through $N$, where $t^N$ represents the final time of interest.
@@ -365,13 +397,14 @@ The choice of temporal discretization of $\vec{G}$ is what leads to several meth
 
 \subsubsection{Explicit}
 \label{subsubsect:numerics_explicit}
+Given the PDEs from \sect{subsect:governing_equations}, the Method-Of-Lines is used for the temporal integration \cite{LeVeque2007}.
 The least computationally expensive MOL variant is known as a the fully explicit method.
-The terminology explicit refers to the fact that the unknowns at $t^{n+1}$, $\vec{X}^{n+1}$, are function of the values at the present time $\vec{X}^{n}$ only.
-This particular temporal approximation of $\vec{G}$, along with \eqref{eqn:MOL_1} and \eqref{eqn:simple_partial_t}, generates the explicit method for two phase flow, \eqref{eqn:explicit_two_phase}.
+The terminology explicit refers to the fact that the unknowns at $t^{n+1}$, $\vec{y}^{n+1}$, are function of the values at the present time $\vec{y}^{n}$ only.
+This particular temporal approximation of $\vec{G}$, along with \eqref{eqn:temporal_semi_discrete} and \eqref{eqn:simple_partial_t}, generates the explicit method for two phase flow, \eqref{eqn:explicit_two_phase}.
 
 \begin{equation}
 \label{eqn:explicit_two_phase}
-\frac{ \vec{X}^{n+1}_{j} - \vec{X}^{n}_{j}}{t^{n+1}-t^{n}} = \vec{G}(\vec{X}^{n})
+\frac{ \vec{y}^{n+1}_{j} - \vec{y}^{n}_{j}}{t^{n+1}-t^{n}} = \vec{G}(\vec{y}^{n})
 \end{equation}
 
 While this particular methodology is the least computationally expensive, it has a severe weakness in the context of two-phase flow.
@@ -400,34 +433,35 @@ This limitation of the explicit method prompted the development of alternative m
 
 \subsubsection{Implicit}
 \label{subsubsect:numerics_fully_implicit}
-The CFL limit discussed in section \ref{subsubsect:numerics_explicit} is a product of the explicit functional dependence of the $\vec{G}$ from \eqref{eqn:MOL_1} upon only $t^n$ variables.
+The CFL limit discussed in \sect{subsubsect:numerics_explicit} is a product of the explicit functional dependence of the $\vec{G}$ from \eqref{eqn:temporal_semi_discrete} upon only $t^n$ variables.
 A simple, but computationally expensive, way to eliminate the CFL limit is to utilize a fully-implicit formulation.
 A fully-implicit formulation is one where $\vec{G}$ is function only of unknown variables, \eqref{eqn:implicit_MOL}.
 
 \begin{equation}
 \label{eqn:implicit_MOL}
-\frac{ \vec{X}^{n+1}_{j} - \vec{X}^{n}_{j}}{t^{n+1}-t^{n}} = \vec{G}(\vec{X}^{n+1})
+\frac{ \vec{y}^{n+1}_{j} - \vec{y}^{n}_{j}}{t^{n+1}-t^{n}} = \vec{G}(\vec{y}^{n+1})
 \end{equation}
 
 This particular formulation has the advantage of not being limited by a CFL number.
 However, recall that the CFL is for stability purposes only, not accuracy.
-In addition, the solution of \eqref{eqn:implicit_MOL} is computationally expense as that $\vec{G}(\vec{X}^{n+1})$ is a highly nonlinear function requiring the use of nonlinear solvers to obtain a solution.
+In addition, the solution of \eqref{eqn:implicit_MOL} is computationally expense as that $\vec{G}(\vec{y}^{n+1})$ is a highly nonlinear function requiring the use of nonlinear solvers to obtain a solution.
 
 \subsubsection{Semi-Implicit}
-\label{subsubsect:numerics_semi_implicit}
+\label{subsubsect:temporal_semi_implicit}
 
 The existance of the sonic CFL limitation led to the development of the semi-implicit methodology \cite{Liles1978}.
-To obtain the semi-implicit formulation, the $\vec{G}$ in \eqref{eqn:MOL_1} is modified and combined with \eqref{eqn:simple_partial_t} to produce \eqref{eqn:semi_implict_MOL}.
+To obtain the semi-implicit formulation, the $\vec{G}$ in \eqref{eqn:temporal_semi_discrete} is modified and combined with \eqref{eqn:simple_partial_t} to produce \eqref{eqn:semi_implicit_MOL}.
 
 \begin{equation}
 \label{eqn:semi_implicit_MOL}
-\frac{ \vec{X}^{n+1}_{j} - \vec{X}^{n}_{j}}{t^{n+1}-t^{n}} = \vec{G}(\vec{X}^{n},\vec{X}^{n+1})
+\frac{ \vec{y}^{n+1}_{j} - \vec{y}^{n}_{j}}{t^{n+1}-t^{n}} = \vec{G}(\vec{y}^{n},\vec{y}^{n+1})
 \end{equation}
 
 $\vec{G}$ is now a function of both known and unknown variables, hence the name semi-implicit. 
-The particular formulation of the semi-implicit methodology is of importance to later sections, so a detailed description of the conservation laws from \sect{sect:two_phase} is provided in equation \eqref{eqnarray:semi_implicit}.
+The particular formulation of the semi-implicit methodology is of importance to later sections, so a detailed description of the conservation laws from \sect{subsect:governing_equations} is provided in equation \eqref{eqn:semi_implicit_flux_terms}.
 
 \begin{IEEEeqnarray}{lCl}
+\label{eqn:semi_implicit_flux_terms}
 2 & = & 2
 \end{IEEEeqnarray}
 
@@ -450,20 +484,60 @@ The particular formulation of the semi-implicit methodology is of importance to 
 \end{algorithmic}
 \end{algo}
 
-\subsection{Multi-stage Methods}
-\label{subsect:numerics_multistep}
+\subsubsection{SETS}
+\label{subsubsect:numerics_sets}
 An alternative formulation for the temporal derivative is a multi-stage method.
 These methods involve predictor and corrector steps.
 
-
-\subsubsection{SETS}
-\label{subsubsect:numerics_sets}
 To overcome the material Courant limit exhibited by the semi-implicit method, several alternatives have been developed.
 One alternative, known as the the stability-enhancing two-step method (SETS) \cite{Mahaffy1982}, eliminates the material Courant limit by introducing multiple iterative refinement of the solution within a given time-step.
 
 \subsubsection{Nearly Implicit}
 \label{subsubsect:numerics_nearly_implicit}
-Another multi-stage method is called the Nearly-Implicit method.
+Another multi-stage method is called the Nearly-Implicit method \cite{Trapp1986}.
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Implicit Nonlinearities}
+\label{sect:nonlinearities}
+In section \sect{sect:numeric_approximation}, several methods for the discritizing \eqref{eqn:conservation_equations} were demonstrated.
+The semi-implicit methodology is the methodology used in this work.
+Now that a fully discrete system of PDEs has been defined, the manner in which the new time variables will be obtained needs to be established.
+Given that there are nine conservation equations, the choice of which nine variables are the independent parameters that will be solved for is another distinguishing charateristic of safety analysis codes.
+The choice made in the COBRA subchannel analysis codes is shown in \eqref{eqn:independent_variables}.
+
+\begin{equation}
+\label{eqn:independent_variables}
+\vec{x} = [\alpha_{ncg}P_{ncg}, \alpha_g, P, \alpha_e, \alpha_gS h_v, (1 - \alpha_g) h_l, \dot{m}_g, \dot{m}_l, \dot{m}_e]^{T}
+\end{equation}
+
+The definition of $\dot{m}_k$ is given by \eqref{eqn:mom_dot}.
+
+\begin{equation}
+\label{eqn:mom_dot}
+\dot{m}_k = \alpha_k \rho_k u_k A_m
+\end{equation}
+
+In the particular discretization utilized, there are several nonlinear terms that are to be evaluated implicitly.
+
+For the two-phase flow equations of interest, the conserved variables at $t^{n+1}$ are nonlinear functions of the indepedent parameters.
+These temporal nonlinearities exist in all numeric methods.
+For those methods that has any implicit variables on the RHS, there are additional nonlinearities introduced.
+In order to deal with these nonlinearities, there are two general branches of solution techniques.
+A choice can be made to not resolve the nonlinearities, or an iterative procedure can be introduced to resolve the nonlinearities of interest.
+
+\subsection{Newton's Method}
+\label{subsect:newtons_method}
+The primary method used to resolve the non-linearities in the governing equations is the use of a Newton's method \cite{Deuflhard2004}.
+Newton's method is an optimization algorithm that is particularly well suited for discretized systems of PDEs.
+
+\subsection{Single-shot Linearization}
+\label{subsect:single_shot}
+If the nonlinearities in the numeric method are not resolved.
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -499,33 +573,8 @@ The concept of implicitly coupling different physics is sufficiently attractive.
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Implicit Nonlinearities}
-\label{sect:nonlinearities}
-In section \sect{sect:numeric_methods}, several numeric methods for the discritization of the equations \eqref{eqn:conservation_of_energy} were demonstrated.
-For the two-phase flow equations of interest, the conserved variables at $t^{n+1}$ are nonlinear functions of the indepedent parameters.
-These temporal nonlinearities exist in all numeric methods.
-For those methods that has any implicit variables on the RHS, there are additional nonlinearities introduced.
-In order to deal with these nonlinearities, there are two general branches of solution techniques.
-A choice can be made to not resolve the nonlinearities, or an iterative procedure can be introduced to resolve the nonlinearities of interest.
-
-\subsection{Newton's Method}
-\label{subsect:newtons_method}
-The primary method used to resolve the non-linearities in the governing equations is the use of a Newton's method \cite{Deuflhard2004}.
-Newton's method is an optimization algorithm that is particularly well suited for discretized systems of PDEs.
-
-\subsection{Single-shot Linearization}
-\label{subsect:single_shot}
-If the nonlinearities in the numeric method are not resolved.
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Temporal Convergence}
 \label{sect:temporal_convergence}
-Of primary use in the field of nuclear reactor safety analysis is simulation.
 The ability to predict the behavior of reactors during off-normal events is the key to the licensing and the operation of nuclear power plants.
 Within the United States, this simulation capacity is provided by a relatively small number of main stream software suites, among which are the RELAP variants, COBRA variants, and MELCOR.
 While each of these software products varies in their models and implementations, the underlying numeric techniques and capabilities are similar.
@@ -560,9 +609,10 @@ There is an extensive set of limiting criteria.
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Research Objective}
-The objective of this dissertation is the design, implementation, and evaluation of a practical non-linear solution framework for reactor safety systems codes.
-Specifically, an efficient and reliable solution methodology to the two-phase, three-field, fluid-dynamics and the solid-structure heat transfer system of coupled non-linear partial differential equations is sought.
-The specific methodology should be capable of obtaining a consistent solution to the system of PDEs while also possessing. \cite{Aktas1996}
+The objective of this research is the design, implementation, and evaluation of spatially selective nonlinear solution framework for reactor safety systems codes.
+Specifically, an efficient and reliable solution methodology to the two-phase, three-field, fluid-dynamic system of coupled non-linear partial differential equations is sought.
+The specific methodology should be capable of obtaining a consistent solution to the system of PDEs while also possessing.
+\cite{Aktas1996}
 The limiting behavior of nuclear reactors occurs during the end portion of a severe accident.
 The primary point of investigation is the use of domain decomposition for the purpose of refining the solution to the nonlinear conservation within COBRA-IE.
 The domain decomposition will take place utilizing a generic semi-implicit coupling methodology developed by \citet{Weaver2002}.

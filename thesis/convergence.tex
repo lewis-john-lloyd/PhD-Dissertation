@@ -1,7 +1,7 @@
 \chapter{Scaling and Convergence}
 \label{chap:scaling_and_convergence}
-The question of temporal convergence, as outlined in \sect{subsect:temporal_convergence}, is linked not only to the particular method used for approximating the temporal derivatives in , but also to the degree to which the nonlinearities are resolved over that time-step. 
-In order to determine the degree to which a state vector, $\vec{x}$, satisfies \eqref{eqn:conservaton_equations}, the use of the nonlinear residual, $\vec{F}$, is required.
+The question of temporal convergence, as outlined in \sect{sect:temporal_convergence}, is linked not only to the particular method used for approximating the temporal derivatives in , but also to the degree to which the nonlinearities are resolved over that time-step. 
+In order to determine the degree to which a state vector, $\vec{x}$, satisfies \eqref{eqn:conservation_equations}, the use of the nonlinear residual, $\vec{F}$, is required.
 However, due to the formulation of the residual vector, the magnitudes of residuals can vary by orders of magnitude.
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -13,14 +13,17 @@ However, due to the formulation of the residual vector, the magnitudes of residu
 
 \section{Physics Based Scaling}
 \label{sect:scaling}
-For a given grid location, the nonlinear residuals for mass and energy, \eqref{eqn:cont_residual}, as formulated in section \ref{subsect:numerics_semi_implicit} will have six components.
+For a given grid location, the nonlinear residuals for mass and energy, \eqref{eqn:cont_residual}, as formulated in section \ref{subsubsect:temporal_semi_implicit} will have six components.
 These residuals will have the units of the conserved quantities for their corresponding PDEs.
 Table \ref{tab:scaling_units_scales} shows some typical values of these conserved quantities during normal operations of typical PWR simulation.
 
 \begin{table}[ht]
 \centering
-\begin{tabular}{|l|}
-... your table ...
+\begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
+\multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
+                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\text{lb}_{\text{m}}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
+Single Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
+Flashing                 &  200&0                       & 1198&3                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
 \end{tabular}
 \caption{Typical scale for reactor simulations}
 \label{tab:scaling_units_scales}
@@ -52,11 +55,11 @@ In this equation there are three physically meaningful quantities: the temporal 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-\section{Nonlinear Convergence vs. Temporal Convergence}
-\label{sect:nonlinear_temporal_convergence}
+\section{Numerical Experiments}
+\label{sect:numerical_experiments}
 
 Two test problems were constructed to examine the impact of nonlinear convergence on temporal convergence.
-The primary purpose of the two problems studied is to determine the impact of resolving the nonlinearities at each time step for a given time-step size on the number of time-step size refinements necessary to reach a temporally converged solution.
+The primary purpose of the problems studied is to determine the impact of resolving the nonlinearities at each time step for a given time-step size on the number of time-step size refinements necessary to reach a temporally converged solution.
 
 \subsection{Geometry}
 \label{subsect:experimental_geometry}
@@ -65,8 +68,8 @@ Each block represents a single continuity cell with a height of 4 [in].
 The total height of the channel is 48 [in].
 Each continuity cell has a cross-sectional area of 4 [in$^2$] and a hydraulic diameter of 4 [in].
 The red block at the top of the channel represents a boundary cell where the pressure and enthalpy are specified.
-This boundary can be thought of an infinite reservoir filled with fluid at the specified conditions.
-The red triangle represents a specified flow at the bottom edge of the 1st continuity cell. 
+This boundary represents an infinite reservoir filled with a fluid at a specified thermodynamic state.
+The red triangle represents a specified flow at the bottom edge of the first continuity cell. 
 \begin{figure}[h!t]
 \caption{Geometry for test problems.}
 \label{fig:exp_geometry}
@@ -81,46 +84,91 @@ The red triangle represents a specified flow at the bottom edge of the 1st conti
 \end{center}
 \end{figure}
 
-\subsection{Single Phase Flow in a Pipe}
-\label{subsect:single_numerical_experiment}
-The first problem examined was that of a stand-pipe filled with water.
-There is an initial hydro-static head within the pipe.
-The pressure-enthalpy boundary condition at the top of the channel has state properties equal to the initial state properties in the top continuity cell.
-The specified inlet mass flow, $\dot{m}$, at the bottom of the channel is a time-dependent function give by \eqref{eqn:bc_time_func_single}.
+\subsection{Initial and Boundary Conditions}
+\label{subsect:ic_bc}
+
+The two problems, while having the same geometry, are different in their dominant physics.
+One problem was designed to represent single-phase, single-field continuous liquid flow in a standpipe; this problem will be referred to as the "Single Phase" problem.
+The second problem was designed such that high pressure liquid flashes into steam as it enters a standpipe initially filled with saturated vapor at a much lower pressure, known hereafter as the "Flashing" problem.
+
+Table \ref{tab:ic} provides the initial conditions for the two problems.
+The pressure, enthalpy, and volume-fractions for the different fields allows for a complete description of the continuity variables.
+The initial velocities are set to zero.
+
+\begin{table}[h!t]
+\centering
+\begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
+\multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
+                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\text{lb}_{\text{m}}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
+Single Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
+Flashing                 &  200&0                       & 1198&3                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
+\end{tabular}
+\caption{Initial conditions for test problems.}
+\label{tab:ic}
+\end{table}
+
+Each of the problems has a specified pressure-enthalpy boundary condition at the top of the stand pipe and a flow-enthalpy boundary condition at the inlet of the domain.
+Table \ref{tab:bc_pe} contains the pressure, enthalpy, and composition of the pressure-enthalpy resevior. 
+
+\begin{table}[h!t]
+\centering
+\begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
+\multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
+                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\text{lb}_{\text{m}}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
+Single Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
+Flashing                 &  200&0                       & 1198&3                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
+\end{tabular}
+\caption{Pressure-enthalpy boundary conditions for test problems.}
+\label{tab:bc_pe}
+\end{table}
+
+The flow-enthalpy boundary condition describes the thermodynamic state of the inflowing fluid and the rate at its flowrate.
+Table \ref{tab:bc_fe} describes the inlet boundary condition for the two problems.
+
+\begin{table}[h!t]
+\centering
+\begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
+\multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
+                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\text{lb}_{\text{m}}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
+Single Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
+Flashing                 & 1000&0                       &  542&6                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
+\end{tabular}
+\caption{Flow-enthalpy boundary conditions for test problems.}
+\label{tab:bc_fe}
+\end{table}
+
+The specified mass flow, $\dot{m}(t)$, at the bottom of the channels is the same for both problems. 
+The is a time-dependent function give by \eqref{eqn:bc_time_func_single}.
 
 \begin{equation}
 \label{eqn:bc_time_func_single}
 \dot{m}(t) = \left\{
 \begin{array}{cclrcll}
- 0.0           & [\frac{lb_m}{s}] & , &         & t & \leq 1 &[s] \\
- 0.5 ( t - 1)  & [\frac{lb_m}{s}] & , & 1 [s] < & t & \leq 2 &[s] \\
- 0.5           & [\frac{lb_m}{s}] & , &         & t & > 2    &[s]
+ 0.0           & [\frac{\text{lb}_{\text{m}}}{\text{s}}] & , &         & t & \leq 1 &[\text{s}] \\
+ 0.5 ( t - 1)  & [\frac{\text{lb}_{\text{m}}}{\text{s}}] & , & 1 [\text{s}] < & t & \leq 2 &[\text{s}] \\
+ 0.5           & [\frac{\text{lb}_{\text{m}}}{\text{s}}] & , &         & t & > 2    &[\text{s}]
 \end{array}\right.
 \end{equation}
 
-Table \ref{tab:ic_single} provides the initial and boundary conditions for this problem.
-The domain starts out at 100 [psia].
+Both problems adjust their initial pressure distribution to account for hydrostatic head, which is not specified on the inlet cards.
+The COBRA-IE input deck for both problems can be found in \app{app:input_decks}.
 
-\begin{table}[h!t]
-\centering
-\begin{tabular}{|l|}
-blarp
-\end{tabular}
-\caption{Initial and boundary conditions for single phase problem.}
-\label{tab:ic_single}
-\end{table}
+\subsection{Procedure}
+\label{subsect:experiments_procedure}
+To determine the effect of nonlinear convergence upon the time-step size sensitivity of the solution, each problem was run for at increasingly small maximum $\Delta t$.
+The material CFL limit of semi-implicit methodology acted as a limiter on the time-step size selected.
+If the acceptable time-step size was below
 
-\subsubsection{Results}
-\label{subsubsect:single_results}
-blarger!
+\subsection{Results}
+\label{subsect:results}
 
 
-\subsection{Superheated Liquid Flashing in a Pipe}
-\label{subsect:flashing_numerical_experiment}
+\subsubsection{Single Phase Flow}
+\label{subsubsect:results_single}
 
-\subsubsection{Results}
-\label{subsubsect:flashing_results}
 
+\subsubsection{Flashing}
+\label{subsubsect:results_flashing}
 
 \section{Review}
 \label{sect:scaling_review}

@@ -1026,10 +1026,13 @@
   \renewcommand{\@chaptername}{}
   \renewcommand{\@chapstyle  }{appendixc}
   \renewcommand{\@chapnumber }{Appendix \theappendixc :}
+  \newcommand{\oldchapter}{\thechapter}
+  \renewcommand{\thechapter}{\theappendixc}
   \let \@chapterhead  \@appendiceschapterhead
   \let \@schapterhead \@appendiceschapterhead
   \if @bibpresent \relax \fi  
   }{
+  \renewcommand{\thechapter}{\oldchapter}
   \def\@chaptername##1{\uppercase {##1}}
   \def\@chapstyle{chapter}
   \def\@chapnumber{\thechapter.}

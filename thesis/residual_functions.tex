@@ -12,42 +12,6 @@
 
 \section{Hydrodynamic Conservation Equations}
 
-\begin{minipage}{0.42\textwidth}
- \begin{center}\textbf{Conserved Variables}\end{center}
- \begin{align}
- \Vec{q} & = 
- \begin{bmatrix} 
- \alpha \rho_g  \\
- \alpha \left( \rho_v + \rho_g \right)\\
- \left(1-\alpha\right) \rho_l \\
- \alpha_e \rho_l \\
- \alpha \left( \rho_v + \rho_g \right) \Vec{U}_v \\
- \left( 1-\alpha \right) \rho_l \Vec{U}_l \\
- \alpha_e \rho_l \Vec{U}_e \\
- \alpha \left( \rho_v H_v+ \rho_g H_g \right)\\
- \left( 1 -\alpha \right) \rho_l H_l
- \end{bmatrix} 
- \end{align}
- \end{minipage}
- \begin{minipage}{0.42\textwidth}
- \begin{center}\textbf{Independent Variables}\end{center}
- \begin{align}
- \Vec{x} & = \begin{bmatrix}
- \alpha \\
- \alpha_e \\
- P \\
- \alpha P_g \\
- \alpha \left( \rho_v + \rho_g \right) \Vec{U}_v \\
- \left( 1-\alpha \right) \rho_l \Vec{U}_l \\
- \alpha_e  \rho_l \Vec{U}_e \\
- \alpha H_v \\
- \left( 1-\alpha \right) H_l
- \end{bmatrix}
- \end{align}
- \end{minipage}
-
-%% Note that $\displaystyle \Vec{q}=f(\Vec{x})$.
-
 \subsection{Continuity Equations}
 
 \subsubsection{Mass}
@@ -304,37 +268,3 @@ Equivalence with a Newton step.
  \end{bmatrix}
  \end{align}
 
-\section{Linearization}
-The semi-implicit method, with a single Newton Step linearizes about the old time value and solves for a single delta. This has several ramifications.
-
-\subsection{Wall Drag}
-The beginning equation to formulate the wall drag is shown in Eqn.
-
- \begin{IEEEeqnarray}{rCl}
- \frac{dP}{dz}\bigg\vert^{n+1}_{k} & \equiv & \left(\frac{f^{n}}{D_h}+\frac{K_{form}}{\Delta z}\right) \left(\frac{1}{2 \rho^{n}}\right) \left(\frac{\dot{\vec{m}}^{n+1}_{k}}{A_{mom}}\right)^{2}\\
-  & = & \left[\left(\frac{f^{n}}{D_h}+\frac{K_{form}}{\Delta z}\right) \left(\frac{1}{2 A^2_{mom} \rho^{n}}\right)\right] \left[\dot{\vec{m}}^{n+1}_{k}\right]^2\\
-   & = & \left[K^{n}\right] \left[\dot{\vec{m}}^{n+1}_{k}\right]^2\\
- \frac{\partial }{\partial_{\dot{\vec{m}}^{n+1}_{k}}} \left(\frac{dP}{dz}\bigg\vert^{n+1}_{k}\right) & = & \left[K^{n}\right]2\left[ \dot{\vec{m}}_{k}^{n+1}\right]
- \end{IEEEeqnarray}
-
- The Momentum Equations, outlined in Section contain an implicit wall drag. This means that we need to evaluate the wall drag at the future time value.
- To do this in the semi-implicit methodology requires that we linearize the future value using Newton's Method.
- The current implementation uses the following derivation.
-
- Modifying this derivation to take into account the multiple Newton Steps results in the equations shown below.
- For brevity, the phase index, $_k$, is dropped from this derivation.
- Once the linearization starts, the index, $_k$, will refer to Newton iteration.
-
-\section{Newton's Method}
-
-
- COBRA currently uses a single linearized Newton step to solve the hydrodynamic equations.
- This method has been shown to be adequate given a small enough time step.
- One potential improvement that can be made to the current method is multiple Newton steps being taken with a frozen Jacobian.
- The Jacobian will be evaluated at the old time value and not updated during the Newton process.
-
-
-\section{Krylov Solvers}
-
-To solve a give newton iteraete, a Krylov subspace based method is used.
- This methodology eliminates the requirement of analytically forming the Jacobian.
