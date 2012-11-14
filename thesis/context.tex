@@ -38,7 +38,7 @@ In the work that follows, the governing physics and the computational framework 
 \section{Geometry of Interest}
 \label{sect:topology}
 All commercial NPPs the US are designed so that both core coolant channels and nuclear fuel rods are vertically oriented.
-Being that COBRA was developed primarily as a sub-channel analysis tool for these NPPs, there is an assumption that the primary flow direction is inline with the gravity vector, which will be referred to as the axial flow direction.
+Being that COBRA was developed primarily as a sub-channel analysis tool for these NPPs, there is an assumption that the primary flow direction is in-line with the gravity vector, which will be referred to as the axial flow direction.
 The physical core being modeled first needs to be converted into a discrete representation. 
 
 The computational grid used by COBRA is a staggered mesh.
@@ -468,7 +468,7 @@ The commonly used approximations will be postponed for now.
 
 Given the system of discretized PDEs, \eqref{eqn:simple_partial_t}, nine independent parameters are required
 Given that there are nine conservation equations, the choice of which nine variables are the independent parameters that will be solved for is another distinguishing characteristic of safety analysis codes.
-The choice made in the COBRA subchannel analysis codes is shown in \eqref{eqn:independent_variables}.
+The choice made in the COBRA sub-channel analysis codes is shown in \eqref{eqn:independent_variables}.
 
 \begin{equation}
 \label{eqn:independent_variables}
@@ -484,7 +484,7 @@ The definition of $\dot{m}_k$ is given by \eqref{eqn:mom_dot}.
 
 In the particular discretization utilized, there are several nonlinear terms that are to be evaluated implicitly.
 
-For the two-phase flow equations of interest, the conserved variables at $t^{n+1}$ are nonlinear functions of the indepedent parameters.
+For the two-phase flow equations of interest, the conserved variables at $t^{n+1}$ are nonlinear functions of the independent parameters.
 These temporal nonlinearities exist in all numeric methods.
 For those methods that has any implicit variables on the RHS, there are additional nonlinearities introduced.
 In order to deal with these nonlinearities, there are two general branches of solution techniques.
@@ -499,6 +499,13 @@ Newton's method is an optimization algorithm that is particularly well suited fo
 \label{subsubsect:single_shot}
 If the nonlinearities in the numeric method are not resolved.
 
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 \section{Solution Methods}
 \label{sect:solution_techniques}
@@ -532,7 +539,7 @@ The algorithmic implementation is shown in \alg{algo:explicit}.
 
 While this particular method is the least computationally expensive, it has a severe weakness in the context of the two-phase flow equations that are used in COBRA.
 That weakness is the Courant-Friedrichs-Lewy (CFL) limit imposed upon the time step size, $\Delta t$.
-The CFL limit is a relationship between the spatial and temporal discretizations and the characteristic velocities of information propagation in the problem of interest \cite{LeVeque2007, Tannehill1997}.
+The CFL limit is a relationship between the spatial and temporal discretization and the characteristic velocities of information propagation in the problem of interest \cite{LeVeque2007, Tannehill1997}.
 For the case of \eqref{eqn:explicit}, the CFL limit is given in \eqref{eqn:cfl_explicit}.
 
 \begin{equation}
@@ -646,17 +653,9 @@ One alternative, known as the the stability-enhancing two-step method (SETS) \ci
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Domain Coupling}
 \label{sect:code_coupling}
-There are several options to couple the specialized capabilities of system analysis codes to the detailed physics of a subchannel analysis code.
+There are several options to couple the specialized capabilities of system analysis codes to the detailed physics of a sub-channel analysis code.
 These methodologies, are constantly evolving.
 The types of methods follow the layout of method of lines.
 
