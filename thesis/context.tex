@@ -7,7 +7,7 @@ Part 50 of 10CFR (10CFR50), lays out the process by which an applicant can obtai
 One documents required by 10CFR50 is the a safety analysis report (SAR) prior to the issuance of any license.
 Depending upon the particular license being pursued by the applicant, either a Preliminary Safety Analysis Report (PSAR) or a Final Safety Analysis Report (FSAR) is required.
 The PSAR is required for the issuance of a site construction license, while the FSAR is required for the issuance of either an operating license or a combined (construction and operating) license.
-For reactors that use light water, $H_2 O$, as a primary coolant, Light Water Reactors (LWR), both types of SARs require that the applicant provide an evaluation of their Emergency Core Cooling System (ECCS) during postulated loss-of-coolant accidents (LOCA).
+For reactors that use light water, $H_2 O$, as a primary coolant, Light Water Reactors (LWR), both types of SARs require that the applicant provide an evaluation of their Emergency Core Cooling System (ECCS) during postulated loss-of-coolant accidents (LOCA) and loss-of-offsite-power (LOOP).
 This evaluation must conform with section 46 of 10CFR50, which requires that the applicant perform analyses for "a number of postulated loss-of-coolant accidents of different sizes, locations, and other properties sufficient to provide assurance that the most severe postulated loss-of-coolant accidents are calculated."
 This requirement necessitates that the designers and operators of NPP possess the ability to model the thermal-hydraulic behavior within the core of a reactor during severe accidents.  
 The diverse physical conditions experienced by the reactor during severe accidents necessitates the inclusion of a wide array of physics during safety analyses.
@@ -37,14 +37,15 @@ In the work that follows, the governing physics and the computational framework 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Geometry of Interest}
 \label{sect:topology}
-All operating power reactors within the US are designed so that both core coolant channels and nuclear fuel rods are vertically oriented.
-Being that COBRA was developed primarily as a sub-channel analysis tool for US NPPs, there is an assumption that the primary flow direction is inline with the gravity vector, which will be referred to as axial flow.
-Computationally, the geometry of a LWR is broken up into discrete "channels," which are representative thermal-hydraulic sub-units of the whole core flow.
+All commercial NPPs the US are designed so that both core coolant channels and nuclear fuel rods are vertically oriented.
+Being that COBRA was developed primarily as a sub-channel analysis tool for these NPPs, there is an assumption that the primary flow direction is inline with the gravity vector, which will be referred to as the axial flow direction.
+The physical core being modeled first needs to be converted into a discrete representation. 
 
-The computational grid utilized in this work is a known as a staggered mesh.
-With the staggered mesh, there are "continuity" meshes and there are "momentum" meshes; see \fig{fig:staggered_mesh}.
-Thermodynamic variables are defined at the center of the continuity volumes, while flow-rates at the center of the momentum volumes.
+The computational grid used by COBRA is a staggered mesh.
+With a staggered mesh, there are continuity volumes and there are momentum"volumes; see \fig{fig:staggered_mesh}.
+Thermodynamic variables are defined as constant over the continuity volumes, while mass flow-rates are defined as constant over momentum volumes.
 The edges of the continuity volumes align with the center of the momentum cells.
+The total number of continuity volumes is $n$ while the number of momentum cells is $n+1$. 
 
 \begin{figure}[ht]
 \caption{A staggered mesh.}
@@ -60,7 +61,45 @@ The edges of the continuity volumes align with the center of the momentum cells.
 \end{center}
 \end{figure}
 
-While COBRA has the ability to operate in a multidimensional mode via "gaps," flow orthogonal to the axial direction, those capabilities are not relevant to the current work, so a detailed discussion of those capabilities will be omitted.
+The computational modeling framework involve two primary components: sections and channels.
+The total axial length of the problem, $L$, is divided into $M$ blocks, $S_i$, known as sections.
+Each section is defined by two bounding elevations and a spatial discretization of that span into $J$ discrete non-overlapping axial segments, $\Delta x_{i,j}$, that represent the axial span of the continuity volumes.
+The particular spatial discretization of a given section is independent of the other sections.
+A sum of the lengths of each section provides the total axial length of given problem, \eqref{eqn:sections}.
+
+\begin{equation}
+\label{eqn:sections}
+L = \sum_{i=1}^{M} S_i = \sum_{i=1}^{M}\sum_{j=1}^{J(i)} \Delta x_{i,j}
+\end{equation}
+
+Within a given section, channels, $C_{k}$, are defined.
+A channel inherits the axial discretization of its parent section.
+The number of channels in a given section, $T(i)$, is independent of the number of channels in other sections.
+The total number of channels, $K$, within a given problem is defined given by \eqref{eqn:number_of_channels}.
+
+\begin{equation}
+\label{eqn:number_of_channels}
+K = \sum_{i = 1}^{M} T(i)
+\end{equation}
+
+For every channel there is defined a cross-sectional area for each of its continuity volumes, $A_{c_{k,j}}$, and each of its momentum volumes, $A_{m_{k,j}}$.
+The total volume of a channel, $\omega_k$, is given by the sum over continuity volumes within that channel, \eqref{eqn:channel_volume}.
+The momentum volumes are considered to not contain mass.
+
+\begin{equation}
+\label{eqn:channel_volume}
+\omega_k = \sum_{j = 1}^{J(k)} \Delta x_{k,j} A_{c_{k,j}}
+\end{equation}
+
+The sum of all channel volumes, \eqref{eqn:domain_decomp}, is the total domain volume, $\Omega$.
+
+\begin{equation}
+\label{eqn:domain_decomp}
+\Omega = \sum \omega_{k}
+\end{equation}
+
+While the geometric modeling capabilities of COBRA include the ability to model three dimensional flow, by defining orthogonal flow paths connecting channels, this work will deal only with the subset of problems where the flow is quasi-one-dimensional.
+
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -70,38 +109,40 @@ While COBRA has the ability to operate in a multidimensional mode via "gaps," fl
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Two-Phase Flow}
 \label{sect:two_phase_flow}
-Since the primary scenario of interest in safety analysis codes involve light-water, $H_2 O$, undergoing phase change, the governing equations of interest in this work are those of multicomponent fluids \cite{Drew1998}.
-In particular, they fall under the category of two-phase flow.
-An importance factor in LOCA analysis is the impact of entrained liquid upon the thermal-hydraulic performance of the nuclear reactor core.
-The two fields of the liquid phase are a continuous liquid field, and an entrained droplet field.
-The ability to track different fields within a phase manifests itself in two important primary ways: the ability to account for the effects of \ncgs on condensation, and the ability to model the impact upon heat transfer by dispersed liquid droplets.
-The gaseous phase in composed of a \ncg gas and a vapor field. 
-The ability to resolve interfaces between the various fields exactly is not desired, so the governing conservation laws are of averaged quantities.
-
-\begin{figure}[ht]
-\caption{Two phase flow within a pipe.}
-\label{fig:pipe_with_bubbles}
-\begin{center}
-\begin{tikzpicture}
-\draw (-4,0) -- +(4,0);
-\end{tikzpicture}
-\end{center}
-\end{figure}
-
-\subsection{Averaged Equations}
-\label{subsect:averaged_equations}
-The first physically motivated simplification is that the exact interface between phases is not necessary for reactor safety.
-This simplification allows averaging assumptions to be made.
-Since the exact deterministic behavior of the fluid is no longer required, the governing equations will be subjected to an averaging procedure to produce conservation laws for average quantities.
-There are several types of averaging that have been used to motivate the conservation laws.
-The definition of average in the above sentence can have several meanings.
-There are spatial, temporal, and ensemble averaging techniques, each of which has their own physical interpretations \cite{Drew1998, Todreas2011}.
-If a particular interpretation is required in a particular scenario, it will be given, otherwise, no distinction will be made between the averaging procedures.
+The primary use of sub-channel analysis codes is to analysis NPP accidents such as a LOOP or a LOCA.
+Since the primary purpose of these simulations determination of fuel integrity, the evaluation of effective core cooling during these accidents is the primary goal.
+This necessitates the ability to effectively model the heat-transfer between the coolant and the nuclear fuel. 
+COBRA is designed specifically for the evaluation of core cooling in LWRs.
+During postulated accidents, the coolant, H$_2$0 can undergo phase-change.
+To model the complex phenomena of phase-change, the governing equations for the fluid-mechanics within the core will be those of a multicomponent fluids \cite{Drew1998}.
+In particular, they will are a subcategory of two-phase flow \cite{Todreas2011, Stewart1984}.
+While a complete derivation of the governing equations of two-phase flow is beyond the scope of this work, a list of the commonly used formulations can be found in \app{app:two_phase_flow}.
 
 \subsection{Assumptions}
 \label{subsect:assumptions}
-Given the four fields of interest, there are twelve conservation equations, one each of mass, momentum, and energy for each of the four fields, to describe the time-dependent behavior of the system.
-In addition, closure relationships would be necessary to describe the interactions between the various fields and their inter-facial transfer terms.
+
+The first simplification for modeling the fluid-mechanics is that the exact geometric shape of the interface between the two phases is not necessary.
+Since the exact deterministic behavior of the phasic-interface is not required, the governing equations are subjected to an averaging procedure to produce conservation laws for average quantities.
+There are several averaging techniques that have been used to motivate the conservation laws for two-phase flow.
+There are spatial, temporal, and ensemble averaging techniques, each of which has their own physical interpretations and mathematical formulation \cite{Drew1998, Todreas2011}.
+The particular formulation used in this work is that of spatial averaging, in particular, area averaging.
+In the area-averaged formulation, the quantities of interest, $a$ are defined as an average over the cross-sectional flow area, $A$, \eqref{eqn:area_average}.
+Since all quantities are area-averaged, the tilde in \eqref{eqn:area_average} will be dropped.
+
+\begin{equation}
+\label{eqn:area_average}
+\tilde{a} = \frac{1}{A}\int_{A} a \;\mathrm{d}\tilde{A}
+\end{equation}
+
+The particular formulation of the two-phase flow equation used in COBRA is commonly referred to as a two-phase three-field formulation. 
+To more accurately capture the phenomena of interest during accident scenarios, the liquid and the gaseous phases are each divided into two fields.
+The two fields of the liquid phase are a continuous liquid field and an entrained droplet field.
+The gaseous phase in composed of a \ncg gas and a water-vapor field. 
+This ability to track the different fields within a phase provides two important benefits to safety analysis: the ability to account for the effects of \ncgs on condensation, and the ability to model the impact upon heat transfer by dispersed liquid droplets.
+
+Given the four fields of interest, there are twelve conservation equations, one each for the mass, momentum, and energy of each of the four fields.
+These equations allow for a description of the time-dependent behavior of the in-core fluid.
+In addition, closure relationships are necessary to describe the interactions between the various fields and their inter-facial transfer terms.
 However, additional assumptions are made to reduce the number of required conservation laws and the number of corresponding closure relationships.
 The following is a list of assumptions that are made to reduce the complexity of the governing equations.
 
@@ -281,6 +322,7 @@ Other common system analysis codes \cite{TRACE, RELAP} use different non-conserv
 It will be useful to refer to the collection of continuous conservation laws, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:conservation_of_ent}, \eqref{eqn:con_energy_gas} -- \eqref{eqn:con_energy_liq}, and \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent}, as a vector of equations.
 To accomplish this, \eqref{eqn:conservation_equations} defines such a system.
 The vector, $\vec{G}$, represents the full conservation equations minus the temporal derivatives of the conserved quantities.
+
 \begin{equation}
 \label{eqn:conservation_equations}
 \frac{\partial \left( \vec{y} \right)}{\partial t} = \vec{g}(\vec{y}(t))
@@ -300,18 +342,18 @@ The vector, $\vec{y}$, of conserved quantities is defined in \eqref{eqn:conserve
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Numeric Approximation}
+\section{Numeric Approximations}
 \label{sect:numeric_approximation}
 The set of conservation laws, \eqref{eqn:conserved_variables}, governing the fluid-mechanics within the geometry of interest do not have a general closed form solution.
-As such, a methodology needs to be adopted to numerically approximate their solutions.
+As such, a method needs to be selected to numerically approximate their solutions.
 
 \subsection{Spatial Approximations}
 \label{subsect:spatial_approx}
-In this work, the finite-volume methodology was chosen to discretize the governing equations \cite{LeVeque2002}.
-The labeling scheme for the volumes are shown in\fig{fig:vertical_pipe_with_cells}, which shows a segment of a vertical channel.
-A continuity cell, $j$, is spatially overlapped by two momentum cells, $j$ and $j-1$.
+In COBRA, the finite-volume method was chosen to discretize the governing equations \cite{LeVeque2002}.
+The labeling scheme for the volumes is shown in \fig{fig:vertical_pipe_with_cells}, a segment of a vertical channel.
+A continuity volume, $j$, is spatially overlapped by two momentum volumes, $j$ and $j-1$.
 Variables are indexed by the mesh on which their conservation equations are defined.
-For example, the velocity $u_j$ would be spatially located at the boundary between the continuity cells $j$ and $j-1$.
+For example, the velocity $u_j$ would be spatially located at center of the momentum volume $j$ and at the boundary between the continuity volumes $j$ and $j-1$.
 
 \begin{figure}[ht]
 \caption{Illustration of indexing scheme.}
@@ -334,7 +376,7 @@ For example, the velocity $u_j$ would be spatially located at the boundary betwe
 \end{center}
 \end{figure}
 
-Recalling the staggered grid from \sect{sect:topology}, the six scalar conservation laws, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:con_energy_liq}, are integrated over each continuity volume.
+Recalling the staggered grid from \sect{sect:topology}, the six scalar conservation laws, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:con_energy_liq}, are each integrated over the continuity volumes.
 The assumption in these integrals is that the value of the conserved quantities and all thermodynamically related variables are constant within a given cell.
 \fig{fig:constant_value} shows a graphical representation of this idea for a generic function $f(x)$ over several spatial continuity meshes.
 
@@ -356,7 +398,8 @@ Picture goes here.
 \end{center}
 \end{figure}
 
-The continuity volume has a constant cross-sectional area, $A_{c,j}$, and a length of $\Delta x$.
+Within a given channel, $k$, a given continuity volume has a constant cross-sectional area, $A_{c_{j}}$, and a length of $\Delta x_{j}$.
+The cross-section area of the boundary between two continuity volumes is given by the cross-section area of the momentum volume at that boundary, $A_{m}$.
 
 \begin{IEEEeqnarray}{lcl}
 \int_{V_j}\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } & + & \nabla \cdot \left( \alpha_l \rho_l u_l \right) \mathrm{d}V = \int_{V_j} \left(-(1-\eta)\Gamma^{'''} - S^{'''} + s_{m,l}\right) \mathrm{d}V \nonumber \\
@@ -364,7 +407,7 @@ V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\i
 V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -A_{m,j}\left[\alpha_l \rho_l u_l \right]_{x_{j-\frac{1}{2}}}^{x_{j+\frac{1}{2}}} -(1-\eta_j)\Gamma_j^{'''}V_j - S_j^{'''}V_j + s_{m,l,j}V_j \nonumber \\
 \label{eqn:spatially_discrete_liq_m_con}
 V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -A_{m,j}\left( <\alpha_l \rho_l>_{d,j+\frac{1}{2}} u_{l,j+1} - <\alpha_l \rho_l>_{d,j-\frac{1}{2}} u_{l,j} \right) \nonumber \\
-& & -(1-\eta)\Gamma^{'''}V - S^{'''}V + s_{m,l}V
+& & -(1-\eta)\Gamma^{'''}V - S^{'''}V_j + s_{m,l}V_j
 \end{IEEEeqnarray}
 
 For the mass-flux terms evaluated on the continuity volume edge, the advected quantity is evaluated using a 1st order upwind method \cite{Tannehill1997}.
@@ -396,136 +439,35 @@ u_{k,j+\frac{1}{2}} = \frac{1}{2}\left(u_{k,j} + u_{k, j+1}\right)
 
 \subsection{Temporal Approximations}
 \label{subsect:temporal_approx}
-Once the governing conservation equations have been spatial discretized utilizing the methodology outlined above, the temporal derivatives need to be numerically approximated.
+Once the governing conservation equations have been spatially discretized utilizing the method outlined above, the temporal derivatives need to be numerically approximated.
 Using the spatially discrete approximations defined in \sect{subsect:spatial_approx}, the temporally continuous differential equations,\eqref{eqn:conservation_equations}, are now semi-discrete approximations given by \eqref{eqn:temporal_semi_discrete}, where $\vec{G}$ now represents the spatially discrete version of $\vec{g}$.
 
 \begin{equation}
 \label{eqn:temporal_semi_discrete}
-\frac{\partial \left( \vec{y} \right)}{\partial t} = \vec{G}(\vec{x}(t))
+\frac{\partial \,\vec{y} }{\partial t} = \vec{G}(\vec{y}(t))
 \end{equation}
 
-Within the current subchannel analysis framework, the temporal derivative is simply approximated by a one-step difference scheme, \eqref{eqn:simple_partial_t}.
-\begin{equation}
+Within COBRA, the temporal derivative is approximated by a one-step difference scheme, \eqref{eqn:simple_partial_t}.
+Where the continuous time variables are now evaluated at discrete points, $t^0, t^1, \ldots, t^N$, where $t^0$ represents the initial conditions and $t^N$ represents the final time.
+The term one-step refers to the fact that the temporal derivative involves only two consecutive points in time.
+
+\begin{IEEEeqnarray}{rcl}
+\int^{t^{n+1}}_{t^n}\frac{\partial \vec{y}}{\partial t}\mathrm{d}\tau & = & \int^{t^{n+1}}_{t^n}\vec{G}(\vec{y})\mathrm{d}\tau \nonumber \\
+\vec{y}^{n+1} - \vec{y}^{n} & = & \int_{t^{n+1}}^{t^n}\vec{G}(\vec{y})\mathrm{d}\tau \nonumber  \\
+\frac{\vec{y}^{n+1} - \vec{y}^{n}}{\int_{t^{n}}^{t^{n+1}}\mathrm{d} \tau} & = & \frac{\int_{t^{n+1}}^{t^n}\vec{G}(\vec{y})\mathrm{d}\tau}{\int_{t^{n}}^{t^{n+1}}\mathrm{d} \tau} \nonumber \\
+\frac{\vec{y}^{n+1} - \vec{y}^{n}}{\Delta t} & = & \frac{\int_{t^{n+1}}^{t^n}\vec{G}(\vec{y})\mathrm{d}\tau}{\int_{t^{n}}^{t^{n+1}}\mathrm{d} \tau} \nonumber \\
 \label{eqn:simple_partial_t}
-\frac{\partial \vec{y}(t)_j}{\partial t} = \frac{ \vec{y}^{n+1}_{j} - \vec{y}^{n}_{j}}{t^{n+1}-t^{n}}, \quad \vec{y}^{n+1}_j = \vec{y}(t^{n+1})_j
-\end{equation}
-
-Where the continuous time variable is now evaluated at discrete points, $t^0, t^1, \ldots, t^N$, numbered zero through $N$, where $t^N$ represents the final time of interest.
-The choice of temporal discretization for the various components of $\vec{G}$ and the number of stages utilized is what leads to various methods of interest.
-
-\subsubsection{Explicit}
-\label{subsubsect:numerics_explicit}
-Given the PDEs from \sect{subsect:governing_equations}, the Method-Of-Lines is used for the temporal integration \cite{LeVeque2007}.
-The least computationally expensive MOL variant is known as a the fully explicit method.
-The terminology explicit refers to the fact that the unknowns at $t^{n+1}$, $\vec{y}^{n+1}$, are function of the values at the present time $\vec{y}^{n}$ only.
-This particular temporal approximation of $\vec{G}$, along with \eqref{eqn:temporal_semi_discrete} and \eqref{eqn:simple_partial_t}, generates the explicit method for two phase flow, \eqref{eqn:explicit_two_phase}.
-
-\begin{equation}
-\label{eqn:explicit_two_phase}
-\frac{ \vec{y}^{n+1}_{j} - \vec{y}^{n}_{j}}{t^{n+1}-t^{n}} = \vec{G}(\vec{y}^{n})
-\end{equation}
-
-While this particular methodology is the least computationally expensive, it has a severe weakness in the context of two-phase flow.
-The weakness is Courant-Friedrichs-Lewy (CFL) limit imposed upon the time step.
-The CFL limit is a relationship between the physical and temporal discretizations and characteristic time-scales of the problem of interest.
-For the case of \eqref{eqn:explicit_two_phase}, the CFL limit is given in \eqref{eqn:cfl_explicit}.
-
-\begin{equation}
-\label{eqn:cfl_explicit}
-\Delta t_j \lesssim \frac{\Delta x_j}{|\vec{u}_j|+|c_j|}
-\end{equation}
-
-Where $c$ represented the speed of sound within the fluid of interest, and $\vec{u}$ is the magnitude of a given phasic velocity.
-The $\Delta t_j$ is calculated at every point within the domain using known local fluid conditions.
-The $\Delta t$ chosen for $t^{n} \rightarrow t^{n+1}$ time-step is most restrictive value over the domain.
-
-\begin{equation}
-\label{eqn:global_cfl}
-\Delta t = \min_{j \in \Omega} \Delta t_j
-\end{equation}
-
-States in words, the maximum permissible time-step size for the explicit method is limited by the local speed of sound.
-This is a severe penalty on computational run-time.
-There are no physics of interest that are attempting to be modeled on the time-scale of the inverse speed of sound.
-This limitation of the explicit method prompted the development of alternative methods that were capable of exceeding this limitation.
-
-\subsubsection{Implicit}
-\label{subsubsect:numerics_fully_implicit}
-The CFL limit discussed in \sect{subsubsect:numerics_explicit} is a product of the explicit functional dependence of the $\vec{G}$ from \eqref{eqn:temporal_semi_discrete} upon only $t^n$ variables.
-A simple, but computationally expensive, way to eliminate the CFL limit is to utilize a fully-implicit formulation.
-A fully-implicit formulation is one where $\vec{G}$ is function only of unknown variables, \eqref{eqn:implicit_MOL}.
-
-\begin{equation}
-\label{eqn:implicit_MOL}
-\frac{ \vec{y}^{n+1}_{j} - \vec{y}^{n}_{j}}{t^{n+1}-t^{n}} = \vec{G}(\vec{y}^{n+1})
-\end{equation}
-
-This particular formulation has the advantage of not being limited by a CFL number.
-However, recall that the CFL is for stability purposes only, not accuracy.
-In addition, the solution of \eqref{eqn:implicit_MOL} is computationally expense as that $\vec{G}(\vec{y}^{n+1})$ is a highly nonlinear function requiring the use of nonlinear solvers to obtain a solution.
-
-\subsubsection{Semi-Implicit}
-\label{subsubsect:temporal_semi_implicit}
-
-The existance of the sonic CFL limitation led to the development of the semi-implicit methodology \cite{Liles1978}.
-To obtain the semi-implicit formulation, the $\vec{G}$ in \eqref{eqn:temporal_semi_discrete} is modified and combined with \eqref{eqn:simple_partial_t} to produce \eqref{eqn:semi_implicit_MOL}.
-
-\begin{equation}
-\label{eqn:semi_implicit_MOL}
-\frac{ \vec{y}^{n+1}_{j} - \vec{y}^{n}_{j}}{t^{n+1}-t^{n}} = \vec{G}(\vec{y}^{n},\vec{y}^{n+1})
-\end{equation}
-
-$\vec{G}$ is now a function of both known and unknown variables, hence the name semi-implicit. 
-The particular formulation of the semi-implicit methodology is of importance to later sections, so a detailed description of the conservation laws from \sect{subsect:governing_equations} is provided in equation \eqref{eqn:semi_implicit_flux_terms}.
-
-\begin{IEEEeqnarray}{lCl}
-\label{eqn:semi_implicit_flux_terms}
-2 & = & 2
+\frac{\vec{y}^{n+1} - \vec{y}^{n}}{\Delta t} & = & \vec{G}(\vec{y}^{*})
 \end{IEEEeqnarray}
 
-\begin{algo}[H]
-\caption{Semi-Implicit Linear Solution Algorithm}
-\label{algo:semi_implicit}
-\setlength{\baselineskip}{0.625\baselineskip}
-\begin{algorithmic}[1]
-\Require $\Vec{x}^{0}$ and $t^{0}$
-\Set $n = 0$
-\Loop \; Take a Time Step
-    \Set $\vec{x}^{n}$
-    \Calculate $\Delta t$
-    \State $t^{n+1} : = t^{n} + \Delta t$
-    \BlackBox Solve for $\vec{x}^{n+1}$
-    \Test CCFL \Comment{Time-step Failure Mechanism (ccfl\_fail) }
-    \BlackBox Interfacial Area Transport Equation
-    \Calculate Courant Numbers
-\EndLoop{\;$n = n+1$}
-\end{algorithmic}
-\end{algo}
+The choice of how to approximate the temporal-average, $\vec{G}(\vec{y}^{*})$, is a factor that defines the eventual solution algorithm.
+The commonly used approximations will be postponed for now. 
 
-\subsubsection{SETS}
-\label{subsubsect:numerics_sets}
-An alternative formulation for the temporal derivative is a multi-stage method.
-These methods involve predictor and corrector steps.
+\subsection{Nonlinear Approximations}
+\label{sect:nonlinear_approximations}
 
-To overcome the material Courant limit exhibited by the semi-implicit method, several alternatives have been developed.
-One alternative, known as the the stability-enhancing two-step method (SETS) \cite{Mahaffy1982}, eliminates the material Courant limit by introducing multiple iterative refinement of the solution within a given time-step.
-
-\subsubsection{Nearly Implicit}
-\label{subsubsect:numerics_nearly_implicit}
-Another multi-stage method is called the Nearly-Implicit method \cite{Trapp1986}.
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Implicit Nonlinearities}
-\label{sect:nonlinearities}
-In section \sect{sect:numeric_approximation}, several methods for the discritizing \eqref{eqn:conservation_equations} were demonstrated.
-The semi-implicit methodology is the methodology used in this work.
-Now that a fully discrete system of PDEs has been defined, the manner in which the new time variables will be obtained needs to be established.
-Given that there are nine conservation equations, the choice of which nine variables are the independent parameters that will be solved for is another distinguishing charateristic of safety analysis codes.
+Given the system of discretized PDEs, \eqref{eqn:simple_partial_t}, nine independent parameters are required
+Given that there are nine conservation equations, the choice of which nine variables are the independent parameters that will be solved for is another distinguishing characteristic of safety analysis codes.
 The choice made in the COBRA subchannel analysis codes is shown in \eqref{eqn:independent_variables}.
 
 \begin{equation}
@@ -548,14 +490,163 @@ For those methods that has any implicit variables on the RHS, there are addition
 In order to deal with these nonlinearities, there are two general branches of solution techniques.
 A choice can be made to not resolve the nonlinearities, or an iterative procedure can be introduced to resolve the nonlinearities of interest.
 
-\subsection{Newton's Method}
-\label{subsect:newtons_method}
+\subsubsection{Newton's Method}
+\label{subsubsect:newtons_method}
 The primary method used to resolve the non-linearities in the governing equations is the use of a Newton's method \cite{Deuflhard2004}.
 Newton's method is an optimization algorithm that is particularly well suited for discretized systems of PDEs.
 
-\subsection{Single-shot Linearization}
-\label{subsect:single_shot}
+\subsubsection{Single-shot Linearization}
+\label{subsubsect:single_shot}
 If the nonlinearities in the numeric method are not resolved.
+
+
+\section{Solution Methods}
+\label{sect:solution_techniques}
+
+\subsection{Explicit}
+\label{subsect:numerics_explicit}
+The least computationally expensive method for temporally integrating the PDEs from \sect{subsect:governing_equations} is a simple fully explicit method.
+The terminology explicit refers to the fact that the unknowns at $t^{n+1}$, $\vec{y}^{n+1}$, are function of the values at the present time $\vec{y}^{n}$ only.
+The vector notation formulation for this method is given by \eqref{eqn:explicit}. 
+
+\begin{equation}
+\label{eqn:explicit}
+\frac{ \vec{y}^{n+1} - \vec{y}^{n}}{\Delta t} = \vec{G}(\vec{y}^{n})
+\end{equation}
+
+The algorithmic implementation is shown in \alg{algo:explicit}.
+
+\begin{algo}[H]
+\caption{Explicit time-integration.}
+\label{algo:explicit}
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Require $\vec{y}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Take a Time Step
+    \State $t^{n+1} : = t^{n} + \Delta t$
+    \Calculate $\vec{y}^{n+1} = \vec{y}^{n} + \Delta t \vec{G}(\vec{y}^n)$
+\EndLoop{\;$n = n+1$}
+\end{algorithmic}
+\end{algo}
+
+While this particular method is the least computationally expensive, it has a severe weakness in the context of the two-phase flow equations that are used in COBRA.
+That weakness is the Courant-Friedrichs-Lewy (CFL) limit imposed upon the time step size, $\Delta t$.
+The CFL limit is a relationship between the spatial and temporal discretizations and the characteristic velocities of information propagation in the problem of interest \cite{LeVeque2007, Tannehill1997}.
+For the case of \eqref{eqn:explicit}, the CFL limit is given in \eqref{eqn:cfl_explicit}.
+
+\begin{equation}
+\label{eqn:cfl_explicit}
+\Delta t_j \lesssim \frac{\Delta x_j}{|u_j|+|c_j|}
+\end{equation}
+
+Where $c_j$ is the speed of sound and $u_j$ is the magnitude of a given phasic velocity at a given location within the domain.
+$\Delta t_j$ is calculated at every point within the domain using the known local fluid conditions.
+The $\Delta t$ chosen for the $t^{n} \rightarrow t^{n+1}$ time-step is the most restrictive value over the domain.
+While the explicit method may provide for the least computational cost on a per-time-step basis, the number of time-steps required for a given problem will be much higher due to the restrictive CFL limitations.
+
+\begin{equation}
+\label{eqn:global_cfl}
+\Delta t = \min_{j \in \Omega} \Delta t_j
+\end{equation}
+
+Stated in words, the maximum permissible time-step size for the explicit method is limited by the local speed of sound.
+This limitation of the explicit method prompted the development of alternative methods that were capable of exceeding this limitation.
+
+\subsection{Implicit}
+\label{subsect:numerics_fully_implicit}
+An alternative method for integrating \eqref{eqn:temporal_semi_discrete} is to use a fully implicit technique.
+A fully-implicit formulation is one where $\vec{G}$ is function only of unknown variables, \eqref{eqn:implicit}.
+
+\begin{equation}
+\label{eqn:implicit}
+\\vec{y}^{n+1} = \vec{y}^{n} + \Delta t \vec{G}(\vec{y}^{n+1})
+\end{equation}
+
+This particular formulation has the advantage of not being limited by a CFL number.
+However, the solution of \eqref{eqn:implicit} is computationally expense as that $\vec{G}(\vec{y}^{n+1})$ is a highly nonlinear function requiring the use of nonlinear solvers to obtain a solution.
+A discussion of nonlinear-solvers will be postponed for now.
+The computational implementation of the fully-implicit method is presented in \alg{algo:implicit}.
+
+\begin{algo}[H]
+\caption{Implicit time-integration.}
+\label{algo:implicit}
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Require $\vec{y}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Take a Time Step	
+    \State $t^{n+1} : = t^{n} + \Delta t$
+    \BlackBox Solve $\vec{y}^{n+1} = \vec{y}^{n} + \Delta t \vec{G}(\vec{y}^{n+1})$ for $\vec{y}^{n+1}$
+\EndLoop{\;$n = n+1$}
+\end{algorithmic}
+\end{algo}
+
+The solution to the full nonlinear system of equations is the most computationally expensive option available.
+However, it provide for the fewest time steps required in a given problem.
+
+\subsection{IMEX}
+\label{subsect:temporal_imex}
+
+The sonic CFL limitation of the fully explicit method, together with the high computational cost of the fully implicit method, led to the development of mixed implicit-explicit (IMEX) methods.
+The development of IMEX methods was develop a method that was able to overcome the time-step limitations of the fully explicit method while keeping the added computational cost to a minimum.
+The first IMEX solution method to be widely used was the semi-implicit method \cite{Liles1978}.
+
+
+\subsubsection{Semi-Implicit}
+\label{subsubsect:semi_implicit}
+To obtain the semi-implicit formulation, the $\vec{G}$ in \eqref{eqn:temporal_semi_discrete} is modified and combined with \eqref{eqn:simple_partial_t} to produce \eqref{eqn:semi_implicit_MOL}.
+
+\begin{equation}
+\label{eqn:semi_implicit_MOL}
+\frac{ \vec{y}^{n+1}_{j} - \vec{y}^{n}_{j}}{t^{n+1}-t^{n}} = \vec{G}(\vec{y}^{n},\vec{y}^{n+1})
+\end{equation}
+
+$\vec{G}$ is now a function of both known and unknown variables, hence the name semi-implicit. 
+The particular formulation of the semi-implicit method is of importance to later sections, so a detailed description of the conservation laws from \sect{subsect:governing_equations} is provided in equation \eqref{eqn:semi_implicit_flux_terms}.
+
+\begin{IEEEeqnarray}{lCl}
+\label{eqn:semi_implicit_flux_terms}
+2 & = & 2
+\end{IEEEeqnarray}
+
+\begin{algo}[H]
+\caption{Semi-Implicit Linear Solution Algorithm}
+\label{algo:semi_implicit}
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Require $\Vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Take a Time Step
+    \Set $\vec{x}^{n}$
+    \Calculate $\Delta t$
+    \State $t^{n+1} : = t^{n} + \Delta t$
+    \BlackBox Solve for $\vec{x}^{n+1}$
+    \Calculate Courant Numbers
+\EndLoop{\;$n = n+1$}
+\end{algorithmic}
+\end{algo}
+
+\subsubsection{Nearly Implicit}
+\label{subsubsect:numerics_nearly_implicit}
+Another multi-stage method is called the Nearly-Implicit method \cite{Trapp1986}.
+
+\subsubsection{SETS}
+\label{subsubsect:numerics_sets}
+An alternative formulation for the temporal derivative is a multi-stage method.
+These methods involve predictor and corrector steps.
+
+To overcome the material Courant limit exhibited by the semi-implicit method, several alternatives have been developed.
+One alternative, known as the the stability-enhancing two-step method (SETS) \cite{Mahaffy1982}, eliminates the material Courant limit by introducing multiple iterative refinement of the solution within a given time-step.
+
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -571,13 +662,13 @@ The types of methods follow the layout of method of lines.
 
 \subsection{Explicit}
 \label{subsect:coupling_explicit}
-The first coupling methodology proposed was explicit coupling.
-This methodology involved passing information between two different codes at the beginning of a time-step.
+The first coupling method proposed was explicit coupling.
+This method involved passing information between two different codes at the beginning of a time-step.
 
 
 \subsection{Semi-Implicit}
 \label{subsect:coupling_semi_implicit}
-The desire to overcome the instabilities outlined in the previous section, a semi-implicit coupling methodology was proposed that made use of Parallel Virtual Machine (PVM).
+The desire to overcome the instabilities outlined in the previous section, a semi-implicit coupling method was proposed that made use of Parallel Virtual Machine (PVM).
 PVM is a piece of software developed for the purpose of passing information between programs running in parallel \cite{Geist1994}. 
 The ability to pass information between software is key to the semi-implicit stuff. 
 
@@ -603,7 +694,7 @@ BLARPER!
 \subsection{Time Step Failure}
 \label{subsect:time_step_failure}
 There are two common methods for dealing with a potentially poor time-step in sub-channel codes: prediction and mitigation.
-The predictive methodology is the less commonly applied of the two methods.
+The predictive method is the less commonly applied of the two methods.
 It uses information about the explicit portion of the nonlinear residual to identify situations where the linearization point may be poor.
 In COBRA, this particular method is used only for the prediction of \ncg appearance.
 
@@ -629,11 +720,11 @@ Marbles!
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Research Objective}
 The objective of this research is the design, implementation, and evaluation of spatially selective nonlinear solution framework for reactor safety systems codes.
-Specifically, an efficient and reliable solution methodology to the two-phase, three-field, fluid-dynamic system of coupled non-linear partial differential equations is sought.
-The specific methodology should be capable of obtaining a consistent solution to the system of PDEs while also possessing.
+Specifically, an efficient and reliable solution method to the two-phase, three-field, fluid-dynamic system of coupled non-linear partial differential equations is sought.
+The specific method should be capable of obtaining a consistent solution to the system of PDEs while also possessing.
 \cite{Aktas1996}
 The limiting behavior of nuclear reactors occurs during the end portion of a severe accident.
 The primary point of investigation is the use of domain decomposition for the purpose of refining the solution to the nonlinear conservation within COBRA-IE.
-The domain decomposition will take place utilizing a generic semi-implicit coupling methodology developed by \citet{Weaver2002}.
+The domain decomposition will take place utilizing a generic semi-implicit coupling method developed by \citet{Weaver2002}.
 The ability to isolate a subdomain of the problem and increase ability of the software to resolve the complex nonlinear physics that occur near the quench front of a reflood transient.
-This methodology will hopefully increase the predictive capabilities of safety analysis codes while keeping the computational overhead as low as reasonable possible.
+This method will hopefully increase the predictive capabilities of safety analysis codes while keeping the computational overhead as low as reasonable possible.
