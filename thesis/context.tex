@@ -384,17 +384,17 @@ The assumption in these integrals is that the value of the conserved quantities 
 \caption{Constant variable values within computational volumes.}
 \label{fig:constant_value}
 \begin{center}
-Picture goes here.
+\includegraphics[width=0.5\textwidth]{images/constant_value.eps}
 \end{center}
 \end{figure}
 
 For illustrative purposes,  the \eqref{eqn:conservation_of_liq} will be integrated over a given volume, $j$, as shown in \fig{fig:single_volume}.
 
-\begin{figure}[ht]
+\begin{figure}[h!t]
 \caption{Single volume over which integration is done.}
 \label{fig:single_volume}
 \begin{center}
-Picture goes here.
+\includegraphics[width=0.5\textwidth]{images/single_volume.eps}
 \end{center}
 \end{figure}
 
@@ -466,9 +466,8 @@ The commonly used approximations will be postponed for now.
 \subsection{Nonlinear Approximations}
 \label{sect:nonlinear_approximations}
 
-Given the system of discretized PDEs, \eqref{eqn:simple_partial_t}, nine independent parameters are required
 Given that there are nine conservation equations, the choice of which nine variables are the independent parameters that will be solved for is another distinguishing characteristic of safety analysis codes.
-The choice made in the COBRA sub-channel analysis codes is shown in \eqref{eqn:independent_variables}.
+The choice made in the COBRA sub-channel analysis code is shown in \eqref{eqn:independent_variables}.
 
 \begin{equation}
 \label{eqn:independent_variables}
@@ -482,22 +481,19 @@ The definition of $\dot{m}_k$ is given by \eqref{eqn:mom_dot}.
 \dot{m}_k = \alpha_k \rho_k u_k A_m
 \end{equation}
 
-In the particular discretization utilized, there are several nonlinear terms that are to be evaluated implicitly.
+The conserved quantities within a continuity volume are therefore nonlinear functions of the independent parameters, \eqref{eqn:nonlinear_functions}, regardless of the approximation chosen for $\vec{F}(\vec{y}^{*})$.
 
-For the two-phase flow equations of interest, the conserved variables at $t^{n+1}$ are nonlinear functions of the independent parameters.
-These temporal nonlinearities exist in all numeric methods.
-For those methods that has any implicit variables on the RHS, there are additional nonlinearities introduced.
-In order to deal with these nonlinearities, there are two general branches of solution techniques.
-A choice can be made to not resolve the nonlinearities, or an iterative procedure can be introduced to resolve the nonlinearities of interest.
+\begin{equation}
+\label{eqn:nonlinear_functions}
+\vec{y}^{n+1} = \vec{y}(\vec{x}^{n+1})
+\end{equation}
 
-\subsubsection{Newton's Method}
-\label{subsubsect:newtons_method}
+This nonlinearity necessitates a nonlinear solve at every time-step.
+In addition, any dependence of $\vec{F}(\vec{y}^{*})$ on new time variables creates additional nonlinearities.
+
 The primary method used to resolve the non-linearities in the governing equations is the use of a Newton's method \cite{Deuflhard2004}.
 Newton's method is an optimization algorithm that is particularly well suited for discretized systems of PDEs.
 
-\subsubsection{Single-shot Linearization}
-\label{subsubsect:single_shot}
-If the nonlinearities in the numeric method are not resolved.
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
