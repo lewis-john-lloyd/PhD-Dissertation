@@ -71,19 +71,19 @@
 %  ... \labelenumiv.  The expansion of \p@enumN\theenumN defines the
 %  output of a \ref command.
 %=============================================================================
-\newcommand{\labelenumi  }{ \arabic{enumi}.   }
-\newcommand{\labelenumii }{ (\alph{ enumii }) }
-\newcommand{\labelenumiii}{ \roman{ enumiii}. }
-\newcommand{\labelenumiv }{ \Alph{  enumiv }. }
+\renewcommand{\theenumi}{\arabic{enumi}}
+\renewcommand{\theenumii}{\alph{enumii}}
+\renewcommand{\theenumiii}{\roman{enumiii}}
+\renewcommand{\theenumiv}{\Alph{enumiv}}
 
-\def\theenumi{   \arabic{ enumi}  }
-\def\theenumii{  \alph{   enumii} }
-\def\theenumiii{ \roman{  enumiii}}
-\def\theenumiv{  \Alph{   enumiv} }
+\newcommand{\labelenumi}{\theenumi.}
+\newcommand{\labelenumii}{(\theenumii)}
+\newcommand{\labelenumiii}{\theenumiii.}
+\newcommand{\labelenumiv}{\theenumiv.}
 
-\def\p@enumii{  \theenumi             }
-\def\p@enumiii{ \theenumi(\theenumii) }
-\def\p@enumiv{  \p@enumiii\theenumiii }
+\def\p@enumii{\theenumi}
+\def\p@enumiii{\theenumi(\theenumii)}
+\def\p@enumiv{\p@enumiii\theenumiii}
 
 %=============================================================================
 % ITEMIZE

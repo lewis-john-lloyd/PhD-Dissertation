@@ -1,8 +1,30 @@
-\chapter{Scaling and Convergence}
-\label{chap:scaling_and_convergence}
-The question of temporal convergence, as outlined in \sect{sect:temporal_convergence}, is linked not only to the particular method used for approximating the temporal derivatives in , but also to the degree to which the nonlinearities are resolved over that time-step. 
-In order to determine the degree to which a state vector, $\vec{x}$, satisfies \eqref{eqn:conservation_equations}, the use of the nonlinear residual, $\vec{F}$, is required.
-However, due to the formulation of the residual vector, the magnitudes of residuals can vary by orders of magnitude.
+\chapter{Preliminary Work}
+\label{chap:prelim_work}
+
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Nonlinear \cobra}
+\label{sect:nl_cobra}
+The first stage of preliminary work was to modify the \cobra software.
+\cobra 
+When it is necessary to distinguish between the single-shot linearization algorithm of \cobra and the iterative nonlinear algorithm of\cobra, the former shall be referred to as legacy mode and the latter as nonlinear mode.
+
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Temporal Convergence}
+\label{sect:temporal_convergence}
+The question of temporal convergence is linked not only to the particular method used for approximating the temporal derivatives, but also to the degree to which the nonlinearities are resolved over a time-step. 
+
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -11,9 +33,11 @@ However, due to the formulation of the residual vector, the magnitudes of residu
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-\section{Physics Based Scaling}
-\label{sect:scaling}
-For a given grid location, the nonlinear residuals for mass and energy, \eqref{eqn:cont_residual}, as formulated in section \ref{subsubsect:temporal_semi_implicit} will have six components.
+\section{Operator Based Scaling}
+\label{sect:operator_scaling}
+In order to determine the degree to which a state vector, $\vec{x}$, satisfies \eqref{eqn:conservation_equations}, the use of the nonlinear residual, $\vec{F}$, is required.
+However, due to the formulation of the residual vector, the magnitudes of residuals can vary by orders of magnitude.
+For a given grid location, the nonlinear residuals for mass and energy, \eqref{eqn:cont_residual}, as formulated in section \ref{subsect:semi_implicit} will have six components.
 These residuals will have the units of the conserved quantities for their corresponding PDEs.
 Table \ref{tab:scaling_units_scales} shows some typical values of these conserved quantities during normal operations of typical PWR simulation.
 
@@ -30,7 +54,7 @@ Flashing                 &  200&0                       & 1198&3                
 \end{table}
 
 However, during accident scenarios, the range of these values can dramatically change.
-One of the challenges that has been addressed during this work is coming up with a methodology for scaling that will provide a meaningful metric for convergence.
+One of the challenges that has been addressed during this work is coming up with a method for scaling that will provide a meaningful metric for convergence.
 The scaling chosen should have the following characteristics:
 \begin{itemize}
 \item{$S^{-1}_k F(x_k)_i \approx 1$ when $x_k$ is a "poor" solution.}
@@ -38,7 +62,7 @@ The scaling chosen should have the following characteristics:
 \item{$0 \leq S^{-1}_k F(x_k)_i \leq 0 $ for all values of $F(x_k)_i$.}
 \end{itemize}
 
-The heart of the scaling used in this work is a physics-based methodology.
+The heart of the scaling used in this work is a physics-based method.
 To illustrate the scaling procedure, we shall consider \eqref{eqn:conservation_of_liq} for a simply connected continuity cell without inter-field mass transfer.
 Assume that the entire channel single phase and in thermodynamics equilibrium such that the macroscopic densities on either side of this single cell are the same.
 
@@ -46,7 +70,7 @@ Assume that the entire channel single phase and in thermodynamics equilibrium su
 F = \left(\alpha_k \rho_k\right)^{n+1} - \left( \alpha_k \rho_k \right)^n - \frac{\Delta t}{V} \left( \frac{\alpha_k \rho_k }{<\alpha_k \rho_k>^n} V^{n+1}_{j-1} \right)
 \end{equation}
 
-In this equation there are three physically meaningful quantities: the temporal difference, the mass flowing into the cell, and mass flowing out of the cell.
+In this equation there are three physically meaningful quantities: the temporal difference, the mass flowing into the cell, and mass flowing out of the volume.
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -156,20 +180,13 @@ The COBRA-IE input deck for both problems can be found in \app{app:input_decks}.
 \subsection{Procedure}
 \label{subsect:experiments_procedure}
 To determine the effect of nonlinear convergence upon the time-step size sensitivity of the solution, each problem was run for at increasingly small maximum $\Delta t$.
-The material CFL limit of semi-implicit methodology acted as a limiter on the time-step size selected.
+The material CFL limit of semi-implicit method acted as a limiter on the time-step size selected.
 If the acceptable time-step size was below
 
 \subsection{Results}
 \label{subsect:results}
-marp
 
-\subsubsection{Single Phase Flow}
-\label{subsubsect:results_single}
-slaip
 
-\subsubsection{Flashing}
-\label{subsubsect:results_flashing}
-blook
 \section{Review}
-\label{sect:scaling_review}
-serad
+\label{sect:review}
+

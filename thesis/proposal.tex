@@ -1,30 +1,18 @@
 \chapter{Work Proposal}
 \label{chap:proposal}
-To evaluate the proposed methodology, several objectives will be pursued.
-The coding of the physics based scaling for the nonlinear residual will be examined and modified as necessary to address the convergence issues such as false non-convergence.
+To evaluate the proposed method, several objectives will be pursued.
+The coding of the operator based scaling for the nonlinear residuals will be examined and modified as necessary to address the noted convergence issues.
 An appropriate scaling of the Newton updates for convergence testing both within the linesearch algorithm and in the Newton loop will be determined.
 The domain decomposition algorithm will be mathematically developed, coded, and evaluated.
 Once the preceding three objectives have been met, a test problem will be developed to test the nonlinear refinement code as applied to a predetermined subdomain.
-After the algorithmic framework has been evaluated, several geometrically complex problems with high local-nonlinearities will be developed to obtain temporal-convergence benchmarks of the legacy methodology.
+After the algorithmic framework has been evaluated, several geometrically complex problems with high local-nonlinearities will be developed to obtain temporal-convergence benchmarks of the legacy algorithm.
 The same problems will then be evaluated using the proposed algorithm to determine the efficacy of temporal-convergence criteria.
-Upon completion of the temporal-convergence tests, run time tests will be conducted to determine any performance gains or losses as a result of the proposed methodology.
-Parametric studies will then be conducted to determine the impact of nonlinear convergence tolerances, geometric residual imbalances, and residual thresholds for activation of nonlinear refinements.
-
-\fig{fig:test_matrix} 
-
-
-\begin{figure}[ht]
-\caption{Proposed test matrix.}
-\label{fig:test_matrix}
-\begin{center}
-Picture goes here.
-\end{center}
-\end{figure}
+Upon completion of the temporal-convergence tests, run time tests will be conducted to determine any performance gains or losses as a result of the proposed method.
+Parametric studies will then be conducted to determine the impact of nonlinear convergence tolerances, phase appearance and disappearance thresholds, geometric residual imbalances, and residual thresholds for activation of nonlinear refinements.
 
 \section{Scaling Evaluation}
 \label{sect:proposal_scaling}
-The current implementation of the physics based scaling methodology outlined in \sect{sect:scaling} has several issues that need to be addressed.
-
+The current implementation of the physics based scaling method outlined in \sect{sect:operator_scaling} has several issues that need to be addressed.
 Another scaling question that needs to be addressed is the proper scaling for the newton update.
 
 \section{Domain Decomposition}
@@ -32,7 +20,7 @@ Another scaling question that needs to be addressed is the proper scaling for th
 The first step will be to implement a variation of the semi-implicit domain coupling algorithm presented in \sect{sect:code_coupling}.
 The details of the derivation will need to be reworked to account for the different flow variables.
 
-Upon completion of the implementation, a rigorous testing of the coupling methodology will be conducted.
+Upon completion of the implementation, a rigorous testing of the coupling method will be conducted.
 This testing will be similar to that conducted by \citet{Weaver2002}.
 
 \section{Temporal-Convergence Testing and Bench-marking}
@@ -48,10 +36,19 @@ Upon completion
 
 \section{Parametric Studies}
 \label{sect:proposal_parametric_studies}
-gsdfdsf
+Given the wide range of parameters
 
 \section{Time Line}
 \label{sect:proposal_time_line}
-asdfasdf
 
+
+\fig{fig:time_line}
+
+\begin{figure}[ht]
+\caption{Proposed test matrix.}
+\label{fig:time_line}
+\begin{center}
+Picture goes here.
+\end{center}
+\end{figure}
 
