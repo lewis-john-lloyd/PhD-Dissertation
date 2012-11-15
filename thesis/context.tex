@@ -7,7 +7,7 @@ Part 50 of 10CFR (10CFR50), lays out the process by which an applicant can obtai
 One documents required by 10CFR50 is the a safety analysis report (SAR) prior to the issuance of any license.
 Depending upon the particular license being pursued by the applicant, either a Preliminary Safety Analysis Report (PSAR) or a Final Safety Analysis Report (FSAR) is required.
 The PSAR is required for the issuance of a site construction license, while the FSAR is required for the issuance of either an operating license or a combined (construction and operating) license.
-For reactors that use light water, $H_2 O$, as a primary coolant, Light Water Reactors (LWR), both types of SARs require that the applicant provide an evaluation of their Emergency Core Cooling System (ECCS) during postulated loss-of-coolant accidents (LOCA) and loss-of-offsite-power (LOOP).
+For reactors that use light water, H$_2$O, as a primary coolant, Light Water Reactors (LWR), both types of SARs require that the applicant provide an evaluation of their Emergency Core Cooling System (ECCS) during postulated loss-of-coolant accidents (LOCA) and loss-of-offsite-power (LOOP).
 This evaluation must conform with section 46 of 10CFR50, which requires that the applicant perform analyses for "a number of postulated loss-of-coolant accidents of different sizes, locations, and other properties sufficient to provide assurance that the most severe postulated loss-of-coolant accidents are calculated."
 This requirement necessitates that the designers and operators of NPP possess the ability to model the thermal-hydraulic behavior within the core of a reactor during severe accidents.  
 The diverse physical conditions experienced by the reactor during severe accidents necessitates the inclusion of a wide array of physics during safety analyses.
@@ -95,7 +95,7 @@ The sum of all channel volumes, \eqref{eqn:domain_decomp}, is the total domain v
 
 \begin{equation}
 \label{eqn:domain_decomp}
-\Omega = \sum \omega_{k}
+\Omega = \sum_{k = 1}^{K} \omega_{k}
 \end{equation}
 
 While the geometric modeling capabilities of COBRA include the ability to model three dimensional flow, by defining orthogonal flow paths connecting channels, this work will deal only with the subset of problems where the flow is quasi-one-dimensional.
@@ -134,11 +134,13 @@ Since all quantities are area-averaged, the tilde in \eqref{eqn:area_average} wi
 \tilde{a} = \frac{1}{A}\int_{A} a \;\mathrm{d}\tilde{A}
 \end{equation}
 
-The particular formulation of the two-phase flow equation used in COBRA is commonly referred to as a two-phase three-field formulation. 
+The particular formulation of the two-phase flow equation used in COBRA is commonly referred to as a two-phase three-field formulation.
 To more accurately capture the phenomena of interest during accident scenarios, the liquid and the gaseous phases are each divided into two fields.
 The two fields of the liquid phase are a continuous liquid field and an entrained droplet field.
 The gaseous phase in composed of a \ncg gas and a water-vapor field. 
 This ability to track the different fields within a phase provides two important benefits to safety analysis: the ability to account for the effects of \ncgs on condensation, and the ability to model the impact upon heat transfer by dispersed liquid droplets.
+The ability of the three-field formulation to capture these complex hydrodynamic phenomena has inspired the French CATHARE software developers to migrate to three-field model in the next version of their software \cite{Emonot2011}.
+
 
 Given the four fields of interest, there are twelve conservation equations, one each for the mass, momentum, and energy of each of the four fields.
 These equations allow for a description of the time-dependent behavior of the in-core fluid.
@@ -461,10 +463,34 @@ The term one-step refers to the fact that the temporal derivative involves only 
 \end{IEEEeqnarray}
 
 The choice of how to approximate the temporal-average, $\vec{G}(\vec{y}^{*})$, is a factor that defines the eventual solution algorithm.
-The commonly used approximations will be postponed for now. 
+There are two subcategories for solving this one-step temporal-integration problem, single-stage and multi-stage \cite{Stewart1981,LeVeque2007}.
+\alg{alg:single_stage_temporal} shows how a multi-stage temporal integration scheme would work.
+
+\begin{algo}[H]
+\caption{Multi-stage temporal integration scheme.}
+\label{alg:single_stage_temporal}
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Require $\vec{y}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \State $t^{n+1} : = t^{n} + \Delta t$
+    \For{$j = 1 \to J$} \; Stage Loop
+		\BlackBox Solve $\displaystyle \frac{\vec{y}^{j} - \vec{y}^{n}}{\Delta t} =  \vec{G}_{j}(\vec{y}^{*})$ for $\vec{y}^{j}$.
+	\EndFor
+	\State $n = n + 1$
+\EndLoop
+\end{algorithmic}
+\end{algo}
+
+The final stage conserved variables will be the new-time variables, $\vec{y}^{J} = \vec{y}^{n+1}$. 
+At each stage the choice of how to approximate the driving function, $\vec{G}_{j}(\vec{y}^{*})$ can change both its functional dependence upon the stage values of $\vec{y}^{j}$ and which components of $\vec{G}$ are included.
+By excluding certain portions of $\vec{G}$ at certain stages, a time-splitting algorithm is developed.
+By changing the functional dependencies of terms within $\vec{G}$ at different stages, predictor-corrector, or stabilizing correction, methods are generated. 
+A single-stage method is the degenerate case of $J = 1$.
 
 \subsection{Nonlinear Approximations}
-\label{sect:nonlinear_approximations}
+\label{subsect:nonlinear_approximations}
 
 Given that there are nine conservation equations, the choice of which nine variables are the independent parameters that will be solved for is another distinguishing characteristic of safety analysis codes.
 The choice made in the COBRA sub-channel analysis code is shown in \eqref{eqn:independent_variables}.
@@ -481,7 +507,7 @@ The definition of $\dot{m}_k$ is given by \eqref{eqn:mom_dot}.
 \dot{m}_k = \alpha_k \rho_k u_k A_m
 \end{equation}
 
-The conserved quantities within a continuity volume are therefore nonlinear functions of the independent parameters, \eqref{eqn:nonlinear_functions}, regardless of the approximation chosen for $\vec{F}(\vec{y}^{*})$.
+The conserved quantities within a continuity volume are therefore nonlinear functions of the independent parameters, \eqref{eqn:nonlinear_functions}, regardless of the approximation chosen for $\vec{G}(\vec{y}^{*})$.
 
 \begin{equation}
 \label{eqn:nonlinear_functions}
@@ -489,11 +515,66 @@ The conserved quantities within a continuity volume are therefore nonlinear func
 \end{equation}
 
 This nonlinearity necessitates a nonlinear solve at every time-step.
-In addition, any dependence of $\vec{F}(\vec{y}^{*})$ on new time variables creates additional nonlinearities.
+In addition, any dependence of $\vec{G}(\vec{y}^{*})$ on the new time parameters can create additional nonlinearities.
+The semi-discrete formulation, \eqref{eqn:simple_partial_t}, is expressed as a nonlinear function of $\vec{x}$ by \eqref{eqn:nonlinear_residuals}.
 
-The primary method used to resolve the non-linearities in the governing equations is the use of a Newton's method \cite{Deuflhard2004}.
-Newton's method is an optimization algorithm that is particularly well suited for discretized systems of PDEs.
+\begin{equation}
+\label{eqn:nonlinear_residuals}
+\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^n) -\Delta x \vec{G}(\vec{y}(\vec{x}^*))
+\end{equation}
 
+The method used to solve \eqref{eqn:nonlinear_residuals} for $\vec{x}^{n+1}$ is Newton's method \cite{Deuflhard2004, Dennis1996}.
+The nonlinear residual being solved in this work is a function of the new-time unknowns, $\vec{x}^{n+1}$.
+For clarity in the following, the superscript denoting temporal location will be dropped.
+Newton's method is an iterative procedure to obtain $\vec{x}^{*}$ such that $\vec{F}(\vec{x}^{*}) = 0$.
+This iterative is done by successive linearizataion of the nonlinear problem \eqref{eqn:newton_taylor}, where $\vec{J}(\vec{z})$ is the Jacobian matrix of $\vec{F}(\vec{x})$ evaluated at $\vec{z}$ and $\vec{\delta x}^k = \vec{x}^{k+1} - \vec{x}^k$.
+
+\begin{IEEEeqnarray}{rcccl}
+0 & = & \vec{F}(\vec{x}^{k}+\vec{\delta x}^k) & = & \vec{F}(\vec{x}^{k}) +  \int_{\vec{x}^k}^{\vec{x}^{k}+\vec{\delta x}^k}\frac{\partial \vec{F}}{\partial \vec{x}}(\vec{z}) \mathrm{d} \vec{z} \nonumber \\
+\label{eqn:newton_taylor}
+0 & = & \vec{F}(\vec{x}^{k}+\vec{\delta x}^k) & \approx & \vec{F}(\vec{x}^{k}) + \vec{J}(\vec{x}^{k}) \cdot \vec{\delta x}^k
+\end{IEEEeqnarray}
+
+The iterative is then one of finding successive updates, $\vec{\delta x}^k$, by solving \eqref{eqn:newton}.
+
+\begin{equation}
+\label{eqn:newton}
+\vec{J}(\vec{x}^k)\cdot \vec{\delta x}^k = -\vec{F}(\vec{x^k})
+\end{equation} 
+
+Since the system of nonlinear equations being solved represent a transient simulation, the iterations at each time-step start with an initial guess for the new time variables that is equal to the old-time variables, $\vec{x}^0 = \vec{x}^{n}$.
+The underlying assumption is that the independent parameters will not change greatly over a time-step.
+\alg{alg:local_newton} provides an overview of a transient simulation using a local Newton's method for a single-stage temporal integration scheme.
+The algorithm generalizes to a multi-stage methods by enclosing the Newton loop within a stage loop.
+
+\begin{algo}[H]
+\caption{Local Newton's method for single-stage temporal-integration.}
+\label{alg:local_newton}
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \State $t^{n+1} : = t^{n} + \Delta t$
+    \State $k = 0$
+    \State $\vec{x}^{k} = \vec{x}^{n}$
+    \Loop \; Newton Loop
+		\Calculate $\vec{F}(\vec{x}^{k})$ and $\vec{J}(\vec{x}^{k})$
+		\Calculate $\vec{\delta x}^k = - \vec{J}^{-1}\cdot\vec{F}$
+		\BlackBox $\vec{x}^{k+1}$
+		\State $k = k + 1$
+		\BlackBox Loop Termination Criteria
+	\EndLoop
+	\State $n = n + 1$
+\EndLoop
+\end{algorithmic}
+\end{algo}
+
+In \alg{alg:local_newton}, there are two black box calculations.
+The first, is the calculation of the update independent parameters, $\vec{x}^{k+1}$, and the second is the loop termination criteria.
+In the case of the loop termination criteria being $k > 0$, the resultant method is observed to us a single-shot linearization for its nonlinear solver.
+The exact nature of those two black-boxes is method dependent and the various options will be discussed later.
+In multi-stage temporal integration methods, both the update method and the loop termination criteria may vary between stages. 
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -502,38 +583,47 @@ Newton's method is an optimization algorithm that is particularly well suited fo
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 \section{Solution Methods}
 \label{sect:solution_techniques}
+\sect{sect:numeric_approximation} provided a framework for defining the various methods used in thermal-hydraulic safety codes. 
+
+
+The sonic CFL limitation of the fully explicit method, together with the high computational cost of the fully implicit method, led to the development of mixed implicit-explicit (IMEX) methods.
+The development of IMEX methods was develop a method that was able to overcome the time-step limitations of the fully explicit method while keeping the added computational cost to a minimum.
 
 \subsection{Explicit}
 \label{subsect:numerics_explicit}
-The least computationally expensive method for temporally integrating the PDEs from \sect{subsect:governing_equations} is a simple fully explicit method.
-The terminology explicit refers to the fact that the unknowns at $t^{n+1}$, $\vec{y}^{n+1}$, are function of the values at the present time $\vec{y}^{n}$ only.
+The least computationally expensive method for temporally integrating \eqref{eqn:simple_partial_t} is a single-stage fully explicit method.
+In the fully-explicit method, the driving function is approximated as $\vec{G}(\vec{x}^n)$.
+The only nonlinearities in this methodology are those present in the temporal derivative.
 The vector notation formulation for this method is given by \eqref{eqn:explicit}. 
 
 \begin{equation}
 \label{eqn:explicit}
-\frac{ \vec{y}^{n+1} - \vec{y}^{n}}{\Delta t} = \vec{G}(\vec{y}^{n})
+\vec{F}(\vec{x}^{n+1}) = \vec{y}^{n+1} - \vec{y}^{n} - \Delta t \vec{G}(\vec{y}^{n})
 \end{equation}
 
 The algorithmic implementation is shown in \alg{algo:explicit}.
+Note that the momentum conservation equations have the identity matrix, $\vec{I}$, for their temporal Jacobian.
+The continuity equations temporal Jacobian is a 6x6 matrix with no inter-volume coupling terms.
 
 \begin{algo}[H]
-\caption{Explicit time-integration.}
+\caption{Single-stage, fully-explicit, single-shot linearization technique.}
 \label{algo:explicit}
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
-\Require $\vec{y}^{0}$ and $t^{0}$
+\Require $\vec{x}^{0}$ and $t^{0}$
 \Set $n = 0$
 \Loop \; Take a Time Step
     \State $t^{n+1} : = t^{n} + \Delta t$
-    \Calculate $\vec{y}^{n+1} = \vec{y}^{n} + \Delta t \vec{G}(\vec{y}^n)$
+    \Calculate $\vec{F}(\vec{x}^n)$ and $\vec{J}(\vec{x}^n)$
+    \Calculate $\vec{\delta x} = -\vec{J}^{-1}\vec{F}$
+    \Calculate $\vec{x}^{n+1} = \vec{x}^{n} + \vec{\delta x}$ 
 \EndLoop{\;$n = n+1$}
 \end{algorithmic}
 \end{algo}
 
-While this particular method is the least computationally expensive, it has a severe weakness in the context of the two-phase flow equations that are used in COBRA.
+While this particular method is the least computationally expensive, it has a severe weakness.
 That weakness is the Courant-Friedrichs-Lewy (CFL) limit imposed upon the time step size, $\Delta t$.
 The CFL limit is a relationship between the spatial and temporal discretization and the characteristic velocities of information propagation in the problem of interest \cite{LeVeque2007, Tannehill1997}.
 For the case of \eqref{eqn:explicit}, the CFL limit is given in \eqref{eqn:cfl_explicit}.
@@ -558,84 +648,284 @@ This limitation of the explicit method prompted the development of alternative m
 
 \subsection{Implicit}
 \label{subsect:numerics_fully_implicit}
-An alternative method for integrating \eqref{eqn:temporal_semi_discrete} is to use a fully implicit technique.
-A fully-implicit formulation is one where $\vec{G}$ is function only of unknown variables, \eqref{eqn:implicit}.
+An alternative method for integrating \eqref{eqn:temporal_semi_discrete} is to use a fully implicit technique \cite{Frepoli2003, Barre1990}.
+The fully-implicit method temporally approximates $\vec{G}$ as a function only of new-time parameters, \eqref{eqn:implicit}.
 
 \begin{equation}
 \label{eqn:implicit}
-\\vec{y}^{n+1} = \vec{y}^{n} + \Delta t \vec{G}(\vec{y}^{n+1})
+\vec{F}(\vec{x}^{n+1}) = \vec{y}^{n+1} - \vec{y}^{n} - \Delta t \vec{G}(\vec{y}^{n+1})
 \end{equation}
 
-This particular formulation has the advantage of not being limited by a CFL number.
-However, the solution of \eqref{eqn:implicit} is computationally expense as that $\vec{G}(\vec{y}^{n+1})$ is a highly nonlinear function requiring the use of nonlinear solvers to obtain a solution.
-A discussion of nonlinear-solvers will be postponed for now.
-The computational implementation of the fully-implicit method is presented in \alg{algo:implicit}.
+This method has the advantage of not being limited by a CFL number for stability purposes.
+However, the solution of \eqref{eqn:implicit} is the most computationally expensive of the methods considered.
+The computational implementation of the fully-implicit method used in a fully implicit COBRA version is presented in \alg{algo:implicit} \cite{Frepoli2003}.
 
 \begin{algo}[H]
-\caption{Implicit time-integration.}
+\caption{Fully-implicit, two-stage, nonlinear solve method.}
 \label{algo:implicit}
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
-\Require $\vec{y}^{0}$ and $t^{0}$
+\Require $\vec{x}^{0}$ and $t^{0}$
 \Set $n = 0$
-\Loop \; Take a Time Step	
+\Loop \; Transient Loop
     \State $t^{n+1} : = t^{n} + \Delta t$
-    \BlackBox Solve $\vec{y}^{n+1} = \vec{y}^{n} + \Delta t \vec{G}(\vec{y}^{n+1})$ for $\vec{y}^{n+1}$
-\EndLoop{\;$n = n+1$}
+    \For{$j = 1 \to 2$} \; Stage Loop
+    \State $k = 0$
+    \State $\vec{x}^{k} = \vec{x}^{n}$
+    \Loop \; Newton Loop
+		\Calculate $\vec{F}(\vec{x}^{k})$ and $\vec{J}(\vec{x}^{k})$
+		\Calculate $\vec{\delta x}^k = - \vec{J}^{-1}\cdot\vec{F}$
+		\BlackBox $\vec{x}^{k+1}$
+		\State $k = k + 1$
+		\BlackBox Loop Termination Criteria
+	\EndLoop	
+	\EndFor
+	\State $n = n + 1$
+\EndLoop
 \end{algorithmic}
 \end{algo}
 
-The solution to the full nonlinear system of equations is the most computationally expensive option available.
-However, it provide for the fewest time steps required in a given problem.
 
-\subsection{IMEX}
-\label{subsect:temporal_imex}
+\subsection{Semi-Implicit}
+\label{subsect:semi_implicit}
 
-The sonic CFL limitation of the fully explicit method, together with the high computational cost of the fully implicit method, led to the development of mixed implicit-explicit (IMEX) methods.
-The development of IMEX methods was develop a method that was able to overcome the time-step limitations of the fully explicit method while keeping the added computational cost to a minimum.
-The first IMEX solution method to be widely used was the semi-implicit method \cite{Liles1978}.
+The semi-implicit solution method developed was developed to overcome the sonic CFL limitations of the explicit method while avoiding the computational cost of the fully implicit method \cite{Liles1978}.
+Since the work being done here will deal with the semi-implicit method, a detailed description of the method will be provided.
+The momentum equations, neglecting spatial discretization notation and external sources, are given in \eqref{eqn:si_mom_liq} -- \eqref{eqn:si_mom_ent}.
 
-
-\subsubsection{Semi-Implicit}
-\label{subsubsect:semi_implicit}
-To obtain the semi-implicit formulation, the $\vec{G}$ in \eqref{eqn:temporal_semi_discrete} is modified and combined with \eqref{eqn:simple_partial_t} to produce \eqref{eqn:semi_implicit_MOL}.
-
-\begin{equation}
-\label{eqn:semi_implicit_MOL}
-\frac{ \vec{y}^{n+1}_{j} - \vec{y}^{n}_{j}}{t^{n+1}-t^{n}} = \vec{G}(\vec{y}^{n},\vec{y}^{n+1})
-\end{equation}
-
-$\vec{G}$ is now a function of both known and unknown variables, hence the name semi-implicit. 
-The particular formulation of the semi-implicit method is of importance to later sections, so a detailed description of the conservation laws from \sect{subsect:governing_equations} is provided in equation \eqref{eqn:semi_implicit_flux_terms}.
-
-\begin{IEEEeqnarray}{lCl}
-\label{eqn:semi_implicit_flux_terms}
-2 & = & 2
+\begin{IEEEeqnarray}{rCl}
+\label{eqn:si_mom_liq}
+\dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{NK} \left( (\alpha_l \rho_l u_l) u_l \right)^{n}
+ -\alpha^{n}_l \nabla P^{n+1} + (\alpha_l \rho_l)^{n} g - K^{n}_{wl}(\dot{m}_l^{n+1})^2 \right. \nonumber \\
+ & + & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2 - ((1 - \eta)\Gamma u^{'})^{n} - (S u^{'})^{n}\vphantom{\sum_{NK}}\right) \\
+\label{eqn:si_mom_gas}
+\dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{NK} \left( (\alpha_g \rho_g u_g) u_g \right)^{n}  -\alpha^{n}_g \nabla P^{n+1} + (\alpha_g \rho_g)^{n} g - K^{n}_{wg}(\dot{m}_g^{n+1})^2 \right.\nonumber \\
+& - & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2 -K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 + (\Gamma u^{'})^{n}\vphantom{\sum_{NK}}\right) \\
+\label{eqn:si_mom_ent}
+\dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{NK} \left( (\alpha_e \rho_l u_e) u_e \right)^n -\alpha^{n}_e \nabla P^{n+1} + (\alpha_e \rho_l)^{n} g - K^{n}_{we}(\dot{m}_e^{n+1})^2\right. \nonumber \\
+&+& \left. K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 - (\eta \Gamma u^{'})^{n} + (S u^{'})^n\vphantom{\sum_{NK}}\right)
 \end{IEEEeqnarray}
 
+In the above equations, the flux terms are summed over $NK$, which indicated the number of connections to a given volume.
+The coefficients $K$ represent effective friction factors calculated using parameters only from time n.
+The inter-facial transfer terms are explicitly evaluated.
+The only new time parameters used in \eqref{eqn:si_mom_liq} -- \eqref{eqn:si_mom_ent} are flow rates and pressures.
+The purely explicit evaluation of the momentum advection term is what leads to a material Courant limit for this method.
+Similar to the sonic Courant limit discussed in \sect{subsect:numerics_explicit}, the material Courant limit dictates the largest $\Delta t$ that can be achieved while maintaining a stable solution algorithm.
+In this method, the Courant limit is given by \eqref{eqn:si_cfl}.
+The characteristic velocity is now a phasic velocity only.
+This allows for much greater time-step sizes than the explicit method, but it is still limited.
+
+\begin{equation}
+\label{eqn:si_cfl}
+\Delta t_j \lesssim \frac{\Delta x_j}{|u_{k,j}|}
+\end{equation}
+
+The continuity equations used in this work, omitting external sources, are shown in \eqref{eqn:si_mass_ncg} -- \eqref{eqn:si_nrg_liq}.
+
+\begin{IEEEeqnarray}{rCl}
+\label{eqn:si_mass_ncg}
+(\alpha_g \rho_{n})^{n+1} & - & (\alpha_g \rho_{n})^{n} = -\Delta t \sum_{NK}\left( <\alpha^{n}_g \rho^{n}_{n}>^{n}_{d} u^{n+1}_g \right)  \\
+\label{eqn:si_mass_vap}
+\left(\alpha_g \rho_v \right)^{n+1} &-& \left(\alpha_g \rho_v \right)^{n} = - \Delta t \sum_{NK} \left( <\alpha^{n}_g \rho^{n}_v>^{n}_{d} u^{n+1}_g \right) + \Delta t (\Gamma^{'''})^{n+1} \\
+\label{eqn:si_mass_liq}
+\left(\alpha_l \rho_l \right)^{n+1} & - & \left(\alpha_l \rho_l \right)^{n} =  -\Delta t \sum_{NK}\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l \right) \nonumber \\
+&- &\Delta t\left[(1-\eta)\Gamma^{'''} + S^{'''}\right]^{n+1} \\
+\label{eqn:si_mass_ent}
+\left(\alpha_e \rho_l \right)^{n+1} & - & \left(\alpha_e \rho_l \right)^{n} = -\Delta t \sum_{NK}\left( <\alpha^{n}_e \rho^{n}_l>^{n}_{d} u^{n+1}_e \right)\nonumber \\ 
+&+& \Delta t\left[ S^{'''} -\eta\Gamma^{'''}\right]^{n+1} \\
+\label{eqn:si_nrg_gas}
+\left( \alpha_g \{\rho_g h_g\} \right)^{n+1} & - & \left( \alpha_g \{\rho_g h_g\} \right)^{n}  = -\Delta t \sum_{NK} \left(  <\alpha^{n}_g \{\rho_g h_g\}^{n}>^{n}_{d} u^{n+1}_g \right) \nonumber \\
+&+& \Delta t \left[\Gamma^{'''} h^{'}_v + q^{'''}_{i,v} + q^{'''}_{gl} + q^{'''}_{wg} \right]^{n+1} + \alpha^{n}_g ( P^{n+1} - P^{n} ) \\
+\label{eqn:si_nrg_liq}
+\left( \alpha_l \rho_l h_l \right)^{n+1} & - & \left( \alpha_l \rho_l h_l \right)^{n} =  -\Delta t \sum_{NK} \left( <\alpha^{n}_l \rho^{n}_l h^{n}_l>^{n}_{d} u^{n+1}_l + <\alpha^{n}_e \rho^{n}_l h^{n}_l>^{n}_{d} u^{n+1}_e \right) \nonumber \\
+& +& \Delta t \left[q^{'''}_{wl} -\Gamma^{'''} h^{'}_l +  q^{'''}_{i,l} - q^{'''}_{gl}\right]^{n+1} + \alpha^{n}_l (P^{n+1} - P^{n})
+\end{IEEEeqnarray}
+
+The flux terms include new time velocities, $u^{n+1}_k$.
+Since COBRA uses $\dot{m}_{k}$ as an independent parameters, the velocities are derived quantities, whose functional form is given in \eqref{eqn:si_vel}.
+The $<\alpha_k \rho_k>^{n}_{a}$ represents the arithmatic average of macroscopic densities from adjoining continuity volumes.
+
+\begin{equation}
+\label{eqn:si_vel}
+u^{n+1}_k = \frac{\dot{m}^{n+1}_k}{A_m <\alpha_k \rho_k>^{n}_{a}} 
+\end{equation}
+
+The donoring operator $<a^n>^{n}_{d}$ is an extension of \eqref{eqn:upwind_donoring}.
+The donored quantities and the velocity used to determine the direction of donoring are evaluated with their old-time values.
+
+COBRA traditionally uses a single-shot linearization method to resolve the non-linearities.
+\alg{alg:si_legacy} shows the traditional algorithm.
+
 \begin{algo}[H]
-\caption{Semi-Implicit Linear Solution Algorithm}
-\label{algo:semi_implicit}
+\caption{Legacy COBRA semi-implicit solution algorithm}
+\label{alg:si_legacy}
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
-\Require $\Vec{x}^{0}$ and $t^{0}$
+\Require $\vec{x}^{0}$ and $t^{0}$
 \Set $n = 0$
-\Loop \; Take a Time Step
-    \Set $\vec{x}^{n}$
-    \Calculate $\Delta t$
+\Loop \; Transient Loop
     \State $t^{n+1} : = t^{n} + \Delta t$
-    \BlackBox Solve for $\vec{x}^{n+1}$
-    \Calculate Courant Numbers
-\EndLoop{\;$n = n+1$}
+	\Calculate $\vec{F}(\vec{x}^{n})$ and $\vec{J}(\vec{x}^{n})$
+	\BlackBox $\vec{\delta x} = - \vec{J}^{-1}\cdot\vec{F}$
+	\Calculate $\vec{x}^{n+1} = \vec{x}^{n} + \vec{\delta x}$
+	\State $n = n + 1$
+\EndLoop
 \end{algorithmic}
 \end{algo}
 
-\subsubsection{Nearly Implicit}
-\label{subsubsect:numerics_nearly_implicit}
-Another multi-stage method is called the Nearly-Implicit method \cite{Trapp1986}.
+Due to the nature semi-implicit method, step 5 of \alg{alg:si_legacy} requires additional details.
+The linear algebra problem to be solved during step 5 is presented in \eqref{eqn:si_solve} for a simply connected problem with three continuity volumes and three momentum volumes.
+ \begin{equation}
+ \label{eqn:si_solve}
+ \begin{bmatrix} 
+ \vec{J}_{m_1,m_1} & \vec{J}_{m_1,c_1} & \vec{0} & \vec{0} & \vec{0} & \vec{0}\\
+ \vec{J}_{c_1,m_1} & \vec{J}_{c_1,c_1} & \vec{J}_{c_1,m_2} & \vec{0} & \vec{0} & \vec{0} \\
+ \vec{0} & \vec{J}_{m_2,c_1} & \vec{J}_{m_2,m_2} & \vec{J}_{m_2,c_2} & \vec{0} & \vec{0} \\
+ \vec{0} & \vec{0} & \vec{J}_{c_2,m_2} & \vec{J}_{c_2,c_2} & \vec{J}_{c_2,m_3} & \vec{0} \\
+ \vec{0} & \vec{0} & \vec{0} & \vec{J}_{m_3,c_2} & \vec{J}_{m_3,m_3} & \vec{J}_{m_3,c_3} \\ 
+ \vec{0} & \vec{0} & \vec{0} & \vec{0} & \vec{J}_{c_3,m_3} & \vec{J}_{c_3,c_3}  
+ \end{bmatrix} \begin{bmatrix}
+ \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
+ \vec{\delta m}_{2} \\ \vec{\delta c}_{2} \\
+ \vec{\delta m}_{3} \\ \vec{\delta c}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+ \vec{F}_{m_1} \\ \vec{F}_{c_1} \\
+ \vec{F}_{m_2} \\ \vec{F}_{c_2} \\
+ \vec{F}_{m_3} \\ \vec{F}_{c_3} \end{bmatrix}
+ \end{equation}
+ 
+ The semi-implicit solution framework is composed of five steps.
+ First, the momentum volume equations, rows one, three, and five of the linear system \eqref{eqn:si_solve}, are multiplied by their inverse diagonal Jacobian entries, $\vec{J}_{m_k}$.
+ The off-diagonal entries for the momentum equations are now $\vec{J}^{-1}_{m_k}\vec{J}_{m_k,c_j}$ where $j$ is the index of the connected continuity volumes.
+ Since the $J_{m_k,c_j}$ terms only contain derivatives with respect to the pressure for the adjoining continuity volumes, the product $\vec{J}^{-1}_{m_k}\vec{J}_{m_k,c_j}$ will be referred to as $\frac{\partial \vec{m}_k}{\partial P_j}$.
+ Using the above notation, the resulting system is given in \eqref{eqn:si_solve_1}.
+ 
+  \begin{equation}
+ \label{eqn:si_solve_1}
+ \begin{bmatrix} 
+ \vec{I} & \frac{\partial \vec{m}_1}{\partial P_1} & \vec{0} & \vec{0} & \vec{0} & \vec{0}\\
+ \vec{J}_{c_1,m_1} & \vec{J}_{c_1} & \vec{J}_{c_1,m_2} & \vec{0} & \vec{0} & \vec{0} \\
+ \vec{0} & \frac{\partial \vec{m}_2}{\partial P_1} & \vec{I} & \frac{\partial \vec{m}_2}{\partial P_2} & \vec{0} & \vec{0} \\
+ \vec{0} & \vec{0} & \vec{J}_{c_2,m_2} & \vec{J}_{c_2} & \vec{J}_{c_2,m_3} & \vec{0} \\
+ \vec{0} & \vec{0} & \vec{0} & \frac{\partial \vec{m}_{3}}{\partial P_2} & \vec{I} & \frac{\partial \vec{m}_{3}}{\partial P_3} \\ 
+ \vec{0} & \vec{0} & \vec{0} & \vec{0} & \vec{J}_{c_3,m_3} & \vec{J}_{c_3}  
+ \end{bmatrix} \begin{bmatrix}
+ \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
+ \vec{\delta m}_{2} \\ \vec{\delta c}_{2} \\
+ \vec{\delta m}_{3} \\ \vec{\delta c}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+ \vec{J}^{-1}_{m_1}\vec{F}_{m_1} \\ \vec{F}_{c_1} \\
+ \vec{J}^{-1}_{m_2}\vec{F}_{m_2} \\ \vec{F}_{c_2} \\
+ \vec{J}^{-1}_{m_3}\vec{F}_{m_3} \\ \vec{F}_{c_3} \end{bmatrix}
+ \end{equation}
 
-\subsubsection{SETS}
-\label{subsubsect:numerics_sets}
+Now, the momentum equations are used to eliminate the $\vec{J}_{c_k,m_k}$ entries from the continuity volumes.
+The resulting equation set no longer has equations for the momentum volumes, \eqref{eqn:si_solve_2}.
+
+\begin{IEEEeqnarray}{rl}
+\label{eqn:si_solve_2}
+\begin{bmatrix} 
+\vec{J}_{c_1} - \vec{J}_{c_1,m_1}\frac{\partial \vec{m}_1}{\partial P_1} - \vec{J}_{c_1,m_2}\frac{\partial \vec{m}_2}{\partial P_1} &
+-\vec{J}_{c_1,m_2}\frac{\partial \vec{m}_2}{\partial P_2} &
+\vec{0} \\
+-\vec{J}_{c_2,m_2}\frac{\partial \vec{m}_2}{\partial P_1} & 
+\vec{J}_{c_2} - \vec{J}_{c_2,m_2}\frac{\partial \vec{m}_2}{\partial P_2}-\vec{J}_{c_2,m_3}\frac{\partial \vec{m}_3}{\partial P_2} &
+-\vec{J}_{c_2,m_3}\frac{\partial \vec{m}_3}{\partial P_3} \\
+ \vec{0} &
+-\vec{J}_{c_3,m_3}\frac{\partial \vec{m}_3}{\partial P_2} &
+\vec{J}_{c_3} -\vec{J}_{c_3,m_3}\frac{\partial \vec{m}_3}{\partial P_3} 
+\end{bmatrix} &\begin{bmatrix}
+\vec{\delta c}_{1} \\
+\vec{\delta c}_{2} \\
+\vec{\delta c}_{3}
+\end{bmatrix} \nonumber \\
+ = -\begin{bmatrix}
+\vec{F}_{c_1} -
+\vec{J}_{c_1,m_1}\vec{J}^{-1}_{m_1}\vec{F}_{m_1}-\vec{J}_{c_1,m_2}\vec{J}^{-1}_{m_2}\vec{F}_{m_2} \\
+\vec{F}_{c_2} - 
+\vec{J}_{c_2,m_2}\vec{J}^{-1}_{m_2}\vec{F}_{m_2}-\vec{J}_{c_2,m_3}\vec{J}^{-1}_{m_3}\vec{F}_{m_3} \\
+\vec{F}_{c_3} - 
+\vec{J}_{c_3,m_3}\vec{J}^{-1}_{m_3}\vec{F}_{m_3}
+\end{bmatrix} &
+ \end{IEEEeqnarray}
+
+The off diagonal entries of the reduced Jacobian matrix in \eqref{eqn:si_solve_2}, $\vec{J}_{c_i,m_j}\frac{\partial \vec{m}_j}{\partial P_k}$ will be denoted by $\vec{C}_{c_i,P_j}$ as they represent the change in the continuity variables in volume $i$ due to the change in the pressure of continuity volume $j$.
+$\vec{C}_{c_i,P_j}$, while being a 6x6 matrix only contains entries in the last column, which correspond to the pressure entry in $\vec{\delta c}_i$.
+The diagonal entries of the reduced Jacobian and the right hand side entries will be referred to as $\vec{J}^{*}_{c_i}$ and $\vec{F}^{*}_{c_i}$.
+With the new nomenclature, \eqref{eqn:si_solve_2} can be restated as \eqref{eqn:si_solve_3}.
+
+  \begin{equation}
+ \label{eqn:si_solve_3}
+ \begin{bmatrix} 
+ \vec{J}^{*}_{c_1} & \vec{C}_{c_1,P_2} & \vec{0} \\
+ \vec{C}_{c_2,P_1} & \vec{J}^{*}_{c_2} & \vec{C}_{c_2,P_3} \\
+ \vec{0}           & \vec{C}_{c_3,P_2} & \vec{J}^{*}_{c_3}
+ \end{bmatrix} \begin{bmatrix}
+ \vec{\delta c}_{1} \\
+ \vec{\delta c}_{2} \\
+ \vec{\delta c}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+ \vec{F}^{*}_{c_1} \\
+ \vec{F}^{*}_{c_2} \\
+ \vec{F}^{*}_{c_3}
+\end{bmatrix}
+ \end{equation}
+
+Step three is to multiply each row by the $\vec{L}^{-1}_{c_i}$ portion of the LU decomposition without pivoting of $\vec{J}^{*}_{c_i}$, \eqref{eqn:si_solve_4}
+
+  \begin{equation}
+ \label{eqn:si_solve_4}
+ \begin{bmatrix} 
+ \vec{U}^{*}_{c_1} & \vec{L}^{-1}_{c_1}\vec{C}_{c_1,P_2} & \vec{0} \\
+ \vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_1} & \vec{U}^{*}_{c_2} & \vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_3} \\
+ \vec{0}           & \vec{L}^{-1}_{c_3}\vec{C}_{c_3,P_2} & \vec{U}^{*}_{c_3}
+ \end{bmatrix} \begin{bmatrix}
+ \vec{\delta c}_{1} \\
+ \vec{\delta c}_{2} \\
+ \vec{\delta c}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+ \vec{L}^{-1}_{c_1}\vec{F}^{*}_{c_1} \\
+ \vec{L}^{-1}_{c_2}\vec{F}^{*}_{c_2} \\
+ \vec{L}^{-1}_{c_3}\vec{F}^{*}_{c_3}
+\end{bmatrix}
+ \end{equation}
+ 
+Isolating the last row from each continuity block and dividing that row by its diagonal entry, a resulting matrix for the pressure update in every continuity volume is obtained, \eqref{eqn:si_pressure_matrix}. 
+For a problem with $N$ continuity volumes, the resulting pressure matrix, \eqref{eqn:si_pressure_matrix}, will be N x N.
+
+  \begin{equation}
+ \label{eqn:si_pressure_matrix}
+ \begin{bmatrix} 
+ 1 & \frac{\vec{L}^{-1}_{c_1}\vec{C}_{c_1,P_2}[6]}{\vec{U}^{*}_{c_1}[6]} & \vec{0} \\
+ \frac{\vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_1}[6]}{\vec{U}^{*}_{c_2}[6]} & 1 & \frac{\vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_3}[6]}{\vec{U}^{*}_{c_2}[6]} \\
+ \vec{0}           & \frac{\vec{L}^{-1}_{c_3}\vec{C}_{c_3,P_2}[6]}{\vec{U}^{*}_{c_3}[6]} & 1
+ \end{bmatrix} \begin{bmatrix}
+ \vec{\delta P}_{1} \\
+ \vec{\delta P}_{2} \\
+ \vec{\delta P}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+ \frac{\vec{L}^{-1}_{c_1}\vec{F}^{*}_{c_1}[6]}{\vec{U}^{*}_{c_1}[6]} \\
+ \frac{\vec{L}^{-1}_{c_2}\vec{F}^{*}_{c_2}[6]}{\vec{U}^{*}_{c_2}[6]} \\
+ \frac{\vec{L}^{-1}_{c_3}\vec{F}^{*}_{c_3}[6]}{\vec{U}^{*}_{c_3}[6]}
+\end{bmatrix}
+ \end{equation}
+
+In step four, the pressure matrix is then solved for the pressure updates in every continuity volume.
+This step is performed using the sparse-matrix solver, SuperLU \cite{Li1999}. 
+
+Step five is the use the vector of pressure updates to obtain the continuity updates in every volume from \eqref{eqn:si_solve_4} and to obtain the updates for the momentum variables from the momentum rows of \eqref{eqn:si_solve_1}.
+
+The five step process just outlined provides an overview of the solution technique of the semi-implicit method used in the legacy version of COBRA.
+As COBRA is traditionally a single-shot algorithm, no additional Newton steps are taken.
+
+\subsection{Stability Enhancing Two Step Method} 
+\label{subsect:numerics_sets}
+In order to overcome the material Courant limit placed upon the simulation by the semi-implicit method, the stability enhancing two-step method was developed \cite{Mahaffy1982}.
+
+
+\subsection{Nearly Implicit}
+\label{subsect:numerics_nearly_implicit}
 An alternative formulation for the temporal derivative is a multi-stage method.
 These methods involve predictor and corrector steps.
 

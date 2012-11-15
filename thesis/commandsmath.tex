@@ -23,18 +23,13 @@
 %		Arguements[1]: bold and overbar arg1	
 \DeclareRobustCommand{\Vec}[1]{%
     \ifmmode
-        \underline{\mathbf{#1}}\,%
+        \mathbf{#1}\,%
     \else
-        $\displaystyle\underline{\mathbf{#1}}\,$%
+        $\displaystyle \mathbf{#1}\,$%
     \fi
 }
-\DeclareRobustCommand{\vec}[1]{%
-    \ifmmode
-        \underline{\mathbf{#1}}\,%
-    \else
-        $\displaystyle\underline{\mathbf{#1}}\,$%
-    \fi
-}
+\DeclareRobustCommand{\vec}[1]{\Vec{#1}}
+
 \DeclareRobustCommand{\FVS}[2]{%
     \ifmmode
         \Vec{#1}\!(#2)
