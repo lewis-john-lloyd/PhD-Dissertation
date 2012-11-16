@@ -1,6 +1,6 @@
 \chapter{Preliminary Work}
 \label{chap:prelim_work}
-Several initial 
+Several steps are necessary to accomplish the objectives of this research.
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -26,23 +26,78 @@ As such, the objectives of this work were to modify the software to be able do t
 
 \cobra utilized a single-shot linearization newton method for its solution technique.
 As a result of that design decision, certain memory savings techniques were employed in its construction that precluded the idea of more than one Newton step.
-In particular, there was an implicit assumption within the software that the current Newton iterate, $\vec{x}^{k}$, was the old-time variable $\vec{x}^{n}$.
+In particular, there was an implicit assumption within the software that the current Newton iterate, $\vec{x}^{n+1, 0}$, was the old-time variable $\vec{x}^{n}$.
 This design decision required an an evaluation of all routine involved with the evaluation of components of both the nonlinear residual and the Jacobian.
-In addition, the assumption that $\vec{x}^{k} = \vec{x}^{n}$ required identification of places in the source code where there were implicit cancellation of terms.
+In addition, the assumption that $\vec{x}^{n+1, k} = \vec{x}^{n}$ required identification of places in the source code where there were implicit cancellation of terms.
 Where appropriate, the software was changed to reflect the distinction between old-time and iterate variables and to introduce terms that had been assumed to be equal to zero.
 
 Once the appropriate variables were used for the evaluation of nonlinear residuals and Jacobians, a Newton loop was introduced to allow multiple Newton steps.
-Newton method parameters go here.
+\alg{alg:nl_cobra} contains the current algorithmic implementation of the non-linear semi-implicit method.
 
+\begin{algo}[H]
+\caption{Nonlinear \cobra solution algorithm.}
+\label{alg:nl_cobra}
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \State $t^{n+1} : = t^{n} + \Delta t$
+    \State $k = 0$
+    \State $\vec{x}^{n+1,0} = \vec{x}^{n}$
+	\Calculate $\vec{F}(\vec{x}^{n+1,0})$ and $\vec{J}(\vec{x}^{n+1,0})$
+    \Loop \; Newton Loop
+		\Calculate $\vec{\delta x} = - \vec{J}^{-1}\cdot\vec{F}$
+		$j = 0$		
+		\Calculate $\vec{x}^{n+1,k+1,j}$
+		\Calculate $\vec{F}(\vec{x}^{n+1,k+1,j})$
+		\Loop \; Globalization Loop
+			\If{ Globalization loop termination criteria not met}
+				\Calculate $\lambda_j$
+				\Calculate $\vec{x}^{n+1,k+1,j+1} = \vec{x}^{n+1,k} + \lambda \vec{\delta x}$
+				\Calculate $\vec{F}(\vec{x}^{n+1,k+1,j+1})$
+				\State $j = j + 1$			
+			\Else
+				\Calculate $\vec{J}(\vec{x}^{n+1,k+1,j})$
+				\Exit Globalization Loop
+			\EndIf
+		\EndLoop			
+		\If{ Newton loop termination criteria met}
+			\Exit Newton Loop
+		\EndIf
+	\EndLoop
+	\State $n = n + 1$
+\EndLoop
+\end{algorithmic}
+\end{algo}
+
+In \alg{alg:nl_cobra}, there are three steps that require discussion.
+First is the Newton Loop termination criteria.
+There are three Newton loop termination mechanisms, listed below.
+
+\begin{itemize}
+\item{Maximum number of Newton iterates, $k_{\,\text{MAX}}$, exceeded.}
+\item{The L-inf norm of the scaled residual, $||\vec{S}^{-1}\vec{F}||_{\infty}$, is below a specified threshold, $F_{\text{ABS}}$.}
+\item{The L-inf norm of the scaled update, $||\vec{D}^{-1}\vec{\delta x}||_{\infty}$, is below a specified threshold, $\delta_{\text{ABS}}$.}
+\end{itemize}
+
+Current values for $k_{\,\text{MAX}}$, $F_{\text{ABS}}$ and $\delta_{\text{ABS}}$ are $35$, $1.0$E$-05$, and $1.0$E$-10$, respectively.
+The scaling vectors, $\vec{S}$ and $\vec{D}$, will be addressed later.
+
+The globalization strategy implemented in \cobra is a linesearch algorithm \cite{Dennis1996}.
+The two globalization loop termination criteria are listed below.
+\begin{itemize}
+\item{$\frac{1}{2}||\vec{F}^{k+1, j}||_{2} < \frac{1}{2}||\vec{F}^{k}||_{2} - \alpha ||\vec{F}^{k}||_{2}$ }
+\item{$||\lambda_{j+1} \vec{\delta x}||_{\infty} < \delta_{\text{abs}}$}
+\end{itemize}
+
+If neither of the loop termination criteria are met, then the a step-length parameter, $\lambda_j$ is calculated.
+On the first pass through the globalization loop within a given Newton step, a quadratic backtracking model is adopted.
+On subsequent passes, a cubic-backtracking model is used.
+ 
 Since vector forms of the nonlinear residual and the independent parameters are used in determining nonlinear convergence and in the globalization algorithm, they needed to be easily manipulated.
 A subroutine was written to gather the discrete variables of the independent parameters into a single vector.
 Additional source code modifications were necessary to construct and gather the components of the nonlinear residual.
-
-
-A linesearch algorithm was implemented in \cobra \cite{Dennis1996}.
-The algorithm is a cubic backtracking method.
-Algorithm of backtracking method goes here.
-Talk about invariance with respect to scaling.
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -57,15 +112,13 @@ In order to determine the degree to which a state vector, $\vec{x}$, satisfies \
 However, due to the formulation of the residual vector, the magnitudes of residuals can vary by orders of magnitude.
 For a given grid location, the nonlinear residuals for mass and energy as formulated in section \ref{subsect:semi_implicit} will have six components.
 These residuals will have the units of the conserved quantities for their corresponding PDEs.
-Table \ref{tab:scaling_units_scales} shows some typical values of these conserved quantities during normal operations of typical PWR simulation.
+Table \ref{tab:scaling_units_scales} shows the range of parameters possible within \cobra.
 
 \begin{table}[ht]
 \centering
-\begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
-\multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
-                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\text{lb}_{\text{m}}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
-Single Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
-Flashing                 &  200&0                       & 1198&3                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
+\begin{tabular}{@{}c@{}} \toprule
+Scale \\
+\bottomrule  
 \end{tabular}
 \caption{Typical scale for reactor simulations}
 \label{tab:scaling_units_scales}
@@ -99,7 +152,39 @@ In this equation there are three physically meaningful quantities: the temporal 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Temporal Convergence}
 \label{sect:temporal_convergence}
-The question of temporal convergence is linked not only to the particular method used for approximating the temporal derivatives, but also to the degree to which the nonlinearities are resolved over a time-step. 
+As stated in \sect{subsect:temporal_approx}, if the nonlinearities of the discrete governing equations are not resolved, then temporal convergence can be degraded.
+This degradation can produce results that qualitatively appear to be converged.
+This apparent convergence, or time-step size insensitivity, is a result not of reaching a time-step size insensitive solution, but, instead, is indicative of highly degrade order of accuracy due to the failure to resolve the nonlinearities at each time-step.
+With the first-order methods outlined in \sect{sect:solution_techniques}, this degradation can result in methods that are approximately zeroth order \cite{Knoll2001}.
+To determine if the validity of the transient solution is both time-step size insensitive and an accurate solution to the nonlinear problem, a quantifiable metric is sought.
+
+The scaled residual from \sect{sect:operator_scaling} provides a well-scaled metric for instantaneous nonlinear convergence at any given time in the simulation.
+The natural extension of this metric would be a temporal integral of the global nonlinear residual, \eqref{eqn:trans_res_simple}.
+
+\begin{equation}
+\label{eqn:trans_res_simple}
+\vec{R} = \int_{t^{0}}^{t^{N}} ||\vec{F}(\tau)||_2 \,\mathrm{d} \tau
+\end{equation}
+
+Given the bounds of the scaled residual, \eqref{eqn:scaled_residual}, it was considered desirable to have a similarly scaled transient residual.
+The transient residual in \eqref{eqn:trans_res_simple} posses a dependence upon the number of time-steps taken.
+To remove this dependence, a temporal average was instead investigated, \eqref{eqn:trans_res_ave}.
+
+\begin{equation}
+\label{eqn:trans_res_ave}
+\vec{R} = \frac{\int_{t^{0}}^{t^{N}} ||\vec{F}(\tau)||_2 \,\mathrm{d} \tau}{t^{N} - t^{0}}
+\end{equation}
+
+This metric posses the desirable bound stated above.
+Other weighted temporal integrals were considered, such as a simple moment about $t^{0}$, \eqref{eqn:trans_res_mom}.
+However, this moment has the the theoretical disadvantage of weighting the latter portion of the transient.
+
+\begin{equation}
+\label{eqn:trans_res_mom}
+\vec{R} = \frac{\int_{t^{0}}^{t^{N}} \,\tau\,||\vec{F}(\tau)||_2 \,\mathrm{d} \tau}{\int_{t^{0}}^{t^{N}} \,\tau \,\mathrm{d} \tau}
+\end{equation}
+
+For the preliminary work, the \eqref{eqn:trans_res_ave} and \eqref{eqn:trans_res_mom} were selected for evaluation.
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -151,7 +236,7 @@ Table \ref{tab:ic} provides the initial conditions for the two problems.
 The pressure, enthalpy, and volume-fractions for the different fields allows for a complete description of the continuity variables.
 The initial velocities are set to zero.
 
-\begin{table}[h!t]
+\begin{table}[ht]
 \centering
 \begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
 \multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
@@ -166,7 +251,7 @@ Flashing                 &  200&0                       & 1198&3                
 Each of the problems has a specified pressure-enthalpy boundary condition at the top of the stand pipe and a flow-enthalpy boundary condition at the inlet of the domain.
 Table \ref{tab:bc_pe} contains the pressure, enthalpy, and composition of the pressure-enthalpy reservoir. 
 
-\begin{table}[h!t]
+\begin{table}[ht]
 \centering
 \begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
 \multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
@@ -181,7 +266,7 @@ Flashing                 &  200&0                       & 1198&3                
 The flow-enthalpy boundary condition describes the thermodynamic state of the inflowing fluid and the rate at its flowrate.
 Table \ref{tab:bc_fe} describes the inlet boundary condition for the two problems.
 
-\begin{table}[h!t]
+\begin{table}[ht]
 \centering
 \begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
 \multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
@@ -221,17 +306,46 @@ The temporal convergence metric was evaluated during post processing.
 \label{subsect:results}
 First, the temporal convergence metrics will be discussed.
 
-\begin{table}
+\begin{table}[h!t]
 \centering
-\begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
-\multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
-                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\text{lb}_{\text{m}}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
-Single Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
-Flashing                 & 1000&0                       &  542&6                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
+\begin{tabular}{@{}l r@{.}l r@{.}l r@{.}l r@{.}l @{}}
+\toprule
+& \multicolumn{4}{c}{Single Phase} & \multicolumn{4}{c}{Flashing}  \\
+$\Delta t_{\text{MAX}}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlinear} & \multicolumn{2}{c}{Legacy}& \multicolumn{2}{c}{Nonlinear}  \\
+\midrule
+1.0    & 2&03E-2 & 2&03E-2 & \multicolumn{2}{c}{-} & 2&03E-2 \\
+1.0E-1 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
+1.0E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
+1.0E-3 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
+1.0E-4 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
+1.0E-5 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
+\bottomrule  
 \end{tabular}
-\caption{Temporal convergence metrics}
-\label{tab:temporal_convergence}
+\caption{Temporal convergence metric -- average}
+\label{tab:criteria_ave}
 \end{table}
+
+
+\begin{table}[h!t]
+\centering
+\begin{tabular}{@{}l r@{.}l r@{.}l r@{.}l r@{.}l @{}}
+\toprule
+& \multicolumn{4}{c}{Single Phase} & \multicolumn{4}{c}{Flashing}  \\
+$\Delta t_{\text{MAX}}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlinear} & \multicolumn{2}{c}{Legacy}& \multicolumn{2}{c}{Nonlinear}  \\
+\midrule
+1.0    & 2&03E-2 & 2&03E-2 & \multicolumn{2}{c}{-} & 2&03E-2 \\
+1.0E-1 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
+1.0E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
+1.0E-3 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
+1.0E-4 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
+1.0E-5 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
+\bottomrule  
+\end{tabular}
+\caption{Temporal convergence metric -- moment}
+\label{tab:criteria_moment}
+\end{table}
+
+
 
 
 \section{Review}

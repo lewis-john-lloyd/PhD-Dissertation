@@ -44,15 +44,39 @@ Convergence criteria, max iteration count, and globalization parameters should b
 
 \section{Time Line}
 \label{sect:proposal_time_line}
-Here is where a proposed time line for the above work will be presented.
+The proposed work will be done in blocks.
+Where possible, objectives will be pursued in parallel.
+Initial work will be implement the software changes to necessary address issues with the current scaling implementation and add internal calculation of the temporal convergence criteria.
+Parallel to those task, the mathematical formulation of the domain decomposition will be developed.
+After the analytic framework for the domain decomposition has been, work on software changes necessary to isolate spatial components will begin.
+During that time testing of the temporal convergence criteria and the scaling factor will be completed.
+Upon completion of the domain decomposition programming, testing of the domain decomposition algorithm will begin.
+The final performance testing and parametric studies will be carried out in parallel.
+\tab{tab:time_line} contains a proposed time line for this work.
 
-\fig{fig:time_line}
-
-\begin{figure}[ht]
-\caption{Proposed test matrix.}
-\label{fig:time_line}
-\begin{center}
-Picture goes here.
-\end{center}
-\end{figure}
-
+\newcommand{\cc}{\cellcolor{black}}
+\begin{table}[h]
+\singlespace
+\centering
+\begin{tabular}{@{}l l c c c c  c c c c @{}} \toprule
+Task & \multicolumn{1}{r}{Month} & Jan & Feb & Mar & Apr & May & Jun & Jul & Aug\\
+\midrule
+\multicolumn{10}{l}{Scaling}  \\
+& Implementation & \cc & \cc &     &     &     &     &     &     \\
+& Testing        &     & \cc & \cc &     &     &     &     &     \\
+\multicolumn{10}{l}{Domain Decomposition} \\
+& Development    & \cc & \cc &     &     &     &     &     &     \\
+& Implementation &     & \cc & \cc & \cc &     &     &     &     \\
+& Testing        &     &     &     & \cc & \cc &     &     &     \\
+\multicolumn{10}{l}{Temporal Convergence Criteria}\\
+& Implementation & \cc & \cc &     &     &     &     &     &     \\
+& Testing        &     &     & \cc & \cc &     &     &     &     \\
+\multicolumn{10}{l}{Performance Evaluation} \\
+& Testing        &     &     &     &     & \cc & \cc & \cc &     \\
+\multicolumn{10}{l}{Parametric Studies} \\
+& Testing        &     &     &     &     &     & \cc & \cc &     \\
+\bottomrule  
+\end{tabular}
+\caption{Proposed research time line}
+\label{tab:time_line}
+\end{table}
