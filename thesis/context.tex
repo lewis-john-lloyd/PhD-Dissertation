@@ -1054,14 +1054,7 @@ In stage three, the nonlinear relation between the conserved quantities and the 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Domain Coupling}
 \label{sect:code_coupling}
-There are several options to couple the specialized capabilities of system analysis codes to the detailed physics of a sub-channel analysis code.
-The domain decomposition will take place utilizing a generic semi/-implicit coupling method developed by \citet{Weaver2002}.
-The first coupling method proposed was explicit coupling.
-This method involved passing information between two different codes at the beginning of a time-step.
-
-The desire to overcome the instabilities outlined in the previous section, a semi-implicit coupling method was proposed that made use of Parallel Virtual Machine (PVM).
-PVM is a piece of software developed for the purpose of passing information between programs running in parallel \cite{Geist1994}. 
-The ability to pass information between software is key to the semi-implicit stuff. 
+Several efforts have been made to combine the abilities of system safety codes and subchannel safety codes.
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1069,13 +1062,17 @@ The ability to pass information between software is key to the semi-implicit stu
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-s\section{Algorithmic Concerns}
+\section{Algorithmic Concerns}
 \label{sect:algorithmic_concerns}
-There are several algorithmic concerns in safety analysis methods that have yet to addressed.
+The methods outlined in \sect{sect:solution_techniques} have algorithmic issues that need to be addressed.
+Given that the governing conservation laws in use in thermal-hydraulic analysis are those of two-phase flow, there is no systematic and widely agreed upon way of dealing with phase appearance or disappearance.
+Additionally, given that each of the methods above utilizes Newton's method for at least one Newton step, the globalization of the local Newton method in the context of safety analysis codes is not addressed.
+While each algorithmic implementation of the various methods addresses these issues out of necessity, there is no systematic, or optimal, way of doing so. 
 
 \subsection{Phase Appearance and Disappearance}
 \label{subsect:phase_change}
 The topic of how to address phase, or field, appearance or disappearance within two-phase analysis codes has been ignored to this point.
+Of the 
 
 \subsection{Time Step Failure}
 \label{subsect:time_step_failure}
