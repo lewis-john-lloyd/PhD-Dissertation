@@ -48,7 +48,6 @@ The edges of the continuity volumes align with the center of the momentum volume
 The total number of continuity volumes is $n$ while the number of momentum volumes is $n+1$. 
 
 \begin{figure}[ht]
-\caption{A staggered mesh.}
 \label{fig:staggered_mesh}
 \begin{center}
 \begin{tikzpicture}
@@ -59,6 +58,7 @@ The total number of continuity volumes is $n$ while the number of momentum volum
 \draw[dashed] (-3,5) -- (4,5);
 \end{tikzpicture}
 \end{center}
+\caption{A staggered mesh.}
 \end{figure}
 
 The computational modeling framework involve two primary components: sections and channels.
@@ -359,7 +359,6 @@ Variables are indexed by the mesh on which their conservation equations are defi
 For example, the velocity $u_j$ would be spatially located at center of the momentum volume $j$ and at the boundary between the continuity volumes $j$ and $j-1$.
 
 \begin{figure}[ht]
-\caption{Illustration of indexing scheme.}
 \label{fig:vertical_pipe_with_cells}
 \begin{center}
 \begin{tikzpicture}
@@ -377,6 +376,7 @@ For example, the velocity $u_j$ would be spatially located at center of the mome
 \node[anchor=north] at (1, -2) {Momentum};
 \end{tikzpicture}
 \end{center}
+\caption{Illustration of indexing scheme.}
 \end{figure}
 
 Recalling the staggered grid from \sect{sect:topology}, the six scalar conservation laws, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:con_energy_liq}, are each integrated over the continuity volumes.
@@ -384,21 +384,21 @@ The assumption in these integrals is that the value of the conserved quantities 
 \fig{fig:constant_value} shows a graphical representation of this idea for a generic function $f(x)$ over several spatial continuity meshes.
 
 \begin{figure}[ht]
-\caption{Constant variable values within computational volumes.}
 \label{fig:constant_value}
 \begin{center}
 \includegraphics[width=0.5\textwidth]{images/constant_value.eps}
 \end{center}
+\caption{Constant variable values within computational volumes.}
 \end{figure}
 
 For illustrative purposes, the \eqref{eqn:conservation_of_liq} will be integrated over a given volume, $j$, as shown in \fig{fig:single_volume}.
 
 \begin{figure}[h!t]
-\caption{Single volume over which integration is done.}
 \label{fig:single_volume}
 \begin{center}
 \includegraphics[width=0.5\textwidth]{images/single_volume.eps}
 \end{center}
+\caption{Single volume over which integration is done.}
 \end{figure}
 
 Within a given channel, $k$, a given continuity volume has a constant cross-sectional area, $A_{c_{j}}$, and a length of $\Delta x_{j}$.
@@ -1054,7 +1054,9 @@ In stage three, the nonlinear relation between the conserved quantities and the 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Domain Coupling}
 \label{sect:code_coupling}
-Several efforts have been made to combine the abilities of system safety codes and subchannel safety codes.
+Here is where I will talk about the semi-implicit coupling algorithm developed by \citet{Weaver2002}.
+In addition, I will talk about the nonlinear preconditioning for fully-implicit CFD codes.
+Mention should also be made regarding the disadvantages of explicit coupling.
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1102,3 +1104,9 @@ The objective of this research is two-fold: the design, implementation, and eval
 The method should be able to quantify the nonlinearity of spatial subdomains within a given problem.
 Isolation of those subdomains where nonlinearities are high will be achieved by using a variant of the code coupling algorithm discussed in \sect{sect:code_coupling}.
 The temporal convergence criteria should be capable of quantifying the degree to which a transient solution is time-step size insensitive.
+Since both objectives depend upon the scaling of the nonlinear residuals, a novel operator based scaling will be utilized to obtain meaningful convergence thresholds.
+
+This work is unique in several ways.
+First, it attempts to develop a quantifiable metric for the time-step size insensitivity of the solution.
+The scaling of the nonlinear residual is typically done in an arbitrary fashion, this work will investigate a scaling factor that is intrinsically linked to the physics of interest.
+The use of domain decomposition for the purpose of nonlinear-refinement has not been investigated in the context of thermal-hydraulic safety methods. 

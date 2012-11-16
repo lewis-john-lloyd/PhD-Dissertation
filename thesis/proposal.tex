@@ -14,33 +14,37 @@ Parametric studies will then be conducted to determine the impact of nonlinear c
 \label{sect:proposal_scaling}
 The current implementation of the physics based scaling method outlined in \sect{sect:operator_scaling} has several issues that need to be addressed.
 Another scaling question that needs to be addressed is the proper scaling for the newton update.
+Additionally, the interplay between the globalization termination criteria and update scaling should be investigated. 
 
 \section{Domain Decomposition}
 \label{sect:domain_coupling}
 The first step will be to implement a variation of the semi-implicit domain coupling algorithm presented in \sect{sect:code_coupling}.
 The details of the derivation will need to be reworked to account for the different flow variables.
-
 Upon completion of the implementation, a rigorous testing of the coupling method will be conducted.
 This testing will be similar to that conducted by \citet{Weaver2002}.
-
-\section{Temporal-Convergence Testing and Bench-marking}
-\label{sect:proposal_temporal_testing}
-To evaluate the domain decomposition capabilities, a geometric test problem will need to be developed.
+Details of a testing plan should be discussed.
+To evaluate the domain decomposition capabilities, a test problem will need to be developed.
 This problem should have a singular characteristic: multiple geometric components.
 The problem will be a single phase run
 The test problem will be run in legacy mode to obtain a standard solution.
 
+\section{Temporal-Convergence Testing and Bench-marking}
+\label{sect:proposal_temporal_testing}
+Several problem with highly nonlinear physics should be constructed to test the temporal convergence criteria.
+Legacy temporal convergence studies should be compared to nonlinear-spatial refinement results.
+
 \section{Performance Evaluation}
 \label{sect:proposal_performance_evaluation}
-Upon completion 
+Theoretical operation counts should be calculated for legacy mode and nonlinear mode.
+Run time calculations for various problems should be calculated.
 
 \section{Parametric Studies}
 \label{sect:proposal_parametric_studies}
-Given the wide range of parameters
+Convergence criteria, max iteration count, and globalization parameters should be varied for set number of problem to determine performance.
 
 \section{Time Line}
 \label{sect:proposal_time_line}
-
+Here is where a proposed time line for the above work will be presented.
 
 \fig{fig:time_line}
 

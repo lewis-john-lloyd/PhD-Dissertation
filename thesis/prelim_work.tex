@@ -12,8 +12,37 @@ Several initial
 \section{Nonlinear \cobra}
 \label{sect:nl_cobra}
 The first stage of preliminary work was to modify the \cobra software.
-\cobra 
-When it is necessary to distinguish between the single-shot linearization algorithm of \cobra and the iterative nonlinear algorithm of\cobra, the former shall be referred to as legacy mode and the latter as nonlinear mode.
+The \cobra software as obtained was a single-shot linearization version of the semi-implicit method.
+In order to evaluate the spatially-selective nonlinear refinement idea, \cobra needed to be able to solve nonlinear problems.
+\cobra needed to be converted to a fully iterative nonlinear solver.
+When it is necessary to distinguish between the single-shot linearization algorithmic implementation of \cobra and the iterative nonlinear \cobra, the former shall be referred to as legacy mode and the latter as nonlinear mode.
+As such, the objectives of this work were to modify the software to be able do the following:
+
+\begin{itemize}
+\item{Create a data framework for constructing vector quantities such as $\vec{x}^{k}$ and $\vec{F}$.}
+\item{Correctly evaluate $\vec{F}(\vec{x}^{k})$ and $\vec{J}(x^{k})$.}
+\item{Implement a globalization strategy for Newton's method.}
+\end{itemize}
+
+\cobra utilized a single-shot linearization newton method for its solution technique.
+As a result of that design decision, certain memory savings techniques were employed in its construction that precluded the idea of more than one Newton step.
+In particular, there was an implicit assumption within the software that the current Newton iterate, $\vec{x}^{k}$, was the old-time variable $\vec{x}^{n}$.
+This design decision required an an evaluation of all routine involved with the evaluation of components of both the nonlinear residual and the Jacobian.
+In addition, the assumption that $\vec{x}^{k} = \vec{x}^{n}$ required identification of places in the source code where there were implicit cancellation of terms.
+Where appropriate, the software was changed to reflect the distinction between old-time and iterate variables and to introduce terms that had been assumed to be equal to zero.
+
+Once the appropriate variables were used for the evaluation of nonlinear residuals and Jacobians, a Newton loop was introduced to allow multiple Newton steps.
+Newton method parameters go here.
+
+Since vector forms of the nonlinear residual and the independent parameters are used in determining nonlinear convergence and in the globalization algorithm, they needed to be easily manipulated.
+A subroutine was written to gather the discrete variables of the independent parameters into a single vector.
+Additional source code modifications were necessary to construct and gather the components of the nonlinear residual.
+
+
+A linesearch algorithm was implemented in \cobra \cite{Dennis1996}.
+The algorithm is a cubic backtracking method.
+Algorithm of backtracking method goes here.
+Talk about invariance with respect to scaling.
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -22,23 +51,11 @@ When it is necessary to distinguish between the single-shot linearization algori
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Temporal Convergence}
-\label{sect:temporal_convergence}
-The question of temporal convergence is linked not only to the particular method used for approximating the temporal derivatives, but also to the degree to which the nonlinearities are resolved over a time-step. 
-
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 \section{Operator Based Scaling}
 \label{sect:operator_scaling}
 In order to determine the degree to which a state vector, $\vec{x}$, satisfies \eqref{eqn:conservation_equations}, the use of the nonlinear residual, $\vec{F}$, is required.
 However, due to the formulation of the residual vector, the magnitudes of residuals can vary by orders of magnitude.
-For a given grid location, the nonlinear residuals for mass and energy, \eqref{eqn:cont_residual}, as formulated in section \ref{subsect:semi_implicit} will have six components.
+For a given grid location, the nonlinear residuals for mass and energy as formulated in section \ref{subsect:semi_implicit} will have six components.
 These residuals will have the units of the conserved quantities for their corresponding PDEs.
 Table \ref{tab:scaling_units_scales} shows some typical values of these conserved quantities during normal operations of typical PWR simulation.
 
@@ -71,7 +88,19 @@ Assume that the entire channel single phase and in thermodynamics equilibrium su
 F = \left(\alpha_k \rho_k\right)^{n+1} - \left( \alpha_k \rho_k \right)^n - \frac{\Delta t}{V} \left( \frac{\alpha_k \rho_k }{<\alpha_k \rho_k>^n} V^{n+1}_{j-1} \right)
 \end{equation}
 
-In this equation there are three physically meaningful quantities: the temporal difference, the mass flowing into the cell, and mass flowing out of the volume.
+In this equation there are three physically meaningful quantities: the temporal difference, the mass flowing into the cell, and mass flowing out of the volume. 
+
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Temporal Convergence}
+\label{sect:temporal_convergence}
+The question of temporal convergence is linked not only to the particular method used for approximating the temporal derivatives, but also to the degree to which the nonlinearities are resolved over a time-step. 
+
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -84,7 +113,8 @@ In this equation there are three physically meaningful quantities: the temporal 
 \label{sect:numerical_experiments}
 
 Two test problems were constructed to examine the impact of nonlinear convergence on temporal convergence.
-The primary purpose of the problems studied is to determine the impact of resolving the nonlinearities at each time step for a given time-step size on the number of time-step size refinements necessary to reach a temporally converged solution.
+The primary objective of these tests is to determine the impact of resolving the nonlinearities at each time step for a given time-step maximum time-step size on the number of time-step size refinements necessary to reach a temporally converged solution.
+A secondary objective is an evaluation of the temporal convergence metric.
 
 \subsection{Geometry}
 \label{subsect:experimental_geometry}
@@ -95,8 +125,8 @@ Each continuity cell has a cross-sectional area of 4 [in$^2$] and a hydraulic di
 The red block at the top of the channel represents a boundary cell where the pressure and enthalpy are specified.
 This boundary represents an infinite reservoir filled with a fluid at a specified thermodynamic state.
 The red triangle represents a specified flow at the bottom edge of the first continuity cell. 
+
 \begin{figure}[h!t]
-\caption{Geometry for test problems.}
 \label{fig:exp_geometry}
 \begin{center}
 \begin{tikzpicture}
@@ -107,6 +137,7 @@ The red triangle represents a specified flow at the bottom edge of the first con
 \draw[->] (2,0) -- (3, 0) node[anchor=west] {$\perp y$};
 \end{tikzpicture}
 \end{center}
+\caption{Geometry for test problems.}
 \end{figure}
 
 \subsection{Initial and Boundary Conditions}
@@ -180,12 +211,27 @@ The \cobra input deck for both problems can be found in \app{app:input_decks}.
 
 \subsection{Procedure}
 \label{subsect:experiments_procedure}
-To determine the effect of nonlinear convergence upon the time-step size sensitivity of the solution, each problem was run for at increasingly small maximum $\Delta t$.
-The material CFL limit of semi-implicit method acted as a limiter on the time-step size selected.
-If the acceptable time-step size was below
+The two problems were set up such that the maximum allowable time-step could be varied.
+Each problem was run with the following maximum allowable time-steps: 1 [s], 0.1 [s], 0.01 [s], 0.001 [s], 0.0001 [s], and 0.00001 [s]. 
+For the legacy runs, the nonlinear residual was evaluated with the result of a single newton-step.
+For the nonlinear runs, the nonlinear residuals were evaluated at the end of the newton-loop.
+The temporal convergence metric was evaluated during post processing.
 
 \subsection{Results}
 \label{subsect:results}
+First, the temporal convergence metrics will be discussed.
+
+\begin{table}
+\centering
+\begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
+\multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
+                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\text{lb}_{\text{m}}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
+Single Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
+Flashing                 & 1000&0                       &  542&6                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
+\end{tabular}
+\caption{Temporal convergence metrics}
+\label{tab:temporal_convergence}
+\end{table}
 
 
 \section{Review}
