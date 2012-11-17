@@ -9,13 +9,12 @@ Several steps are necessary to accomplish the objectives of this research.
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Nonlinear \cobra}
+\section{Nonlinear \cobra{}}
 \label{sect:nl_cobra}
-The first stage of preliminary work was to modify the \cobra software.
-The \cobra software as obtained was a single-shot linearization version of the semi-implicit method.
-In order to evaluate the spatially-selective nonlinear refinement idea, \cobra needed to be able to solve nonlinear problems.
-\cobra needed to be converted to a fully iterative nonlinear solver.
-When it is necessary to distinguish between the single-shot linearization algorithmic implementation of \cobra and the iterative nonlinear \cobra, the former shall be referred to as legacy mode and the latter as nonlinear mode.
+The first stage of preliminary work was to modify the \cobra{} software.
+The \cobra{} software as obtained was a single-shot linearization version of the semi-implicit method.
+In order to evaluate the spatially-selective nonlinear refinement, \cobra{} needed to be converted to a fully iterative nonlinear solver.
+When it is necessary to distinguish between the single-shot linearization algorithmic implementation of \cobra{} and the iterative nonlinear \cobra{}, the former shall be referred to as legacy mode and the latter as nonlinear mode.
 As such, the objectives of this work were to modify the software to be able do the following:
 
 \begin{itemize}
@@ -24,18 +23,18 @@ As such, the objectives of this work were to modify the software to be able do t
 \item{Implement a globalization strategy for Newton's method.}
 \end{itemize}
 
-\cobra utilized a single-shot linearization newton method for its solution technique.
-As a result of that design decision, certain memory savings techniques were employed in its construction that precluded the idea of more than one Newton step.
+\cobra{} utilized a single-shot linearization Newton method for its solution technique.
+As a result of that design decision, certain memory saving techniques were employed in its construction that precluded the idea of more than one Newton step.
 In particular, there was an implicit assumption within the software that the current Newton iterate, $\vec{x}^{n+1, 0}$, was the old-time variable $\vec{x}^{n}$.
-This design decision required an an evaluation of all routine involved with the evaluation of components of both the nonlinear residual and the Jacobian.
+This design decision required an an evaluation of all routines involved with the evaluation of components of both the nonlinear residual and the Jacobian.
 In addition, the assumption that $\vec{x}^{n+1, k} = \vec{x}^{n}$ required identification of places in the source code where there were implicit cancellation of terms.
 Where appropriate, the software was changed to reflect the distinction between old-time and iterate variables and to introduce terms that had been assumed to be equal to zero.
 
 Once the appropriate variables were used for the evaluation of nonlinear residuals and Jacobians, a Newton loop was introduced to allow multiple Newton steps.
-\alg{alg:nl_cobra} contains the current algorithmic implementation of the non-linear semi-implicit method.
+\alg{alg:nl_cobra} contains the current algorithmic implementation of the nonlinear semi-implicit method.
 
 \begin{algo}[H]
-\caption{Nonlinear \cobra solution algorithm.}
+\caption{Nonlinear \cobra{} solution algorithm.}
 \label{alg:nl_cobra}
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
@@ -75,21 +74,22 @@ In \alg{alg:nl_cobra}, there are three steps that require discussion.
 First is the Newton Loop termination criteria.
 There are three Newton loop termination mechanisms, listed below.
 
-\begin{itemize}
+\begin{enumerate}
 \item{Maximum number of Newton iterates, $k_{\,\text{MAX}}$, exceeded.}
 \item{The L-inf norm of the scaled residual, $||\vec{S}^{-1}\vec{F}||_{\infty}$, is below a specified threshold, $F_{\text{ABS}}$.}
 \item{The L-inf norm of the scaled update, $||\vec{D}^{-1}\vec{\delta x}||_{\infty}$, is below a specified threshold, $\delta_{\text{ABS}}$.}
-\end{itemize}
+\end{enumerate}
 
 Current values for $k_{\,\text{MAX}}$, $F_{\text{ABS}}$ and $\delta_{\text{ABS}}$ are $35$, $1.0$E$-05$, and $1.0$E$-10$, respectively.
 The scaling vectors, $\vec{S}$ and $\vec{D}$, will be addressed later.
 
-The globalization strategy implemented in \cobra is a linesearch algorithm \cite{Dennis1996}.
+The globalization strategy implemented in \cobra{} is a linesearch algorithm \cite{Dennis1996}.
 The two globalization loop termination criteria are listed below.
-\begin{itemize}
+
+\begin{enumerate}
 \item{$\frac{1}{2}||\vec{F}^{k+1, j}||_{2} < \frac{1}{2}||\vec{F}^{k}||_{2} - \alpha ||\vec{F}^{k}||_{2}$ }
 \item{$||\lambda_{j+1} \vec{\delta x}||_{\infty} < \delta_{\text{abs}}$}
-\end{itemize}
+\end{enumerate}
 
 If neither of the loop termination criteria are met, then the a step-length parameter, $\lambda_j$ is calculated.
 On the first pass through the globalization loop within a given Newton step, a quadratic backtracking model is adopted.
@@ -106,18 +106,18 @@ Additional source code modifications were necessary to construct and gather the 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Operator Based Scaling}
+\section{Operator-Based Scaling}
 \label{sect:operator_scaling}
 In order to determine the degree to which a state vector, $\vec{x}$, satisfies \eqref{eqn:conservation_equations}, the use of the nonlinear residual, $\vec{F}$, is required.
-However, due to the formulation of the residual vector, the magnitudes of residuals can vary by orders of magnitude.
+However, due to the formulation of the residual vector, their values can vary by orders of magnitude.
 For a given grid location, the nonlinear residuals for mass and energy as formulated in section \ref{subsect:semi_implicit} will have six components.
 These residuals will have the units of the conserved quantities for their corresponding PDEs.
-Table \ref{tab:scaling_units_scales} shows the range of parameters possible within \cobra.
+Table \ref{tab:scaling_units_scales} shows the range of parameters possible within \cobra{}.
 
 \begin{table}[ht]
 \centering
 \begin{tabular}{@{}c@{}} \toprule
-Scale \\
+Scales \\
 \bottomrule  
 \end{tabular}
 \caption{Typical scale for reactor simulations}
@@ -125,7 +125,7 @@ Scale \\
 \end{table}
 
 However, during accident scenarios, the range of these values can dramatically change.
-One of the challenges that has been addressed during this work is coming up with a method for scaling that will provide a meaningful metric for convergence.
+One of the challenges that has been addressed during this work is developing a method for scaling that will provide a meaningful metric for convergence.
 The scaling chosen should have the following characteristics:
 \begin{itemize}
 \item{$S^{-1}_k F(x_k)_i \approx 1$ when $x_k$ is a "poor" solution.}
@@ -143,6 +143,11 @@ F = \left(\alpha_k \rho_k\right)^{n+1} - \left( \alpha_k \rho_k \right)^n - \fra
 
 In this equation there are three physically meaningful quantities: the temporal difference, the mass flowing into the cell, and mass flowing out of the volume. 
 
+\begin{equation}
+\label{eqn:scaled_residual}
+2 + 2 = 4
+\end{equation}
+
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -154,7 +159,7 @@ In this equation there are three physically meaningful quantities: the temporal 
 \label{sect:temporal_convergence}
 As stated in \sect{subsect:temporal_approx}, if the nonlinearities of the discrete governing equations are not resolved, then temporal convergence can be degraded.
 This degradation can produce results that qualitatively appear to be converged.
-This apparent convergence, or time-step size insensitivity, is a result not of reaching a time-step size insensitive solution, but, instead, is indicative of highly degrade order of accuracy due to the failure to resolve the nonlinearities at each time-step.
+This apparent convergence, or time-step size insensitivity, is not a result of reaching a time-step size insensitive solution, but instead is indicative of the degraded order of accuracy due to the failure to resolve the nonlinearities at each time-step.
 With the first-order methods outlined in \sect{sect:solution_techniques}, this degradation can result in methods that are approximately zeroth order \cite{Knoll2001}.
 To determine if the validity of the transient solution is both time-step size insensitive and an accurate solution to the nonlinear problem, a quantifiable metric is sought.
 
@@ -167,7 +172,7 @@ The natural extension of this metric would be a temporal integral of the global 
 \end{equation}
 
 Given the bounds of the scaled residual, \eqref{eqn:scaled_residual}, it was considered desirable to have a similarly scaled transient residual.
-The transient residual in \eqref{eqn:trans_res_simple} posses a dependence upon the number of time-steps taken.
+The transient residual in \eqref{eqn:trans_res_simple} possesses a dependence upon the number of time-steps taken.
 To remove this dependence, a temporal average was instead investigated, \eqref{eqn:trans_res_ave}.
 
 \begin{equation}
@@ -175,7 +180,7 @@ To remove this dependence, a temporal average was instead investigated, \eqref{e
 \vec{R} = \frac{\int_{t^{0}}^{t^{N}} ||\vec{F}(\tau)||_2 \,\mathrm{d} \tau}{t^{N} - t^{0}}
 \end{equation}
 
-This metric posses the desirable bound stated above.
+This metric possesses the desirable bound stated above.
 Other weighted temporal integrals were considered, such as a simple moment about $t^{0}$, \eqref{eqn:trans_res_mom}.
 However, this moment has the the theoretical disadvantage of weighting the latter portion of the transient.
 
@@ -198,17 +203,17 @@ For the preliminary work, the \eqref{eqn:trans_res_ave} and \eqref{eqn:trans_res
 \label{sect:numerical_experiments}
 
 Two test problems were constructed to examine the impact of nonlinear convergence on temporal convergence.
-The primary objective of these tests is to determine the impact of resolving the nonlinearities at each time step for a given time-step maximum time-step size on the number of time-step size refinements necessary to reach a temporally converged solution.
+The primary objective of these tests is to determine the impact of resolving the nonlinearities at each time step for a given maximum time-step size on the number of time-step size refinements necessary to reach a temporally converged solution.
 A secondary objective is an evaluation of the temporal convergence metric.
 
 \subsection{Geometry}
 \label{subsect:experimental_geometry}
-For both of the test problems, the same computational geometry was used; figure \ref{fig:exp_geometry} represents the experimental geometry.
+For both of the test problems, the same computational geometry was used;  \fig{fig:exp_geometry} represents the experimental geometry.
 Each block represents a single continuity cell with a height of 4 [in].
 The total height of the channel is 48 [in].
 Each continuity cell has a cross-sectional area of 4 [in$^2$] and a hydraulic diameter of 4 [in].
 The red block at the top of the channel represents a boundary cell where the pressure and enthalpy are specified.
-This boundary represents an infinite reservoir filled with a fluid at a specified thermodynamic state.
+It represents an infinite reservoir filled with a fluid at a specified thermodynamic state.
 The red triangle represents a specified flow at the bottom edge of the first continuity cell. 
 
 \begin{figure}[h!t]
@@ -263,7 +268,7 @@ Flashing                 &  200&0                       & 1198&3                
 \label{tab:bc_pe}
 \end{table}
 
-The flow-enthalpy boundary condition describes the thermodynamic state of the inflowing fluid and the rate at its flowrate.
+The flow-enthalpy boundary condition describes the thermodynamic state of the inflowing fluid and its flow rate.
 Table \ref{tab:bc_fe} describes the inlet boundary condition for the two problems.
 
 \begin{table}[ht]
@@ -292,7 +297,7 @@ The is a time-dependent function give by \eqref{eqn:bc_time_func_single}.
 \end{equation}
 
 Both problems adjust their initial pressure distribution to account for hydrostatic head, which is not specified on the inlet cards.
-The \cobra input deck for both problems can be found in \app{app:input_decks}.
+The \cobra{} input deck for both problems can be found in \app{app:input_decks}.
 
 \subsection{Procedure}
 \label{subsect:experiments_procedure}
@@ -300,10 +305,13 @@ The two problems were set up such that the maximum allowable time-step could be 
 Each problem was run with the following maximum allowable time-steps: 1 [s], 0.1 [s], 0.01 [s], 0.001 [s], 0.0001 [s], and 0.00001 [s]. 
 For the legacy runs, the nonlinear residual was evaluated with the result of a single newton-step.
 For the nonlinear runs, the nonlinear residuals were evaluated at the end of the newton-loop.
-The temporal convergence metric was evaluated during post processing.
+The temporal convergence metric was evaluated during post-processing.
 
 \subsection{Results}
 \label{subsect:results}
+
+\comment{Yes, a bunch of work required.}
+
 First, the temporal convergence metrics will be discussed.
 
 \begin{table}[h!t]
@@ -351,3 +359,6 @@ $\Delta t_{\text{MAX}}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlin
 \section{Review}
 \label{sect:review}
 
+\comment{
+Obviously in some serious need of work.
+I should talk about the findings of the work.}

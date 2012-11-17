@@ -12,9 +12,14 @@ Parametric studies will then be conducted to determine the impact of nonlinear c
 
 \section{Scaling Evaluation}
 \label{sect:proposal_scaling}
-The current implementation of the physics based scaling method outlined in \sect{sect:operator_scaling} has several issues that need to be addressed.
-Another scaling question that needs to be addressed is the proper scaling for the newton update.
-Additionally, the interplay between the globalization termination criteria and update scaling should be investigated. 
+The current implementation of the operator-based scaling method outlined in \sect{sect:operator_scaling} has several issues that need to be addressed.
+\comment{Here is where I will address the issues from the prelim work section.}
+
+Another scaling question that needs to be addressed is the proper scaling for the Newton update.
+\comment{More details required.}
+
+Additionally, the interplay between the globalization termination criteria and the update scaling should be investigated. 
+\comment{More details required.}
 
 \section{Domain Decomposition}
 \label{sect:domain_coupling}
@@ -25,12 +30,14 @@ This testing will be similar to that conducted by \citet{Weaver2002}.
 Details of a testing plan should be discussed.
 To evaluate the domain decomposition capabilities, a test problem will need to be developed.
 This problem should have a singular characteristic: multiple geometric components.
-The problem will be a single phase run
+The problem will be a single-phase run.
 The test problem will be run in legacy mode to obtain a standard solution.
+\comment{More details.}
+
 
 \section{Temporal-Convergence Testing and Bench-marking}
 \label{sect:proposal_temporal_testing}
-Several problem with highly nonlinear physics should be constructed to test the temporal convergence criteria.
+Several problems with highly nonlinear physics should be constructed to test the temporal convergence criteria.
 Legacy temporal convergence studies should be compared to nonlinear-spatial refinement results.
 
 \section{Performance Evaluation}
@@ -40,16 +47,16 @@ Run time calculations for various problems should be calculated.
 
 \section{Parametric Studies}
 \label{sect:proposal_parametric_studies}
-Convergence criteria, max iteration count, and globalization parameters should be varied for set number of problem to determine performance.
+Convergence criteria, max iteration count, and globalization parameters should be varied for a set number of problems to determine performance.
 
 \section{Time Line}
 \label{sect:proposal_time_line}
 The proposed work will be done in blocks.
 Where possible, objectives will be pursued in parallel.
-Initial work will be implement the software changes to necessary address issues with the current scaling implementation and add internal calculation of the temporal convergence criteria.
-Parallel to those task, the mathematical formulation of the domain decomposition will be developed.
-After the analytic framework for the domain decomposition has been, work on software changes necessary to isolate spatial components will begin.
-During that time testing of the temporal convergence criteria and the scaling factor will be completed.
+Initial work will be to implement the software changes necessary to address issues with the current scaling implementation and add internal calculation of the temporal convergence criteria.
+Parallel to those tasks, the mathematical formulation of the domain decomposition will be developed.
+After the analytic framework for the domain decomposition has been developed, work on software changes necessary to isolate spatial components will begin.
+During that time, testing of the temporal convergence criteria and the scaling factor will be completed.
 Upon completion of the domain decomposition programming, testing of the domain decomposition algorithm will begin.
 The final performance testing and parametric studies will be carried out in parallel.
 \tab{tab:time_line} contains a proposed time line for this work.

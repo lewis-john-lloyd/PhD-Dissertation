@@ -315,7 +315,6 @@
 \newcommand{\l@subparagraph  }{\@dottedtocline{5}{12.0em}{6.0em}}
 \newcommand{\l@figure}{\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
 \newcommand{\l@table }{\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
-\newcommand{\l@algo  }{\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
 
 %=============================================================================
 % TABLE OF CONTENTS; LIST OF FIGURES; LIST OF TABLES
@@ -336,9 +335,7 @@
 %
 %=============================================================================
 \newcommand{\tableofcontents}{\@tableof{Table of Contents }{         }{tocpage}{toc}{                                                          }}
-\newcommand{\listoffigures  }{\@tableof{List of Figures   }{Figure   }{lofpage}{lof}{\protect\addcontentsline{toc}{chapter}{List of Figures}   }}
 \newcommand{\listoftables   }{\@tableof{List of Tables    }{Table    }{lotpage}{lot}{\protect\addcontentsline{toc}{chapter}{List of Tables}    }}
-\newcommand{\listofalgorithm}{\@tableof{List of Algorithms}{Algorithm}{loapage}{loa}{\protect\addcontentsline{toc}{chapter}{List of Algorithms}}}
 
 \newcommand{\@tableof}[5]{{ % limit scope of following declarations!!
   \@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn\fi
@@ -554,8 +551,9 @@
 %=============================================================================
 % FIGURE
 %=============================================================================
+\newcommand{\listoffigures}{\@tableof{List of Figures}{Figure}{lofpage}{lof}{\protect\addcontentsline{toc}{chapter}{List of Figures}}}
 \newcounter{figure}[chapter]
-\def\thefigure{\thechapter.\@arabic\c@figure}
+%\def\thefigure{\thechapter.\@arabic\c@figure}
 \def\fps@figure{tbp}
 \def\ftype@figure{1}
 \def\ext@figure{lof}
@@ -569,7 +567,7 @@
 % TABLE
 %=============================================================================
 \newcounter{table}[chapter]
-\def\thetable{\thechapter.\@arabic\c@table}
+\renewcommand{\thetable}{\thechapter.\@arabic\c@table}
 \def\fps@table{tbp}
 \def\ftype@table{2}
 \def\ext@table{lot}
@@ -583,7 +581,9 @@
 % ALGORITHM
 %=============================================================================
 \newcounter{algo}[chapter]
-\def\thealgo{\thechapter.\@arabic\c@algo}
+\newcommand{\l@algo  }{\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
+\newcommand{\listofalgorithm}{\@tableof{List of Algorithms}{Algorithm}{loapage}{loa}{\protect\addcontentsline{toc}{chapter}{List of Algorithms}}}
+\renewcommand{\thealgo}{\thechapter.\@arabic\c@algo}
 \def\fps@algo{tbp}
 \def\ftype@algo{4}
 \def\ext@algo{loa}
@@ -595,6 +595,17 @@
 %\floatstyle{ruled}
 %\newfloat{algorithm}{H}{loa}[chapter]
 %\floatname{algorithm}{Algorithm:} 
+
+\newcommand{\@loaheading}{
+	\addtocontents{loa}{
+    	\protect\stepcounter{listofheading}
+	    \protect\addvspace{\@tocchapterskip}
+    	\hbox to \hsize{Appendix \hfil}
+	    \hbox to \hsize{Algorithm \hfil}
+		}
+	}
+\newcommand{\noappendixalgorithms}{ \renewcommand{\@loaheading}{}}
+
 %=============================================================================
 % TITLE PAGE
 %   - define \title{} \author{} \date{}
@@ -1035,18 +1046,9 @@
     	}
 	}
 
-\newcommand{\@loaheading}{
-	\addtocontents{loa}{
-    	\protect\stepcounter{listofheading}
-	    \protect\addvspace{\@tocchapterskip}
-    	\hbox to \hsize{Appendix \hfil}
-	    \hbox to \hsize{Algorithm \hfil}
-		}
-	}
-
 \newcommand{\noappendixtables    }{ \renewcommand{\@lotheading}{}}
 \newcommand{\noappendixfigures   }{ \renewcommand{\@lofheading}{}}
-\newcommand{\noappendixalgorithms}{ \renewcommand{\@loaheading}{}}
+
 
 %=============================================================================
 % COPYRIGHTPAGE
