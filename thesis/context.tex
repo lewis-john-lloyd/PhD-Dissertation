@@ -46,7 +46,6 @@ The edges of the continuity volumes align with the center of the momentum volume
 The total number of continuity volumes is $n$ while the number of momentum volumes is $n+1$.
 
 \begin{figure}[ht]
-\label{fig:staggered_mesh}
 \begin{center}
 \begin{tikzpicture}
 \draw (-3,0) rectangle +(1,5);
@@ -57,6 +56,7 @@ The total number of continuity volumes is $n$ while the number of momentum volum
 \end{tikzpicture}
 \end{center}
 \caption{A staggered mesh.}
+\label{fig:staggered_mesh}
 \end{figure}
 
 The computational modeling framework involve two primary components: sections and channels.
@@ -1099,8 +1099,125 @@ The coupling of software via data exchange has led to the development of a semi-
 This technique is of direct interest to the work that will be performed.
 A quick outline of the method will be now be presented.
 
-\comment{Here is where I will talk the coupling method.}
+ \begin{equation}
+ \label{eqn:coupling_1}
+ \begin{bmatrix} 
+ \vec{J}_{m_1,c_1} & \vec{J}_{m_1,c_1} & \vec{0} & \vec{0} & \vec{0} & \vec{0}\\
+ \vec{J}_{c_1,m_1} & \vec{J}_{c_1,c_1} & \vec{J}_{c_1,m_{cpl_1}} & \vec{0} & \vec{0} & \vec{0} \\
+ \vec{0} & \vec{0} & \vec{0} & \vec{J}_{c_2,m_{cpl_2}} & \vec{J}_{c_2,c_2} & \vec{J}_{c_2,m_2} \\ 
+ \vec{0} & \vec{0} & \vec{0} & \vec{0} & \vec{J}_{m_2,c_2} & \vec{J}_{m_2,m_2}  
+ \end{bmatrix} \begin{bmatrix}
+ \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
+ \vec{\delta m}_{cpl_1} \\ \vec{\delta m}_{cpl_2} \\
+ \vec{\delta c}_{2} \\ \vec{\delta m}_{2}
+\end{bmatrix}  = -\begin{bmatrix}
+ \vec{F}_{m_1} \\ \vec{F}_{c_1} \\
+ \vec{F}_{c_2} \\ \vec{F}_{m_2} \end{bmatrix}
+ \end{equation}
 
+ \begin{equation}
+ \label{eqn:coupling_2}
+ \begin{bmatrix} 
+ \vec{J}_{m_1,c_1} & \vec{J}_{m_1,c_1} & \vec{0} & \vec{0}\\
+ \vec{J}_{c_1,m_1} & \vec{J}_{c_1,c_1} & \vec{0} & \vec{0} \\
+ \vec{0} & \vec{0} & \vec{J}_{c_2,c_2} & \vec{J}_{c_2,m_2} \\ 
+ \vec{0} & \vec{0} & \vec{J}_{m_2,c_2} & \vec{J}_{m_2,m_2}  
+ \end{bmatrix} \begin{bmatrix}
+ \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
+ \vec{\delta c}_{2} \\ \vec{\delta m}_{2}
+\end{bmatrix}  = -\begin{bmatrix}
+ \vec{F}_{m_1} \\ \vec{F}_{c_1} \\ \vec{F}_{c_2} \\ \vec{F}_{m_2} \end{bmatrix} - \begin{bmatrix}
+ 0 \\ \vec{J}_{c_1,m_{cpl_1}} \\ \vec{J}_{c_2,m_{cpl_2}} \\ 0
+ \end{bmatrix}\begin{bmatrix}
+ 0 \\ \vec{\delta m}_{cpl_1} \\ \vec{\delta m}_{cpl_2} \\ 0
+ \end{bmatrix}
+ \end{equation}
+ 
+  \begin{IEEEeqnarray}{rl}
+ \begin{bmatrix} 
+ \vec{I} & \vec{J}_{m_1,m_1}^{-1}\vec{J}_{m_1,c_1} & \vec{0} & \vec{0}\\
+ \vec{J}_{c_1,m_1} & \vec{J}_{c_1,c_1} & \vec{0} & \vec{0} \\
+ \vec{0} & \vec{0} & \vec{J}_{c_2,c_2} & \vec{J}_{c_2,m_2} \\ 
+ \vec{0} & \vec{0} & \vec{J}_{m_2,m_2}^{-1}\vec{J}_{m_2,c_2} & \vec{I} 
+ \end{bmatrix} &\begin{bmatrix}
+ \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
+ \vec{\delta c}_{2} \\ \vec{\delta m}_{2}
+\end{bmatrix}  = \nonumber \\
+ \label{eqn:coupling_3}
+-\begin{bmatrix}
+ \vec{J}_{m_1,m_1}^{-1}\vec{F}_{m_1} \\ \vec{F}_{c_1} + \vec{J}_{c_1,m_{cpl_1}}\vec{m}_{cpl_1}^{n+1,k} \\ \vec{F}_{c_2} + \vec{J}_{c_2,m_{cpl_2}} \vec{m}_{cpl_2}^{n+1,k} \\ \vec{J}_{m_2,m_2}^{-1}\vec{F}_{m_2} \end{bmatrix} - \begin{bmatrix}
+ 0 \\ \vec{J}_{c_1,m_{cpl_1}} \\ \vec{J}_{c_2,m_{cpl_2}} \\ 0
+ \end{bmatrix}\begin{bmatrix}
+ 0 \\ \vec{m}^{n+1,k+1}_{cpl_1} \\ \vec{m}^{n+1,k+1}_{cpl_2} \\ 0
+ \end{bmatrix} &
+ \end{IEEEeqnarray}
+
+\begin{IEEEeqnarray}{rl}
+\begin{bmatrix} 
+\vec{J}_{c_1,c_1} -\vec{J}_{c_1,m_1}\vec{J}_{m_1,m_1}^{-1}\vec{J}_{m_1,c_1} & \vec{0} \\
+\vec{0} & \vec{J}_{c_2,c_2} - \vec{J}_{c_2,m_2}\vec{J}_{m_2,m_2}^{-1}\vec{J}_{m_2,c_2} 
+\end{bmatrix} &
+\begin{bmatrix}
+\vec{\delta c}_{1} \\
+\vec{\delta c}_{2} \\
+\end{bmatrix}  = \nonumber \\
+ \label{eqn:coupling_4}
+-\begin{bmatrix}
+\vec{F}_{c_1} + \vec{J}_{c_1,m_{cpl_1}}\vec{m}_{cpl_1}^{n+1,k}  - \vec{J}_{c_1,m_1}\vec{J}_{m_1,m_1}^{-1}\vec{F}_{m_1} \\
+\vec{F}_{c_2} + \vec{J}_{c_2,m_{cpl_2}} \vec{m}_{cpl_2}^{n+1,k} -\vec{J}_{c_2,m_2}\vec{J}_{m_2,m_2}^{-1}\vec{F}_{m_2}  
+\end{bmatrix} -
+\begin{bmatrix}
+\vec{J}_{c_1,m_{cpl_1}} \\ \vec{J}_{c_2,m_{cpl_2}}
+\end{bmatrix}
+\begin{bmatrix}
+\vec{m}^{n+1,k+1}_{cpl_1} \\ \vec{m}^{n+1,k+1}_{cpl_2}
+\end{bmatrix} &
+\end{IEEEeqnarray}
+
+
+\begin{equation}
+\label{eqn:coupling_5}
+\begin{bmatrix} 
+\vec{J}^{*}_{c_1} & \vec{0} \\
+\vec{0} & \vec{J}^{*}_{c_2} 
+\end{bmatrix} 
+\begin{bmatrix}
+\vec{\delta c}_{1} \\
+\vec{\delta c}_{2} \\
+\end{bmatrix}  =
+-\begin{bmatrix}
+\vec{F}^{*}_{c_1}\\
+\vec{F}^{*}_{c_2}  
+\end{bmatrix} -
+\begin{bmatrix}
+\vec{J}_{c_1,m_{cpl_1}} \\ \vec{J}_{c_2,m_{cpl_2}}
+\end{bmatrix}
+\begin{bmatrix}
+\vec{m}^{n+1,k+1}_{cpl_1} \\ \vec{m}^{n+1,k+1}_{cpl_2}
+\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+\label{eqn:coupling_6}
+\begin{bmatrix} 
+\vec{U}^{*}_{c_1} & \vec{0} \\
+\vec{0} & \vec{U}^{*}_{c_2} 
+\end{bmatrix} 
+\begin{bmatrix}
+\vec{\delta c}_{1} \\
+\vec{\delta c}_{2} \\
+\end{bmatrix}  =
+-\begin{bmatrix}
+\vec{L}^{-1}_{c_1}\vec{F}^{*}_{c_1}\\
+\vec{L}^{-1}_{c_2}\vec{F}^{*}_{c_2}  
+\end{bmatrix} -
+\begin{bmatrix}
+\vec{L}^{-1}_{c_1}\vec{J}_{c_1,m_{cpl_1}} \\ \vec{L}^{-1}_{c_2}\vec{J}_{c_2,m_{cpl_2}}
+\end{bmatrix}
+\begin{bmatrix}
+\vec{m}^{n+1,k+1}_{cpl_1} \\ \vec{m}^{n+1,k+1}_{cpl_2}
+\end{bmatrix}
+\end{equation}
 The coupling of system analysis codes and sub-channel codes can be viewed through a different lens.
 If the global problem, the balance-of-plant and the in-core region are considered to a part of a global domain, $\Omega$, then each piece of software can be viewed as solving a smaller portion of the global domain, $\Omega_i$.
 The boundary between the two domains will be denoted as $\partial \Omega_i$.

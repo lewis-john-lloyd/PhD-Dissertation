@@ -13,41 +13,40 @@ Parametric studies will then be conducted to determine the impact of nonlinear c
 \section{Scaling Evaluation}
 \label{sect:proposal_scaling}
 The current implementation of the operator-based scaling method outlined in \sect{sect:operator_scaling} has several issues that need to be addressed.
-\comment{Here is where I will address the issues from the prelim work section.}
+In addition, the efficacy of this scaling should be compared to that of an unscaled residual in a systematic manner.
+\comment{What level of detail?}
 
 Another scaling question that needs to be addressed is the proper scaling for the Newton update.
-\comment{More details required.}
+\comment{How much detail?}
 
 Additionally, the interplay between the globalization termination criteria and the update scaling should be investigated. 
-\comment{More details required.}
+\comment{How much detail?}
 
 \section{Domain Decomposition}
 \label{sect:domain_coupling}
-The first step will be to implement a variation of the semi-implicit domain coupling algorithm presented in \sect{sect:code_coupling}.
-The details of the derivation will need to be reworked to account for the different flow variables.
-Upon completion of the implementation, a rigorous testing of the coupling method will be conducted.
-This testing will be similar to that conducted by \citet{Weaver2002}.
-Details of a testing plan should be discussed.
-To evaluate the domain decomposition capabilities, a test problem will need to be developed.
-This problem should have a singular characteristic: multiple geometric components.
-The problem will be a single-phase run.
+The first step will be to develop a variation of the semi-implicit domain coupling algorithm presented in \sect{sect:code_coupling}.
+The derivation should take into account the iterative Newton nature of the subdomain. 
+In addition, the details of the derivation will need to be reworked to account for the different flow variables in \cobra.
+Upon implementation of the internal coupling algorithm within \cobra, a test problem will be developed to ensure that in legacy mode, a decomposed problem produces an equivalent solution to a single domain problem.
+This problem will need to have multiple geometric components, as that the decomposed domain will be at channel boundaries.
 The test problem will be run in legacy mode to obtain a standard solution.
-\comment{More details.}
-
 
 \section{Temporal-Convergence Testing and Bench-marking}
 \label{sect:proposal_temporal_testing}
-Several problems with highly nonlinear physics should be constructed to test the temporal convergence criteria.
-Legacy temporal convergence studies should be compared to nonlinear-spatial refinement results.
+Several problems with nonlinear phenomena should be constructed to test the temporal convergence criteria.
+These problems will test the validity of the temporal-convergence metric.
+\comment{What level of detail?}
 
 \section{Performance Evaluation}
 \label{sect:proposal_performance_evaluation}
 Theoretical operation counts should be calculated for legacy mode and nonlinear mode.
 Run time calculations for various problems should be calculated.
+\comment{I will write more details.}
 
 \section{Parametric Studies}
 \label{sect:proposal_parametric_studies}
 Convergence criteria, max iteration count, and globalization parameters should be varied for a set number of problems to determine performance.
+\comment{More details required.}
 
 \section{Time Line}
 \label{sect:proposal_time_line}

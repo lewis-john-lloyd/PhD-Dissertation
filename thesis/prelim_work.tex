@@ -143,10 +143,7 @@ F = \left(\alpha_k \rho_k\right)^{n+1} - \left( \alpha_k \rho_k \right)^n - \fra
 
 In this equation there are three physically meaningful quantities: the temporal difference, the mass flowing into the cell, and mass flowing out of the volume. 
 
-\begin{equation}
-\label{eqn:scaled_residual}
-2 + 2 = 4
-\end{equation}
+\comment{I know this needs more details.}
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -158,36 +155,38 @@ In this equation there are three physically meaningful quantities: the temporal 
 \section{Temporal Convergence}
 \label{sect:temporal_convergence}
 
-
-Define time-step size insensitivity.
-Ideally, the definition would be the following.
-As the time-step size is reduce, the numerical solution does not change.
-However, due to the finite precision of computers, this is an unrealistic definition.
+One of the factors in engineering analysis is the time-step size insensitive nature of the solution.
+However, a quantifiable measure of time-step size insensitivity is lacking in the literature.
+A definition of a temporally converged solution is required.
+Ideally, the definition would be the following: as the time-step size is reduce, the solution does not change.
+However, this is an unrealistically optimistic definition due to the finite precision of computers.
 Another possible definition: as the time-step size is reduced, the change in the solution is small enough.
-This a very subjective definition.
-What do "as the time-step size is reduce," "change in solution," and "small enough" mean?
-Traditionally, "change in solution" is addressed in a very qualitative manner.
+Unfortunately, this is a subjective definition.
+The subjectivity of the definition manifests itself in three parts: ``as the time-step size is reduce," ``change in solution," and ``small enough."
+
+Traditionally, ``change in solution" is addressed in a very qualitative manner.
 Engineering judgment of which parameters of the solution are of interest is required.
-Traditionally, these parameters may include items such as peak clad temperature or peak system pressure.
-These definition of solution in this case is local.
-This locality means that the entire solution domain is not being considered in the definition "change in solution."
-This choice of parameters be a more apt definition for "the engineering parameter of interest."
+These parameters may include items such as peak clad temperature or peak system pressure.
+The localized nature of examining parameters of interest is a weakness.
+This locality means that the entire solution domain is not being considered in the definition ``change in solution."
 
-The next definition is for "small enough."
-Depending upon the context in which the work is being done, this may be nothing more than looking at a graph of the parameter of interest and using engineering judgment to say "those two graphs look pretty similar."
-Or, a more quantifiable measure may be used.
-Small enough may be "peak clad temperature does not change by more than 50$\deg$.
-Neither of these metrics address questions of rate of change.
+Another subjective aspect of the definition is would be the meaning of ``small enough."
+Depending upon the context in which the work is being done, this may be nothing more than looking at a graph of the parameter of interest and using engineering judgment to say ``those two graphs look pretty similar."
+In some cases, a more quantifiable measure may be used.
+Quantifiable metrics may be  ``peak clad temperature does not change by more than 50$\deg$."
 
-The last definition, "as the time-step size is reduced" is a very amorphous statement.
-This statement could be interpreted as "over the range of time-steps considered."
-While it may be that the chosen metric does not change with modest time-step refinement, that does not imply that the solution obtained is either correct or time-step size insensitive.
+The refinement of the temporal discretization is another place where subjectivity comes into play.
+``As the time-step size is reduced" is a very amorphous statement.
+A more proper statement could be interpreted as ``over the range of time-steps considered."
+While it may be that the chosen metric does not change with modest time-step refinement, that does not imply that the solution obtained is correct.
 
-As stated in \sect{subsect:temporal_approx}, if the nonlinearities of the discrete governing equations are not resolved, then temporal convergence can be degraded.
-This degradation can produce results that qualitatively appear to be converged.
-This apparent convergence, or time-step size insensitivity, is not a result of reaching a time-step size insensitive solution, but instead is indicative of the degraded order of accuracy due to the failure to resolve the nonlinearities at each time-step.
-With the first-order methods outlined in \sect{sect:solution_techniques}, this degradation can result in methods that are approximately zeroth order \cite{Knoll2001}.
-To determine if the transient solution is both time-step size insensitive and an accurate solution to the nonlinear problem, a quantifiable metric is sought.
+Unfortunately, the subjective meaning of temporal convergence will always be subject to some form of engineering judgment. However, a metric that can quantify probability that a solution is not accurately temporally-converged would be of great value.
+
+The previously mentioned work into nonlinear convergence shows that a solution may be time-step size insensitive but not be the converged solution of the discretized problem \cite{Knoll2001}.
+If the nonlinearities of the discrete governing equations are not resolved, then temporal convergence rate can be degraded.
+This degradation can produce results that qualitatively appear to be converged due an almost zeroth order of accuracy.
+This apparent temporal convergence, or time-step size insensitivity, of the solution is not a result of reaching a the solution to the discretized nonlinear equations, but instead is indicative of the degraded order of accuracy due to the failure to resolve the nonlinearities at each time-step.
+To determine if the time-step size insensitive transient solution is both time-step size insensitive and an accurate solution to the nonlinear problem, a quantifiable metric is sought.
 
 The scaled residual from \sect{sect:operator_scaling} provides a well-scaled metric for instantaneous nonlinear convergence at any given time in the simulation.
 The natural extension of this metric would be a temporal integral of the global nonlinear residual, \eqref{eqn:trans_res_simple}.
@@ -197,7 +196,7 @@ The natural extension of this metric would be a temporal integral of the global 
 \vec{R} = \int_{t^{0}}^{t^{N}} ||\vec{F}(\tau)||_2 \,\mathrm{d} \tau
 \end{equation}
 
-Given the bounds of the scaled residual, \eqref{eqn:scaled_residual}, it was considered desirable to have a similarly scaled transient residual.
+Given the bounds of the scaled residual it was considered desirable to have a similarly scaled transient residual.
 The transient residual in \eqref{eqn:trans_res_simple} possesses a dependence upon the number of time-steps taken.
 To remove this dependence, a temporal average was instead investigated, \eqref{eqn:trans_res_ave}.
 
@@ -228,12 +227,11 @@ For the preliminary work, the \eqref{eqn:trans_res_ave} and \eqref{eqn:trans_res
 \label{sect:numerical_experiments}
 
 In order to evaluate the interplay between the nonlinear solver implementation, the scaling metric, and the temporal convergence criteria, two test problems were constructed.
-These tests problems were designed to answer the following three questions.
+These tests problems were designed to answer the following two questions.
 
 \begin{enumerate}
-\item{Does the nonlinear solver produce correct results?}
-\item{Does the temporal convergence metric provide a quantifiable measure of time-step size insensitivity?}
-\item{Does the single-shot linearization have temporal convergence properties similar to the nonlinear solver in the absence of "strong" nonlinearities?}
+\item{Does the temporal convergence metric provide a quantifiable measure for the nonconvergence of a time-step size insensitive solution?}
+\item{Does the single-shot linearization have temporal convergence properties similar to the nonlinear solver in the absence of nonlinearities?}
 \end{enumerate}
 
 \subsection{Geometry}
@@ -247,7 +245,6 @@ It represents an infinite reservoir filled with a fluid at a specified thermodyn
 The red triangle represents a specified flow at the bottom edge of the first continuity cell. 
 
 \begin{figure}[h!t]
-\label{fig:exp_geometry}
 \begin{center}
 \begin{tikzpicture}
 \foreach \x in {1,..., 12} \draw(0, 0.5*\x-0.5) rectangle +(.5,.5);
@@ -258,6 +255,7 @@ The red triangle represents a specified flow at the bottom edge of the first con
 \end{tikzpicture}
 \end{center}
 \caption{Geometry for test problems.}
+\label{fig:exp_geometry}
 \end{figure}
 
 \subsection{Initial and Boundary Conditions}
@@ -329,48 +327,75 @@ The is a time-dependent function give by \eqref{eqn:bc_time_func_single}.
 Both problems adjust their initial pressure distribution to account for hydrostatic head, which is not specified in the input files.
 The \cobra{} input files for both problems can be found in \app{app:input_decks}.
 
-\subsection{Procedure}
-\label{subsect:experiments_procedure}
-The two problems were set up such that the maximum allowable time-step was varied.
+\subsection{Results}
+\label{subsect:results}
+
+The two problems were set up so that the maximum allowable time-step was varied.
 Each problem was run with the following maximum allowable time-steps: 1 [s], 0.1 [s], 0.01 [s], 0.001 [s], 0.0001 [s], and 0.00001 [s]. 
 For the legacy runs, the scaled residuals were evaluated after a single newton-step.
 For the nonlinear runs, the scaled nonlinear residuals were evaluated at the end of the newton-loop.
 The nonlinear convergence criteria used for the nonlinear runs are described in \sect{sect:nl_cobra}.
 The temporal convergence metric was evaluated during post-processing.
 
-\subsection{Results}
-\label{subsect:results}
-
 In total, there were twenty-four simulations run.
 The two different problems were each run at six different maximum time-step sizes on each of the two version of \cobra.
 Of the twenty-four simulations run, the legacy mode simulation of flashing at a time-step size of 1 [s] failed to run to completion.
 
-\subsubsection{Time-Step Size Insensitivity}
-\label{sect:result_time_step}
-
-\comment{Does the nonlinear convergence impact the time-step size sensitivity of the solution?}
-
-\subsubsection{Temporal Convergence Criteria}
+\subsubsection{Convergence Criteria}
 \label{sect:result_temporal_convergence}
 
-\comment{Does the temporal convergence metric provide a quantifiable measure of time-step size insensitivity?}
+\comment{Does the temporal convergence metric provide a quantifiable measure for a converged time-step size insensitive solution?}
 
-The metrics of interest that will be used to determine the convergence of the solution are the blah and blah.
+The convergence metric will be used determine if a qualitative temporal-convergence determination can lead to the acceptance of solution that is not nonlinearly converged.
 For each of the test cases, these variables were compared at different time-steps.
-First, it should be noted that the 1 [s] max time-step simulation of the flashing problem failed to run.
-Why did it fail to run?
+First, the 1 [s] max time-step legacy simulation of the flashing problem failed to run.
+\comment{Why did it fail to run?}
 It could not reduce the time-step size enough to prevent too large of changes to the independent parameters.
-There is a section earlier that talks about this issue.
-The nonlinear cobra did run.
-The same limits on change of variables is placed on both version of the software.
-Why did the single-shot linearization fail to run?
-I couldn't say mathematically.
+\comment{I need to discuss this more in the time-step failure section.}
+However, the nonlinearly convergent \cobra{} was able to run at a 1 [s] time-step.
+Both versions of \cobra{} are subject to the same limits on change of independent variables.
+\comment{Why did the single-shot linearization fail to run?
+I couldn't say mathematically.}
 
-It should be noted that the nonlinear \cobra produced a solution that was qualitatively different than semi-implicit.
-This difference did not disappear as the time-step size was reduced.
-The temporal convergence metric says that even for small time-step sizes, the solution is still not good.
-This will be shown by a picture of the flashing solutions.
-This will be backed up by pictures of the flashing residual.
+Note that the nonlinear \cobra produced a solution that was qualitatively different than semi-implicit, \fig{fig:flashing_solution}.
+The two solutions did not converge as the time-step size was reduced for both.
+
+\begin{figure}
+        \centering
+        \begin{subfigure}[b]{0.48\textwidth}
+                \centering
+				I am the nl\_cobra solution.
+                \caption{Nonlinear mode.}
+                \label{fig:gull}
+        \end{subfigure}%
+        \begin{subfigure}[b]{0.48\textwidth}
+                \centering
+				I am the cobra solution.
+                \caption{Legacy mode.}
+                \label{fig:tiger}
+        \end{subfigure}
+        \caption{Solutions to the flashing problem.}
+        \label{fig:flashing_solution}
+\end{figure}
+
+The nonlinear residual for the legacy flashing problem shows that that even for small time-step sizes, the solution still contains nonlinearities, \fig{fig:legacy_flashing_residual}.
+This is in contrast to the nonlinear flashing problem, which shows a lower residual through out, \fig{fig:nonlinear_flashing_residual}.
+
+\begin{figure}[h!t]
+\begin{center}
+I am a picture.
+\end{center}
+\caption{Legacy \cobra{} nonlinear residual for flashing problem.}
+\label{fig:legacy_flashing_residual}
+\end{figure}
+
+\begin{figure}[h!t]
+\begin{center}
+I am a picture.
+\end{center}
+\caption{Nonlinear \cobra{} nonlinear residual for flashing problem.}
+\label{fig:nonlinear_flashing_residual}
+\end{figure}
 
 The single-phase case ran just fine for both problems.
 
@@ -426,17 +451,18 @@ $\Delta t_{\text{MAX}}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlin
 \subsubsection{Lack of Nonlinearities}
 \label{sect:result_linear_problem}
 
-\comment{Does the single-shot linearization have temporal convergence properties similar to the nonlinear solver in the absence of "strong" nonlinearities?}
+\comment{Does the single-shot linearization have temporal convergence properties similar to the nonlinear solver in the absence of nonlinearities?}
 
+The single-phase problem was setup to minimize the amount of nonlinearity in the simulation.
 This section should show that the single-phase problem had a time-step insensitive solution.
-It should also show that the solution for both the single-shot and the nonlinear versions of \cobra produced the same result.
-The nonlinear \cobra did not produce the same results.
-This is where I show the blowup picture of the oscilatory solution.
+It should also show that the solution for both the single-shot and the nonlinear versions of \cobra{} produced the same result.
+The nonlinear \cobra{} did not produce the same results.
+This is where I show the blowup picture of the oscillatory solution.
 I also show how the residual increases as the time-step size is decreased.
 It produced solutions with bounded oscillations at smaller time-step sizes.
 In addition the residuals appear to be growing with smaller time-steps.
 I do not know why at the moment.
-This piss-poor behavior could be the result of multiple issues.
+This poor behavior could be the result of multiple issues.
 One possibility is the inconsistency between the scaled update vector used in the line-search algorithm and  the one used in the Newton loop convergence criteria.
 Another possibility is the limiters used in the operator-based scaling were chosen poorly.
 
@@ -444,11 +470,9 @@ Another possibility is the limiters used in the operator-based scaling were chos
 \label{sect:review}
 
 In review, the single-shot semi-implicit \cobra software was converted to a nonlinearly convergent semi-implicit algorithm.
-A operator-based scaling was introduced and implemented in nonlinear \cobra.
-Several defficiencies have been identified with the current implementation of the scaling.
+A operator-based scaling was introduced and implemented in nonlinear \cobra{}.
+Several deficiencies have been identified with the current implementation of the scaling.
 A temporal-convergence criteria was developed and implemented to test for non-convergence of simulations. 
 
 
-\comment{
-Obviously in some serious need of work.
-I should talk about the findings of the work.}
+\comment{More work needed.}

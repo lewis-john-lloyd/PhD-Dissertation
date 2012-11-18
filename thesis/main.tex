@@ -37,6 +37,7 @@
 \usepackage{times}
 \renewcommand{\ttdefault}{cmtt}
 
+\usepackage{subcaption}
 \usepackage{IEEEtrantools}
 \usepackage{algpseudocode}
 \usepackage{pdflscape}
@@ -58,6 +59,10 @@
 \let\oldbibsection\bibsection
 \renewcommand{\bibsection}{\oldbibsection\addcontentsline{toc}{chapter}{List of References}\singlespace\raggedright}
 
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{lipsum}
+
 \usepackage[bookmarks,
 	bookmarksdepth=2,
 	pdfauthor={Lewis John Lloyd}, %
@@ -66,9 +71,6 @@
 	filecolor=black, %
 	linkcolor=black, %
 	urlcolor=black]{hyperref}
-\usepackage{lipsum}
-\usepackage{booktabs}
-\usepackage{multirow}
 
 \pagestyle{thesis}
 \draftscreen
