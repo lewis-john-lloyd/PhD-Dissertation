@@ -112,7 +112,7 @@ This necessitates the ability to effectively model the heat transfer between the
 \cobra{} is designed specifically for the evaluation of core cooling in LWRs.
 During postulated accidents, the coolant, H$_2$O, can undergo phase-change.
 To model the complex phenomena of phase-change, the governing equations for the fluid mechanics within the core will be those of multicomponent fluids \cite{Drew1998}.
-In particular, they are a subcategory of two-phase flow \cite{Todreas2011, Stewart1984}.
+In particular, they are a subcategory of two-phase flow \cite{Todreas2011, Stewart1984, Ishii1984}.
 
 \subsection{Assumptions}
 \label{subsect:assumptions}
@@ -330,6 +330,12 @@ Other common system analysis codes \cite{TRACE, RELAP} use different non-conserv
 \subsection{Summary}
 \label{subsect:summary}
 
+\comment{Discuss ill-posedness of the equations. And then mention that it doesn't matter.}
+
+The above collection of governing equations posses a potentially troublesome property.
+The assumption of pressure equilibrium between the fields produces a ill-posed collection of equations \cite{Ransom1984}.
+
+
 It will be useful to refer to the collection of continuous conservation laws, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:conservation_of_ent}, \eqref{eqn:con_energy_gas} -- \eqref{eqn:con_energy_liq}, and \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent}, as a vector of equations.
 To accomplish this, \eqref{eqn:conservation_equations} defines such a system.
 The vector, $\vec{g}$, represents the full conservation equations minus the temporal derivatives of the conserved quantities.
@@ -495,6 +501,15 @@ The term one-step refers to the fact that the temporal derivative involves only 
 \frac{\vec{y}^{n+1} - \vec{y}^{n}}{\Delta t} & = & \vec{G}(\vec{y}^{*})
 \end{IEEEeqnarray}
 
+One thing that distinguishes this the numerical method in \cobra{} from other methods is its treatment of the temporal derivative.
+In the work that follows, the temporal derivative of the conserved momentum equations is directly discretized, known as conservative form.
+The other option, the non-conservative form, is analytically expand the temporal derivative via the chain rule, \eqref{eqn:non_conservative}, and these equations are then temporally discretized.
+
+\begin{equation}
+\label{eqn:non_conservative}
+\frac{\partial \alpha_k \rho_k u_k}{\partial t} = \alpha_k \rho_k \frac{\partial u_k}{\partial t} + u_k \frac{\partial \alpha_k \rho_k}{\partial t}
+\end{equation}
+
 The choice of how to approximate the temporal-average, $\vec{G}(\vec{y}^{*})$, is a factor that defines the eventual solution algorithm.
 There are two subcategories for solving this one-step temporal-integration problem, single-stage and multi-stage \cite{Stewart1981,LeVeque2007}.
 \alg{alg:single_stage_temporal} shows how a multi-stage temporal integration scheme would work.
@@ -566,7 +581,7 @@ However, it has been shown that if the nonlinear problem, \eqref{eqn:nonlinear_r
 The method used to solve \eqref{eqn:nonlinear_residuals} for $\vec{x}^{n+1}$ in this work is Newton's method \cite{Deuflhard2004, Dennis1996}.
 The nonlinear residual being solved in this work is a function of the new-time unknowns, $\vec{x}^{n+1}$.
 Newton's method is an iterative procedure to obtain $\vec{x}^{*}$ such that $\vec{F}(\vec{x}^{*}) = 0$.
-Since Newton's method is an interative procedure for obtaining new-time variables, two superscripts will be required.
+Since Newton's method is an iterative procedure for obtaining new-time variables, two superscripts will be required.
 The nonlinear iterate superscript will be $k$.
 This iteration is done by successive linearization of the nonlinear problem \eqref{eqn:newton_taylor}, where $\vec{\delta x}^k = \vec{x}^{n+1,k+1} - \vec{x}^{n+1,k}$.
 
@@ -1071,10 +1086,35 @@ In stage three, the nonlinear relation between the conserved quantities and the 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Domain Coupling}
 \label{sect:code_coupling}
-Here is where I will talk about the semi-implicit coupling algorithm developed by \citet{Weaver2002}.
-In addition, I will talk about the nonlinear preconditioning for fully-implicit CFD codes.
-\comment{ Mention should also be made regarding the disadvantages of explicit coupling.
-}
+
+\cobra{} posses the physics necessary to model the complicated flow patterns encountered during LOCA within the core of an NPP.
+However, it lacks the detailed models for NPP components (steam-generators, heat exchanges, etc) that are traditionaly available from system-analysis codes.
+When modeling full NPP transients, to it is advantageous to use sub-channel software for the core and system analysis software to model the rest of the NPP.
+The combination of different specialized software is a common practice.
+This coupling of capabilities can be accomplished in two ways: the two pieces of software can be merged, or they can be coupled via data exchange.
+There are several examples of the first method: MARS \cite{Jeong2008} and TRACE \cite{TRACE} are two examples.
+Coupling software via data exchange is the more common option \cite{Makihara2003, Aumiller2002, Aumiller2001, Avramova2006, Weaver2002}.
+
+The coupling of software via data exchange has led to the development of a semi-implicit coupling technique for thermal-hydraulic simulations \cite{Weaver2002}.
+This technique is of direct interest to the work that will be performed.
+A quick outline of the method will be now be presented.
+
+\comment{Here is where I will talk the coupling method.}
+
+The coupling of system analysis codes and sub-channel codes can be viewed through a different lens.
+If the global problem, the balance-of-plant and the in-core region are considered to a part of a global domain, $\Omega$, then each piece of software can be viewed as solving a smaller portion of the global domain, $\Omega_i$.
+The boundary between the two domains will be denoted as $\partial \Omega_i$.
+In explicit coupling of two semi-implicit solvers, the fluid flowing between the domains at the boundary is discretized explicitly.
+The global time-step size will then be subject to a sonic Courant limit at the boundary of the two domains \cite{Aumiller2001}.
+In the case of the semi-implicit coupling between two semi-implicit solvers, the material Courant limit then limits the problem.
+The semi-implicit coupling generates a consistent global Newton step for the entire domain.
+This is the context through which code coupling will be viewed.
+
+Within the realm of domain decomposition, the two classes of the Schwarz method will be of interest.
+There is the multiplicative Schwarz and the additive Schwarz.
+
+From there I will present the view of code coupling as one of either additive or multiplicative Schawrz applied to a larger problem with different physics applied in different areas.
+
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------

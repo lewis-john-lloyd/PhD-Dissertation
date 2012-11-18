@@ -214,9 +214,7 @@
 \newcounter {subparagraph}[paragraph]
 \newcounter {tocpage}
 \newcounter {lofpage}
-\newcounter {lotpage}
 \newcounter {listofheading}
-\newcounter {loapage}
 
 %=============================================================================
 % For any counter CTR, \theCTR is a macro that defines the printed version
@@ -334,8 +332,7 @@
 % the chapter.  Isn't elegance wonderful?
 %
 %=============================================================================
-\newcommand{\tableofcontents}{\@tableof{Table of Contents }{         }{tocpage}{toc}{                                                          }}
-\newcommand{\listoftables   }{\@tableof{List of Tables    }{Table    }{lotpage}{lot}{\protect\addcontentsline{toc}{chapter}{List of Tables}    }}
+\newcommand{\tableofcontents}{\@tableof{Table of Contents}{}{tocpage}{toc}{}}
 
 \newcommand{\@tableof}[5]{{ % limit scope of following declarations!!
   \@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn\fi
@@ -562,12 +559,22 @@
 \let\endfigure\end@float
 \@namedef{figure*}{\@dblfloat{figure}}
 \@namedef{endfigure*}{\end@dblfloat}
-
+\newcommand{\@lofheading}{
+	\addtocontents{lof}{
+    	\protect\stepcounter{listofheading}
+	    \protect\addvspace{\@tocchapterskip}
+    	\hbox to \hsize{Appendix \hfil}
+	    \hbox to \hsize{Figure \hfil}
+    	}
+	}
+\newcommand{\noappendixfigures}{\renewcommand{\@lofheading}{}}
 %=============================================================================
 % TABLE
 %=============================================================================
 \newcounter{table}[chapter]
-\renewcommand{\thetable}{\thechapter.\@arabic\c@table}
+\newcounter{lotpage}
+\newcommand{\listoftables}{\@tableof{List of Tables}{Table}{lotpage}{lot}{\protect\addcontentsline{toc}{chapter}{List of Tables}}}
+\renewcommand{\thetable}{\thechapter.\arabic{table}}
 \def\fps@table{tbp}
 \def\ftype@table{2}
 \def\ext@table{lot}
@@ -576,11 +583,20 @@
 \let\endtable\end@float
 \@namedef{table*}{\@dblfloat{table}}
 \@namedef{endtable*}{\end@dblfloat}
-
+\newcommand{\@lotheading}{
+	\addtocontents{lot}{
+  		\protect\stepcounter{listofheading}
+  		\protect\addvspace{\@tocchapterskip}
+  		\hbox to \hsize{Appendix \hfil}
+  		\hbox to \hsize{Table \hfil}
+  		}
+	}
+\newcommand{\noappendixtables}{\renewcommand{\@lotheading}{}}
 %=============================================================================
 % ALGORITHM
 %=============================================================================
 \newcounter{algo}[chapter]
+\newcounter{loapage}
 \newcommand{\l@algo  }{\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
 \newcommand{\listofalgorithm}{\@tableof{List of Algorithms}{Algorithm}{loapage}{loa}{\protect\addcontentsline{toc}{chapter}{List of Algorithms}}}
 \renewcommand{\thealgo}{\thechapter.\@arabic\c@algo}
@@ -592,10 +608,6 @@
 \let\endalgo\end@float
 \@namedef{algo*}{\@dblfloat{algo}}
 \@namedef{endalgo*}{\end@dblfloat}
-%\floatstyle{ruled}
-%\newfloat{algorithm}{H}{loa}[chapter]
-%\floatname{algorithm}{Algorithm:} 
-
 \newcommand{\@loaheading}{
 	\addtocontents{loa}{
     	\protect\stepcounter{listofheading}
@@ -604,8 +616,7 @@
 	    \hbox to \hsize{Algorithm \hfil}
 		}
 	}
-\newcommand{\noappendixalgorithms}{ \renewcommand{\@loaheading}{}}
-
+\newcommand{\noappendixalgorithms}{\renewcommand{\@loaheading}{}}
 %=============================================================================
 % TITLE PAGE
 %   - define \title{} \author{} \date{}
@@ -656,7 +667,6 @@
   \gdef\@thanks{}\gdef\@degree{}\gdef\@doctype{}
   \gdef\@department{}
 }
-
 %=============================================================================
 % ABSTRACT
 %=============================================================================
@@ -672,8 +682,6 @@
   }{
   \par\newpage
   }
-
-
 %=============================================================================
 % UMI ABSTRACT
 %=============================================================================
@@ -762,7 +770,6 @@
     \def\chaptermark##1{\markright {\uppercase{\ifnum \c@secnumdepth >\m@ne
       \@chapapp\ \thechapter. \ \fi ##1}}}}
 \fi
-
 %=============================================================================
 % Definition of 'thesis' page style -- riedl
 %  -- no footer
@@ -783,7 +790,6 @@
     \def\@oddhead{\hbox{}\hfil\rm\thepage}                   % Heading.
     \def\chaptermark##1{}}
 \fi
-
 %=============================================================================
 % The following code sets \@currentipfile to current include file.
 % taken from chapterbib.sty by
@@ -803,7 +809,6 @@
 \newcounter{@includefilectr}            % current \include file
 \def\@rootfilevalue{1988}               % arbitrary value for root file
 \def\savedjobname{\jobname}             % save root file name as a macro
-
 %-----------------------------------------------------------------------
 % The name of the current I/P file is stored in macro \@currentipfile
 % and the global macro ipfile@the@ipfilectr is set to this name whenever
@@ -812,8 +817,6 @@
 \def\@currentipfile{\jobname}           % initialize to root file
 \setcounter{@ipfilectr}{\@rootfilevalue}        % ditto
 \global\@namedef{ipfile@\the@ipfilectr}{\@currentipfile}
-
-%
 %-----------------------------------------------------------------------
 % Redefine the \include macro (taken from LATEX.TEX of 25-JAN-1988) so
 % that when a file is \include'd
@@ -976,13 +979,11 @@
   \end{center}
   \vfil\vfil
   \newpage}
-
 %=============================================================================
 % \@chapapp is initially defined to be 'Chapter'.  The \appendix
 % command redefines it to be 'Appendix'.
 %=============================================================================
 \def\@chapapp{CHAPTER}
-
 %=============================================================================
 % APPENDIX
 %=============================================================================
@@ -1027,29 +1028,6 @@
   \let\@chapterhead\@makechapterhead
   \let\@schapterhead\@makeschapterhead
   }
-
-\newcommand{\@lotheading}{
-	\addtocontents{lot}{
-  		\protect\stepcounter{listofheading}
-  		\protect\addvspace{\@tocchapterskip}
-  		\hbox to \hsize{Appendix \hfil}
-  		\hbox to \hsize{Table \hfil}
-  		}
-	}
-
-\newcommand{\@lofheading}{
-	\addtocontents{lof}{
-    	\protect\stepcounter{listofheading}
-	    \protect\addvspace{\@tocchapterskip}
-    	\hbox to \hsize{Appendix \hfil}
-	    \hbox to \hsize{Figure \hfil}
-    	}
-	}
-
-\newcommand{\noappendixtables    }{ \renewcommand{\@lotheading}{}}
-\newcommand{\noappendixfigures   }{ \renewcommand{\@lofheading}{}}
-
-
 %=============================================================================
 % COPYRIGHTPAGE
 %=============================================================================
