@@ -1,6 +1,10 @@
 \chapter{Preliminary Work}
 \label{chap:prelim_work}
-Several steps are necessary to accomplish the objectives of this research.
+As preliminary work, several steps were taken to evaluate the validity of the proposed research.
+In order to determine the effects of nonlinear nonconvergence upon the temporal convergence of a solution, the \cobra{} software was modified to enable an iterative Newton method.
+A metric was developed to detect the presence of a nonlinearly nonconverged time-step size insensitive simulation results.
+A dynamic scaling for the nonlinear residual needed to be developed that would equally weight each of the conservation equation. 
+Test problems were developed to show that the metric for nonlinear nonconvergence can identify situations where the temporally-converged simulation results may be inaccurate.
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -84,7 +88,7 @@ Current values for $k_{\,\text{MAX}}$, $F_{\text{ABS}}$ and $\delta_{\text{ABS}}
 The scaling vectors, $\vec{S}$ and $\vec{D}$, will be addressed later.
 
 The globalization strategy implemented in \cobra{} is a linesearch algorithm \cite{Dennis1996}.
-The two globalization loop termination criteria are listed below.
+The two globalization loop termination criteria are:
 
 \begin{enumerate}
 \item{$\frac{1}{2}||\vec{F}^{k+1, j}||_{2} < \frac{1}{2}||\vec{F}^{k}||_{2} - \alpha ||\vec{F}^{k}||_{2}$ }
@@ -99,6 +103,8 @@ Since vector forms of the nonlinear residual and the independent parameters are 
 A subroutine was written to gather the discrete variables of the independent parameters into a single vector.
 Additional source code modifications were necessary to construct and gather the components of the nonlinear residual.
 
+\comment{Anything else here? More detail?}
+
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -109,7 +115,7 @@ Additional source code modifications were necessary to construct and gather the 
 \section{Operator-Based Scaling}
 \label{sect:operator_scaling}
 In order to determine the degree to which a state vector, $\vec{x}$, satisfies \eqref{eqn:conservation_equations}, the use of the nonlinear residual, $\vec{F}$, is required.
-However, due to the formulation of the residual vector, their values can vary by orders of magnitude.
+However, the magnitude of the residual for the different conservation equations can vary by orders of magnitude. 
 For a given grid location, the nonlinear residuals for mass and energy as formulated in section \ref{subsect:semi_implicit} will have six components.
 These residuals will have the units of the conserved quantities for their corresponding PDEs.
 Table \ref{tab:scaling_units_scales} shows the range of parameters possible within \cobra{}.
@@ -135,7 +141,7 @@ The scaling chosen should have the following characteristics:
 
 The heart of the scaling used in this work is a physics-based method.
 To illustrate the scaling procedure, we shall consider \eqref{eqn:conservation_of_liq} for a simply connected continuity cell without inter-field mass transfer.
-Assume that the entire channel single phase and in thermodynamics equilibrium such that the macroscopic densities on either side of this single cell are the same.
+Assume that the entire channel single-phase and in thermodynamics equilibrium such that the macroscopic densities on either side of this single cell are the same.
 
 \begin{equation}
 F = \left(\alpha_k \rho_k\right)^{n+1} - \left( \alpha_k \rho_k \right)^n - \frac{\Delta t}{V} \left( \frac{\alpha_k \rho_k }{<\alpha_k \rho_k>^n} V^{n+1}_{j-1} \right)
@@ -143,7 +149,7 @@ F = \left(\alpha_k \rho_k\right)^{n+1} - \left( \alpha_k \rho_k \right)^n - \fra
 
 In this equation there are three physically meaningful quantities: the temporal difference, the mass flowing into the cell, and mass flowing out of the volume. 
 
-\comment{I know this needs more details.}
+\comment{I know this needs more work.}
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -155,10 +161,10 @@ In this equation there are three physically meaningful quantities: the temporal 
 \section{Temporal Convergence}
 \label{sect:temporal_convergence}
 
-One of the factors in engineering analysis is the time-step size insensitive nature of the solution.
+One of the factors in engineering analysis is the time-step size insensitivity of the solution.
 However, a quantifiable measure of time-step size insensitivity is lacking in the literature.
 A definition of a temporally converged solution is required.
-Ideally, the definition would be the following: as the time-step size is reduce, the solution does not change.
+Ideally, the definition would be the following: as the time-step size is reduced, the solution does not change.
 However, this is an unrealistically optimistic definition due to the finite precision of computers.
 Another possible definition: as the time-step size is reduced, the change in the solution is small enough.
 Unfortunately, this is a subjective definition.
@@ -170,26 +176,28 @@ These parameters may include items such as peak clad temperature or peak system 
 The localized nature of examining parameters of interest is a weakness.
 This locality means that the entire solution domain is not being considered in the definition ``change in solution."
 
-Another subjective aspect of the definition is would be the meaning of ``small enough."
+Another subjective aspect of the definition is the meaning of ``small enough."
 Depending upon the context in which the work is being done, this may be nothing more than looking at a graph of the parameter of interest and using engineering judgment to say ``those two graphs look pretty similar."
 In some cases, a more quantifiable measure may be used.
-Quantifiable metrics may be  ``peak clad temperature does not change by more than 50$\deg$."
+Quantifiable metrics may be  ``peak clad temperature does not change by more than $50\,^{\circ}\mathrm{C}$."
 
 The refinement of the temporal discretization is another place where subjectivity comes into play.
 ``As the time-step size is reduced" is a very amorphous statement.
 A more proper statement could be interpreted as ``over the range of time-steps considered."
-While it may be that the chosen metric does not change with modest time-step refinement, that does not imply that the solution obtained is correct.
+While it may be that the chosen parameter of interest does not exceed the limits placed upon it with modest time-step refinement, that does not imply that the solution obtained is an accurate solution to the discrete nonlinear problem.
 
-Unfortunately, the subjective meaning of temporal convergence will always be subject to some form of engineering judgment. However, a metric that can quantify probability that a solution is not accurately temporally-converged would be of great value.
+Unfortunately, the subjective meaning of temporal convergence will always be subject to some form of engineering judgment. However, a metric that can quantify the probability that a solution is not accurately temporally converged would be of great value.
 
 The previously mentioned work into nonlinear convergence shows that a solution may be time-step size insensitive but not be the converged solution of the discretized problem \cite{Knoll2001}.
 If the nonlinearities of the discrete governing equations are not resolved, then temporal convergence rate can be degraded.
 This degradation can produce results that qualitatively appear to be converged due an almost zeroth order of accuracy.
-This apparent temporal convergence, or time-step size insensitivity, of the solution is not a result of reaching a the solution to the discretized nonlinear equations, but instead is indicative of the degraded order of accuracy due to the failure to resolve the nonlinearities at each time-step.
+This apparent temporal convergence, or time-step size insensitivity, of the solution is not a result of reaching the solution to the discretized nonlinear equations, but instead is indicative of the degraded order of accuracy due to the failure to resolve the nonlinearities at each time-step.
 To determine if the time-step size insensitive transient solution is both time-step size insensitive and an accurate solution to the nonlinear problem, a quantifiable metric is sought.
 
-The scaled residual from \sect{sect:operator_scaling} provides a well-scaled metric for instantaneous nonlinear convergence at any given time in the simulation.
-The natural extension of this metric would be a temporal integral of the global nonlinear residual, \eqref{eqn:trans_res_simple}.
+The norm of the scaled residual from \sect{sect:operator_scaling} provides a well-scaled metric for instantaneous nonlinear convergence at any given time in the simulation.
+The residual vector norm is divided by the number of equations in the residual to provide an average residual value per equation.
+This equation averaged scaled residual provides a metric for determining the degree of nonlinear convergence.
+The natural extension of this metric to transient problems would be a temporal integral, \eqref{eqn:trans_res_simple}, of said norm.
 
 \begin{equation}
 \label{eqn:trans_res_simple}
@@ -205,7 +213,7 @@ To remove this dependence, a temporal average was instead investigated, \eqref{e
 \vec{R} = \frac{\int_{t^{0}}^{t^{N}} ||\vec{F}(\tau)||_2 \,\mathrm{d} \tau}{t^{N} - t^{0}}
 \end{equation}
 
-This metric possesses the desirable bound stated above.
+This metric possesses the desirable bounds stated above.
 Other weighted temporal integrals were considered, such as a simple moment about $t^{0}$, \eqref{eqn:trans_res_mom}.
 However, this moment has the the theoretical disadvantage of weighting the latter portion of the transient.
 
@@ -215,7 +223,6 @@ However, this moment has the the theoretical disadvantage of weighting the latte
 \end{equation}
 
 For the preliminary work, the \eqref{eqn:trans_res_ave} and \eqref{eqn:trans_res_mom} were selected for evaluation.
-
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -266,7 +273,7 @@ One problem was designed to simulate single-phase, single-field continuous liqui
 The second problem was designed such that high-pressure liquid flashes into steam as it enters a standpipe initially filled with saturated vapor at a much lower pressure, known hereafter as the "Flashing" problem.
 
 Table \ref{tab:ic} provides the initial conditions for the two problems.
-The pressure, enthalpy, and volume-fractions for the different fields allows for a complete description of the continuity variables.
+The pressure, enthalpy, and volume-fractions for the different fields allow for a complete description of the continuity variables.
 The initial velocities are set to zero.
 
 \begin{table}[ht]
@@ -453,8 +460,11 @@ $\Delta t_{\text{MAX}}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlin
 
 \comment{Does the single-shot linearization have temporal convergence properties similar to the nonlinear solver in the absence of nonlinearities?}
 
-The single-phase problem was setup to minimize the amount of nonlinearity in the simulation.
-This section should show that the single-phase problem had a time-step insensitive solution.
+The single-phase problem should be relatively linear.
+As such, the solution produced by the linear solver should be the same as that produced by the linear solver.
+In addition, the solution should be time-step size insensitive from the beginning.
+
+
 It should also show that the solution for both the single-shot and the nonlinear versions of \cobra{} produced the same result.
 The nonlinear \cobra{} did not produce the same results.
 This is where I show the blowup picture of the oscillatory solution.
@@ -470,9 +480,8 @@ Another possibility is the limiters used in the operator-based scaling were chos
 \label{sect:review}
 
 In review, the single-shot semi-implicit \cobra software was converted to a nonlinearly convergent semi-implicit algorithm.
-A operator-based scaling was introduced and implemented in nonlinear \cobra{}.
-Several deficiencies have been identified with the current implementation of the scaling.
-A temporal-convergence criteria was developed and implemented to test for non-convergence of simulations. 
-
-
-\comment{More work needed.}
+A operator-based scaling was introduced and implemented into the nonlinear \cobra{}.
+Deficiencies were been identified with the current implementation of the operator-based scaling.
+A metric to detect nonlinear-convergence of a temporally converged simulation was developed and implemented.
+Tests indicated that an nonlinearly non-converged time-step size insensitive solution may, in fact, not be the correct solution to the nonlinear discrete equations.
+It was found that the metric to determine nonlinear non-convergence of solutions provided a way to determine if the solution obtained may not be the correct solution. 
