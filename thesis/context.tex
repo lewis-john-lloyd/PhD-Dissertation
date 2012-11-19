@@ -6,7 +6,7 @@ Chapter 1 of Title 10 of the Code of Federal Regulations (10CFR) details the reg
 Part 50 of 10CFR (10CFR50), lays out the process by which an applicant can obtain both construction and operating licenses for NPPs.
 One of the documents required by 10CFR50 is a safety analysis report (SAR) prior to the issuance of any license.
 In part, SARs for Light Water Reactors (LWRs) require that the applicant provides an evaluation of their Emergency Core Cooling System (ECCS) during postulated loss-of-coolant accidents (LOCA).
-This evaluation must conform with section 46 of 10CFR50, which requires that the applicant perform analyses for ``a number of postulated loss-of-coolant accidents of different sizes, locations, and other properties sufficient to provide assurance that the most severe postulated loss-of-coolant accidents are calculated" \comment{figure out how to cite this}.
+This evaluation must conform with section 46 of 10CFR50, which requires that the applicant perform analyses for ``a number of postulated loss-of-coolant accidents of different sizes, locations, and other properties sufficient to provide assurance that the most severe postulated loss-of-coolant accidents are calculated" \cite{CFR10}.
 This requirement necessitates that the designers and operators of NPPs possess the ability to model the thermal-hydraulic behavior within the core of a reactor during severe accidents.  
 The diverse physical conditions experienced by the reactor during severe accidents necessitate the inclusion of a wide array of physics during safety analyses.
 Among the physics of interest are fluid mechanics, neutron transport, structural mechanics, and radio-chemistry.
@@ -580,7 +580,7 @@ However, it has been shown that if the nonlinear problem, \eqref{eqn:nonlinear_r
 \label{subsect:nonlinear_approximations}
 
 The method used to solve \eqref{eqn:nonlinear_residuals} for $\vec{x}^{n+1}$ in this work is Newton's method \cite{Deuflhard2004, Dennis1996}.
-The nonlinear residual being solved in this work is a function of the new-time unknowns, $\vec{x}^{n+1}$.
+The nonlinear residual being solved is a function of the new-time unknowns, $\vec{x}^{n+1}$.
 Newton's method is an iterative procedure to obtain $\vec{x}^{*}$ such that $\vec{F}(\vec{x}^{*}) = 0$.
 Since Newton's method is an iterative procedure for obtaining new-time variables, two superscripts will be required.
 The nonlinear iterate superscript will be $k$.
@@ -600,7 +600,7 @@ The algorithm is then one of finding successive updates, $\vec{\delta x}^k$, by 
 \end{equation} 
 
 Since the system of nonlinear equations being solved represents a transient simulation, the iterations at each time-step start with an initial guess for the new time variables that is equal to the old-time variables, $\vec{x}^{n+1,0} = \vec{x}^{n}$.
-The underlying assumption is that the independent parameters will not change greatly over a time-step, and, as such, the old-time variables provide an initial vector that is within the radius of convergence of Newton's method.
+The underlying assumption of this initial value is that the independent parameters will not change greatly over a time-step, and the old-time variables will provide an initial vector that is within the radius of convergence of Newton's method.
 \alg{alg:local_newton} provides an overview of a transient simulation using a local Newton's method for a single-stage temporal integration scheme.
 The algorithm generalizes to a multi-stage method by enclosing the Newton loop within a stage loop.
 
@@ -627,7 +627,7 @@ The algorithm generalizes to a multi-stage method by enclosing the Newton loop w
 \end{algorithmic}
 \end{algo}
 
-In \alg{alg:local_newton}, there are two black box calculations: the calculation of the update independent parameters, $\vec{x}^{n+1,k+1}$; and the calculation of the loop termination criteria.
+In \alg{alg:local_newton}, there are two black box calculations: the calculation of the updated independent parameters, $\vec{x}^{n+1,k+1}$; and the calculation of the loop termination criteria.
 In the case of the loop termination criteria being $k > 0$, the resultant method is labeled as a single-shot linearization.
 The exact nature of those two black box calculations is method-dependent and the various options will be discussed later.
 In multi-stage temporal integration methods, both the update method and the loop termination criteria may vary between stages. 
@@ -641,6 +641,7 @@ In multi-stage temporal integration methods, both the update method and the loop
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Solution Methods}
 \label{sect:solution_techniques}
+
 \sect{sect:numeric_approximation} provided a framework for characterizing the different methods used in thermal-hydraulic safety codes. 
 Each method can be defined by the manner in which the temporal integration is carried out and the manner in which the nonlinearities are resolved.
 The methods described below form the core of available techniques that have been developed for two-phase safety analysis codes. 
@@ -1090,32 +1091,43 @@ In stage three, the nonlinear relation between the conserved quantities and the 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Algorithmic Concerns}
 \label{sect:algorithmic_concerns}
+
 The methods outlined in \sect{sect:solution_techniques} have algorithmic issues that need to be addressed.
-Given that the governing conservation laws in use in thermal-hydraulic analyses are those of two-phase flow, there is no systematic and widely agreed upon way of dealing with phase appearance or disappearance.
-Additionally, given that each of the methods above utilizes Newton's method for at least one Newton step, the use of globalization methods for the local Newton method is not addressed.
+Given that the governing conservation laws in thermal-hydraulic analyses are those of two-phase flow, there is no systematic and widely agreed upon way of dealing with phase appearance or disappearance.
 While each algorithmic implementation of the various methods addresses these issues out of necessity, there is no systematic, or optimal, way of doing so. 
 
-\subsection{Phase Appearance and Disappearance}
-\label{subsect:phase_change}
-The topic of how to address phase and field appearance or disappearance within two-phase analysis codes has been ignored to this point.
-While there are published best-practices, these are inherently ad-hoc procedures that vary from software to software \cite{Bestion2000}.
+Phase and field appearance or disappearance, hereafter referred to as phase transitions, is a concern for any algorithmic implementation of thermal hydraulic methods.
+The methods for addressing phase transitions within two-phase analysis software are ad-hoc procedures that vary from software to software.
+However, certain physical limits have been identified that need to be considered \cite{Bestion2000}.
+Since the manner in which \cobra{} treats phase transitions is of importance to this work, a brief description will follow.
 
-\comment{Degree of detail fuzzy.}
-
-\subsection{Time Step Failure}
-\label{subsect:time_step_failure}
+\comment{Talk about phase transition logic here.}
+\begin{itemize}
+\item{Velocity equilibrium enforced by enhanced interfacial drag.}
+\item{Minimum field threshold for the three water fields.}
+\item{Partial pressure of \ncg field allowed to go to zero.}
+\end{itemize}
 
 Within \cobra{}, there are certain constraints that are imposed upon the independent parameters.
-There are two common methods for dealing with a potentially poor time-step in sub-channel codes: prediction and mitigation.
-The predictive method is the less commonly applied of the two methods.
-It uses information about the explicit portion of the nonlinear residual to identify situations where the linearization point may be poor.
-This particular method is used only for the prediction of appearance.
+These constraints are dealt with in a mitigative manner.
+After a single Newton step, the updated parameters evaluated to determine their validity in the context of a single-shot method.
+There are two ways of resolving potentially invalid solutions: limiting and failure.
+The limiting procedure can either truncate the updated parameter, so that is falls within a valid range or the time-step can be considered a failure.
+When a predicted volume fraction falls outside of its valid range, it is limited.
+When thermodynamic variables are predicted to exceed the equations of state available in \cobra{}, the time-step is repeated with a smaller time-step size. 
 
-Mitigation, the second method, is the more common and actively used strategy.
-This strategy can be further subdivided into two categories: limiting and failure.
-There is an extensive set of limiting criteria.
+There are also limits placed upon the changes in the continuity parameters.
+\begin{itemize}
+\item{Change of enthalpy too great.}
+\item{Change in pressure too great.}
+\item{Change in partial pressure of \ncg field too great.}
+\end{itemize}
 
-\comment{Here there be work.}
+Another algorithmic concern is how to identify a potentially poor linearization point in the presence of phase transitions. 
+This can be considered a predictive error correction technique.
+It uses information from the explicit portion of the nonlinear residual to identify situations where the linearization point may be poor.
+In \cobra{} this method is used only for the prediction of \ncg{} appearance.
+
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1134,9 +1146,11 @@ This coupling of capabilities can be accomplished in two ways: the two pieces of
 Examples of the first method are MARS \cite{Jeong2008} and TRACE \cite{TRACE}.
 Coupling software via data exchange is the more common option \cite{Makihara2003, Aumiller2002, Aumiller2001, Avramova2006, Weaver2002}.
 
-The coupling of software via data exchange has led to the development of a semi-implicit coupling technique for thermal-hydraulic simulations \cite{Weaver2002}.
+The use of explicit coupling can lead to a sonic Courant limit imposed upon the two coupled systems \cite{Ragusa2009, Aumiller2000}.
+The coupling of software via data exchange has led to the development of a semi-implicit coupling technique for thermal-hydraulic simulations \cite{Weaver2002, Aumiller2002}.
 This technique is of direct interest to the work that will be performed.
 The original paper presents the method in terms of the RELAP5-3D conservation equations, which are different from those in \cobra{}.
+
 The following outline of the method uses the \cobra{} equations.
 
 The coupling boundary of the two domains occurs at the edge of a continuity volume.
@@ -1277,7 +1291,6 @@ This is the context through which code coupling will be viewed.
 In the realm of domain decomposition, the Schwarz method is relevant.
 There is the multiplicative Schwarz and the additive Schwarz method.
 There is paper by David E. Keyes that talks about domain decomposition with multi-models.
-That is really what we are doing.
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1291,13 +1304,9 @@ The methods used to simulate thermal-hydraulic behavior in NPP are characterized
 Each of the methods outlined in \sect{sect:solution_techniques} has one thing in common: the nonlinear problem is solved globally, either through a single-shot linearization or through an iterative procedure.
 If nonlinear effects are spatially isolable, then the computational expenditure of iteratively solving the global nonlinear problem may be unnecessary.
 
-The objective of this research is two-fold: the design, implementation, and evaluation of a spatially-selective nonlinear solution framework, and the development of a temporal convergence criteria.
+The objective of this research is the design, implementation, and evaluation of a novel spatially and temporally selective nonlinearly convergent solution framework for nuclear thermal hydraulic safety analysis.
 The method should be able to quantify the nonlinearity of spatial subdomains within a given problem.
 Isolation of those subdomains where nonlinearities are high will be achieved by using a variant of the code coupling algorithm discussed in \sect{sect:code_coupling}.
-The temporal convergence criteria should be capable of quantifying the degree to which a transient solution is time-step size insensitive.
-Since both objectives depend upon the scaling of the nonlinear residuals, a novel operator-based scaling will be utilized to obtain meaningful convergence thresholds.
-
-This work is unique in several ways.
-First, it attempts to develop a quantifiable metric for the time-step size insensitivity of the solution.
-The scaling of the nonlinear residual is typically done in an arbitrary fashion, this work will investigate a scaling factor that is intrinsically linked to the physics of interest.
-The novel use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling may provide a route to accelerated convergence for traditional two-phase flow methods.
+Upon isolation, the coupled subdomain will be subjected to a globally convergent Newton method to resolve the nonlinearities.
+This converged solution will be communicated via the coupling coefficients to the rest of the problem domain for use in calculating its single Newton step.
+This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling may provide a route to nonlinearly converged time-step size insensitive solutions for traditional two-phase flow methods.

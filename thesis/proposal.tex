@@ -1,16 +1,16 @@
 \chapter{Proposed Work}
 \label{chap:proposal}
 To evaluate the proposed method, several objectives will be pursued.
-The coding of the operator based scaling for the nonlinear residuals will be examined and modified as necessary to address the noted convergence issues.
+The coding of the operator-based scaling for the nonlinear residuals will be examined and modified as necessary to address the noted convergence issues.
 An appropriate scaling of the Newton updates for convergence testing both within the linesearch algorithm and in the Newton loop will be determined.
 The domain decomposition algorithm will be mathematically developed, coded, and evaluated.
 Once the preceding three objectives have been met, a test problem will be developed to test the nonlinear refinement code as applied to a predetermined subdomain.
-After the algorithmic framework has been evaluated, several geometrically complex problems with high local-nonlinearities will be developed to obtain temporal-convergence benchmarks of the legacy algorithm.
+After the algorithmic framework has been evaluated, several geometrically complex problems with a high incidence local-nonlinearities will be developed to obtain temporal-convergence benchmarks of the legacy algorithm.
 The same problems will then be evaluated using the proposed algorithm to determine the efficacy of temporal-convergence criteria.
 Upon completion of the temporal-convergence tests, run time tests will be conducted to determine any performance gains or losses as a result of the proposed method.
 Parametric studies will then be conducted to determine the impact of nonlinear convergence tolerances, phase appearance and disappearance thresholds, geometric residual imbalances, and residual thresholds for activation of nonlinear refinements.
 
-\section{Scaling Evaluation}
+\section{Scaling}
 \label{sect:proposal_scaling}
 The current implementation of the operator-based scaling method outlined in \sect{sect:operator_scaling} has several issues that need to be addressed.
 In addition, the efficacy of this scaling should be compared to that of an unscaled residual in a systematic manner.
@@ -27,7 +27,7 @@ Additionally, the interplay between the globalization termination criteria and t
 The first step will be to develop a variation of the semi-implicit domain coupling algorithm presented in \sect{sect:code_coupling}.
 The derivation should take into account the iterative Newton nature of the subdomain. 
 In addition, the details of the derivation will need to be reworked to account for the different flow variables in \cobra.
-Upon implementation of the internal coupling algorithm within \cobra, a test problem will be developed to ensure that in legacy mode, a decomposed problem produces an equivalent solution to a single domain problem.
+Upon implementation of the internal coupling algorithm within \cobra, a test problem will be developed to ensure that in legacy mode a decomposed problem produces an equivalent solution to a single domain problem.
 This problem will need to have multiple geometric components, as that the decomposed domain will be at channel boundaries.
 The test problem will be run in legacy mode to obtain a standard solution.
 
