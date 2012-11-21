@@ -497,7 +497,9 @@ The definition of $\dot{m}_k$ is given by \eqref{eqn:mom_dot}.
 \dot{m}_k = \alpha_k \rho_k u_k A_m
 \end{equation}
 
-Variants of these parameters include the use of velocities instead of momenta, temperatures or internal energies instead of enthalpies \cite{RELAP, TRACE}.
+The choice of independent parameters used in \cobra{} is not the only option .
+Other software uses variants of these parameters.
+Some other options include the use of velocities instead of momenta, and temperatures or internal energies instead of enthalpies \cite{RELAP, TRACE}.
 
 A distinguishing feature of the numerical method in \cobra{} is its treatment of the temporal derivative for the conservation of momentum.
 In the work that follows, the temporal derivative of the conserved momentum equations is directly discretized, known as conservative form.
@@ -515,13 +517,12 @@ The term one-step refers to the fact that the temporal derivative involves only 
 \begin{IEEEeqnarray}{rcl}
 \int^{t^{n+1}}_{t^n}\frac{\partial \vec{y}(\vec{x})}{\partial t}\mathrm{d}\tau & = & \int^{t^{n+1}}_{t^n}\vec{E}(\vec{y}(\vec{x}))\mathrm{d}\tau \nonumber \\
 \vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n}) & = & \int_{t^{n+1}}^{t^n}\vec{E}(\vec{y}(\vec{x}))\mathrm{d}\tau \nonumber  \\
-\frac{\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n})}{\int_{t^{n}}^{t^{n+1}}\mathrm{d} \tau} & = & \frac{\int_{t^{n+1}}^{t^n}\vec{E}(\vec{y}(\vec{x}))\mathrm{d}\tau}{\int_{t^{n}}^{t^{n+1}}\mathrm{d} \tau} \nonumber \\
-\frac{\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n})}{\Delta t} & = & \frac{\int_{t^{n+1}}^{t^n}\vec{E}(\vec{y}(\vec{x}))\mathrm{d}\tau}{\int_{t^{n}}^{t^{n+1}}\mathrm{d} \tau} \nonumber \\
+\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n}) & = & \Delta t \vec{E}(\vec{x}^{*}) \nonumber  \\
 \label{eqn:simple_partial_t}
 \frac{\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n})}{\Delta t} & = & \vec{E}(\vec{y}(\vec{x}^{*}))
 \end{IEEEeqnarray}
 
-The choice of how to approximate the temporal-average, $\vec{E}(\vec{y}(\vec{x}^{*}))$, hereafter referred to as $\vec{E}^{*}$, is a factor that defines the eventual solution algorithm.
+The choice of how to approximate the temporal integral of the sources and sinks of the system, $\vec{E}(\vec{y}(\vec{x}^{*}))$, hereafter referred to as $\vec{E}^{*}$, is a factor that defines the eventual solution algorithm.
 There are two subcategories for solving this one-step temporal-integration problem, single-stage and multi-stage \cite{Stewart1981,LeVeque2007}.
 \alg{alg:single_stage_temporal} shows how a multi-stage temporal integration scheme would work.
 
@@ -1014,7 +1015,7 @@ For each stage, the residual and Jacobian matrix will be denoted by $\vec{F}_k$ 
 \end{algorithmic}
 \end{algo}
 
-This algorithm allows for the semi-implicit method to be used within a larger framework.
+This algorithm was designed to allow existing software utilizing the semi-implicit method to be embedded within a larger framework.
 The loop termination criteria is an implementation-specific choice.
 The TRACE code uses an $L_{inf}$ norm of the unscaled Newton updates for the continuity variables to determine convergence.
 
@@ -1085,6 +1086,8 @@ In stage three, the nonlinear relation between the conserved quantities and the 
 \section{Algorithmic Concerns}
 \label{sect:algorithmic_concerns}
 
+\comment{This section may end up with subsections.}
+
 The methods outlined in \sect{sect:solution_techniques} have algorithmic issues that need to be addressed.
 Given that the governing conservation laws in thermal-hydraulic analyses are those of two-phase flow, there is no systematic and widely agreed upon way of dealing with phase appearance or disappearance.
 While each algorithmic implementation of the various methods addresses these issues out of necessity, there is no systematic, or optimal, way of doing so. 
@@ -1104,21 +1107,30 @@ Within \cobra{}, there are certain constraints that are imposed upon the indepen
 These constraints are dealt with in a mitigative manner.
 After a single Newton step, the updated parameters evaluated to determine their validity in the context of a single-shot method.
 There are two ways of resolving potentially invalid solutions: limiting and failure.
-The limiting procedure can either truncate the updated parameter, so that is falls within a valid range or the time-step can be considered a failure.
-When a predicted volume fraction falls outside of its valid range, it is limited.
-When thermodynamic variables are predicted to exceed the equations of state available in \cobra{}, the time-step is repeated with a smaller time-step size. 
+The limiting procedure can either truncate the updated parameter, so that is falls within a valid range, or the time-step can be considered a failure.
+When a predicted volume fraction falls outside of its valid range, it is truncated to obey the constraints in equation \eqref{eqn:volume_fraction}.
 
-There are also limits placed upon the changes in the continuity parameters.
+\begin{equation}
+\label{eqn:volume_fraction}
+\alpha_{k,\text{min}} \leq \alpha_k \leq \alpha_{k,\text{max}} 
+\end{equation}
+
+There are also limits placed upon the changes thermodynamic parameters within \cobra{}.
 \begin{itemize}
-\item{Change of enthalpy too great.}
-\item{Change in pressure too great.}
-\item{Change in partial pressure of \ncg field too great.}
+\item{Change of phasic enthalpy cannot be greater than 45 [$\frac{\text{BTU}}{\text{lb}_{\text{m}}}$].}
+\item{Change in pressure cannot be greater than 20 [psia].}
+\item{Change in partial pressure of the \ncg field cannot be greater than 20 [psia].}
+\item{Thermodynamic variables would fall outside of the range of validity of the equations of state.}
 \end{itemize}
+The first three limits are an attempt to mitigate an initial guess that may be outside of the Newton's step radius of convergence.
+If any of the above limits are exceeded, the time-step is considered a failure and is repeated with a smaller time-step size.
 
 Another algorithmic concern is how to identify a potentially poor linearization point in the presence of phase transitions. 
 This can be considered a predictive error correction technique.
 It uses information from the explicit portion of the nonlinear residual to identify situations where the linearization point may be poor.
 In \cobra{} this method is used only for the prediction of \ncg{} appearance.
+
+\comment{I need to discuss time-step selection algorithm here.}
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1295,15 +1307,14 @@ There is paper by David E. Keyes that talks about domain decomposition with mult
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Research Objectives}
 The methods used to simulate thermal-hydraulic behavior in NPP are characterized by the manner in which the temporal-integration of the governing conservation equations and the manner in which the nonlinearities inherent in those fully discrete equations are resolved.
-Each of the methods outlined in \sect{sect:solution_techniques} has one thing in common: the nonlinear problem is solved globally, either through a single-shot linearization or through an iterative procedure.
+Each of the methods outlined in \sect{sect:solution_techniques} has one thing in common: the nonlinear problem is solved globally, either through a single-shot linearization or through an iterative Newton procedure.
+The resolution of the nonlinearities within a time-step requires the use of an iterative method.
 If nonlinear effects are spatially isolable, then the computational expenditure of iteratively solving the global nonlinear problem may be unnecessary.
 
 The objective of this research is the design, implementation, and evaluation of a novel spatially and temporally selective nonlinearly convergent solution framework for nuclear thermal hydraulic safety analysis.
-%The method should be able to quantify the nonlinearity of spatial subdomains within a given problem.
+The method should be able to quantify the nonlinearity of spatial subdomains within a given problem.
 Isolation of those subdomains where nonlinearities are high will be achieved by using a variant of the code coupling algorithm discussed in \sect{sect:code_coupling}.
+For this work, the subdomains will be predetermined geometric components.
 Upon isolation, the coupled subdomain will be subjected to a globally convergent Newton method to resolve the nonlinearities.
 This converged solution will be communicated via the coupling coefficients to the rest of the problem domain for use in calculating its single Newton step.
-This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling may provide a route to nonlinearly converged time-step size insensitive solutions for traditional two-phase flow methods.
-
-The resolution of localized nonlinearities could allow time-step size insensitive solutions at larger $\Delta t_{\text{MAX}}$.
-This would provide for a faster engineering analysis.
+This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling may provide a route to nonlinearly converged time-step size insensitive solutions for traditional two-phase flow methods that utilizes time-step sizes unattainable in single-shot linearization methods.

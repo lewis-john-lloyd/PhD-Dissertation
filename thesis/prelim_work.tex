@@ -3,9 +3,9 @@
 As preliminary work, several steps were taken to evaluate the validity of the proposed research.
 To aid in this task a metric was be developed for the evaluation of the nonlinear convergence of a temporally-converged solution.
 In order to determine the effects of nonlinear convergence upon the time-step size insensitivity of a solution, the \cobra{} software was modified to enable an iterative Newton method.
-Since both objective depend upon the scaling of the nonlinear residuals, a novel operator-based scaling will be utilized to obtain meaningful convergence thresholds.
+Since both objectives depend upon the scaling of the nonlinear residuals, a novel operator-based scaling has been developed to obtain meaningful convergence thresholds.
 The scaling of the nonlinear residual is typically done in an arbitrary fashion; a scaling factor that is intrinsically linked to the physics of interest was developed.
-This dynamic scaling allows for equal weighting of each of the conservation equation. 
+This scaling produces a non-dimensionalized residual that is relative to the physical sources and sinks on a per equation basis. 
 Test problems were developed to show that the metric to test for nonlinear convergence in time-step size insensitive solutions can identify situations where the temporally-converged simulation results may not satisfy the discrete nonlinear equations.
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -18,7 +18,7 @@ Test problems were developed to show that the metric to test for nonlinear conve
 \label{sect:nl_cobra}
 The first stage of preliminary work was to modify the \cobra{} software.
 The \cobra{} software as obtained was a single-shot linearization version of the semi-implicit method.
-In order to evaluate the spatially-selective nonlinear refinement, \cobra{} needed to be converted to a fully iterative nonlinear solver.
+In order to evaluate the spatially-selective nonlinear refinement, \cobra{} needed to be converted to include a fully iterative Newton solver based upon a linesearch globalization strategy.
 When it is necessary to distinguish between the single-shot linearization algorithmic implementation of \cobra{} and the iterative nonlinear \cobra{}, the former shall be referred to as legacy mode and the latter as nonlinear mode.
 As such, the objectives of this work were to modify the software to be able do the following:
 
@@ -32,7 +32,9 @@ As such, the objectives of this work were to modify the software to be able do t
 As a result of that design decision, certain memory saving techniques were employed in its construction that precluded the idea of more than one Newton step.
 In particular, there was an implicit assumption within the software that the current Newton iterate, $\vec{x}^{n+1, 0}$, was the old-time variable $\vec{x}^{n}$.
 This design decision required an an evaluation of all routines involved with the evaluation of components of both the nonlinear residual and the Jacobian.
-In addition, the assumption that $\vec{x}^{n+1, k} = \vec{x}^{n}$ required identification of places in the source code where there were implicit cancellation of terms.
+In addition, the assumption that $\vec{x}^{n+1, k} = \vec{x}^{n}$ produced source code that was inconsistent with an iterative Newton method.
+This required that the source code be modified to reflect the intended discretization of the governing conservation laws.
+To do this, several areas had to be identified where: there were implicit cancellation of terms, the new-time variables were used in place of old-time variables, and the old-time variables were used in place of new-time variables.
 Where appropriate, the software was changed to reflect the distinction between old-time and iterate variables and to introduce terms that had been assumed to be equal to zero.
 
 Once the appropriate variables were used for the evaluation of nonlinear residuals and Jacobians, a Newton loop was introduced to allow multiple Newton steps.
@@ -48,7 +50,7 @@ Once the appropriate variables were used for the evaluation of nonlinear residua
 \Loop \; Transient Loop
     \State $t^{n+1} : = t^{n} + \Delta t$
     \State $k = 0$
-    \State $\vec{x}^{n+1,0} = \vec{x}^{n}$
+    \Define $\vec{x}^{n+1,0} = \vec{x}^{n}$
 	\Calculate $\vec{F}(\vec{x}^{n+1,0})$ and $\vec{J}(\vec{x}^{n+1,0})$
     \Loop \; Newton Loop
 		\Calculate $\vec{\delta x} = - \vec{J}^{-1}\cdot\vec{F}$
@@ -258,8 +260,8 @@ The red triangle represents a specified flow at the bottom edge of the first con
 \foreach \x in {1,..., 12} \draw(0, 0.5*\x-0.5) rectangle +(.5,.5);
 \filldraw[fill=red] (0, 6) rectangle +(.5,.5); 
 \filldraw[fill=red] (0, -0.5) -- (0.25, 0) -- (0.5, -0.5) -- cycle;
-\draw[->] (2,0) -- (2, 1) node[anchor=west] {y};
-\draw[->] (2,0) -- (3, 0) node[anchor=west] {$\perp y$};
+\draw[->] (2,0) -- (2, 1) node[anchor=west] {z};
+\draw[->] (2,0) -- (3, 0) node[anchor=west] {$\perp z$};
 \end{tikzpicture}
 \end{center}
 \caption{Geometry for test problems.}
@@ -300,7 +302,7 @@ Table \ref{tab:bc_pe} contains the pressure, enthalpy, and composition of the pr
 Single Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
 Flashing                 &  200&0                       & 1198&3                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
 \end{tabular}
-\caption{Pressure-enthalpy boundary conditions for test problems.}
+\caption{Outlet pressure-enthalpy boundary conditions for test problems.}
 \label{tab:bc_pe}
 \end{table}
 
@@ -315,7 +317,7 @@ Table \ref{tab:bc_fe} describes the inlet boundary condition for the two problem
 Single Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
 Flashing                 & 1000&0                       &  542&6                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
 \end{tabular}
-\caption{Flow-enthalpy boundary conditions for test problems.}
+\caption{Inlet f	low-enthalpy boundary conditions for test problems.}
 \label{tab:bc_fe}
 \end{table}
 
@@ -357,7 +359,8 @@ Of the twenty-four simulations run, the legacy mode simulation of flashing at a 
 The convergence metric will be used to determine if a qualitative temporal-convergence determination can lead to the acceptance of solution that is not nonlinearly converged.
 For each of the test cases, these variables were compared at different time-steps.
 First, the 1 [s] max time-step legacy simulation of the flashing problem failed to run.
-It could not reduce the time-step size enough to prevent too large of changes to the independent parameters.
+The time-step limiting procedure outlined \sect{sect:algorithmic_concerns} was unable to prevent too large of changes to the independent parameters by reducing the time-step.
+This caused the problem to try to run below a the minimum allowable time-step size, which resulted in the software aborting.
 However, the nonlinearly convergent \cobra{} was able to run at a 1 [s] time-step.
 Both versions of \cobra{} are subject to the same limits on change of independent variables.
 
@@ -385,7 +388,7 @@ The two solutions did not converge as the time-step size was reduced for both.
         \label{fig:flashing_solution}
 \end{figure}
 
-The nonlinear residual for the legacy Flashing problem shows that that even for small time-step sizes, the solution still contains nonlinearities, \fig{fig:legacy_flashing_residual}.
+The nonlinear residual for the legacy Flashing problem indicates that even for small time-step sizes, the solution obtained still does not satisfy the discrete nonlinear equations, \fig{fig:legacy_flashing_residual}.
 This is in contrast to the nonlinear Flashing problem, which shows a lower nonlinear residual over the course of the simulation, \fig{fig:nonlinear_flashing_residual}.
 
 \begin{figure}[h!t]

@@ -204,17 +204,17 @@
 %                               reset to zero when counter OLDCTR is stepped.
 %                               Counter OLDCTR must already be defined.
 %=============================================================================
-\newcounter {part}
-\newcounter {chapter}
-\newcounter {appendixc}
-\newcounter {section}[chapter]
-\newcounter {subsection}[section]
-\newcounter {subsubsection}[subsection]
-\newcounter {paragraph}[subsubsection]
-\newcounter {subparagraph}[paragraph]
-\newcounter {tocpage}
-\newcounter {lofpage}
-\newcounter {listofheading}
+\newcounter{part}
+\newcounter{chapter}
+\newcounter{appendixc}
+\newcounter{section}[chapter]
+\newcounter{subsection}[section]
+\newcounter{subsubsection}[subsection]
+\newcounter{paragraph}[subsubsection]
+\newcounter{subparagraph}[paragraph]
+\newcounter{tocpage}
+\newcounter{lofpage}
+\newcounter{listofheading}
 
 %=============================================================================
 % For any counter CTR, \theCTR is a macro that defines the printed version

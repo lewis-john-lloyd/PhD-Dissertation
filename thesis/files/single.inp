@@ -25,8 +25,8 @@ air              1.0
 *
 *   CHFCOR      GPTH     TMREL
          8     0.168         6
-*       K1_EXP       K2_DIST      NSPACERS         K4_L0       K5_FLAG       K8_FLAG
-           0.5         0.295             0          48.0             2             2
+*       K1_EXP       K2_DIST      NSPACERS         K4_L0       K5_FLAG   K8_FLAG
+           0.5         0.295             0          48.0             2         2
 *
 ********************************************************************************
 * Group 2: 
@@ -61,16 +61,16 @@ air              1.0
     4
 *ABSC    ORDINT ABSC    ORDINT ABSC    ORDINT ABSC    ORDINT
   0.0       0.0    1       0.0    2       1.0 1000       1.0
-*IBD1 IBD2 ISPE NPFN NHFN    PVALUE    HVALUE    XVALUE NXFN     DROPS NDFN    FDROPS NFFN
+*IBD1 IBD2 ISPE NPFN NHFN    PVALUE    HVALUE    XVALUE NXFN     DROPS NDFN
 *n: Inlet
-    2    1    2    1    0       0.5     38.05    1000.0    0       0.0    0       0.0    0
+    2    1    2    1    0       0.5     38.05    1000.0    0       0.0    0 
 *HGMA  GV1  GV2  GV3
   0.0    1    1    1
 *NHFN NGFN NGFN NGFN
     0    0    0    0
-*IBD1 IBD2 ISPE NPFN NHFN    PVALUE    HVALUE    XVALUE NXFN     DROPS NDFN    FDROPS NFFN
+*IBD1 IBD2 ISPE NPFN NHFN    PVALUE    HVALUE    XVALUE NXFN     DROPS NDFN 
 *n: Outlet
-    2   14    1    0    0    1000.0     38.05       0.0    0       0.0    0       0.0    0
+    2   14    1    0    0    1000.0     38.05       0.0    0       0.0    0 
 *HGMA  GV1  GV2  GV3
   0.0    1    1    1
 *NHFN NGFN NGFN NGFN

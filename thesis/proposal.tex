@@ -13,9 +13,10 @@ Parametric studies will then be conducted to determine the impact of nonlinear c
 \section{Scaling}
 \label{sect:proposal_scaling}
 The current implementation of the operator-based scaling method outlined in \sect{sect:operator_scaling} has several issues that need to be addressed.
-Another scaling question that needs to be addressed is the proper scaling for the Newton update.
+These issues include the poor behavior for the single-phase problem identified in \ref{subsect:results}.
+Another scaling issues that need to be addressed is the proper scaling for the Newton update.
 The current algorithmic implementation has different convergence criteria for the linesearch step and the Newton step.
-The interplay between the globalization termination criteria and the update scaling should be investigated. 
+The interplay between the globalization termination criteria and the update scaling should also be investigated. 
 
 \section{Domain Decomposition}
 \label{sect:domain_coupling}
@@ -63,23 +64,25 @@ The final performance testing and parametric studies will be carried out in para
 \begin{table}[h]
 \singlespace
 \centering
-\begin{tabular}{@{}l l c c c c  c c c c @{}} \toprule
-Task & \multicolumn{1}{r}{Month} & Jan & Feb & Mar & Apr & May & Jun & Jul & Aug\\
+\begin{tabular}{@{}l l c c c c  c c c c c @{}} \toprule
+Task & \multicolumn{1}{r}{Month} & Jan & Feb & Mar & Apr & May & Jun & Jul & Aug & Sep \\
 \midrule
-\multicolumn{10}{l}{Scaling}  \\
-& Implementation & \cc & \cc &     &     &     &     &     &     \\
-& Testing        &     & \cc & \cc &     &     &     &     &     \\
-\multicolumn{10}{l}{Domain Decomposition} \\
-& Development    & \cc & \cc &     &     &     &     &     &     \\
-& Implementation &     & \cc & \cc & \cc &     &     &     &     \\
-& Testing        &     &     &     & \cc & \cc &     &     &     \\
-\multicolumn{10}{l}{Temporal Convergence Criteria}\\
-& Implementation & \cc & \cc &     &     &     &     &     &     \\
-& Testing        &     &     & \cc & \cc &     &     &     &     \\
-\multicolumn{10}{l}{Performance Evaluation} \\
-& Testing        &     &     &     &     & \cc & \cc & \cc &     \\
-\multicolumn{10}{l}{Parametric Studies} \\
-& Testing        &     &     &     &     &     & \cc & \cc &     \\
+\multicolumn{11}{l}{Scaling}  \\
+& Implementation & \cc & \cc &     &     &     &     &     &     &    \\
+& Testing        &     & \cc & \cc &     &     &     &     &     &    \\
+\multicolumn{11}{l}{Domain Decomposition} \\
+& Development    & \cc & \cc &     &     &     &     &     &     &    \\
+& Implementation &     & \cc & \cc & \cc & \cc &     &     &     &    \\
+& Testing        &     &     &     &     & \cc & \cc &     &     &    \\
+\multicolumn{11}{l}{Temporal Convergence Criteria}\\
+& Implementation & \cc & \cc &     &     &     &     &     &     &    \\
+& Testing        &     &     & \cc & \cc &     &     &     &     &    \\
+\multicolumn{11}{l}{Performance Evaluation} \\
+& Testing        &     &     &     &     &     & \cc & \cc &     &    \\
+\multicolumn{11}{l}{Parametric Studies} \\
+& Testing        &     &     &     &     &     & \cc & \cc &     &    \\
+\multicolumn{11}{l}{Dissertation} \\
+& Writing        & \cc & \cc & \cc & \cc & \cc & \cc & \cc & \cc & \cc \\
 \bottomrule  
 \end{tabular}
 \caption{Proposed research time line}
