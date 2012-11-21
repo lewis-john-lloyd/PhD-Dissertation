@@ -234,12 +234,12 @@ For the preliminary work, the \eqref{eqn:trans_res_ave} and \eqref{eqn:trans_res
 \section{Numerical Experiments}
 \label{sect:numerical_experiments}
 
-In order to evaluate the interplay between the nonlinear nonlinear convergence and temporal convergence, two test problems were constructed.
+In order to evaluate the interplay between the nonlinear convergence and temporal convergence, two test problems were constructed.
 These tests problems were designed to answer the following two questions.
 
 \begin{enumerate}
 \item{Does the metric provide a quantifiable measure for the nonlinear convergence of a time-step size insensitive solution?}
-\item{Does the single-shot linearization have nonlinearly converged time-step size insensitive solution similar to the nonlinear solver in the absence of nonlinearities?}
+\item{Does the single-shot linearization have a converged time-step size insensitive solution similar to that produced by the nonlinear solver for simple problems?}
 \end{enumerate}
 
 \subsection{Geometry}
@@ -357,21 +357,22 @@ Of the twenty-four simulations run, the legacy mode simulation of flashing at a 
 The convergence metric will be used to determine if a qualitative temporal-convergence determination can lead to the acceptance of solution that is not nonlinearly converged.
 For each of the test cases, these variables were compared at different time-steps.
 First, the 1 [s] max time-step legacy simulation of the flashing problem failed to run.
-\comment{Why did it fail to run?}
 It could not reduce the time-step size enough to prevent too large of changes to the independent parameters.
-\comment{I need to discuss this more in the time-step failure section.}
 However, the nonlinearly convergent \cobra{} was able to run at a 1 [s] time-step.
 Both versions of \cobra{} are subject to the same limits on change of independent variables.
-\comment{Why did the single-shot linearization fail to run?
-I couldn't say mathematically.}
 
-Note that the nonlinear \cobra{} produced a solution that was qualitatively different than semi-implicit, \fig{fig:flashing_solution}.
+\fig{fig:flashing_solution_} shows the gaseous volume fraction 2 [in] from the inlet of the stand pipe as a function of time for a max \dt{} of 1.0E-1 [s] for both the legacy and the nonlinear solvers.
+Note that the nonlinearly resolved solution is qualitatively different than the traditional single-shot solution, \fig{fig:flashing_solution}.
+As the time-step size is reduced, this discrepancy does does disappear.
+
 The two solutions did not converge as the time-step size was reduced for both.
 
 \begin{figure}
         \centering
         \begin{subfigure}[b]{0.48\textwidth}
                 \centering
+                \includegraphics[width=0.5\textwidth]{images/constant_value.eps}
+
 				I am the nl\_cobra solution.
                 \caption{Nonlinear mode.}
                 \label{fig:gull}
@@ -387,7 +388,7 @@ The two solutions did not converge as the time-step size was reduced for both.
 \end{figure}
 
 The nonlinear residual for the legacy Flashing problem shows that that even for small time-step sizes, the solution still contains nonlinearities, \fig{fig:legacy_flashing_residual}.
-This is in contrast to the nonlinear Flashing problem, which shows a lower residual through out, \fig{fig:nonlinear_flashing_residual}.
+This is in contrast to the nonlinear Flashing problem, which shows a lower nonlinear residual over the course of the simulation, \fig{fig:nonlinear_flashing_residual}.
 
 \begin{figure}[h!t]
 \begin{center}
@@ -406,9 +407,7 @@ I am a picture.
 \end{figure}
 
 The single-phase case ran just fine for both problems.
-
 Moving on to the case of 0.1 [s].
-In this simulation, both the
 
 To examine efficacy of the the temporal convergence criteria, both the average and moment based temporal convergence criteria were evaluated for each of the twenty-three successful simulations.
 See \tab{tab:criteria_ave} and \tab{tab:criteria_moment} for the data.
@@ -420,12 +419,12 @@ See \tab{tab:criteria_ave} and \tab{tab:criteria_moment} for the data.
 & \multicolumn{4}{c}{Single Phase} & \multicolumn{4}{c}{Flashing}  \\
 $\Delta t_{\text{MAX}}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlinear} & \multicolumn{2}{c}{Legacy}& \multicolumn{2}{c}{Nonlinear}  \\
 \midrule
-1.0    & 2&03E-2 & 2&03E-2 & \multicolumn{2}{c}{-} & 2&03E-2 \\
-1.0E-1 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
-1.0E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
-1.0E-3 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
-1.0E-4 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
-1.0E-5 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
+1.0    & 3&149E-3 & 1&700E-3 & \multicolumn{2}{c}{-} & 1&177E-3 \\
+1.0E-1 & 2&866E-3 & 1&700E-3 & 5&487E-2 & 1&141E-3 \\
+1.0E-2 & 3&412E-4 & 1&357E-3 & 4&960E-2 & 3&413E-4 \\
+1.0E-3 & 2&207E-4 & 4&584E-4 & 3&172E-2 & 2&669E-4 \\
+1.0E-4 & 1&672E-4 & 1&588E-3 & 2&504E-2 & 1&346E-4 \\
+1.0E-5 & 5&493E-4 & 2&758E-4 & 2&166E-2 & 5&075E-5 \\
 \bottomrule  
 \end{tabular}
 \caption{Temporal convergence metric -- average}
@@ -434,7 +433,7 @@ $\Delta t_{\text{MAX}}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlin
 
 The average metric for the legacy flashing problem shows that the single-shot case has unresolved nonlinearities of greater magnitude than the nonlinear case.
 This is expected.
-Other scientitist have noted this behavior.
+Other scientist have noted this behavior.
 
 
 \begin{table}[h!t]
@@ -444,12 +443,12 @@ Other scientitist have noted this behavior.
 & \multicolumn{4}{c}{Single Phase} & \multicolumn{4}{c}{Flashing}  \\
 $\Delta t_{\text{MAX}}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlinear} & \multicolumn{2}{c}{Legacy}& \multicolumn{2}{c}{Nonlinear}  \\
 \midrule
-1.0    & 2&03E-2 & 2&03E-2 & \multicolumn{2}{c}{-} & 2&03E-2 \\
-1.0E-1 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
-1.0E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
-1.0E-3 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
-1.0E-4 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
-1.0E-5 & 2&03E-2 & 2&03E-2 & 2&03E-2 & 2&03E-2 \\
+1.0    & 1&485E-3 & 1&070E-4 & \multicolumn{2}{c}{-} & 6&885E-4 \\
+1.0E-1 & 1&287E-3 & 1&070E-4 & 5&044E-2 & 6&730E-4 \\
+1.0E-2 & 1&417E-4 & 7&701E-5 & 4&570E-2 & 2&511E-4 \\
+1.0E-3 & 8&805E-5 & 1&178E-4 & 2&372E-2 & 1&975E-4 \\
+1.0E-4 & 1&834E-5 & 4&958E-5 & 1&838E-2 & 8&974E-5 \\
+1.0E-5 & 1&916E-5 & 8&939E-5 & 1&922E-2 & 4&581E-5 \\
 \bottomrule  
 \end{tabular}
 \caption{Temporal convergence metric -- moment}

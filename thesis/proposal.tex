@@ -13,21 +13,16 @@ Parametric studies will then be conducted to determine the impact of nonlinear c
 \section{Scaling}
 \label{sect:proposal_scaling}
 The current implementation of the operator-based scaling method outlined in \sect{sect:operator_scaling} has several issues that need to be addressed.
-In addition, the efficacy of this scaling should be compared to that of an unscaled residual in a systematic manner.
-\comment{What level of detail?}
-
 Another scaling question that needs to be addressed is the proper scaling for the Newton update.
-\comment{How much detail?}
-
-Additionally, the interplay between the globalization termination criteria and the update scaling should be investigated. 
-\comment{How much detail?}
+The current algorithmic implementation has different convergence criteria for the linesearch step and the Newton step.
+The interplay between the globalization termination criteria and the update scaling should be investigated. 
 
 \section{Domain Decomposition}
 \label{sect:domain_coupling}
 The first step will be to develop a variation of the semi-implicit domain coupling algorithm presented in \sect{sect:code_coupling}.
 The derivation should take into account the iterative Newton nature of the subdomain. 
-In addition, the details of the derivation will need to be reworked to account for the different flow variables in \cobra.
-Upon implementation of the internal coupling algorithm within \cobra, a test problem will be developed to ensure that in legacy mode a decomposed problem produces an equivalent solution to a single domain problem.
+In addition, the details of the derivation will need to be reworked to account for the different flow variables in \cobra{}.
+Upon implementation of the internal coupling algorithm within \cobra{}, a test problem will be developed to ensure that in legacy mode a decomposed problem produces an equivalent solution to a single domain problem.
 This problem will need to have multiple geometric components, as that the decomposed domain will be at channel boundaries.
 The test problem will be run in legacy mode to obtain a standard solution.
 
@@ -46,7 +41,11 @@ Run time calculations for various problems should be calculated.
 \section{Parametric Studies}
 \label{sect:proposal_parametric_studies}
 Convergence criteria, max iteration count, and globalization parameters should be varied for a set number of problems to determine performance.
-\comment{More details required.}
+
+
+\section{Possible Outcomes}
+\label{sect:possible_outcomes}
+
 
 \section{Time Line}
 \label{sect:proposal_time_line}

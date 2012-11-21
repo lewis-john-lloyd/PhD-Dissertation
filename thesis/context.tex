@@ -37,7 +37,7 @@ In the work that follows, the governing physics and the computational framework 
 \label{sect:topology}
 All commercial NPPs in the US are designed so that both core coolant channels and nuclear fuel rods are vertically oriented.
 Being that \cobra{} was developed primarily as a sub-channel analysis tool for these NPPs, there is an assumption that the primary flow direction is in-line with the gravity vector, which will be referred to as the axial flow direction.
-The physical problem of interest being modeled first needs to be converted into a discrete representation. 
+The physical problem of interest being modeled first needs to be converted into a discrete representation.
 
 The computational grid used is a staggered mesh.
 With a staggered mesh, there are continuity volumes and there are momentum volumes; see \fig{fig:staggered_mesh}.
@@ -228,7 +228,7 @@ The gaseous phasic enthalpy, however, is defined according to \eqref{eqn:gaseous
 
 \begin{equation}
 \label{eqn:gaseous_enthalpy}
-\{\rho_g h_g\} = \rho_v h_v + rho_n h_n
+\{\rho_g h_g\} = \rho_v h_v + \rho_n h_n
 \end{equation}
 
 The various terms on the right hand sides of \eqref{eqn:con_energy_gas} and \eqref{eqn:con_energy_liq} are defined as follows.
@@ -331,19 +331,13 @@ Other common system analysis codes \cite{TRACE, RELAP} use different non-conserv
 \subsection{Summary}
 \label{subsect:summary}
 
-\comment{Discuss ill-posedness of the equations. And then mention that it doesn't matter.}
-
-The above collection of governing equations posses a potentially troublesome property.
-The assumption of pressure equilibrium between the fields produces an ill-posed system of equations \cite{Ransom1984}.
-
-
 It will be useful to refer to the collection of continuous conservation laws, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:conservation_of_ent}, \eqref{eqn:con_energy_gas} -- \eqref{eqn:con_energy_liq}, and \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent}, as a vector of equations.
 To accomplish this, \eqref{eqn:conservation_equations} defines such a system.
 The vector, $\vec{g}$, represents the full conservation equations minus the temporal derivatives of the conserved quantities.
 
 \begin{equation}
 \label{eqn:conservation_equations}
-\frac{\partial \left( \vec{y} \right)}{\partial t} = \vec{g}(\vec{y}(t))
+\frac{\partial \vec{y} }{\partial t} = \vec{g}(\vec{y}(t))
 \end{equation}
 
 The vector, $\vec{y}$, of conserved quantities is defined in \eqref{eqn:conserved_variables}.
@@ -481,6 +475,7 @@ The conservation of momentum equations within a given momentum volume are ordere
 
 \subsection{Temporal Approximations}
 \label{subsect:temporal_approx}
+
 Once the governing conservation equations have been spatially discretized utilizing the method outlined above, the temporal derivatives need to be numerically approximated.
 Using the spatially discrete approximations defined in \sect{subsect:spatial_approx}, the temporally continuous differential equations, \eqref{eqn:conservation_equations}, are now semi-discrete approximations given by \eqref{eqn:temporal_semi_discrete}, where $\vec{G}$ now represents the spatially discrete version of $\vec{g}$.
 
@@ -489,20 +484,24 @@ Using the spatially discrete approximations defined in \sect{subsect:spatial_app
 \frac{\partial \,\vec{y} }{\partial t} = \vec{G}(\vec{y}(t))
 \end{equation}
 
-Within \cobra{}, the temporal derivative is approximated by a one-step difference scheme, \eqref{eqn:simple_partial_t}, where the continuous time variables are now evaluated at discrete points, $t^0, t^1, \ldots, t^N$.
-The notations $t^0$ and $t^N$ represents the initial and final time, respectively.
-The term one-step refers to the fact that the temporal derivative involves only two consecutive points in time.
+Given that there are nine conservation equations, the choice of which nine variables are the independent parameters which will be solved for is another distinguishing characteristic of safety analysis codes.
+\cobra{} uses the following set of nine independent variables \eqref{eqn:independent_variables}.
 
-\begin{IEEEeqnarray}{rcl}
-\int^{t^{n+1}}_{t^n}\frac{\partial \vec{y}}{\partial t}\mathrm{d}\tau & = & \int^{t^{n+1}}_{t^n}\vec{G}(\vec{y})\mathrm{d}\tau \nonumber \\
-\vec{y}^{n+1} - \vec{y}^{n} & = & \int_{t^{n+1}}^{t^n}\vec{G}(\vec{y})\mathrm{d}\tau \nonumber  \\
-\frac{\vec{y}^{n+1} - \vec{y}^{n}}{\int_{t^{n}}^{t^{n+1}}\mathrm{d} \tau} & = & \frac{\int_{t^{n+1}}^{t^n}\vec{G}(\vec{y})\mathrm{d}\tau}{\int_{t^{n}}^{t^{n+1}}\mathrm{d} \tau} \nonumber \\
-\frac{\vec{y}^{n+1} - \vec{y}^{n}}{\Delta t} & = & \frac{\int_{t^{n+1}}^{t^n}\vec{G}(\vec{y})\mathrm{d}\tau}{\int_{t^{n}}^{t^{n+1}}\mathrm{d} \tau} \nonumber \\
-\label{eqn:simple_partial_t}
-\frac{\vec{y}^{n+1} - \vec{y}^{n}}{\Delta t} & = & \vec{G}(\vec{y}^{*})
-\end{IEEEeqnarray}
+\begin{equation}
+\label{eqn:independent_variables}
+\vec{x} = [\alpha_{ncg}P_{ncg}, \alpha_g, P, \alpha_e, \alpha_gS h_v, (1 - \alpha_g) h_l, \dot{m}_g, \dot{m}_l, \dot{m}_e]^{T}
+\end{equation}
 
-One thing that distinguishes the numerical method in \cobra{} from other methods is its treatment of the temporal derivative.
+The definition of $\dot{m}_k$ is given by \eqref{eqn:mom_dot}.
+
+\begin{equation}
+\label{eqn:mom_dot}
+\dot{m}_k = \alpha_k \rho_k u_k A_m
+\end{equation}
+
+Variants of these parameters include the use of velocities instead of momenta, temperatures or internal energies instead of enthalpies \cite{RELAP, TRACE}.
+
+A distinguishing feature of the numerical method in \cobra{} is its treatment of the temporal derivative for the conservation of momentum.
 In the work that follows, the temporal derivative of the conserved momentum equations is directly discretized, known as conservative form.
 The other option, the non-conservative form, is to analytically expand the temporal derivative via the chain rule, \eqref{eqn:non_conservative}, and these equations are then temporally discretized.
 
@@ -511,7 +510,20 @@ The other option, the non-conservative form, is to analytically expand the tempo
 \frac{\partial \alpha_k \rho_k u_k}{\partial t} = \alpha_k \rho_k \frac{\partial u_k}{\partial t} + u_k \frac{\partial \alpha_k \rho_k}{\partial t}
 \end{equation}
 
-The choice of how to approximate the temporal-average, $\vec{G}(\vec{y}^{*})$, hereafter referred to as $\vec{G}^{*}$, is a factor that defines the eventual solution algorithm.
+Within \cobra{}, the temporal derivative is approximated by a one-step difference scheme, \eqref{eqn:simple_partial_t}, where the continuous time variables are now evaluated at discrete points, $t^0, t^1, \ldots, t^N$.
+The notations $t^0$ and $t^N$ represents the initial and final time, respectively.
+The term one-step refers to the fact that the temporal derivative involves only two consecutive points in time.
+
+\begin{IEEEeqnarray}{rcl}
+\int^{t^{n+1}}_{t^n}\frac{\partial \vec{y}(\vec{x})}{\partial t}\mathrm{d}\tau & = & \int^{t^{n+1}}_{t^n}\vec{G}(\vec{y}(\vec{x}))\mathrm{d}\tau \nonumber \\
+\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n}) & = & \int_{t^{n+1}}^{t^n}\vec{G}(\vec{y}(\vec{x}))\mathrm{d}\tau \nonumber  \\
+\frac{\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n})}{\int_{t^{n}}^{t^{n+1}}\mathrm{d} \tau} & = & \frac{\int_{t^{n+1}}^{t^n}\vec{G}(\vec{y}(\vec{x}))\mathrm{d}\tau}{\int_{t^{n}}^{t^{n+1}}\mathrm{d} \tau} \nonumber \\
+\frac{\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n})}{\Delta t} & = & \frac{\int_{t^{n+1}}^{t^n}\vec{G}(\vec{y}(\vec{x}))\mathrm{d}\tau}{\int_{t^{n}}^{t^{n+1}}\mathrm{d} \tau} \nonumber \\
+\label{eqn:simple_partial_t}
+\frac{\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n})}{\Delta t} & = & \vec{G}(\vec{y}(\vec{x}^{*}))
+\end{IEEEeqnarray}
+
+The choice of how to approximate the temporal-average, $\vec{G}(\vec{y}(\vec{x}^{*}))$, hereafter referred to as $\vec{G}^{*}$, is a factor that defines the eventual solution algorithm.
 There are two subcategories for solving this one-step temporal-integration problem, single-stage and multi-stage \cite{Stewart1981,LeVeque2007}.
 \alg{alg:single_stage_temporal} shows how a multi-stage temporal integration scheme would work.
 
@@ -538,23 +550,6 @@ By excluding certain portions of $\vec{G}^{*}$ at certain stages, a time-splitti
 By changing the functional dependencies of terms within $\vec{G}^{*}$ at different stages, predictor-corrector methods, also called stabilizing correction methods, are generated. 
 A single-stage method is the degenerate case of $J = 1$.
 
-Given that there are nine conservation equations, the choice of which nine variables are the independent parameters which will be solved for is another distinguishing characteristic of safety analysis codes.
-\cobra{} uses the following set of nine independent variables \eqref{eqn:independent_variables}.
-
-\begin{equation}
-\label{eqn:independent_variables}
-\vec{x} = [\alpha_{ncg}P_{ncg}, \alpha_g, P, \alpha_e, \alpha_gS h_v, (1 - \alpha_g) h_l, \dot{m}_g, \dot{m}_l, \dot{m}_e]^{T}
-\end{equation}
-
-The definition of $\dot{m}_k$ is given by \eqref{eqn:mom_dot}.
-
-\begin{equation}
-\label{eqn:mom_dot}
-\dot{m}_k = \alpha_k \rho_k u_k A_m
-\end{equation}
-
-Variants of these parameters include the use of velocities instead of momenta, temperatures or internal energies instead of enthalpies \cite{RELAP, TRACE}.
-
 The conserved quantities within a continuity volume are nonlinear functions of the chosen independent parameters, \eqref{eqn:nonlinear_functions}, regardless of the approximation chosen for $\vec{G}^{*}$.
 
 \begin{equation}
@@ -568,7 +563,7 @@ The semi-discrete formulation, \eqref{eqn:simple_partial_t}, is expressed as a n
 
 \begin{equation}
 \label{eqn:nonlinear_residuals}
-\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^n) -\Delta x \vec{G}^{*}
+\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^n) -\Delta t \vec{G}^{*}
 \end{equation}
 
 Depending upon the approximation of $\vec{G}^{*}$ and the number of stage, the temporal integration method used has an associated temporal accuracy.
@@ -656,7 +651,7 @@ The vector notation formulation for this method is given by \eqref{eqn:explicit}
 
 \begin{equation}
 \label{eqn:explicit}
-\vec{F}(\vec{x}^{n+1}) = \vec{y}^{n+1} - \vec{y}^{n} - \Delta t \vec{G}(\vec{y}^{n})
+\vec{F}(\vec{x}^{n+1}) = \vec{y}^{n+1} - \vec{y}^{n} - \Delta t \vec{G}(\vec{y}(\vec{x}^{n}))
 \end{equation}
 
 The algorithmic implementation is shown in \alg{algo:explicit}.
@@ -709,7 +704,7 @@ The fully implicit method temporally approximates $\vec{G}^{*}$ as a function on
 
 \begin{equation}
 \label{eqn:implicit}
-\vec{F}(\vec{x}^{n+1}) = \vec{y}^{n+1} - \vec{y}^{n} - \Delta t \vec{G}(\vec{y}^{n+1})
+\vec{F}(\vec{x}^{n+1}) = \vec{y}^{n+1} - \vec{y}^{n} - \Delta t \vec{G}(\vec{y}(\vec{x}^{n+1}))
 \end{equation}
 
 This method has the advantage of not being limited by a CFL number for stability purposes; it is unconditionally stable.
@@ -744,7 +739,7 @@ The computational implementation of a fully implicit method is presented in \alg
 \subsection{Semi-Implicit Method}
 \label{subsect:semi_implicit}
 
-The semi-implicit method was developed to overcome the sonic CFL limitations of the explicit method while avoiding the computational cost of the fully implicit method \cite{Liles1978}.
+The semi-implicit method was developed to overcome the sonic Courant limitations of the explicit method while avoiding the computational cost of the fully implicit method \cite{Liles1978}.
 Since the work being done here will deal with the semi-implicit method, detailed description of the semi-implicit equations used in \cobra{} are provided.
 The momentum equations, neglecting spatial discretization notation and external sources, are given in \eqref{eqn:si_mom_liq} -- \eqref{eqn:si_mom_ent}.
 
@@ -1101,7 +1096,6 @@ The methods for addressing phase transitions within two-phase analysis software 
 However, certain physical limits have been identified that need to be considered \cite{Bestion2000}.
 Since the manner in which \cobra{} treats phase transitions is of importance to this work, a brief description will follow.
 
-\comment{Talk about phase transition logic here.}
 \begin{itemize}
 \item{Velocity equilibrium enforced by enhanced interfacial drag.}
 \item{Minimum field threshold for the three water fields.}
@@ -1151,131 +1145,133 @@ The coupling of software via data exchange has led to the development of a semi-
 This technique is of direct interest to the work that will be performed.
 The original paper presents the method in terms of the RELAP5-3D conservation equations, which are different from those in \cobra{}.
 
-The following outline of the method uses the \cobra{} equations.
+The method developed for coupling RELAP5-3D.
 
-The coupling boundary of the two domains occurs at the edge of a continuity volume.
-\eqref{eqn:coupling_1} shows a portion of the global Jacobian matrix.
-The two continuity volumes represent the the boundary of the global domain.
-
- \begin{equation}
- \label{eqn:coupling_1}
- \begin{bmatrix} 
- \vec{J}_{m_1,c_1} & \vec{J}_{m_1,c_1} & \vec{0} & \vec{0} & \vec{0} & \vec{0}\\
- \vec{J}_{c_1,m_1} & \vec{J}_{c_1,c_1} & \vec{J}_{c_1,m_{cpl_1}} & \vec{0} & \vec{0} & \vec{0} \\
- \vec{0} & \vec{0} & \vec{0} & \vec{J}_{c_2,m_{cpl_2}} & \vec{J}_{c_2,c_2} & \vec{J}_{c_2,m_2} \\ 
- \vec{0} & \vec{0} & \vec{0} & \vec{0} & \vec{J}_{m_2,c_2} & \vec{J}_{m_2,m_2}  
- \end{bmatrix} \begin{bmatrix}
- \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
- \vec{\delta m}_{cpl_1} \\ \vec{\delta m}_{cpl_2} \\
- \vec{\delta c}_{2} \\ \vec{\delta m}_{2}
-\end{bmatrix}  = -\begin{bmatrix}
- \vec{F}_{m_1} \\ \vec{F}_{c_1} \\
- \vec{F}_{c_2} \\ \vec{F}_{m_2} \end{bmatrix}
- \end{equation}
-
- \begin{equation}
- \label{eqn:coupling_2}
- \begin{bmatrix} 
- \vec{J}_{m_1,c_1} & \vec{J}_{m_1,c_1} & \vec{0} & \vec{0}\\
- \vec{J}_{c_1,m_1} & \vec{J}_{c_1,c_1} & \vec{0} & \vec{0} \\
- \vec{0} & \vec{0} & \vec{J}_{c_2,c_2} & \vec{J}_{c_2,m_2} \\ 
- \vec{0} & \vec{0} & \vec{J}_{m_2,c_2} & \vec{J}_{m_2,m_2}  
- \end{bmatrix} \begin{bmatrix}
- \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
- \vec{\delta c}_{2} \\ \vec{\delta m}_{2}
-\end{bmatrix}  = -\begin{bmatrix}
- \vec{F}_{m_1} \\ \vec{F}_{c_1} \\ \vec{F}_{c_2} \\ \vec{F}_{m_2} \end{bmatrix} - \begin{bmatrix}
- 0 \\ \vec{J}_{c_1,m_{cpl_1}} \\ \vec{J}_{c_2,m_{cpl_2}} \\ 0
- \end{bmatrix}\begin{bmatrix}
- 0 \\ \vec{\delta m}_{cpl_1} \\ \vec{\delta m}_{cpl_2} \\ 0
- \end{bmatrix}
- \end{equation}
- 
-  \begin{IEEEeqnarray}{rl}
- \begin{bmatrix} 
- \vec{I} & \vec{J}_{m_1,m_1}^{-1}\vec{J}_{m_1,c_1} & \vec{0} & \vec{0}\\
- \vec{J}_{c_1,m_1} & \vec{J}_{c_1,c_1} & \vec{0} & \vec{0} \\
- \vec{0} & \vec{0} & \vec{J}_{c_2,c_2} & \vec{J}_{c_2,m_2} \\ 
- \vec{0} & \vec{0} & \vec{J}_{m_2,m_2}^{-1}\vec{J}_{m_2,c_2} & \vec{I} 
- \end{bmatrix} &\begin{bmatrix}
- \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
- \vec{\delta c}_{2} \\ \vec{\delta m}_{2}
-\end{bmatrix}  = \nonumber \\
- \label{eqn:coupling_3}
--\begin{bmatrix}
- \vec{J}_{m_1,m_1}^{-1}\vec{F}_{m_1} \\ \vec{F}_{c_1} + \vec{J}_{c_1,m_{cpl_1}}\vec{m}_{cpl_1}^{n+1,k} \\ \vec{F}_{c_2} + \vec{J}_{c_2,m_{cpl_2}} \vec{m}_{cpl_2}^{n+1,k} \\ \vec{J}_{m_2,m_2}^{-1}\vec{F}_{m_2} \end{bmatrix} - \begin{bmatrix}
- 0 \\ \vec{J}_{c_1,m_{cpl_1}} \\ \vec{J}_{c_2,m_{cpl_2}} \\ 0
- \end{bmatrix}\begin{bmatrix}
- 0 \\ \vec{m}^{n+1,k+1}_{cpl_1} \\ \vec{m}^{n+1,k+1}_{cpl_2} \\ 0
- \end{bmatrix} &
- \end{IEEEeqnarray}
-
-\begin{IEEEeqnarray}{rl}
-\begin{bmatrix} 
-\vec{J}_{c_1,c_1} -\vec{J}_{c_1,m_1}\vec{J}_{m_1,m_1}^{-1}\vec{J}_{m_1,c_1} & \vec{0} \\
-\vec{0} & \vec{J}_{c_2,c_2} - \vec{J}_{c_2,m_2}\vec{J}_{m_2,m_2}^{-1}\vec{J}_{m_2,c_2} 
-\end{bmatrix} &
-\begin{bmatrix}
-\vec{\delta c}_{1} \\
-\vec{\delta c}_{2} \\
-\end{bmatrix}  = \nonumber \\
- \label{eqn:coupling_4}
--\begin{bmatrix}
-\vec{F}_{c_1} + \vec{J}_{c_1,m_{cpl_1}}\vec{m}_{cpl_1}^{n+1,k}  - \vec{J}_{c_1,m_1}\vec{J}_{m_1,m_1}^{-1}\vec{F}_{m_1} \\
-\vec{F}_{c_2} + \vec{J}_{c_2,m_{cpl_2}} \vec{m}_{cpl_2}^{n+1,k} -\vec{J}_{c_2,m_2}\vec{J}_{m_2,m_2}^{-1}\vec{F}_{m_2}  
-\end{bmatrix} -
-\begin{bmatrix}
-\vec{J}_{c_1,m_{cpl_1}} \\ \vec{J}_{c_2,m_{cpl_2}}
-\end{bmatrix}
-\begin{bmatrix}
-\vec{m}^{n+1,k+1}_{cpl_1} \\ \vec{m}^{n+1,k+1}_{cpl_2}
-\end{bmatrix} &
-\end{IEEEeqnarray}
-
-
-\begin{equation}
-\label{eqn:coupling_5}
-\begin{bmatrix} 
-\vec{J}^{*}_{c_1} & \vec{0} \\
-\vec{0} & \vec{J}^{*}_{c_2} 
-\end{bmatrix} 
-\begin{bmatrix}
-\vec{\delta c}_{1} \\
-\vec{\delta c}_{2} \\
-\end{bmatrix}  =
--\begin{bmatrix}
-\vec{F}^{*}_{c_1}\\
-\vec{F}^{*}_{c_2}  
-\end{bmatrix} -
-\begin{bmatrix}
-\vec{J}_{c_1,m_{cpl_1}} \\ \vec{J}_{c_2,m_{cpl_2}}
-\end{bmatrix}
-\begin{bmatrix}
-\vec{m}^{n+1,k+1}_{cpl_1} \\ \vec{m}^{n+1,k+1}_{cpl_2}
-\end{bmatrix}
-\end{equation}
-
-\begin{equation}
-\label{eqn:coupling_6}
-\begin{bmatrix} 
-\vec{U}^{*}_{c_1} & \vec{0} \\
-\vec{0} & \vec{U}^{*}_{c_2} 
-\end{bmatrix} 
-\begin{bmatrix}
-\vec{\delta c}_{1} \\
-\vec{\delta c}_{2} \\
-\end{bmatrix}  =
--\begin{bmatrix}
-\vec{L}^{-1}_{c_1}\vec{F}^{*}_{c_1}\\
-\vec{L}^{-1}_{c_2}\vec{F}^{*}_{c_2}  
-\end{bmatrix} -
-\begin{bmatrix}
-\vec{L}^{-1}_{c_1}\vec{J}_{c_1,m_{cpl_1}} \\ \vec{L}^{-1}_{c_2}\vec{J}_{c_2,m_{cpl_2}}
-\end{bmatrix}
-\begin{bmatrix}
-\vec{m}^{n+1,k+1}_{cpl_1} \\ \vec{m}^{n+1,k+1}_{cpl_2}
-\end{bmatrix}
-\end{equation}
+%The following outline of the method uses the \cobra{} equations.
+%
+%The coupling boundary of the two domains occurs at the edge of a continuity volume.
+%\eqref{eqn:coupling_1} shows a portion of the global Jacobian matrix.
+%The two continuity volumes represent the the boundary of the global domain.
+%
+% \begin{equation}
+% \label{eqn:coupling_1}
+% \begin{bmatrix} 
+% \vec{J}_{m_1,c_1} & \vec{J}_{m_1,c_1} & \vec{0} & \vec{0} & \vec{0} & \vec{0}\\
+% \vec{J}_{c_1,m_1} & \vec{J}_{c_1,c_1} & \vec{J}_{c_1,m_{cpl_1}} & \vec{0} & \vec{0} & \vec{0} \\
+% \vec{0} & \vec{0} & \vec{0} & \vec{J}_{c_2,m_{cpl_2}} & \vec{J}_{c_2,c_2} & \vec{J}_{c_2,m_2} \\ 
+% \vec{0} & \vec{0} & \vec{0} & \vec{0} & \vec{J}_{m_2,c_2} & \vec{J}_{m_2,m_2}  
+% \end{bmatrix} \begin{bmatrix}
+% \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
+% \vec{\delta m}_{cpl_1} \\ \vec{\delta m}_{cpl_2} \\
+% \vec{\delta c}_{2} \\ \vec{\delta m}_{2}
+%\end{bmatrix}  = -\begin{bmatrix}
+% \vec{F}_{m_1} \\ \vec{F}_{c_1} \\
+% \vec{F}_{c_2} \\ \vec{F}_{m_2} \end{bmatrix}
+% \end{equation}
+%
+% \begin{equation}
+% \label{eqn:coupling_2}
+% \begin{bmatrix} 
+% \vec{J}_{m_1,c_1} & \vec{J}_{m_1,c_1} & \vec{0} & \vec{0}\\
+% \vec{J}_{c_1,m_1} & \vec{J}_{c_1,c_1} & \vec{0} & \vec{0} \\
+% \vec{0} & \vec{0} & \vec{J}_{c_2,c_2} & \vec{J}_{c_2,m_2} \\ 
+% \vec{0} & \vec{0} & \vec{J}_{m_2,c_2} & \vec{J}_{m_2,m_2}  
+% \end{bmatrix} \begin{bmatrix}
+% \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
+% \vec{\delta c}_{2} \\ \vec{\delta m}_{2}
+%\end{bmatrix}  = -\begin{bmatrix}
+% \vec{F}_{m_1} \\ \vec{F}_{c_1} \\ \vec{F}_{c_2} \\ \vec{F}_{m_2} \end{bmatrix} - \begin{bmatrix}
+% 0 \\ \vec{J}_{c_1,m_{cpl_1}} \\ \vec{J}_{c_2,m_{cpl_2}} \\ 0
+% \end{bmatrix}\begin{bmatrix}
+% 0 \\ \vec{\delta m}_{cpl_1} \\ \vec{\delta m}_{cpl_2} \\ 0
+% \end{bmatrix}
+% \end{equation}
+% 
+%  \begin{IEEEeqnarray}{rl}
+% \begin{bmatrix} 
+% \vec{I} & \vec{J}_{m_1,m_1}^{-1}\vec{J}_{m_1,c_1} & \vec{0} & \vec{0}\\
+% \vec{J}_{c_1,m_1} & \vec{J}_{c_1,c_1} & \vec{0} & \vec{0} \\
+% \vec{0} & \vec{0} & \vec{J}_{c_2,c_2} & \vec{J}_{c_2,m_2} \\ 
+% \vec{0} & \vec{0} & \vec{J}_{m_2,m_2}^{-1}\vec{J}_{m_2,c_2} & \vec{I} 
+% \end{bmatrix} &\begin{bmatrix}
+% \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
+% \vec{\delta c}_{2} \\ \vec{\delta m}_{2}
+%\end{bmatrix}  = \nonumber \\
+% \label{eqn:coupling_3}
+%-\begin{bmatrix}
+% \vec{J}_{m_1,m_1}^{-1}\vec{F}_{m_1} \\ \vec{F}_{c_1} + \vec{J}_{c_1,m_{cpl_1}}\vec{m}_{cpl_1}^{n+1,k} \\ \vec{F}_{c_2} + \vec{J}_{c_2,m_{cpl_2}} \vec{m}_{cpl_2}^{n+1,k} \\ \vec{J}_{m_2,m_2}^{-1}\vec{F}_{m_2} \end{bmatrix} - \begin{bmatrix}
+% 0 \\ \vec{J}_{c_1,m_{cpl_1}} \\ \vec{J}_{c_2,m_{cpl_2}} \\ 0
+% \end{bmatrix}\begin{bmatrix}
+% 0 \\ \vec{m}^{n+1,k+1}_{cpl_1} \\ \vec{m}^{n+1,k+1}_{cpl_2} \\ 0
+% \end{bmatrix} &
+% \end{IEEEeqnarray}
+%
+%\begin{IEEEeqnarray}{rl}
+%\begin{bmatrix} 
+%\vec{J}_{c_1,c_1} -\vec{J}_{c_1,m_1}\vec{J}_{m_1,m_1}^{-1}\vec{J}_{m_1,c_1} & \vec{0} \\
+%\vec{0} & \vec{J}_{c_2,c_2} - \vec{J}_{c_2,m_2}\vec{J}_{m_2,m_2}^{-1}\vec{J}_{m_2,c_2} 
+%\end{bmatrix} &
+%\begin{bmatrix}
+%\vec{\delta c}_{1} \\
+%\vec{\delta c}_{2} \\
+%\end{bmatrix}  = \nonumber \\
+% \label{eqn:coupling_4}
+%-\begin{bmatrix}
+%\vec{F}_{c_1} + \vec{J}_{c_1,m_{cpl_1}}\vec{m}_{cpl_1}^{n+1,k}  - \vec{J}_{c_1,m_1}\vec{J}_{m_1,m_1}^{-1}\vec{F}_{m_1} \\
+%\vec{F}_{c_2} + \vec{J}_{c_2,m_{cpl_2}} \vec{m}_{cpl_2}^{n+1,k} -\vec{J}_{c_2,m_2}\vec{J}_{m_2,m_2}^{-1}\vec{F}_{m_2}  
+%\end{bmatrix} -
+%\begin{bmatrix}
+%\vec{J}_{c_1,m_{cpl_1}} \\ \vec{J}_{c_2,m_{cpl_2}}
+%\end{bmatrix}
+%\begin{bmatrix}
+%\vec{m}^{n+1,k+1}_{cpl_1} \\ \vec{m}^{n+1,k+1}_{cpl_2}
+%\end{bmatrix} &
+%\end{IEEEeqnarray}
+%
+%
+%\begin{equation}
+%\label{eqn:coupling_5}
+%\begin{bmatrix} 
+%\vec{J}^{*}_{c_1} & \vec{0} \\
+%\vec{0} & \vec{J}^{*}_{c_2} 
+%\end{bmatrix} 
+%\begin{bmatrix}
+%\vec{\delta c}_{1} \\
+%\vec{\delta c}_{2} \\
+%\end{bmatrix}  =
+%-\begin{bmatrix}
+%\vec{F}^{*}_{c_1}\\
+%\vec{F}^{*}_{c_2}  
+%\end{bmatrix} -
+%\begin{bmatrix}
+%\vec{J}_{c_1,m_{cpl_1}} \\ \vec{J}_{c_2,m_{cpl_2}}
+%\end{bmatrix}
+%\begin{bmatrix}
+%\vec{m}^{n+1,k+1}_{cpl_1} \\ \vec{m}^{n+1,k+1}_{cpl_2}
+%\end{bmatrix}
+%\end{equation}
+%
+%\begin{equation}
+%\label{eqn:coupling_6}
+%\begin{bmatrix} 
+%\vec{U}^{*}_{c_1} & \vec{0} \\
+%\vec{0} & \vec{U}^{*}_{c_2} 
+%\end{bmatrix} 
+%\begin{bmatrix}
+%\vec{\delta c}_{1} \\
+%\vec{\delta c}_{2} \\
+%\end{bmatrix}  =
+%-\begin{bmatrix}
+%\vec{L}^{-1}_{c_1}\vec{F}^{*}_{c_1}\\
+%\vec{L}^{-1}_{c_2}\vec{F}^{*}_{c_2}  
+%\end{bmatrix} -
+%\begin{bmatrix}
+%\vec{L}^{-1}_{c_1}\vec{J}_{c_1,m_{cpl_1}} \\ \vec{L}^{-1}_{c_2}\vec{J}_{c_2,m_{cpl_2}}
+%\end{bmatrix}
+%\begin{bmatrix}
+%\vec{m}^{n+1,k+1}_{cpl_1} \\ \vec{m}^{n+1,k+1}_{cpl_2}
+%\end{bmatrix}
+%\end{equation}
 
 The coupling of system analysis codes and sub-channel codes can also be viewed through a different lens.
 If the global problem, the balance-of-plant and the in-core region are considered to a part of a global domain, $\Omega$, then each piece of software can be viewed as solving a smaller portion of the global domain, $\Omega_i$.
@@ -1310,3 +1306,6 @@ Isolation of those subdomains where nonlinearities are high will be achieved by 
 Upon isolation, the coupled subdomain will be subjected to a globally convergent Newton method to resolve the nonlinearities.
 This converged solution will be communicated via the coupling coefficients to the rest of the problem domain for use in calculating its single Newton step.
 This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling may provide a route to nonlinearly converged time-step size insensitive solutions for traditional two-phase flow methods.
+
+The resolution of localized nonlinearities could allow time-step size insensitive solutions at larger $\Delta t_{\text{MAX}}$.
+This would provide for a faster engineering analysis.
