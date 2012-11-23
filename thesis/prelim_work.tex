@@ -1,12 +1,12 @@
 \chapter{Preliminary Work}
 \label{chap:prelim_work}
 As preliminary work, several steps were taken to evaluate the validity of the proposed research.
-To aid in this task a metric was be developed for the evaluation of the nonlinear convergence of a temporally-converged solution.
-In order to determine the effects of nonlinear convergence upon the time-step size insensitivity of a solution, the \cobra{} software was modified to enable an iterative Newton method.
-Since both objectives depend upon the scaling of the nonlinear residuals, a novel operator-based scaling has been developed to obtain meaningful convergence thresholds.
+To aid in this task a metric was be developed for the evaluation of the nonlinear convergence of a time-step size insensitive solution.
+In order to determine the effects of nonlinear convergence upon the time-step size insensitivity of a solution, the \cobra{} software was modified to enable an iterative global Newton's method.
+To aid in the development of the nonlinear convergence metric and the nonlinear solver, a novel operator-based scaling has been developed to obtain meaningful convergence thresholds.
 The scaling of the nonlinear residual is typically done in an arbitrary fashion; a scaling factor that is intrinsically linked to the physics of interest was developed.
-This scaling produces a non-dimensionalized residual that is relative to the physical sources and sinks on a per equation basis. 
-Test problems were developed to show that the metric to test for nonlinear convergence in time-step size insensitive solutions can identify situations where the temporally-converged simulation results may not satisfy the discrete nonlinear equations.
+This scaling produces a non-dimensionalized residual whose magnitude is relative to the physical sources and sinks on a per equation basis. 
+Two test problems were developed to show that the nonlinear convergence metric can identify situations where a time-step size insensitive simulation may not satisfy the discrete nonlinear equations.
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -17,9 +17,9 @@ Test problems were developed to show that the metric to test for nonlinear conve
 \section{Nonlinear \cobra{}}
 \label{sect:nl_cobra}
 The first stage of preliminary work was to modify the \cobra{} software.
-The \cobra{} software as obtained was a single-shot linearization version of the semi-implicit method.
+As obtained, the \cobra{} software was a single-shot linearization version of the semi-implicit method.
 In order to evaluate the spatially-selective nonlinear refinement, \cobra{} needed to be converted to include a fully iterative Newton solver based upon a linesearch globalization strategy.
-When it is necessary to distinguish between the single-shot linearization algorithmic implementation of \cobra{} and the iterative nonlinear \cobra{}, the former shall be referred to as legacy mode and the latter as nonlinear mode.
+When it is necessary to distinguish between the single-shot linearization algorithmic implementation of \cobra{} and the iterative nonlinear \cobra{} implementation, the former shall be referred to as legacy mode and the latter as nonlinear mode.
 As such, the objectives of this work were to modify the software to be able do the following:
 
 \begin{itemize}
