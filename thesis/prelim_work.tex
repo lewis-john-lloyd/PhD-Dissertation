@@ -173,15 +173,14 @@ In this equation there are three physically meaningful quantities: the temporal 
 \section{Temporal Convergence}
 \label{sect:temporal_convergence}
 
-In thermal-hydraulic safety analysis, an important factor is the temporal convergence of the solution.
-In practice, however, the time-step size insensitivity of a solution is often confused with temporal convergence.
+An important factor in thermal-hydraulic safety analysis is the temporal convergence of the solution.
 First, a definition of a temporally converged solution is required.
 In theory, a temporally converged solution is one where the local truncation error due to the discrete approximation of the temporal integral is orders of magnitude below both the engineering scales of interest and precision of the physical models being used in the simulation.
 Unfortunately, the precise measurement of the error in a simulation requires that an analytic solution be available for comparison to.
 During the simulation of physically realistic systems, there is rarely an analytic solution to compare against.
 This situation requires a slightly different definition of a temporally converged solution; a definition that does not depend upon accurately measuring the local truncation error.
 
-Another possible definition for temporal convergence could be ``as the time-step size is reduced, the change in the solution is small enough."
+An alternative definition for temporal convergence could be ``as the time-step size is reduced, the change in the solution is small enough."
 While commonly used, this definition is subjective.
 Traditionally, ``change in solution" is addressed in a very qualitative manner.
 Engineering judgment of which parameters of the solution are of interest is required.
@@ -191,14 +190,13 @@ This locality means that the entire solution domain is not being considered.
 Depending upon the context in which the work is being done, the degree of ``small enough" may be nothing more than looking at a graph of the parameter of interest and using engineering judgment to say that ``those two graphs look about the same."
 In some cases, a more quantifiable measure may be used.
 Quantifiable metrics may be  ``peak clad temperature does not change by more than $50\,^{\circ}\mathrm{C}$" \cite{CFR10}.
+
 While it may be that the change in the chosen parameters of interest does not exceed the limits placed upon it as the time-step size is refined, that behavior does not imply that the solution obtained is the solution to the discrete nonlinear problem.
-
-Unfortunately, the subjective meaning of temporal convergence will always be subject to some form of engineering judgment.
 However, a metric that can quantify the probability that a solution is not accurately temporally converged would be of great value.
-
 The previously mentioned work into nonlinear convergence shows that a solution may be time-step size insensitive but not be the converged solution of the discretized problem \cite{Knoll2001}.
 If the nonlinearities of the discrete governing equations are not resolved, then temporal convergence rate can be degraded.
 This degradation can produce results that qualitatively appear to be converged due an almost zeroth order of temporal accuracy.
+In practice, the time-step size insensitivity of a solution is often confused with temporal convergence.
 This apparent temporal convergence, or time-step size insensitivity, of the solution is not a result of reaching the solution to the discretized nonlinear equations, but instead is indicative of the degraded order of accuracy due to the failure to resolve the nonlinearities at each time-step.
 To determine if the time-step size insensitive transient solution is both time-step size insensitive and an accurate solution to the nonlinear problem, it is necessary to examine the nonlinear convergence of system as an issue separate from the temporal-convergence.
 
@@ -209,7 +207,7 @@ The natural extension of this metric to transient problems would be a temporal i
 
 \begin{equation}
 \label{eqn:trans_res_simple}
-\vec{R} = \int_{t^{0}}^{t^{N}} ||\vec{F}(\tau)||_2 \,\mathrm{d} \tau
+R = \int_{t^{0}}^{t^{N}} ||\vec{F}(\tau)||_2 \,\mathrm{d} \tau
 \end{equation}
 
 Given the bounds of the scaled residual it was considered desirable to have a similarly scaled transient residual.
@@ -218,16 +216,16 @@ To remove this dependence, a temporal average was instead investigated, \eqref{e
 
 \begin{equation}
 \label{eqn:trans_res_ave}
-\vec{R} = \frac{\int_{t^{0}}^{t^{N}} ||\vec{F}(\tau)||_2 \,\mathrm{d} \tau}{t^{N} - t^{0}}
+\tilde{R} = \frac{\int_{t^{0}}^{t^{N}} ||\vec{F}(\tau)||_2 \,\mathrm{d} \tau}{t^{N} - t^{0}}
 \end{equation}
 
-This metric possesses the desirable bounds stated above.
+This metric possesses the desirable bounds $0 \leq R \geq 1$.
 Other weighted temporal integrals were considered, such as a simple moment about $t^{0}$, \eqref{eqn:trans_res_mom}.
-However, this moment has the the theoretical disadvantage of weighting the latter portion of the transient.
+However, this moment has the disadvantage of weighting the latter portion of the transient greater than the early portion.
 
 \begin{equation}
 \label{eqn:trans_res_mom}
-\vec{R} = \frac{\int_{t^{0}}^{t^{N}} \,\tau\,||\vec{F}(\tau)||_2 \,\mathrm{d} \tau}{\int_{t^{0}}^{t^{N}} \,\tau \,\mathrm{d} \tau}
+\tilde{R}_{\text{M}} = \frac{\int_{t^{0}}^{t^{N}} \,\tau\,||\vec{F}(\tau)||_2 \,\mathrm{d} \tau}{\int_{t^{0}}^{t^{N}} \,\tau \,\mathrm{d} \tau}
 \end{equation}
 
 For the preliminary work, the \eqref{eqn:trans_res_ave} and \eqref{eqn:trans_res_mom} were selected for evaluation.
@@ -266,7 +264,7 @@ The red triangle represents a specified flow at the bottom edge of the first con
 \filldraw[fill=red] (0, 6) rectangle +(.5,.5); 
 \filldraw[fill=red] (0, -0.5) -- (0.25, 0) -- (0.5, -0.5) -- cycle;
 \draw[->] (2,0) -- (2, 1) node[anchor=west] {z};
-\draw[->] (2,0) -- (3, 0) node[anchor=west] {$\perp z$};
+\draw[->] (2,0) -- (3, 0) node[anchor=west] {$\perp$ z};
 \end{tikzpicture}
 \end{center}
 \caption{Geometry for test problems.}
@@ -356,9 +354,6 @@ In total, there were twenty-four simulations run.
 The two different problems were each run at six different maximum time-step sizes on each of the two version of \cobra.
 Of the twenty-four simulations run, the legacy mode simulation of flashing at a time-step size of 1 [s] failed to run to completion.
 
-\subsubsection{Convergence Criteria}
-\label{sect:result_temporal_convergence}
-
 \comment{Does the temporal convergence metric provide a quantifiable measure for a converged time-step size insensitive solution?}
 
 The convergence metric will be used to determine if a qualitative temporal-convergence determination can lead to the acceptance of solution that is not nonlinearly converged.
@@ -371,128 +366,107 @@ Both versions of \cobra{} are subject to the same limits on change of independen
 
 \fig{fig:flashing_1em1} shows the gaseous volume fraction 2 [in] from the inlet of the stand pipe as a function of time for a max \dt{} of 1.0E-1 [s] for both the legacy and the nonlinear solvers.
 
-
 \begin{figure}[h!t]
-\begin{center}
-\includegraphics[width=0.9\textwidth]{images/flashing_1em1.eps}
-\end{center}
-\caption{Solutions to the flashing problem with $\Delta t_{\text{MAX}} = 1.0$E-1.}
-\label{fig:flashing_1em1}
+\centering
+\subfloat[Solution at $\Delta t_{\text{MAX}} = $1.0E-1 {[s]}]{\includegraphics[width=0.49\textwidth]{images/flashing_1em1.eps}
+\label{fig:flashing_1em1}}
+\subfloat[Solution at $\Delta t_{\text{MAX}} = $1.0E-5 {[s]}]{\includegraphics[width=0.49\textwidth]{images/flashing_1em5.eps}
+\label{fig:flashing_1em5}}
+\caption[Flashing solution at $\Delta t_{\text{MAX}}$ = 1.0E-1 {[s]}and 1.0E-5 {[s]}]{Flashing solution at $\Delta t_{\text{MAX}}$ = 1.0E-1 {[s]} and 1.0E-5 {[s]}.}
+\label{fig:flashing_compare_1}
 \end{figure}
-
 
 Note that the nonlinearly resolved solution is qualitatively different than the traditional single-shot solution, \fig{fig:flashing_1em1}.
-As the time-step size is reduced, this discrepancy does does disappear, \fig{fig:flashing_1em5}.
-
-
-\begin{figure}[h!t]
-\begin{center}
-\includegraphics[width=0.95\textwidth]{images/flashing_1em5.eps}
-\end{center}
-\caption{Solutions to the flashing problem with $\Delta t_{\text{MAX}} = 1.0$E-5.}
-\label{fig:flashing_1em5}
-\end{figure}
+Even as the time-step size is reduced, this discrepancy does does disappear, \fig{fig:flashing_1em5}.
 
 The two solutions do not converge to the same solution as the time-step size was reduced.
-Notice however, that the solution to the flashing problem produced by the nonlinear mode of \cobra{} varies less as the time-step size is reduced that that produced by the legacy mode, \fig{fig:nl_mode_flashing} and \fig{fig:cobra_mode_flashing}.
-\fig{fig:cobra_mode_flashing} shows that as the time-step size is reduced the nonlinear solution approaches a solution that is time-step size insensitive.
+Notice however, that the solution to the flashing problem produced by the nonlinear mode of \cobra{}, \fig{fig:nl_mode_flashing}, varies less as the time-step size is reduced that that produced by the legacy mode, \fig{fig:cobra_mode_flashing}.
+However, both \fig{fig:cobra_mode_flashing} and \fig{fig:nl_mode_flashing} show that as the time-step size is reduced the solution becomes more time-step size insensitive.
+
+\begin{figure}[h!t]
+\centering
+\subfloat[Legacy mode solution.]{\includegraphics[width=0.49\textwidth]{images/cobra_flashing_al_2in.eps}
+\label{fig:cobra_mode_flashing}}
+\subfloat[Nonlinear mode solution.]{\includegraphics[width=0.49\textwidth]{images/nl_flashing_al_2in.eps}
+\label{fig:nl_mode_flashing}}
+\caption{Flashing simulation.}
+\label{fig:flashing_solutions_1}
+\end{figure}
+
 The two modes of \cobra{}, when applied to the same problem that contains highly nonlinear physics, produce two different time-step size invariant solutions.
-These two solutions are reached at different time-step sizes.
+These two solutions reach time-step size invariance at different time-step sizes.
+The solution produced by the nonlinear mode at 1 [s] $\Delta t_{\text{MAX}}$ is qualitatively as close to that produced with a 0.1 [s] $\Delta t_{\text{MAX}}$, \fig{fig:nl_flashing_compare}, as the legacy mode simulations at 1.0E-3 [s] and 1.0E-4 [s] $\Delta t_{\text{MAX}}$ are to each other, \fig{fig:cobra_flashing_compare}.
+
+\begin{figure}[h!t]
+\centering
+\subfloat[Nonlinear mode solution.]{\includegraphics[width=0.49\textwidth]{images/nl_flashing_1em0_1em1.eps}
+\label{fig:nl_flashing_compare}}
+\subfloat[Legacy mode solution.]{\includegraphics[width=0.49\textwidth]{images/cobra_flashing_1em3_1em4.eps}
+\label{fig:cobra_flashing_compare}}
+\caption{Time-step size insensitive Flashing solutions.}
+\label{fig:flashing_res_comp_1}
+\end{figure}
+
+The time-step size insensitive solution produced by the nonlinearly convergent solver in \cobra{} occurs at maximum time-step size three orders of magnitude greater than that achieved by the single-shot linearization solver in \cobra{}.
+An examination of the nonlinear residual over the course of the transient provides insight into why this behavior is observed.
+The scaled nonlinear residual for the legacy Flashing problem indicates that even for small time-step sizes, the solution obtained still does not satisfy the discrete nonlinear equations, \fig{fig:legacy_flashing_residual}.
+This is in contrast to the nonlinear flashing problem, which shows a lower nonlinear residual over the course of the simulation, \fig{fig:nonlinear_flashing_residual}.
+
+\begin{figure}[h!t]
+\centering
+\subfloat[Nonlinear mode residuals.]{\includegraphics[width=0.49\textwidth]{images/cobra_flashing_res_compare.eps}
+\label{fig:legacy_flashing_residual}}
+\subfloat[Legacy mode residuals.]{\includegraphics[width=0.49\textwidth]{images/nl_flashing_res_compare.eps}
+\label{fig:nonlinear_flashing_residual}}
+\caption[Flashing residual at $\Delta t_{\text{MAX}}$ = 1.0E-1 {[s]}and 1.0E-5 {[s]}]{Flashing residual at $\Delta t_{\text{MAX}}$ = 1.0E-1 {[s]} and 1.0E-5 {[s]}.}
+\label{fig:flashing_compare_2}
+\end{figure}
+
+The reduction in the residual exhibited by the legacy mode solution, \fig{fig:legacy_flashing_residual}, shows that the reduction of the time-step size now reduces two errors.
+As the time-step size is reduced, the nonlinear physics are being better resolved; however, even for small time-step sizes, the nonlinear residual is still large compared to the nonlinear residual of the nonlinearly convergent simulation, \fig{fig:nonlinear_flashing_residual}.
+The residuals of the nonlinearly convergent \cobra{} mode are non-zero at certain portions of the simulation at large time-step sizes.
+There are several possibilities as to why the residuals are non-zero.
+The convergence criteria outlined in \sect{sect:nl_cobra} include two paths through which Newton's method may terminate while not having a zero residual.
+The first is that the $k_{\text{MAX}}$ may be too small, terminating the iterative process prior to a solution being obtained.
+The second is that the norm of the scaled independent parameter update vector may be below the convergence threshold.
+A concern is that the update vector is the vector based upon the limiting of the independent parameters.
+So, it may be impossible for the algorithm to reach a nonlinearly converged solution without pushing a parameter outside of the acceptable limits.
+This behavior needs additional investigation to determine both the cause and the impact upon the algorithmic frame work.
+
+To examine efficacy of the the temporal convergence criteria, both the average and moment based temporal convergence criteria were evaluated for each of the twenty-three successful simulations.
 
 One way to quantify the difference between the solutions is by measuring the nonlinear residual metric outlined in \ref{sect:temporal_convergence}.
 This metric provides a measure of how poorly the discrete nonlinear equations are being solved at every time-step in the transient.
 The resolution of the nonlinear residual allows for a solution that is less sensitive to time-step size selection than the solution that does not resolve the nonlinear residual.
 
-\begin{figure}[h!t!]
-\begin{center}
-\includegraphics[width=0.95\textwidth]{images/nl_flashing_al_2in.eps}
-\end{center}
-\caption{Nonlinear solution for Flashing problem.}
-\label{fig:nl_mode_flashing}
-\end{figure}
-
-\begin{figure}[h!t!]
-\begin{center}
-\includegraphics[width=0.95\textwidth]{images/cobra_flashing_al_2in.eps}
-\end{center}
-\caption{Legacy solution for Flashing problem.}
-\label{fig:cobra_mode_flashing}
-\end{figure}
-
-The nonlinear residual for the legacy Flashing problem indicates that even for small time-step sizes, the solution obtained still does not satisfy the discrete nonlinear equations, \fig{fig:legacy_flashing_residual}.
-This is in contrast to the nonlinear flashing problem, which shows a lower nonlinear residual over the course of the simulation, \fig{fig:nonlinear_flashing_residual}.
-
-\begin{figure}[h!t]
-\begin{center}
-I am a picture.
-\end{center}
-\caption{Legacy \cobra{} nonlinear residual for Flashing problem.}
-\label{fig:legacy_flashing_residual}
-\end{figure}
-
-\begin{figure}[h!t]
-\begin{center}
-I am a picture.
-\end{center}
-\caption{Nonlinear \cobra{} nonlinear residual for Flashing problem.}
-\label{fig:nonlinear_flashing_residual}
-\end{figure}
-
-To examine efficacy of the the temporal convergence criteria, both the average and moment based temporal convergence criteria were evaluated for each of the twenty-three successful simulations.
-See \tab{tab:criteria_ave} and \tab{tab:criteria_moment} for the data.
+See \tab{tab:flashing_criteria} and \tab{tab:single_criteria} for the data.
 
 \begin{table}[h!t]
 \centering
 \begin{tabular}{@{}l r@{.}l r@{.}l r@{.}l r@{.}l @{}}
 \toprule
-& \multicolumn{4}{c}{Single Phase} & \multicolumn{4}{c}{Flashing}  \\
+& \multicolumn{4}{c}{$\tilde{R}$} & \multicolumn{4}{c}{$\tilde{R}_{\text{M}}$}  \\
 $\Delta t_{\text{MAX}}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlinear} & \multicolumn{2}{c}{Legacy}& \multicolumn{2}{c}{Nonlinear}  \\
 \midrule
-1.0    & 3&149E-3 & 1&700E-3 & \multicolumn{2}{c}{-} & 1&177E-3 \\
-1.0E-1 & 2&866E-3 & 1&700E-3 & 5&487E-2 & 1&141E-3 \\
-1.0E-2 & 3&412E-4 & 1&357E-3 & 4&960E-2 & 3&413E-4 \\
-1.0E-3 & 2&207E-4 & 4&584E-4 & 3&172E-2 & 2&669E-4 \\
-1.0E-4 & 1&672E-4 & 1&588E-3 & 2&504E-2 & 1&346E-4 \\
-1.0E-5 & 5&493E-4 & 2&758E-4 & 2&166E-2 & 5&075E-5 \\
+1.0    & \multicolumn{2}{c}{-} & 1&177E-3 & \multicolumn{2}{c}{-} & 6&885E-4 \\
+1.0E-1 & 5&487E-2 & 1&141E-3 & 5&044E-2 & 6&730E-4 \\
+1.0E-2 & 4&960E-2 & 3&413E-4 & 4&570E-2 & 2&511E-4 \\
+1.0E-3 & 3&172E-2 & 2&669E-4 & 2&372E-2 & 1&975E-4 \\
+1.0E-4 & 2&504E-2 & 1&346E-4 & 1&838E-2 & 8&974E-5 \\
+1.0E-5 & 2&166E-2 & 5&075E-5 & 1&922E-2 & 4&581E-5 \\
 \bottomrule  
 \end{tabular}
-\caption{Temporal convergence metric -- average}
-\label{tab:criteria_ave}
+\caption{Nonlinear convergence metrics for Flashing problem.}
+\label{tab:flashing_criteria}
 \end{table}
 
 The average metric for the legacy flashing problem shows that the single-shot case has unresolved nonlinearities of greater magnitude than the nonlinear case.
 This is expected.
 Other scientist have noted this behavior.
 
-
-\begin{table}[h!t]
-\centering
-\begin{tabular}{@{}l r@{.}l r@{.}l r@{.}l r@{.}l @{}}
-\toprule
-& \multicolumn{4}{c}{Single Phase} & \multicolumn{4}{c}{Flashing}  \\
-$\Delta t_{\text{MAX}}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlinear} & \multicolumn{2}{c}{Legacy}& \multicolumn{2}{c}{Nonlinear}  \\
-\midrule
-1.0    & 1&485E-3 & 1&070E-4 & \multicolumn{2}{c}{-} & 6&885E-4 \\
-1.0E-1 & 1&287E-3 & 1&070E-4 & 5&044E-2 & 6&730E-4 \\
-1.0E-2 & 1&417E-4 & 7&701E-5 & 4&570E-2 & 2&511E-4 \\
-1.0E-3 & 8&805E-5 & 1&178E-4 & 2&372E-2 & 1&975E-4 \\
-1.0E-4 & 1&834E-5 & 4&958E-5 & 1&838E-2 & 8&974E-5 \\
-1.0E-5 & 1&916E-5 & 8&939E-5 & 1&922E-2 & 4&581E-5 \\
-\bottomrule  
-\end{tabular}
-\caption{Temporal convergence metric -- moment}
-\label{tab:criteria_moment}
-\end{table}
-
-\subsubsection{Lack of Nonlinearities}
-\label{sect:result_linear_problem}
-
-\comment{Does the single-shot linearization have temporal convergence properties similar to the nonlinear solver in the absence of nonlinearities?}
-
 The single-phase problem should be relatively linear.
 As such, the solution produced by the linear solver should be the same as that produced by the linear solver.
 In addition, the solution should be time-step size insensitive from the beginning.
-
 
 It should also show that the solution for both the single-shot and the nonlinear versions of \cobra{} produced the same result.
 The nonlinear \cobra{} did not produce the same results.
@@ -504,6 +478,25 @@ I do not know why at the moment.
 This poor behavior could be the result of multiple issues.
 One possibility is the inconsistency between the scaled update vector used in the line-search algorithm and  the one used in the Newton loop convergence criteria.
 Another possibility is the limiters used in the operator-based scaling were chosen poorly.
+
+\begin{table}[h!t]
+\centering
+\begin{tabular}{@{}l r@{.}l r@{.}l r@{.}l r@{.}l @{}}
+\toprule
+& \multicolumn{4}{c}{$\tilde{R}$} & \multicolumn{4}{c}{$\tilde{R}_{\text{M}}$}  \\
+$\Delta t_{\text{MAX}}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlinear} & \multicolumn{2}{c}{Legacy}& \multicolumn{2}{c}{Nonlinear}  \\
+\midrule
+1.0    & 3&149E-3 & 1&700E-3 & 1&485E-3 & 1&070E-4 \\
+1.0E-1 & 2&866E-3 & 1&700E-3 & 1&287E-3 & 1&070E-4 \\
+1.0E-2 & 3&412E-4 & 1&357E-3 & 1&417E-4 & 7&701E-5 \\
+1.0E-3 & 2&207E-4 & 4&584E-4 & 8&805E-5 & 1&178E-4 \\
+1.0E-4 & 1&672E-4 & 1&588E-3 & 1&834E-5 & 4&958E-5 \\
+1.0E-5 & 5&493E-4 & 2&758E-4 & 1&916E-5 & 8&939E-5 \\
+\bottomrule  
+\end{tabular}
+\caption{Nonlinear convergence metrics for Single Phase problem.}
+\label{tab:single_criteria}
+\end{table}
 
 \section{Review}
 \label{sect:review}
