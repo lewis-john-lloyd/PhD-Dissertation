@@ -494,10 +494,17 @@ The definition of $\dot{m}_k$ is given by \eqref{eqn:mom_dot}.
 
 \begin{equation}
 \label{eqn:mom_dot}
-\dot{m}_k = \alpha_k \rho_k u_k A_m
+\dot{m}_{k} = <\alpha_k \rho_k>_{a} u_{k} A_{m}
 \end{equation}
 
-The choice of independent parameters used in \cobra{} is not the only option .
+The averaging operator $<a>_{a}$ provides the average of a quantity from the two adjoining continuity volume, \eqref{eqn:average_val}.
+
+\begin{equation}
+\label{eqn:average_val}
+<a>_{j,a} = \frac{a_{j} + a_{j+1}}{2}
+\end{equation}
+
+The choice of independent parameters used in \cobra{} iss not the only option .
 Other software uses variants of these parameters.
 Some other options include the use of velocities instead of momenta, and temperatures or internal energies instead of enthalpies \cite{RELAP, TRACE}.
 
@@ -1086,8 +1093,6 @@ In stage three, the nonlinear relation between the conserved quantities and the 
 \section{Algorithmic Concerns}
 \label{sect:algorithmic_concerns}
 
-\comment{This section may end up with subsections.}
-
 The methods outlined in \sect{sect:solution_techniques} have algorithmic issues that need to be addressed.
 Given that the governing conservation laws in thermal-hydraulic analyses are those of two-phase flow, there is no systematic and widely agreed upon way of dealing with phase appearance or disappearance.
 While each algorithmic implementation of the various methods addresses these issues out of necessity, there is no systematic, or optimal, way of doing so. 
@@ -1148,155 +1153,59 @@ When modeling full NPP transients, it is advantageous to use sub-channel softwar
 The combination of different specialized software is a common practice.
 This coupling of capabilities can be accomplished in two ways: the two pieces of software can be merged, or they can be coupled via data exchange.
 Examples of the first method are MARS \cite{Jeong2008} and TRACE \cite{TRACE}.
-Coupling software via data exchange is the more common option \cite{Makihara2003, Aumiller2002, Aumiller2001, Avramova2006, Weaver2002}.
+Coupling software via data exchange is the more common option \cite{Makihara2003, Aumiller2002, Aumiller2001, Avramova2006, Weaver2002, Rodriguez2002}.
 
-The use of explicit coupling can lead to a sonic Courant limit imposed upon the two coupled systems \cite{Ragusa2009, Aumiller2000}.
+The use of explicit coupling can lead to a sonic Courant limit imposed upon the two coupled systems \cite{Ragusa2009, Aumiller2001}.
 The coupling of software via data exchange has led to the development of a semi-implicit coupling technique for thermal-hydraulic simulations \cite{Weaver2002, Aumiller2002}.
 This technique is of direct interest to the work that will be performed.
+
+The coupling of the different software involves the use of a third-party message passing interface.
+The program used for the software coupling in the papers of interest is the Parallel Virtual Machine (PVM) software \cite{Geist1994}.
+PVM allows the data exchange to occur between separate software.
+As formulated in the original papers, the software coupling technique involves decomposing the coupled problem into two pieces, the master and the slave domain.
+The master and slave domains have a one-to-one correspondence with the different software domains.
+In this respect, the problem can be thought of as being decomposed into a subdomain controlled by a master program and a slave domain being controlled by a slave program.
 The original paper presents the method in terms of the RELAP5-3D conservation equations, which are different from those in \cobra{}.
+The coupling method developed presents RELAP5-3D as both the master and slave software \cite{Weaver2002}.
+Later work showed how this base method could be extended to allow coupling between RELAP5-3D and the \cobra{} subchannel analysis software \cite{Aumiller2002}.
+A short outline of the method is presented below.
 
-The method developed for coupling RELAP5-3D.
+The semi-implicit domain decomposition is accomplished via the staggered mesh formulation.
+The master domain is truncated on a continuity volume.
+The unknowns at the boundary of the coupled volumes, the fluxes of conserved continuity quantities, are retained as intrinsic unknowns during the decomposition of the domain into a pressure matrix.
+Upon formulation of the pressure matrix, the Newton update for the pressure will be expressed a linear combination of all of the unknown mass and energy fluxes through the boundary of the domain.
 
-%The following outline of the method uses the \cobra{} equations.
-%
-%The coupling boundary of the two domains occurs at the edge of a continuity volume.
-%\eqref{eqn:coupling_1} shows a portion of the global Jacobian matrix.
-%The two continuity volumes represent the the boundary of the global domain.
-%
-% \begin{equation}
-% \label{eqn:coupling_1}
-% \begin{bmatrix} 
-% \vec{J}_{m_1,c_1} & \vec{J}_{m_1,c_1} & \vec{0} & \vec{0} & \vec{0} & \vec{0}\\
-% \vec{J}_{c_1,m_1} & \vec{J}_{c_1,c_1} & \vec{J}_{c_1,m_{cpl_1}} & \vec{0} & \vec{0} & \vec{0} \\
-% \vec{0} & \vec{0} & \vec{0} & \vec{J}_{c_2,m_{cpl_2}} & \vec{J}_{c_2,c_2} & \vec{J}_{c_2,m_2} \\ 
-% \vec{0} & \vec{0} & \vec{0} & \vec{0} & \vec{J}_{m_2,c_2} & \vec{J}_{m_2,m_2}  
-% \end{bmatrix} \begin{bmatrix}
-% \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
-% \vec{\delta m}_{cpl_1} \\ \vec{\delta m}_{cpl_2} \\
-% \vec{\delta c}_{2} \\ \vec{\delta m}_{2}
-%\end{bmatrix}  = -\begin{bmatrix}
-% \vec{F}_{m_1} \\ \vec{F}_{c_1} \\
-% \vec{F}_{c_2} \\ \vec{F}_{m_2} \end{bmatrix}
-% \end{equation}
-%
-% \begin{equation}
-% \label{eqn:coupling_2}
-% \begin{bmatrix} 
-% \vec{J}_{m_1,c_1} & \vec{J}_{m_1,c_1} & \vec{0} & \vec{0}\\
-% \vec{J}_{c_1,m_1} & \vec{J}_{c_1,c_1} & \vec{0} & \vec{0} \\
-% \vec{0} & \vec{0} & \vec{J}_{c_2,c_2} & \vec{J}_{c_2,m_2} \\ 
-% \vec{0} & \vec{0} & \vec{J}_{m_2,c_2} & \vec{J}_{m_2,m_2}  
-% \end{bmatrix} \begin{bmatrix}
-% \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
-% \vec{\delta c}_{2} \\ \vec{\delta m}_{2}
-%\end{bmatrix}  = -\begin{bmatrix}
-% \vec{F}_{m_1} \\ \vec{F}_{c_1} \\ \vec{F}_{c_2} \\ \vec{F}_{m_2} \end{bmatrix} - \begin{bmatrix}
-% 0 \\ \vec{J}_{c_1,m_{cpl_1}} \\ \vec{J}_{c_2,m_{cpl_2}} \\ 0
-% \end{bmatrix}\begin{bmatrix}
-% 0 \\ \vec{\delta m}_{cpl_1} \\ \vec{\delta m}_{cpl_2} \\ 0
-% \end{bmatrix}
-% \end{equation}
-% 
-%  \begin{IEEEeqnarray}{rl}
-% \begin{bmatrix} 
-% \vec{I} & \vec{J}_{m_1,m_1}^{-1}\vec{J}_{m_1,c_1} & \vec{0} & \vec{0}\\
-% \vec{J}_{c_1,m_1} & \vec{J}_{c_1,c_1} & \vec{0} & \vec{0} \\
-% \vec{0} & \vec{0} & \vec{J}_{c_2,c_2} & \vec{J}_{c_2,m_2} \\ 
-% \vec{0} & \vec{0} & \vec{J}_{m_2,m_2}^{-1}\vec{J}_{m_2,c_2} & \vec{I} 
-% \end{bmatrix} &\begin{bmatrix}
-% \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
-% \vec{\delta c}_{2} \\ \vec{\delta m}_{2}
-%\end{bmatrix}  = \nonumber \\
-% \label{eqn:coupling_3}
-%-\begin{bmatrix}
-% \vec{J}_{m_1,m_1}^{-1}\vec{F}_{m_1} \\ \vec{F}_{c_1} + \vec{J}_{c_1,m_{cpl_1}}\vec{m}_{cpl_1}^{n+1,k} \\ \vec{F}_{c_2} + \vec{J}_{c_2,m_{cpl_2}} \vec{m}_{cpl_2}^{n+1,k} \\ \vec{J}_{m_2,m_2}^{-1}\vec{F}_{m_2} \end{bmatrix} - \begin{bmatrix}
-% 0 \\ \vec{J}_{c_1,m_{cpl_1}} \\ \vec{J}_{c_2,m_{cpl_2}} \\ 0
-% \end{bmatrix}\begin{bmatrix}
-% 0 \\ \vec{m}^{n+1,k+1}_{cpl_1} \\ \vec{m}^{n+1,k+1}_{cpl_2} \\ 0
-% \end{bmatrix} &
-% \end{IEEEeqnarray}
-%
-%\begin{IEEEeqnarray}{rl}
-%\begin{bmatrix} 
-%\vec{J}_{c_1,c_1} -\vec{J}_{c_1,m_1}\vec{J}_{m_1,m_1}^{-1}\vec{J}_{m_1,c_1} & \vec{0} \\
-%\vec{0} & \vec{J}_{c_2,c_2} - \vec{J}_{c_2,m_2}\vec{J}_{m_2,m_2}^{-1}\vec{J}_{m_2,c_2} 
-%\end{bmatrix} &
-%\begin{bmatrix}
-%\vec{\delta c}_{1} \\
-%\vec{\delta c}_{2} \\
-%\end{bmatrix}  = \nonumber \\
-% \label{eqn:coupling_4}
-%-\begin{bmatrix}
-%\vec{F}_{c_1} + \vec{J}_{c_1,m_{cpl_1}}\vec{m}_{cpl_1}^{n+1,k}  - \vec{J}_{c_1,m_1}\vec{J}_{m_1,m_1}^{-1}\vec{F}_{m_1} \\
-%\vec{F}_{c_2} + \vec{J}_{c_2,m_{cpl_2}} \vec{m}_{cpl_2}^{n+1,k} -\vec{J}_{c_2,m_2}\vec{J}_{m_2,m_2}^{-1}\vec{F}_{m_2}  
-%\end{bmatrix} -
-%\begin{bmatrix}
-%\vec{J}_{c_1,m_{cpl_1}} \\ \vec{J}_{c_2,m_{cpl_2}}
-%\end{bmatrix}
-%\begin{bmatrix}
-%\vec{m}^{n+1,k+1}_{cpl_1} \\ \vec{m}^{n+1,k+1}_{cpl_2}
-%\end{bmatrix} &
-%\end{IEEEeqnarray}
-%
-%
-%\begin{equation}
-%\label{eqn:coupling_5}
-%\begin{bmatrix} 
-%\vec{J}^{*}_{c_1} & \vec{0} \\
-%\vec{0} & \vec{J}^{*}_{c_2} 
-%\end{bmatrix} 
-%\begin{bmatrix}
-%\vec{\delta c}_{1} \\
-%\vec{\delta c}_{2} \\
-%\end{bmatrix}  =
-%-\begin{bmatrix}
-%\vec{F}^{*}_{c_1}\\
-%\vec{F}^{*}_{c_2}  
-%\end{bmatrix} -
-%\begin{bmatrix}
-%\vec{J}_{c_1,m_{cpl_1}} \\ \vec{J}_{c_2,m_{cpl_2}}
-%\end{bmatrix}
-%\begin{bmatrix}
-%\vec{m}^{n+1,k+1}_{cpl_1} \\ \vec{m}^{n+1,k+1}_{cpl_2}
-%\end{bmatrix}
-%\end{equation}
-%
-%\begin{equation}
-%\label{eqn:coupling_6}
-%\begin{bmatrix} 
-%\vec{U}^{*}_{c_1} & \vec{0} \\
-%\vec{0} & \vec{U}^{*}_{c_2} 
-%\end{bmatrix} 
-%\begin{bmatrix}
-%\vec{\delta c}_{1} \\
-%\vec{\delta c}_{2} \\
-%\end{bmatrix}  =
-%-\begin{bmatrix}
-%\vec{L}^{-1}_{c_1}\vec{F}^{*}_{c_1}\\
-%\vec{L}^{-1}_{c_2}\vec{F}^{*}_{c_2}  
-%\end{bmatrix} -
-%\begin{bmatrix}
-%\vec{L}^{-1}_{c_1}\vec{J}_{c_1,m_{cpl_1}} \\ \vec{L}^{-1}_{c_2}\vec{J}_{c_2,m_{cpl_2}}
-%\end{bmatrix}
-%\begin{bmatrix}
-%\vec{m}^{n+1,k+1}_{cpl_1} \\ \vec{m}^{n+1,k+1}_{cpl_2}
-%\end{bmatrix}
-%\end{equation}
+From the point-of-view of the slave process, the momentum volume between the master domain and the slave domain is a traditional momentum volume.
+Since the interface boundary between the slave and master domain is composed entirely of momentum volumes, the only implicit unknowns from the master domain used in the solve domain are the pressure from the coupled continuity volumes.
+These implicit pressures are expressed as in terms of explicit pressure and an update to the pressure from the old-time value and the new-time values.
+The pressure update is expressed in terms of the unknown continuity fluxes at the boundary of the master continuity volumes, \eqref{eqn:pressure_coupled}.
+
+\begin{equation}
+\label{eqn:pressure_coupled}
+P^{n+1}
+\end{equation}
+
+This formulation allows for the updated pressure in the master domain to be calculated internally to the slave domain without inter-software communication.
+The original intent of this formulation was to enable the semi-implicit method to be used for software coupling.
+This would enable coupled simulations to exceed the sonic Courant limit.
 
 The coupling of system analysis codes and sub-channel codes can also be viewed through a different lens.
-If the global problem, the balance-of-plant and the in-core region are considered to a part of a global domain, $\Omega$, then each piece of software can be viewed as solving a smaller portion of the global domain, $\Omega_i$.
-The boundary between the two domains will be denoted as $\partial \Omega_i$.
-In explicit coupling of two semi-implicit solvers, the fluid flowing between the domains at the boundary is discretized explicitly.
-The global time-step size will then be subject to a sonic Courant limit at the boundary of the two domains \cite{Aumiller2001}.
-In the case of the semi-implicit coupling between two semi-implicit solvers, the material Courant limit then limits the problem.
-The semi-implicit coupling generates a consistent global Newton step for the entire domain.
-This is the context through which code coupling will be viewed.
+If the global problem, the balance-of-plant (e.g., RELAP5-3D) and the in-core region (e.g., \cobra{}) are considered to a part of a global domain, $\Omega$, then each piece of software can be viewed as solving a smaller portion of the global domain, $\Omega_i$.
+The use of more detailed physics for the in-core thermal-hydraulic behavior is a particular application of model reduction \cite{Paraschivoiu1999}.
+In this decomposition of the global domain, if the boundary values are explicitly evaluated then this decomposition could be viewed as an application of an additive Schwarz domain decomposition algorithm.
+In an additive Schwarz algorithm, the boundary values for each subdomain are functions only of the old-time values in the other domains.
+If the information exchange between the two domains is purely explicit in nature, then the sonic Courant limit becomes the time-step limiter \cite{Aumiller2001}.
 
-\comment{Expand on this.}
+The sonic Courant limit of explicit domain coupling led to the development of semi-implicit domain coupling.
+This domain coupling technique, like the Semi-Implicit technique for safety analysis codes, enables the global problem to run at time-steps that exceed the sonic Courant limit, but that are still limited by the material Courant limit.
+This particular mode of domain decomposition allows for each domain to use the most recent information from each domain in its calculation.
+This method is similar to the multiplicative Schwarz domain decomposition.
+However, the multiplicative Schwarz domain decomposition is traditionally viewed as a sequential solution over the subdomains.
+Each subdomain utilizes the most recent information from the other subdomains to formulate its boundary conditions.
 
-In the realm of domain decomposition, the Schwarz method is relevant.
-There is the multiplicative Schwarz and the additive Schwarz method.
-There is paper by David E. Keyes that talks about domain decomposition with multi-models.
+The additive Schawrz method has seen extensive use as a nonlinear preconditioner for fully implicit CFD calculations \cite{Cai2009, Cai2002}.
+This application does not worry about consistency at the boundaries of the subdomains since the obtained subdomain solutions are used as a preconditioned initial guess for a global Newton-Krylov-Schwarz algorithm \cite{Chan1984}.
+
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------

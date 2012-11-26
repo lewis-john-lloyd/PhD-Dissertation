@@ -14,11 +14,11 @@ Two test problems were developed to show that the nonlinear convergence metric c
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Nonlinear \cobra{}}
+\section{Nonlinear \cobra{} Implementation}
 \label{sect:nl_cobra}
 The first stage of preliminary work was to modify the \cobra{} software.
 As obtained, the \cobra{} software was a single-shot linearization version of the semi-implicit method.
-In order to evaluate the spatially-selective nonlinear refinement, \cobra{} needed to be converted to include a fully iterative Newton solver based upon a linesearch globalization strategy.
+In order to evaluate the subdomain nonlinear refinement algorithm, \cobra{} needed to be converted to include a fully iterative Newton solver based upon a linesearch globalization strategy.
 When it is necessary to distinguish between the single-shot linearization algorithmic implementation of \cobra{} and the iterative nonlinear \cobra{} implementation, the former shall be referred to as legacy mode and the latter as nonlinear mode.
 As such, the objectives of this work were to modify the software to be able do the following:
 
@@ -29,15 +29,15 @@ As such, the objectives of this work were to modify the software to be able do t
 \end{itemize}
 
 \cobra{} utilized a single-shot linearization Newton method for its solution technique.
-As a result of that design decision, certain memory saving techniques were employed in its construction that precluded the idea of more than one Newton step.
-In particular, there was an implicit assumption within the software that the current Newton iterate, $\vec{x}^{n+1, 0}$, was the old-time variable $\vec{x}^{n}$.
-This design decision required an an evaluation of all routines involved with the evaluation of components of both the nonlinear residual and the Jacobian.
+As a result of that design decision, certain memory saving techniques were employed in the construction of the software that precluded the idea of more than one Newton step.
+In particular, there was the implicit assumption within the software that the current Newton iterate, $\vec{x}^{n+1, 0}$, was the old-time variable $\vec{x}^{n}$.
+This design decision required the vetting of all subroutines involved with the evaluation of the components of both the nonlinear residual and the Jacobian.
 In addition, the assumption that $\vec{x}^{n+1, k} = \vec{x}^{n}$ produced source code that was inconsistent with an iterative Newton method.
 This required that the source code be modified to reflect the intended discretization of the governing conservation laws.
-To do this, several areas had to be identified where: there were implicit cancellation of terms, the new-time variables were used in place of old-time variables, and the old-time variables were used in place of new-time variables.
+To do this, areas had to be identified where: there were implicit cancellation of terms, the new-time variables were used in place of old-time variables, and the old-time variables were used in place of new-time variables.
 Where appropriate, the software was changed to reflect the distinction between old-time and iterate variables and to introduce terms that had been assumed to be equal to zero.
 
-Once the appropriate variables were used for the evaluation of nonlinear residuals and Jacobians, a Newton loop was introduced to allow multiple Newton steps.
+Once the appropriate variables were used for the evaluation of the nonlinear residuals and the Jacobian, a Newton loop was introduced to allow multiple Newton steps.
 \alg{alg:nl_cobra} contains the current algorithmic implementation of the nonlinear semi-implicit method.
 
 \begin{algo}[H]
@@ -50,7 +50,7 @@ Once the appropriate variables were used for the evaluation of nonlinear residua
 \Loop \; Transient Loop
     \State $t^{n+1} : = t^{n} + \Delta t$
     \State $k = 0$
-    \Define $\vec{x}^{n+1,0} = \vec{x}^{n}$
+    \Define $\vec{x}^{n+1,0}$
 	\Calculate $\vec{F}(\vec{x}^{n+1,0})$ and $\vec{J}(\vec{x}^{n+1,0})$
     \Loop \; Newton Loop
 		\Calculate $\vec{\delta x} = - \vec{J}^{-1}\cdot\vec{F}$
@@ -82,9 +82,9 @@ First is the Newton Loop termination criteria.
 There are three Newton loop termination mechanisms, listed below.
 
 \begin{enumerate}
-\item{Maximum number of Newton iterates, $k_{\,\text{MAX}}$, exceeded.}
-\item{The L-inf norm of the scaled residual, $||\vec{S}^{-1}\vec{F}||_{\infty}$, is below a specified threshold, $F_{\text{ABS}}$.}
-\item{The L-inf norm of the scaled update, $||\vec{D}^{-1}\vec{\delta x}||_{\infty}$, is below a specified threshold, $\delta_{\text{ABS}}$.}
+\item{$k > k_{\,\text{MAX}}$}
+\item{$||(\vec{S}^{k+1})^{-1}\vec{F}^{k+1}||_{\infty} \leq F_{\text{ABS}}$}
+\item{$||(\vec{D}^{k+1})^{-1}\vec{\delta x}^{k}||_{\infty} \leq \delta_{\text{ABS}}$}
 \end{enumerate}
 
 Current values for $k_{\,\text{MAX}}$, $F_{\text{ABS}}$ and $\delta_{\text{ABS}}$ are $35$, $1.0$E$-05$, and $1.0$E$-10$, respectively.
@@ -94,19 +94,17 @@ The globalization strategy implemented in \cobra{} is a linesearch algorithm \ci
 The two globalization loop termination criteria are:
 
 \begin{enumerate}
-\item{$\frac{1}{2}||\vec{F}^{k+1, j}||_{2} < \frac{1}{2}||\vec{F}^{k}||_{2} - \alpha ||\vec{F}^{k}||_{2}$ }
-\item{$||\lambda_{j+1} \vec{\delta x}||_{\infty} < \delta_{\text{abs}}$}
+\item{$\frac{1}{2}||\vec{F}^{k+1, j}||^{2}_{2} < \frac{1}{2}||\vec{F}^{k}||^{2}_{2} - \alpha ||\vec{F}^{k}||^{2}_{2}$ }
+\item{$||\lambda_{j+1} \vec{\delta x}^{k}||_{\infty} < \delta_{\text{abs}}$}
 \end{enumerate}
 
-If neither of the loop termination criteria are met, then the a step-length parameter, $\lambda_j$ is calculated.
+If neither of the loop termination criteria are met, then the step-length parameter, $\lambda_j$ is calculated.
 On the first pass through the globalization loop within a given Newton step, a quadratic backtracking model is adopted.
 On subsequent passes, a cubic-backtracking model is used.
  
 Since vector forms of the nonlinear residual and the independent parameters are used in determining nonlinear convergence and in the globalization algorithm, they needed to be easily manipulated.
 A subroutine was written to gather the discrete variables of the independent parameters into a single vector.
 Additional source code modifications were necessary to construct and gather the components of the nonlinear residual.
-
-\comment{Anything else here? More detail?}
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -125,8 +123,18 @@ Table \ref{tab:scaling_units_scales} shows the range of parameters possible with
 
 \begin{table}[ht]
 \centering
-\begin{tabular}{@{}c@{}} \toprule
-Scales \\
+\begin{tabular}{@{}l c r @{}} \toprule
+Residual & Units \\
+\midrule
+Conservation of the \NCG{} Field Mass                  & [ lb$_m$ ] \\
+Conservation of the Continuous Liquid Water Field Mass & [ lb$_m$ ] \\
+Conservation of the Entrained Liquid Water Field Mass  & [ lb$_m$ ] \\
+Conservation of the Water Vapor Field Mass             & [ lb$_m$ ] \\
+Conservation of the Gaseous Phase Enthalpy             & [ BTU ]    \\
+Conservation of the Liquid Phase Enthalpy              & [ BTU ]    \\
+Conservation of the Continuous Liquid Field Momentum   & [ $\frac{\text{lb}_{\text{m}} \text{ft}}{\text{s}}$ ] \\
+Conservation of the Entrained Liquid Field Momentum & [ $\frac{\text{lb}_{\text{m}} \text{ft}}{\text{s}}$ ] \\
+Conservation of the Gaseous Phase Momentum & [ $\frac{\text{lb}_{\text{m}} \text{ft}}{\text{s}}$ ] \\
 \bottomrule  
 \end{tabular}
 \caption{Typical scale for reactor simulations}
@@ -137,9 +145,9 @@ However, during accident scenarios, the range of these values can dramatically c
 One of the challenges that has been addressed during this work is developing a method for scaling that will provide a meaningful metric for convergence.
 The scaling chosen should have the following characteristics:
 \begin{itemize}
-\item{$S^{-1}_k F(x_k)_i \approx 1$ when $x_k$ is a "poor" solution.}
-\item{$S^{-1}_k F(x_k)_i \rightarrow 0$ when a phase disappears.}
-\item{$0 \leq S^{-1}_k F(x_k)_i \leq 1 $ for all values of $F(x_k)_i$.}
+\item{$(S_{i}^{k})^{-1} F^{k}_i \approx 1$ when $\vec{x}^{k}$ is a "poor" solution.}
+\item{$(S_{i}^{k})^{-1} F^{k}_i \rightarrow 0$ when a phase disappears.}
+\item{$0 \leq (S_{i}^{k})^{-1} F^{k}_{i} \leq 1 $ for all values of $\vec{x}^{k}_i$.}
 \end{itemize}
 
 The heart of the scaling used in this work is a physics-based method.
@@ -147,12 +155,10 @@ To illustrate the scaling procedure, we shall consider \eqref{eqn:conservation_o
 Assume that the entire channel single-phase and in thermodynamics equilibrium such that the macroscopic densities on either side of this single cell are the same.
 
 \begin{equation}
-F = \left(\alpha_k \rho_k\right)^{n+1} - \left( \alpha_k \rho_k \right)^n - \frac{\Delta t}{V} \left( \frac{\alpha_k \rho_k }{<\alpha_k \rho_k>^n} V^{n+1}_{j-1} \right)
+F = \left(\alpha_k \rho_k\right)^{n+1} - \left( \alpha_k \rho_k \right)^n - \frac{\Delta t}{V} \left( \frac{<\alpha^{n}_k \rho^{n}_k>^{n}_{d} }{<\alpha_k \rho_k>^{n}_{a}} V^{n+1}_{j-1} \right)
 \end{equation}
 
 In this equation there are three physically meaningful quantities: the temporal difference, the mass flowing into the cell, and mass flowing out of the volume. 
-
-\comment{I know this needs more work.}
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -364,32 +370,58 @@ This caused the problem to try to run below a the minimum allowable time-step si
 However, the nonlinearly convergent \cobra{} was able to run at a 1 [s] time-step.
 Both versions of \cobra{} are subject to the same limits on change of independent variables.
 
-\fig{fig:flashing_solution_} shows the gaseous volume fraction 2 [in] from the inlet of the stand pipe as a function of time for a max \dt{} of 1.0E-1 [s] for both the legacy and the nonlinear solvers.
-Note that the nonlinearly resolved solution is qualitatively different than the traditional single-shot solution, \fig{fig:flashing_solution}.
-As the time-step size is reduced, this discrepancy does does disappear.
+\fig{fig:flashing_1em1} shows the gaseous volume fraction 2 [in] from the inlet of the stand pipe as a function of time for a max \dt{} of 1.0E-1 [s] for both the legacy and the nonlinear solvers.
 
-The two solutions did not converge as the time-step size was reduced for both.
 
-\begin{figure}
-        \centering
-        \begin{subfigure}[b]{0.48\textwidth}
-                \centering
-				I am the nl\_cobra solution.
-                \caption{Nonlinear mode.}
-                \label{fig:gull}
-        \end{subfigure}%
-        \begin{subfigure}[b]{0.48\textwidth}
-                \centering
-				I am the cobra solution.
-                \caption{Legacy mode.}
-                \label{fig:tiger}
-        \end{subfigure}
-        \caption{Solutions to the flashing problem.}
-        \label{fig:flashing_solution}
+\begin{figure}[h!t]
+\begin{center}
+\includegraphics[width=0.9\textwidth]{images/flashing_1em1.eps}
+\end{center}
+\caption{Solutions to the flashing problem with $\Delta t_{\text{MAX}} = 1.0$E-1.}
+\label{fig:flashing_1em1}
+\end{figure}
+
+
+Note that the nonlinearly resolved solution is qualitatively different than the traditional single-shot solution, \fig{fig:flashing_1em1}.
+As the time-step size is reduced, this discrepancy does does disappear, \fig{fig:flashing_1em5}.
+
+
+\begin{figure}[h!t]
+\begin{center}
+\includegraphics[width=0.95\textwidth]{images/flashing_1em5.eps}
+\end{center}
+\caption{Solutions to the flashing problem with $\Delta t_{\text{MAX}} = 1.0$E-5.}
+\label{fig:flashing_1em5}
+\end{figure}
+
+The two solutions do not converge to the same solution as the time-step size was reduced.
+Notice however, that the solution to the flashing problem produced by the nonlinear mode of \cobra{} varies less as the time-step size is reduced that that produced by the legacy mode, \fig{fig:nl_mode_flashing} and \fig{fig:cobra_mode_flashing}.
+\fig{fig:cobra_mode_flashing} shows that as the time-step size is reduced the nonlinear solution approaches a solution that is time-step size insensitive.
+The two modes of \cobra{}, when applied to the same problem that contains highly nonlinear physics, produce two different time-step size invariant solutions.
+These two solutions are reached at different time-step sizes.
+
+One way to quantify the difference between the solutions is by measuring the nonlinear residual metric outlined in \ref{sect:temporal_convergence}.
+This metric provides a measure of how poorly the discrete nonlinear equations are being solved at every time-step in the transient.
+The resolution of the nonlinear residual allows for a solution that is less sensitive to time-step size selection than the solution that does not resolve the nonlinear residual.
+
+\begin{figure}[h!t!]
+\begin{center}
+\includegraphics[width=0.95\textwidth]{images/nl_flashing_al_2in.eps}
+\end{center}
+\caption{Nonlinear solution for Flashing problem.}
+\label{fig:nl_mode_flashing}
+\end{figure}
+
+\begin{figure}[h!t!]
+\begin{center}
+\includegraphics[width=0.95\textwidth]{images/cobra_flashing_al_2in.eps}
+\end{center}
+\caption{Legacy solution for Flashing problem.}
+\label{fig:cobra_mode_flashing}
 \end{figure}
 
 The nonlinear residual for the legacy Flashing problem indicates that even for small time-step sizes, the solution obtained still does not satisfy the discrete nonlinear equations, \fig{fig:legacy_flashing_residual}.
-This is in contrast to the nonlinear Flashing problem, which shows a lower nonlinear residual over the course of the simulation, \fig{fig:nonlinear_flashing_residual}.
+This is in contrast to the nonlinear flashing problem, which shows a lower nonlinear residual over the course of the simulation, \fig{fig:nonlinear_flashing_residual}.
 
 \begin{figure}[h!t]
 \begin{center}
@@ -406,9 +438,6 @@ I am a picture.
 \caption{Nonlinear \cobra{} nonlinear residual for Flashing problem.}
 \label{fig:nonlinear_flashing_residual}
 \end{figure}
-
-The single-phase case ran just fine for both problems.
-Moving on to the case of 0.1 [s].
 
 To examine efficacy of the the temporal convergence criteria, both the average and moment based temporal convergence criteria were evaluated for each of the twenty-three successful simulations.
 See \tab{tab:criteria_ave} and \tab{tab:criteria_moment} for the data.
