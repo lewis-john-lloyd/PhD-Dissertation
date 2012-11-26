@@ -115,11 +115,11 @@ Additional source code modifications were necessary to construct and gather the 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Operator-Based Scaling}
 \label{sect:operator_scaling}
-In order to determine the degree to which a state vector, $\vec{x}$, satisfies \eqref{eqn:conservation_equations}, the use of the nonlinear residual, $\vec{F}$, is required.
-However, the magnitude of the residual for the different conservation equations can vary by orders of magnitude. 
-For a given grid location, the nonlinear residuals for mass and energy as formulated in section \ref{subsect:semi_implicit} will have six components.
-These residuals will have the units of the conserved quantities for their corresponding PDEs.
-Table \ref{tab:scaling_units_scales} shows the range of parameters possible within \cobra{}.
+In order to determine the degree to which a state vector, $\vec{x}$, satisfies \eqref{eqn:conservation_equations}, the use of the nonlinear residual is required.
+However, due to the units of the residuals for the different conservation equations, their magnitudes can vary by orders of magnitude. 
+For a given continuity volume, the nonlinear residual will have six components: four for the conservation of mass and two for the conservation of energy.
+For each momentum volume, the three conservation of momentum equations will form the three components of the nonlinear residual.
+These residuals have the units of the conserved quantities for their corresponding PDEs; \tab{tab:scaling_units_scales} shows the units for the different conservation equations.
 
 \begin{table}[ht]
 \centering
@@ -137,20 +137,23 @@ Conservation of the Entrained Liquid Field Momentum & [ $\frac{\text{lb}_{\text{
 Conservation of the Gaseous Phase Momentum & [ $\frac{\text{lb}_{\text{m}} \text{ft}}{\text{s}}$ ] \\
 \bottomrule  
 \end{tabular}
-\caption{Typical scale for reactor simulations}
+\caption{Residuals and their units.}
 \label{tab:scaling_units_scales}
 \end{table}
 
-However, during accident scenarios, the range of these values can dramatically change.
-One of the challenges that has been addressed during this work is developing a method for scaling that will provide a meaningful metric for convergence.
-The scaling chosen should have the following characteristics:
+Due to the range of magnitudes of these residuals, it is important to choose a proper scaling factor.
+A challenge that has been addressed in this work is the development of a method for scaling of these residuals that is based upon the physics of interest during a time-step.
+In constructing this scaling factor, it was determined that following characteristics were desirable:
 \begin{itemize}
 \item{$(S_{i}^{k})^{-1} F^{k}_i \approx 1$ when $\vec{x}^{k}$ is a "poor" solution.}
-\item{$(S_{i}^{k})^{-1} F^{k}_i \rightarrow 0$ when a phase disappears.}
+\item{$(S_{i}^{k})^{-1} F^{k}_i \rightarrow 0$ when phase $i$ disappears.}
 \item{$0 \leq (S_{i}^{k})^{-1} F^{k}_{i} \leq 1 $ for all values of $\vec{x}^{k}_i$.}
 \end{itemize}
 
-The heart of the scaling used in this work is a physics-based method.
+The scaling used in this work is an operator based approach.
+The governing PDEs can be viewed as a collection of operators, both linear and nonlinear, acting upon the vector of independent parameters.
+The summation of these operators must balance to zero for the nonlinear equation to be satisfied.
+
 To illustrate the scaling procedure, we shall consider \eqref{eqn:conservation_of_liq} for a simply connected continuity cell without inter-field mass transfer.
 Assume that the entire channel single-phase and in thermodynamics equilibrium such that the macroscopic densities on either side of this single cell are the same.
 
@@ -170,42 +173,38 @@ In this equation there are three physically meaningful quantities: the temporal 
 \section{Temporal Convergence}
 \label{sect:temporal_convergence}
 
-One of the factors in engineering analysis is the time-step size insensitivity of the solution.
-However, a quantifiable measure of time-step size insensitivity is lacking in the literature.
-A definition of a temporally converged solution is required.
-Ideally, the definition would be the following: as the time-step size is reduced, the solution does not change.
-However, this is an unrealistically optimistic definition due to the finite precision of computers.
-Another possible definition: as the time-step size is reduced, the change in the solution is small enough.
-Unfortunately, this is a subjective definition.
-The subjectivity of the definition manifests itself in three parts: ``as the time-step size is reduce," ``change in solution," and ``small enough."
+In thermal-hydraulic safety analysis, an important factor is the temporal convergence of the solution.
+In practice, however, the time-step size insensitivity of a solution is often confused with temporal convergence.
+First, a definition of a temporally converged solution is required.
+In theory, a temporally converged solution is one where the local truncation error due to the discrete approximation of the temporal integral is orders of magnitude below both the engineering scales of interest and precision of the physical models being used in the simulation.
+Unfortunately, the precise measurement of the error in a simulation requires that an analytic solution be available for comparison to.
+During the simulation of physically realistic systems, there is rarely an analytic solution to compare against.
+This situation requires a slightly different definition of a temporally converged solution; a definition that does not depend upon accurately measuring the local truncation error.
 
+Another possible definition for temporal convergence could be ``as the time-step size is reduced, the change in the solution is small enough."
+While commonly used, this definition is subjective.
 Traditionally, ``change in solution" is addressed in a very qualitative manner.
 Engineering judgment of which parameters of the solution are of interest is required.
-These parameters may include items such as peak clad temperature or peak system pressure.
-The localized nature of examining parameters of interest is a weakness.
-This locality means that the entire solution domain is not being considered in the definition ``change in solution."
-
-Another subjective aspect of the definition is the meaning of ``small enough."
-Depending upon the context in which the work is being done, this may be nothing more than looking at a graph of the parameter of interest and using engineering judgment to say ``those two graphs look pretty similar."
+These parameters may include items of regulatory concern such as peak clad temperature or peak system pressure.
+Examining only engineering parameters of interest is a weakness.
+This locality means that the entire solution domain is not being considered.
+Depending upon the context in which the work is being done, the degree of ``small enough" may be nothing more than looking at a graph of the parameter of interest and using engineering judgment to say that ``those two graphs look about the same."
 In some cases, a more quantifiable measure may be used.
-Quantifiable metrics may be  ``peak clad temperature does not change by more than $50\,^{\circ}\mathrm{C}$."
+Quantifiable metrics may be  ``peak clad temperature does not change by more than $50\,^{\circ}\mathrm{C}$" \cite{CFR10}.
+While it may be that the change in the chosen parameters of interest does not exceed the limits placed upon it as the time-step size is refined, that behavior does not imply that the solution obtained is the solution to the discrete nonlinear problem.
 
-The refinement of the temporal discretization is another place where subjectivity comes into play.
-``As the time-step size is reduced" is a very amorphous statement.
-A more proper statement could be interpreted as ``over the range of time-steps considered."
-While it may be that the chosen parameter of interest does not exceed the limits placed upon it with modest time-step refinement, that does not imply that the solution obtained is an accurate solution to the discrete nonlinear problem.
-
-Unfortunately, the subjective meaning of temporal convergence will always be subject to some form of engineering judgment. However, a metric that can quantify the probability that a solution is not accurately temporally converged would be of great value.
+Unfortunately, the subjective meaning of temporal convergence will always be subject to some form of engineering judgment.
+However, a metric that can quantify the probability that a solution is not accurately temporally converged would be of great value.
 
 The previously mentioned work into nonlinear convergence shows that a solution may be time-step size insensitive but not be the converged solution of the discretized problem \cite{Knoll2001}.
 If the nonlinearities of the discrete governing equations are not resolved, then temporal convergence rate can be degraded.
-This degradation can produce results that qualitatively appear to be converged due an almost zeroth order of accuracy.
+This degradation can produce results that qualitatively appear to be converged due an almost zeroth order of temporal accuracy.
 This apparent temporal convergence, or time-step size insensitivity, of the solution is not a result of reaching the solution to the discretized nonlinear equations, but instead is indicative of the degraded order of accuracy due to the failure to resolve the nonlinearities at each time-step.
-To determine if the time-step size insensitive transient solution is both time-step size insensitive and an accurate solution to the nonlinear problem, a quantifiable metric is sought.
+To determine if the time-step size insensitive transient solution is both time-step size insensitive and an accurate solution to the nonlinear problem, it is necessary to examine the nonlinear convergence of system as an issue separate from the temporal-convergence.
 
 The norm of the scaled residual from \sect{sect:operator_scaling} provides a well-scaled metric for instantaneous nonlinear convergence at any given time in the simulation.
 The residual vector norm is divided by the number of equations in the residual to provide an average residual value per equation.
-This equation averaged scaled residual provides a metric for determining the degree of nonlinear convergence.
+This equation averaged scaled residual provides a metric for determining the degree of nonlinear convergence at any time-step in the simulation.
 The natural extension of this metric to transient problems would be a temporal integral, \eqref{eqn:trans_res_simple}, of said norm.
 
 \begin{equation}
