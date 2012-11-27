@@ -59,7 +59,7 @@ The total number of continuity volumes is $n$ while the number of momentum volum
 \end{figure}
 
 The computational modeling framework involves two primary components: sections and channels.
-The total axial length of the problem, $L$, is divided into $M$ blocks known as sections, $S_i$.
+The total axial length of the problem, $L$, is divided into $M$ sections, $S_i$.
 Each section is defined by two bounding elevations and a spatial discretization of that span into $J$ discrete non-overlapping axial segments, $\Delta x_{i,j}$, that represent the axial span of the continuity volumes.
 The particular spatial discretization of a given section is independent of the other sections.
 A sum of the lengths of each section provides the total axial length of given problem, \eqref{eqn:sections}.
@@ -95,7 +95,26 @@ The sum of all channel volumes, \eqref{eqn:domain_decomp}, is the total domain v
 \Omega = \sum_{k = 1}^{K} \omega_{k}
 \end{equation}
 
-While the geometric modeling capabilities of \cobra{} include the ability to model three dimensional flow, by defining orthogonal flow paths connecting channels, this work will deal only with the subset of problems where the flow is quasi-one-dimensional.
+\cobra{} is capable of modeling complex geometries.
+For example, it is permissible to have the flow from a single channel split into multiple channels in an adjacent section.
+This flow splitting is only permitted at section boundaries.
+It is also possible to model multi-dimensional flow through the definition of transverse flow paths that connect two channels within a given section to each other.
+The transverse flow paths are considered orthogonal to the axial flow direction.
+An example of a geometric model that includes these different abilities is given in \fig{fig:complex_geometry}.
+
+\begin{figure}[ht]
+\begin{center}
+\begin{tikzpicture}
+\draw (-3,0) rectangle +(1,5);
+\draw (0,-1) rectangle +(1,1) (0,0) rectangle +(1,1) (0,1) rectangle +(1,1) (0, 2) rectangle +(1,1) (0,3) rectangle +(1,1) (0,4) rectangle +(1,1) (0, 5) rectangle +(1,1);
+\draw[dashed] (3,-0.5) rectangle +(1,1) (3,0.5) rectangle +(1,1) (3,1.5) rectangle +(1,1) (3, 2.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3, 4.5) rectangle +(1,1) ;
+\draw[dashed] (-3,0) -- (4,0);
+\draw[dashed] (-3,5) -- (4,5);
+\end{tikzpicture}
+\end{center}
+\caption{A complex geometry example.}
+\label{fig:complex_geometry}
+\end{figure}
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -135,9 +154,9 @@ To more accurately capture the phenomena of interest during accident scenarios, 
 The two fields of the liquid phase are a continuous liquid field and an entrained droplet field.
 The gaseous phase in composed of a \ncg{} field and a water-vapor field. 
 This ability to track the different fields within a phase provides two important benefits to safety analysis: the ability to account for the effects of \ncgs{} on condensation, and the ability to model the effects of dispersed liquid droplets on heat transfer.
-The benefits of modeling the dispered liquid field allow to capture these complex hydrodynamic phenomena hasve inspired the French CATHARE software developers to migrate to a similar three-field formulation in the next version of their software \cite{Emonot2011}.
+The benefits of modeling the dispersed liquid field allow to capture these complex hydrodynamic phenomena have inspired the French CATHARE software developers to migrate to a similar three-field formulation in the next version of their software \cite{Emonot2011}.
 
-Given the four fields of interest, there are twelve conservation equations, one each for the mass, momentum, and energy of each of the four fields.
+Given the four fields of interest, in axial flow there are twelve conservation equations, one each for the mass, momentum, and energy of each of the four fields.
 These equations allow for a description of the time-dependent behavior of the in-core fluid.
 In addition, closure relationships are necessary to describe the interactions between the various fields and their interfacial transfer terms.
 However, additional assumptions are made to reduce the number of required conservation laws and the number of corresponding closure relationships.
@@ -149,13 +168,15 @@ Thermodynamic and pressure equilibrium exists between the continuous liquid film
 The basis for this assumption is that while the entrained droplets are here being modeled by a separate set of governing equations than those of the continuous liquid field, in reality the droplets are constantly entraining and depositing with the continuous liquid field. 
 }
 \item{
-The liquid and gaseous phases are in pressure equilibrium.
+The liquid and gaseous phases are assumed to be in pressure equilibrium with the interface between the phases.
+The basis for this assumption is that the inter-phase dynamics at the interface are negligible when compared to the bulk flow dynamics.
 }
 \item{The gaseous phases are mechanical equilibrium.}
 \item{The gaseous phases obey Dalton's Law.}
 \item{The gaseous phases are in thermal equilibrium.}
 \item{
 The viscous dissipation of momentum in the axial flow direction and the associated generation of energy are neglected.
+This assumption is made because the simulations of interest are dominated by inertial forces, not viscous, so that the neglected terms would be small compared to other terms in the calculations.
 }
 \item{
 The wall-shear effects of viscosity are accounted for via empirically based friction correlations.
@@ -395,7 +416,20 @@ The assumption in these integrals is that the value of the conserved quantities 
 
 \begin{figure}[ht]
 \begin{center}
-\includegraphics[width=0.5\textwidth]{images/constant_value.eps}
+\begin{tikzpicture}
+\draw [->, thick] (-5,0) -- (6,0);
+\draw [->, thick] (-5,0) -- (-5,4);
+\draw (-4,1) -- (-1,1);
+\draw (-1,2) -- (2,2);
+\draw (2,3) -- (5,3);
+\draw (-5.5,3) node {\verb!f(x)!};
+\draw [dashed] (-4,1) -- (-4,0);
+\draw [dashed] (-1,2) -- (-1,0);
+\draw [dashed] (2,3) -- (2,0);
+\draw [dashed] (5,3) -- (5,0);
+\foreach \x / \xtext in {-2.5/x_{j-1},-1/x_{j-\frac{1}{2}},0.5/x_j,2/x_{j+\frac{1}{2}},3.5/x_{j+1}}
+	\draw [thick] (\x,-2pt) -- (\x,0pt) node [anchor=north] {$\xtext$};
+\end{tikzpicture}
 \end{center}
 \caption{Constant variable values within computational volumes.}
 \label{fig:constant_value}
@@ -404,6 +438,16 @@ The assumption in these integrals is that the value of the conserved quantities 
 
 \begin{figure}[h!t]
 \begin{center}
+%\begin{tikzpicture}
+%\draw [thick] (-2,-3) rectangle (2,3);
+%\draw [<->] (3,-3) -- (3,3);
+%\draw (2.75,-3) -- (3.25,-3);
+%\draw (2.75,3) -- (3.25,3);
+%\draw (3,0) \fill[white] node {$x_j$};
+%\draw [dashed] (-2,0) -- (2,0);
+%\foreach \y in {-3,0,3}
+%	\draw (2,\y) node [anchor=west] {$\y$};
+%\end{tikzpicture}
 \includegraphics[width=0.5\textwidth]{images/single_volume.eps}
 \end{center}
 \caption{Single volume over which integration is done.}
@@ -1083,7 +1127,6 @@ In stage three, the nonlinear relation between the conserved quantities and the 
 \end{algorithmic}
 \end{algo}
 
-
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1217,7 +1260,6 @@ Each subdomain utilizes the most recent information from the other subdomains to
 The additive Schawrz method has seen extensive use as a nonlinear preconditioner for fully implicit CFD calculations \cite{Cai2009, Cai2002}.
 This application does not worry about consistency at the boundaries of the subdomains since the obtained subdomain solutions are used as a preconditioned initial guess for a global Newton-Krylov-Schwarz algorithm \cite{Chan1984}.
 
-
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1226,15 +1268,33 @@ This application does not worry about consistency at the boundaries of the subdo
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Research Objectives}
+
 The methods used to simulate thermal-hydraulic behavior in NPP are characterized by the manner in which the temporal-integration of the governing conservation equations and the manner in which the nonlinearities inherent in those fully discrete equations are resolved.
 Each of the methods outlined in \sect{sect:solution_techniques} has one thing in common: the nonlinear problem is solved globally, either through a single-shot linearization or through an iterative Newton procedure.
 The resolution of the nonlinearities within a time-step requires the use of an iterative method.
+\fig{fig:venn_diagram} shows a Venn diagram of the current methods for reactor safety.
 If nonlinear effects are spatially isolable, then the computational expenditure of iteratively solving the global nonlinear problem may be unnecessary.
+\fig{fig:my_venn_diagram} shows where the current work will fit into this paradigm.
 
-The objective of this research is the design, implementation, and evaluation of a novel spatially and temporally selective nonlinearly convergent solution framework for nuclear thermal hydraulic safety analysis.
+\begin{figure}[h!t]
+\centering
+\subfloat[Traditional methods.]{
+%\includegraphics[width=0.49\textwidth]{images/venn_diagram.eps}
+Blarp!
+\label{fig:venn_diagram}}
+\subfloat[Proposed method.]{
+%\includegraphics[width=0.49\textwidth]{images/my_venn_diagram.eps}
+Blarper!
+\label{fig:my_venn_diagram}}
+\caption{Thermal-hydraulic safety software.}
+\label{fig:venn_diagrams}
+\end{figure}
+
+The objective of this research is the design, implementation, and evaluation of a novel spatially selective nonlinearly convergent solution framework for nuclear thermal hydraulic safety analysis.
 The method should be able to quantify the nonlinearity of spatial subdomains within a given problem.
 Isolation of those subdomains where nonlinearities are high will be achieved by using a variant of the code coupling algorithm discussed in \sect{sect:code_coupling}.
-For this work, the subdomains will be predetermined geometric components.
+For this work, the subdomains to be isolated will be geometric components predetermined by the user.
 Upon isolation, the coupled subdomain will be subjected to a globally convergent Newton method to resolve the nonlinearities.
-This converged solution will be communicated via the coupling coefficients to the rest of the problem domain for use in calculating its single Newton step.
-This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling may provide a route to nonlinearly converged time-step size insensitive solutions for traditional two-phase flow methods that utilizes time-step sizes unattainable in single-shot linearization methods.
+This converged solution will be communicated via the coupling coefficients to the rest of the problem domain for use in calculating its single-shot Newton step.
+This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling may provide a route to nonlinearly converged time-step size insensitive solutions for traditional two-phase flow methods.
+The convergence of the nonlinearities may allow for the utilization of time-step sizes unattainable in current single-shot linearization methods.

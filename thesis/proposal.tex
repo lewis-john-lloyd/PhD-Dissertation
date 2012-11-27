@@ -13,7 +13,8 @@ Parametric studies will then be conducted to determine the impact of nonlinear c
 \section{Scaling}
 \label{sect:proposal_scaling}
 The current implementation of the operator-based scaling method outlined in \sect{sect:operator_scaling} has several issues that need to be addressed.
-These issues include the poor behavior for the single-phase problem identified in \ref{subsect:results}.
+These issues include the non-convergence of the nonlinear problem during steady-state initialization.
+The sporadic non-convergence of the nonlinear problem during simulations where the highly nonlinear physics are dominant needs to be investigated.
 Another scaling issues that need to be addressed is the proper scaling for the Newton update.
 The current algorithmic implementation has different convergence criteria for the linesearch step and the Newton step.
 The interplay between the globalization termination criteria and the update scaling should also be investigated. 
@@ -26,12 +27,15 @@ In addition, the details of the derivation will need to be reworked to account f
 Upon implementation of the internal coupling algorithm within \cobra{}, a test problem will be developed to ensure that in legacy mode a decomposed problem produces an equivalent solution to a single domain problem.
 This problem will need to have multiple geometric components, as that the decomposed domain will be at channel boundaries.
 The test problem will be run in legacy mode to obtain a standard solution.
+Legacy problem will then be run in legacy mode with a decoupled subcomponent.
+The results will be compared to ensure that the solution was not affected.
+The nonlinear mode of \cobra{} then be likewise tested to ensure that the solution does not change with a decomposed domain.
+Extensive testing of domain isolation will be necessary to catch all possible geometric configurations.
 
 \section{Temporal-Convergence Testing and Bench-marking}
 \label{sect:proposal_temporal_testing}
 Several problems with nonlinear phenomena should be constructed to test the temporal convergence criteria.
 These problems will test the validity of the temporal-convergence metric.
-\comment{What level of detail?}
 
 \section{Performance Evaluation}
 \label{sect:proposal_performance_evaluation}
@@ -56,7 +60,7 @@ The final performance testing and parametric studies will be carried out in para
 \tab{tab:time_line} contains a proposed time line for this work.
 
 \newcommand{\cc}{\cellcolor{black}}
-\begin{table}[h]
+\begin{table}[ht]
 \singlespace
 \centering
 \begin{tabular}{@{}l l c c c c  c c c c c @{}} \toprule

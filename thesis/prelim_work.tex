@@ -106,6 +106,14 @@ Since vector forms of the nonlinear residual and the independent parameters are 
 A subroutine was written to gather the discrete variables of the independent parameters into a single vector.
 Additional source code modifications were necessary to construct and gather the components of the nonlinear residual.
 
+The development of the nonlinear solver within \cobra{} took place under strict quality assurance guidelines.
+At every step of the development, the legacy mode of the software was required to maintain the same solution.
+This verification was dependent upon a larger number of verification and assessment problems.
+The binary output of the simulation was required.
+Backup testing needed to be done.
+Restart testing needed to be done.
+The overhead of the quality assurance procedures, while adding time to the development cycle, ensured that the legacy mode of \cobra{} could continue to be used for design purposes.
+
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -141,7 +149,7 @@ Conservation of the Gaseous Phase Momentum & [ $\frac{\text{lb}_{\text{m}} \text
 \label{tab:scaling_units_scales}
 \end{table}
 
-Due to the range of magnitudes of these residuals, it is important to choose a proper scaling factor.
+Due to the range of magnitudes of these residuals, it is important to choose a proper scaling factor to ensure that the convergence of each equation is relative to their magnitude.
 A challenge that has been addressed in this work is the development of a method for scaling of these residuals that is based upon the physics of interest during a time-step.
 In constructing this scaling factor, it was determined that following characteristics were desirable:
 \begin{itemize}
@@ -154,14 +162,46 @@ The scaling used in this work is an operator based approach.
 The governing PDEs can be viewed as a collection of operators, both linear and nonlinear, acting upon the vector of independent parameters.
 The summation of these operators must balance to zero for the nonlinear equation to be satisfied.
 
-To illustrate the scaling procedure, we shall consider \eqref{eqn:conservation_of_liq} for a simply connected continuity cell without inter-field mass transfer.
-Assume that the entire channel single-phase and in thermodynamics equilibrium such that the macroscopic densities on either side of this single cell are the same.
+To illustrate the scaling procedure, we shall consider the discrete conservation of continuous liquid mass \eqref{eqn:si_mass_liq}.
+The residual for \eqref{eqn:si_mass_liq} would be \eqref{eqn:res_mass_liq}.
 
 \begin{equation}
-F = \left(\alpha_k \rho_k\right)^{n+1} - \left( \alpha_k \rho_k \right)^n - \frac{\Delta t}{V} \left( \frac{<\alpha^{n}_k \rho^{n}_k>^{n}_{d} }{<\alpha_k \rho_k>^{n}_{a}} V^{n+1}_{j-1} \right)
+\label{eqn:res_mass_liq}
+F_{m,l} = \Delta t \left[ V_c \frac{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho_l \right)^{n}}{\Delta t} + \sum_{NK}\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right) + \left[(1-\eta)\Gamma + S \right]^{n+1}\right]
 \end{equation}
 
-In this equation there are three physically meaningful quantities: the temporal difference, the mass flowing into the cell, and mass flowing out of the volume. 
+In this equation there are five physically meaningful quantities: the temporal difference, the mass flowing into  the volume, the mass flowing out of the volume, the mass exchange with other the gaseous phase, and the mass exchange with the entrained liquid field.
+
+The scaling chosen for this residual is shown by \eqref{eqn:scaling_factor}.
+\begin{equation}
+\label{eqn:scaling_factor}
+S_{m,l} = \Delta t \left[ V_c \abs{\frac{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho_l \right)^{n}}{\Delta t}} + \sum_{NK}\abs{\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right)} + \left[\abs{(1-\eta)\Gamma} + \abs{S} \right]^{n+1}\right]
+\end{equation}
+
+This scaling creates a relative measure of a nonlinear residual when compared to the magnitude of the physics involved in the process.
+The other mass, the energy, and the momentum equations each have similarly defined scaling factors for their respective residuals.
+For convergence testing in the nonlinear version of \cobra{} and residual evaluation during the legacy mode, the scaled nonlinear residual is used.
+
+The issue of phase transition needed to considered during this work.
+Since \cobra{} does not actually transition the governing equations to those for single-phase flow, there will always be a nonlinear residuals for those phases that are approximately absent.
+It was determined that the effects of maintaining a depleted phase in the system of equations when solving the nonlinear problem created a unique issue.
+The unscaled residuals would be on the order of machine round-off.
+The operator based scaling factors for these residuals would also be within orders of magnitude of machine round-off.
+This created the situation where the scaled nonlinear residual for the depleted field would be of $\mathcal{O}$(1).
+These depleted residuals would dominate the determination of convergence.
+To overcome this deficiency it was determined that when a phase or field began to deplete, the scale factor would be scaled up to create an artificial decrease in the residual to counter the artificial presence of the depleted field.
+This scaling is shown by \eqref{eqn:scaling_factor_small}.
+
+\begin{equation}
+\label{eqn:scaling_factor_small}
+S_k = \max[1.0, \left(C_1 \frac{\alpha_{k,\text{MIN}}}{\alpha_k}\right)^{C_2} ] S_k
+\end{equation}
+
+For this work, the constant $C_1$ was set equal to 100, and the exponent $C_2$ was set equal to 6.
+This particular phase transition scaling produced the regular operator scaling factor when the volume fraction of a phase is at least two orders of magnitude greater than the minimum volume fraction for that phase.
+This drove the scaled residuals for phase that were nominally not present to zero.
+The original coding of \cobra{} has a minimum volume fraction of $\alpha_{k,\text{MIN}}$ = 1.0E-6.
+For the work performed here, that value was dropped down to $\alpha_{k,\text{MIN}}$ = 1.0E-9.
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -189,7 +229,7 @@ Examining only engineering parameters of interest is a weakness.
 This locality means that the entire solution domain is not being considered.
 Depending upon the context in which the work is being done, the degree of ``small enough" may be nothing more than looking at a graph of the parameter of interest and using engineering judgment to say that ``those two graphs look about the same."
 In some cases, a more quantifiable measure may be used.
-Quantifiable metrics may be  ``peak clad temperature does not change by more than $50\,^{\circ}\mathrm{C}$" \cite{CFR10}.
+Quantifiable metrics may be that the comparison of two separate simulations with different \dtmax{} are dissimilar if the solutions produces ``calculated peak fuel cladding temperature different by more than $50\,^{\circ}\mathrm{F}$" from a previously approved result \cite{CFR10}.
 
 While it may be that the change in the chosen parameters of interest does not exceed the limits placed upon it as the time-step size is refined, that behavior does not imply that the solution obtained is the solution to the discrete nonlinear problem.
 However, a metric that can quantify the probability that a solution is not accurately temporally converged would be of great value.
@@ -429,12 +469,6 @@ So, it may be impossible for the algorithm to reach a nonlinearly converged solu
 Since the global minimization problem is not formulated as a constrained minimization problem, there may be inconsistencies in the solution.
 This behavior needs additional investigation to determine both the cause and the impact upon the algorithmic frame work.
 
-The single-phase case was designed to test the hypothesis that the the linearized solver produced a simulation result that was equivalent to that produced by the nonlinearly convergent case.
-More specifically, it was designed to show that for problems where the physics of interest have relatively low nonlinearities, the linearized solution provides as accurate solution as the nonlinear solver.
-\fig{fig:single_compare_1} shows the solution produced by both the nonlinear and legacy mode of \cobra{}.
-Both solver modes produce solutions that are equivalent at \dtmax{} = 1.0 [s] and \dtmax{} = 1.0E-5 [s].
-This indicates that the linearized solver is adequate in regions where the solution is not highly nonlinear.
-
 \begin{figure}[h!t]
 \centering
 \subfloat[\dtmax{} = 1.0 {[s]}]{\includegraphics[width=0.49\textwidth]{images/single_1em0.eps}
@@ -445,10 +479,31 @@ This indicates that the linearized solver is adequate in regions where the solut
 \label{fig:single_compare_1}
 \end{figure}
 
-Unfortunately, while the solutions at \dtmax{} = 1.0 [s] and \dtmax{} = 1.0E-5 [s] are identical for the two solver modes, the solutions at intermediate time-step sizes were not identical.
-In particular, the nonlinearly converged solution at \dtmax{} = 1.0E-3 [s] is wrong.
-The exact reason for this discrepancy is as of yet, undetermined.
-The algorithmic implementation is suspect.
+The single-phase case was designed to test if the linearized solver produced a simulation result that was equivalent to that produced by the nonlinearly convergent case.
+More specifically, it was designed to show that for problems where the physics of interest have relatively low nonlinearities, the linearized solution provides as accurate solution as the nonlinear solver.
+\fig{fig:single_compare_1} shows the solution produced by both the nonlinear and legacy mode of \cobra{}.
+Unlike the flashing problem, neither solver was unable to solve the problem for the \dtmax{} specified.
+Both solver modes produce solutions that are equivalent at \dtmax{} = 1.0 [s] and \dtmax{} = 1.0E-5 [s].
+This indicates that the linearized solver is adequate in regions where the solution is not highly nonlinear.
+
+\begin{figure}[h!t]
+\centering
+\subfloat[Legacy mode.]
+{\includegraphics[width=0.49\textwidth]{images/cobra_single_res_v_dt.eps}
+\label{fig:leg_single_res}}
+\subfloat[Nonlinear mode.]{\includegraphics[width=0.49\textwidth]{images/nl_single_res_v_dt.eps}
+\label{fig:nl_single_res}}
+\caption[Single phase residuals.]{Single phase residuals.}
+\label{fig:single_compare_2}
+\end{figure}
+
+The residual of the legacy mode solution for the single-phase problem, \fig{fig:leg_single_res}, shows that the nonlinear residuals is almost zero except in to regions.
+At larger \dtmax{}, the nonlinear residual is larger at the initiation of the inlet flow at 1 [s].
+Also, the nonlinear residual below 0.5 [s], where the solution should be steady-state, shows a non-zero residual.
+For the nonlinear mode solution, \fig{fig:nl_single_res}, the same to regions exhibit larger nonlinear residuals.
+Two aspects of the nonlinear residual for the nonlinear mode should be noted.
+The first is that the nonlinear residual at the initiation of the ramp is approximately zero for \dtmax{} = 1 [s] and \dtmax{} = 1.0E-5 [s].
+It is only during intermediate steps where the residuals becomes non-zero.
 
 \begin{figure}[h!t]
 \centering
@@ -457,10 +512,24 @@ The algorithmic implementation is suspect.
 \subfloat[Zoomed Solution]{\includegraphics[width=0.49\textwidth]{images/single_1em3_zoom.eps}
 \label{fig:single_1em3_zoom}}
 \caption[Single phase solution at \dtmax{} = 1.0E-3 {[s]}]{Single phase solution with \dtmax{} = 1.0E-3 {[s]}.}
-\label{fig:single_compare_2}
+\label{fig:single_compare_3}
 \end{figure}
 
-The difference between the legacy and the nonlinear solution at \dtmax{} = 1.0E-3 might be attributed to.
+While the solutions at \dtmax{} = 1.0 [s] and \dtmax{} = 1.0E-5 [s] are identical for the two solver modes, the solutions at intermediate time-step sizes were not identical.
+In particular, the nonlinearly converged solution at \dtmax{} = 1.0E-3 [s] is wrong, \fig{fig:single_compare_3}.
+The two solutions agree for most of the domain, \fig{fig:single_1em3}, except at the initiation of flow at 1 [s], \fig{fig:single_1em3_zoom}.
+
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.49\textwidth]{images/nl_res_single_zoom.eps}
+\caption{Nonlinear mode solution residual for single-phase problem.}
+\label{fig:nl_res_single_zoom}
+\end{figure}
+
+This difference manifests itself in the nonlinear residuals of the nonlinear mode solution around 1 [s], \fig{fig:nl_res_single_zoom}.
+At \dtmax{} = 1.0E-3, the nonlinear residual increases from effectively zero at \dtmax{} = 1.0E-2.
+This behavior of the solution at those 	
 
 The convergence metric will be used to determine if a qualitative temporal-convergence determination can lead to the acceptance of solution that is not nonlinearly converged.
 For each of the test cases, these variables were compared at different time-steps.
@@ -499,13 +568,7 @@ The single-phase problem should be relatively linear.
 As such, the solution produced by the linear solver should be the same as that produced by the linear solver.
 In addition, the solution should be time-step size insensitive from the beginning.
 
-It should also show that the solution for both the single-shot and the nonlinear versions of \cobra{} produced the same result.
-The nonlinear \cobra{} did not produce the same results.
-This is where I show the blowup picture of the oscillatory solution.
-I also show how the residual increases as the time-step size is decreased.
-It produced solutions with bounded oscillations at smaller time-step sizes.
-In addition the residuals appear to be growing with smaller time-steps.
-I do not know why at the moment.
+
 This poor behavior could be the result of multiple issues.
 One possibility is the inconsistency between the scaled update vector used in the line-search algorithm and  the one used in the Newton loop convergence criteria.
 Another possibility is the limiters used in the operator-based scaling were chosen poorly.
