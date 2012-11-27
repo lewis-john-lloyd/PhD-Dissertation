@@ -854,7 +854,8 @@ The linear algebra problem to be solved during step 5 is presented in \eqref{eqn
  The semi-implicit solution framework is composed of five steps.
  First, the momentum volume equations, rows one, three, and five of the linear system \eqref{eqn:si_solve}, are multiplied by their inverse diagonal Jacobian entries, $\vec{J}_{m_k}$.
  The off-diagonal entries for the momentum equations are now $\vec{J}^{-1}_{m_k}\vec{J}_{m_k,c_j}$ where $j$ is the index of the connected continuity volumes.
- Since the $J_{m_k,c_j}$ terms only contain derivatives with respect to the pressure for the adjoining continuity volumes, the product $\vec{J}^{-1}_{m_k}\vec{J}_{m_k,c_j}$ will be referred to as $\frac{\partial \vec{m}_k}{\partial P_j}$.
+ Since the $J_{m_k,c_j}$ terms only contain derivatives with respect to the pressure for the adjoining continuity volumes, the [3 x 6] matrix product $\vec{J}^{-1}_{m_k}\vec{J}_{m_k,c_j}$ will be referred to as $\frac{\partial \vec{m}_k}{\partial P_j}$.
+ This matrix only contains entries in the sixth column.
  Using the above notation, the resulting system is given in \eqref{eqn:si_solve_1}.
  
   \begin{equation}
@@ -973,7 +974,7 @@ This step is performed using the sparse-matrix solver, SuperLU \cite{Li1999}.
 Step five is the use the vector of pressure updates to obtain the continuity updates in every volume from \eqref{eqn:si_solve_4} and to obtain the updates for the momentum variables from the momentum rows of \eqref{eqn:si_solve_1}.
 
 This five step process provides an overview of the solution technique of the semi-implicit method used in \cobra{}.
-As \cobra{} is a single-shot algorithm, no additional Newton steps would be taken.
+As \cobra{} is a single-shot algorithm, no additional Newton steps are taken.
 
 \subsection{Stability-Enhancing Two-Step Method} 
 \label{subsect:numerics_sets}
@@ -1024,7 +1025,7 @@ For each stage, the residual and Jacobian matrix will be denoted by $\vec{F}_k$ 
 
 This algorithm was designed to allow existing software utilizing the semi-implicit method to be embedded within a larger framework.
 The loop termination criteria is an implementation-specific choice.
-The TRACE code uses an $L_{inf}$ norm of the unscaled Newton updates for the continuity variables to determine convergence.
+The TRACE code uses an $L_{\infty}$ norm of the unscaled Newton updates for the continuity variables to determine convergence.
 
 \subsection{Nearly-Implicit Method}
 \label{subsect:numerics_nearly_implicit}
@@ -1135,8 +1136,18 @@ This can be considered a predictive error correction technique.
 It uses information from the explicit portion of the nonlinear residual to identify situations where the linearization point may be poor.
 In \cobra{} this method is used only for the prediction of \ncg{} appearance.
 
-\comment{I need to discuss time-step selection algorithm here.}
+The \cobra{} software uses an adaptive time-step selection algorithm.
+This algorithm is based upon a maximum permissible time-step based upon the material Courant limit.
+The \dt{} for any time-step is given by \eqref{eqn:time_step}.
 
+\begin{equation}
+\label{eqn:time_step}
+\Delta t^{n \rightarrow n+1} = \max\left[ \Delta t_{\text{MIN}}, \min\left[\frac{6}{5}\Delta t^{n-1 \rightarrow n}, \frac{5}{6}\Delta t_{\text{CRNT}}, \Delta t_{\text{MAX}} \right]\right]
+\end{equation}
+
+$\Delta t_{\text{CRNT}}$ is the most restrictive Courant number calculated for both axial and transverse flow.
+In addition, there is a continuity volume based $\Delta t$ that is based upon the time calculated to empty a given volume of the mass of a given field.
+The most restrictive of the Courant time-step is used as $\Delta t_{\text{CRNT}}$.
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------

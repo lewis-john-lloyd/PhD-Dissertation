@@ -345,39 +345,34 @@ The \cobra{} input files for both problems can be found in \app{app:input_decks}
 
 The two problems were set up so that the maximum allowable time-step was varied.
 Each problem was run with the following maximum allowable time-steps: 1 [s], 0.1 [s], 0.01 [s], 0.001 [s], 0.0001 [s], and 0.00001 [s]. 
-For the legacy runs, the scaled residuals were evaluated after a single Newton-step.
+For the legacy runs, the scaled residuals were evaluated after a single Newton-step, $\vec{F}(\vec{x}^{1})$.
 For the nonlinear runs, the scaled nonlinear residuals were evaluated at the end of the Newton-loop.
 The nonlinear convergence criteria used for the nonlinear runs are described in \sect{sect:nl_cobra}.
 The temporal convergence metric was evaluated during post-processing.
 
 In total, there were twenty-four simulations run.
 The two different problems were each run at six different maximum time-step sizes on each of the two version of \cobra.
-Of the twenty-four simulations run, the legacy mode simulation of flashing at a time-step size of 1 [s] failed to run to completion.
-
-\comment{Does the temporal convergence metric provide a quantifiable measure for a converged time-step size insensitive solution?}
-
-The convergence metric will be used to determine if a qualitative temporal-convergence determination can lead to the acceptance of solution that is not nonlinearly converged.
-For each of the test cases, these variables were compared at different time-steps.
-First, the 1 [s] max time-step legacy simulation of the flashing problem failed to run.
-The time-step limiting procedure outlined \sect{sect:algorithmic_concerns} was unable to prevent too large of changes to the independent parameters by reducing the time-step.
+Of the twenty-four simulations run, the legacy mode simulation of flashing problem at a \dtmax{} of 1 [s] failed to run to completion.
+The time-step limiting procedure outlined \sect{sect:algorithmic_concerns} was unable to prevent too large of a change in the independent parameters by reducing the time-step.
 This caused the problem to try to run below a the minimum allowable time-step size, which resulted in the software aborting.
-However, the nonlinearly convergent \cobra{} was able to run at a 1 [s] time-step.
+However, the nonlinearly convergent \cobra{} was able to run at a \dtmax{} of 1 [s].
 Both versions of \cobra{} are subject to the same limits on change of independent variables.
 
-\fig{fig:flashing_1em1} shows the gaseous volume fraction 2 [in] from the inlet of the stand pipe as a function of time for a max \dt{} of 1.0E-1 [s] for both the legacy and the nonlinear solvers.
+For the flashing problem, the parameter of interest for temporal convergence testing is $\alpha_g$ at 2 [in] from the inlet of the stand pipe.
+\fig{fig:flashing_1em1} shows the gaseous volume fraction 2 [in] from the inlet of the stand pipe as a function of time for a \dtmax{} of 1.0E-1 [s] for both the legacy and the nonlinear solvers.
 
 \begin{figure}[h!t]
 \centering
-\subfloat[Solution at $\Delta t_{\text{MAX}} = $1.0E-1 {[s]}]{\includegraphics[width=0.49\textwidth]{images/flashing_1em1.eps}
+\subfloat[Solution at \dtmax{} = 1.0E-1 {[s]}]{\includegraphics[width=0.49\textwidth]{images/flashing_1em1.eps}
 \label{fig:flashing_1em1}}
-\subfloat[Solution at $\Delta t_{\text{MAX}} = $1.0E-5 {[s]}]{\includegraphics[width=0.49\textwidth]{images/flashing_1em5.eps}
+\subfloat[Solution at \dtmax{} = 1.0E-5 {[s]}]{\includegraphics[width=0.49\textwidth]{images/flashing_1em5.eps}
 \label{fig:flashing_1em5}}
-\caption[Flashing solution at $\Delta t_{\text{MAX}}$ = 1.0E-1 {[s]}and 1.0E-5 {[s]}]{Flashing solution at $\Delta t_{\text{MAX}}$ = 1.0E-1 {[s]} and 1.0E-5 {[s]}.}
+\caption[Flashing solution at \dtmax{} = 1.0E-1 {[s]}and 1.0E-5 {[s]}]{Flashing solution at \dtmax{} = 1.0E-1 {[s]} and 1.0E-5 {[s]}.}
 \label{fig:flashing_compare_1}
 \end{figure}
 
 Note that the nonlinearly resolved solution is qualitatively different than the traditional single-shot solution, \fig{fig:flashing_1em1}.
-Even as the time-step size is reduced, this discrepancy does does disappear, \fig{fig:flashing_1em5}.
+Even as the \dtmax{} is reduced, this discrepancy does not disappear, \fig{fig:flashing_1em5}.
 
 The two solutions do not converge to the same solution as the time-step size was reduced.
 Notice however, that the solution to the flashing problem produced by the nonlinear mode of \cobra{}, \fig{fig:nl_mode_flashing}, varies less as the time-step size is reduced that that produced by the legacy mode, \fig{fig:cobra_mode_flashing}.
@@ -430,9 +425,45 @@ The convergence criteria outlined in \sect{sect:nl_cobra} include two paths thro
 The first is that the $k_{\text{MAX}}$ may be too small, terminating the iterative process prior to a solution being obtained.
 The second is that the norm of the scaled independent parameter update vector may be below the convergence threshold.
 A concern is that the update vector is the vector based upon the limiting of the independent parameters.
-So, it may be impossible for the algorithm to reach a nonlinearly converged solution without pushing a parameter outside of the acceptable limits.
+So, it may be impossible for the algorithm to reach a nonlinearly converged solution without pushing an independent parameter outside of the acceptable limits imposed by the software.
+Since the global minimization problem is not formulated as a constrained minimization problem, there may be inconsistencies in the solution.
 This behavior needs additional investigation to determine both the cause and the impact upon the algorithmic frame work.
 
+The single-phase case was designed to test the hypothesis that the the linearized solver produced a simulation result that was equivalent to that produced by the nonlinearly convergent case.
+More specifically, it was designed to show that for problems where the physics of interest have relatively low nonlinearities, the linearized solution provides as accurate solution as the nonlinear solver.
+\fig{fig:single_compare_1} shows the solution produced by both the nonlinear and legacy mode of \cobra{}.
+Both solver modes produce solutions that are equivalent at \dtmax{} = 1.0 [s] and \dtmax{} = 1.0E-5 [s].
+This indicates that the linearized solver is adequate in regions where the solution is not highly nonlinear.
+
+\begin{figure}[h!t]
+\centering
+\subfloat[\dtmax{} = 1.0 {[s]}]{\includegraphics[width=0.49\textwidth]{images/single_1em0.eps}
+\label{fig:single_1em1}}
+\subfloat[\dtmax{} = 1.0E-5 {[s]}]{\includegraphics[width=0.49\textwidth]{images/single_1em5.eps}
+\label{fig:single_1em5}}
+\caption[Single phase solution at \dtmax{} = 1.0 {[s]}and 1.0E-5 {[s]}]{Single phase solution with \dtmax{} = 1.0 {[s]} and 1.0E-5 {[s]}.}
+\label{fig:single_compare_1}
+\end{figure}
+
+Unfortunately, while the solutions at \dtmax{} = 1.0 [s] and \dtmax{} = 1.0E-5 [s] are identical for the two solver modes, the solutions at intermediate time-step sizes were not identical.
+In particular, the nonlinearly converged solution at \dtmax{} = 1.0E-3 [s] is wrong.
+The exact reason for this discrepancy is as of yet, undetermined.
+The algorithmic implementation is suspect.
+
+\begin{figure}[h!t]
+\centering
+\subfloat[Transient Solution]{\includegraphics[width=0.49\textwidth]{images/single_1em3.eps}
+\label{fig:single_1em3}}
+\subfloat[Zoomed Solution]{\includegraphics[width=0.49\textwidth]{images/single_1em3_zoom.eps}
+\label{fig:single_1em3_zoom}}
+\caption[Single phase solution at \dtmax{} = 1.0E-3 {[s]}]{Single phase solution with \dtmax{} = 1.0E-3 {[s]}.}
+\label{fig:single_compare_2}
+\end{figure}
+
+The difference between the legacy and the nonlinear solution at \dtmax{} = 1.0E-3 might be attributed to.
+
+The convergence metric will be used to determine if a qualitative temporal-convergence determination can lead to the acceptance of solution that is not nonlinearly converged.
+For each of the test cases, these variables were compared at different time-steps.
 To examine efficacy of the the temporal convergence criteria, both the average and moment based temporal convergence criteria were evaluated for each of the twenty-three successful simulations.
 
 One way to quantify the difference between the solutions is by measuring the nonlinear residual metric outlined in \ref{sect:temporal_convergence}.

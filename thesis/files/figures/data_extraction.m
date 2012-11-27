@@ -122,3 +122,31 @@ fleg = legend(  char(f(6).grandkids(1).data(5).legend_entry),...
                 char(f(6).grandkids(1).data(1).legend_entry),...
                 0);
 set(fleg,'Interpreter','latex','FontSize',16)
+%%
+figure(11)
+plot(f(2).grandkids(1).data(5).time,f(2).grandkids(1).data(5).var,'-*',f(4).grandkids(1).data(5).time,f(4).grandkids(1).data(5).var)
+axis([0 5 0 1])
+ylabel('$\dot{\mathrm{m}}_{\, l}$ [$\frac{\mathrm{lb}_{\mathrm{m}}}{\mathrm{s}}$] @ 4 [in] from Inlet','Interpreter','latex','FontSize',16)
+xlabel('Time [s]','Interpreter','latex','FontSize',16)
+legend('Legacy Mode','Nonlinear Mode',0)
+%%
+figure(12)
+plot(f(2).grandkids(1).data(1).time,f(2).grandkids(1).data(1).var,'*',f(4).grandkids(1).data(1).time,f(4).grandkids(1).data(1).var,'-r')
+axis([0 5 0 1])
+ylabel('$\dot{\mathrm{m}}_{\, l}$ [$\frac{\mathrm{lb}_{\mathrm{m}}}{\mathrm{s}}$] @ 4 [in] from Inlet','Interpreter','latex','FontSize',16)
+xlabel('Time [s]','Interpreter','latex','FontSize',16)
+legend('Legacy Mode','Nonlinear Mode',0)
+%%
+figure(13)
+plot(f(2).grandkids(1).data(3).time,f(2).grandkids(1).data(3).var,'-',f(4).grandkids(1).data(3).time,f(4).grandkids(1).data(3).var,'-r')
+axis([0.8 1.2 0 0.1])
+ylabel('$\dot{\mathrm{m}}_{\, l}$ [$\frac{\mathrm{lb}_{\mathrm{m}}}{\mathrm{s}}$] @ 4 [in] from Inlet','Interpreter','latex','FontSize',16)
+xlabel('Time [s]','Interpreter','latex','FontSize',16)
+legend('Legacy Mode','Nonlinear Mode',0)
+%%
+figure(14)
+plot(f(2).grandkids(1).data(3).time,f(2).grandkids(1).data(3).var,'-',f(4).grandkids(1).data(3).time,f(4).grandkids(1).data(3).var,'-r')
+axis([0 5 0 1])
+ylabel('$\dot{\mathrm{m}}_{\, l}$ [$\frac{\mathrm{lb}_{\mathrm{m}}}{\mathrm{s}}$] @ 4 [in] from Inlet','Interpreter','latex','FontSize',16)
+xlabel('Time [s]','Interpreter','latex','FontSize',16)
+legend('Legacy Mode','Nonlinear Mode',0)
