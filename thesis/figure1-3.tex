@@ -1,0 +1,20 @@
+\begin{figure}[ht]
+\begin{center}
+\begin{tikzpicture}
+\draw [->, thick] (-5,0) -- (6,0);
+\draw [->, thick] (-5,0) -- (-5,4);
+\draw (-4,1) -- (-1,1);
+\draw (-1,2) -- (2,2);
+\draw (2,3) -- (5,3);
+\draw (-5.5,3) node {\verb!f(x)!};
+\draw [dashed] (-4,1) -- (-4,0);
+\draw [dashed] (-1,2) -- (-1,0);
+\draw [dashed] (2,3) -- (2,0);
+\draw [dashed] (5,3) -- (5,0);
+\foreach \x / \xtext in {-2.5/x_{j-1},-1/x_{j-\frac{1}{2}},0.5/x_j,2/x_{j+\frac{1}{2}},3.5/x_{j+1}}
+	\draw [thick] (\x,-2pt) -- (\x,0pt) node [anchor=north] {$\xtext$};
+\end{tikzpicture}
+\end{center}
+\caption{Constant variable values within computational volumes.}
+\label{fig:variable_values}
+\end{figure}

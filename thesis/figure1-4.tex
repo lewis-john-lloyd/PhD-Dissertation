@@ -1,0 +1,16 @@
+\begin{figure}[ht]
+\begin{center}
+\begin{tikzpicture}
+\draw [thick] (-2,-3) rectangle (2,3);
+\draw [<->] (3,-3) -- (3,3);
+\draw (2.75,-3) -- (3.25,-3);
+\draw (2.75,3) -- (3.25,3);
+\draw (3,0) \fill[white] node {$x_j$};
+\draw [dashed] (-2,0) -- (2,0);
+\foreach \y in {-3,0,3}
+	\draw (2,\y) node [anchor=west] {$\y$};
+\end{tikzpicture}
+\end{center}
+\caption{Single volume over which integration is done.}
+\label{fig:integration_volume}
+\end{figure}
