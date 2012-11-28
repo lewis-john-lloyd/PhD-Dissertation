@@ -7,24 +7,23 @@ Part 50 of 10CFR (10CFR50), lays out the process by which an applicant can obtai
 One of the documents required by 10CFR50 is a safety analysis report (SAR) prior to the issuance of any license.
 In part, SARs for Light Water Reactors (LWRs) require that the applicant provides an evaluation of their Emergency Core Cooling System (ECCS) during postulated loss-of-coolant accidents (LOCA).
 This evaluation must conform with section 46 of 10CFR50, which requires that the applicant perform analyses for ``a number of postulated loss-of-coolant accidents of different sizes, locations, and other properties sufficient to provide assurance that the most severe postulated loss-of-coolant accidents are calculated" \cite{CFR10}.
-This requirement necessitates that the designers and operators of NPPs possess the ability to model the thermal-hydraulic behavior within the core of a reactor during severe accidents.  
+This requirement necessitates that the designers and operators of NPPs possess the ability to model the thermal-hydraulic behavior within the core of a reactor during postulated LOCAs.  
 The diverse physical conditions experienced by the reactor during postulated accidents necessitate the inclusion of a wide array of physics during safety analyses.
 For each of these disciplines there are dedicated pieces of software under continual development to improve their predictive capabilities.
-The work that follows is concerned with the mathematical formulation and solution of the equations governing the thermal-hydraulic behavior of the reactor core.
+The work that follows is concerned with the mathematical formulation and solution of the equations governing the thermal-hydraulic behavior within the reactor core.
 
 All operating commercial reactors within the United States are of an LWR design.
-There are two types of LWR designs within the US, pressurized water reactors (PWRs) and boiling water reactors (BWRs).
-In both cases, the safety analyses required for licensing necessitate the modeling of water in both its liquid and its gaseous phases.
+The safety analyses required for licensing necessitate the modeling of water in both its liquid and its gaseous phases.
 This fact has driven the development of safety software that can model the behavior of water under an extensive range of thermodynamic states, including multiple phases.
 There are several formulations of the governing conservation equations used to predict the thermal-hydraulic response of the nuclear reactor core to transient plant conditions.
 
-Several codes are widely available for simulating the thermal-hydraulic response of an NPP.
+Several codes are widely available for simulating the thermal-hydraulic response of an NPP during postulated accidents.
 These safety codes can be divided into two large categories: system analysis codes, and sub-channel analysis codes.
 While there is a swath of overlap between the capabilities of these two categories, each has its own particular strengths and weaknesses.
 The system analysis codes often have extensive models available for large components such as steam generators, pumps, valves, containment, etc.
-RELAP \cite{RELAP}, TRACE \cite{TRACE}, and MELCOR \cite{Summers1994} are three of the more well-known of these system-level safety analysis codes.
+RELAP5-3D \cite{RELAP}, TRACE \cite{TRACE}, and MELCOR \cite{Summers1994} are three of the more well-known of these system-level safety analysis codes.
 Other codes have extensive modeling capabilities for in-core heat transfer and fluid mechanics: COBRA \cite{Thurgood1983c} and VIPRE are two examples of these sub-channel codes.
-In the work that follows, the governing physics and the computational framework of interest will be taken from a variant of the aforementioned COBRA sub-channel analysis code, \cobra{}.
+In the work that follows, the governing physics and the computational framework of interest will be taken from a variant of the aforementioned COBRA sub-channel analysis code, which shall be referred to generically as \cobra{}.
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -38,11 +37,12 @@ All commercial NPPs in the US are designed so that both core coolant channels an
 Being that \cobra{} was developed primarily as a sub-channel analysis tool for these NPPs, there is an assumption that the primary flow direction is in-line with the gravity vector, which will be referred to as the axial flow direction.
 The physical problem of interest being modeled first needs to be converted into a discrete representation.
 
-The computational grid used is a staggered mesh.
-With a staggered mesh, there are continuity volumes and there are momentum volumes; see \fig{fig:staggered_mesh}.
-Thermodynamic variables are defined as constant over the continuity volumes, while mass flow-rates are defined as constant over momentum volumes.
+The computational grid used in \cobra{} is a staggered mesh.
+With a staggered mesh, the domain is divide into two overlapping meshes.
+There is one mesh comprised of continuity volumes and another comprised of momentum volumes; see \fig{fig:staggered_mesh}.
+Thermodynamic variables are defined as constant over the continuity volumes, while momenta are defined as constant over momentum volumes.
 The edges of the continuity volumes align with the center of the momentum volumes.
-The total number of continuity volumes is $n$ while the number of momentum volumes is $n+1$.
+The total number of continuity volumes in a given channel is $n$ while the number of momentum volumes is $n+1$.
 
 \begin{figure}[ht]
 \begin{center}
@@ -65,9 +65,9 @@ The total number of continuity volumes is $n$ while the number of momentum volum
 
 The computational modeling framework involves two primary components: sections and channels.
 The total axial length of the problem, $L$, is divided into $M$ sections, $S_i$.
-Each section is defined by two bounding elevations and a spatial discretization of that span into $J$ discrete non-overlapping axial segments, $\Delta x_{i,j}$, that represent the axial span of the continuity volumes.
-The particular spatial discretization of a given section is independent of the other sections.
-A sum of the lengths of each section provides the total axial length of given problem, \eqref{eqn:sections}.
+Each section is defined by two bounding elevations and a spatial discretization of that span into $J$ discrete non-overlapping axial segments, $\Delta x_{i,j}$, that represent the axial spacing of the continuity volumes.
+The particular spatial discretization of a given section is independent from that of the other sections.
+A sum of the lengths of each section provides the total axial length of a given problem, \eqref{eqn:sections}.
 
 \begin{equation}
 \label{eqn:sections}
@@ -86,7 +86,7 @@ K = \sum_{i = 1}^{M} T(i)
 
 For every channel there is defined a cross-sectional area for each of its continuity volumes, $A_{c_{k,j}}$, and each of its momentum volumes, $A_{m_{k,j}}$.
 The total volume of a channel, $\omega_k$, is given by the sum over continuity volumes within that channel, \eqref{eqn:channel_volume}.
-The momentum volumes are considered to not contain mass.
+The momentum volumes are considered to not contain mass or energy.
 
 \begin{equation}
 \label{eqn:channel_volume}
@@ -103,7 +103,7 @@ The sum of all channel volumes, \eqref{eqn:domain_decomp}, is the total domain v
 \cobra{} is capable of modeling complex geometries.
 For example, it is permissible to have the flow from a single channel split into multiple channels in an adjacent section.
 This flow splitting is only permitted at section boundaries.
-It is also possible to model multi-dimensional flow through the definition of transverse flow paths that connect two channels within a given section to each other.
+It is also possible to model multi-dimensional flow through the definition of transverse flow paths that connect two channels within a given section.
 The transverse flow paths are considered orthogonal to the axial flow direction.
 An example of a geometric model that includes these different abilities is given in \fig{fig:complex_geometry}.
 
@@ -130,18 +130,18 @@ An example of a geometric model that includes these different abilities is given
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Two-Phase Flow}
 \label{sect:two_phase_flow}
-The primary purpose of sub-channel analysis codes it to determine fuel integrity via evaluation of effective core cooling during NPP accidents such as LOCAs.
+The primary purpose of sub-channel analysis codes it to determine fuel integrity via evaluation of effective core cooling during postulated NPP accidents, such as a LOCA.
 This necessitates the ability to effectively model the heat transfer between the coolant and the nuclear fuel. 
 \cobra{} is designed specifically for the evaluation of core cooling in LWRs.
 During postulated accidents, the coolant, H$_2$O, can undergo phase-change.
-To model the complex phenomena of phase-change, the governing equations for the fluid mechanics within the core will be those of multicomponent fluids \cite{Drew1998}.
+To model the complex phenomena of phase-change, the governing equations for the fluid mechanics within the core will be those of a multicomponent fluid \cite{Drew1998}.
 In particular, they are a subcategory of two-phase flow \cite{Todreas2011, Stewart1984, Ishii1984}.
 
 \subsection{Assumptions}
 \label{subsect:assumptions}
 
-The first simplification for modeling the fluid mechanics is recognizing that the exact geometric shape of the interface between the two phases is not necessary.
-Since the exact deterministic behavior of the phasic-interface is not required, the governing equations are subjected to an averaging procedure to produce conservation laws for average quantities.
+The first simplification for modeling the fluid mechanics during a LOCA is recognizing that the exact geometric shape of the interface between the two phases is not required.
+Since the exact deterministic behavior of the phasic-interface is not necessary, the governing equations are subjected to an averaging procedure to produce conservation laws for averaged quantities.
 There are several averaging techniques that have been used to motivate the conservation laws for two-phase flow.
 There are spatial, temporal, and ensemble averaging techniques, each of which has their own physical interpretation and mathematical formulation \cite{Drew1998, Todreas2011}.
 The particular formulation used in this work is that of spatial averaging, in particular, area averaging.
@@ -154,12 +154,12 @@ Since all quantities are area-averaged, the tilde in \eqref{eqn:area_average} wi
 \end{equation}
 
 The particular formulation of the two-phase flow equation used in \cobra{} is commonly referred to as a two-phase, three-field formulation.
-The designation as a three-field formulation comes from the three water fields that the software simulates. 
-To more accurately capture the phenomena of interest during accident scenarios, the liquid and the gaseous phases are each divided into two fields.
-The two fields of the liquid phase are a continuous liquid field and an entrained droplet field.
+The designation as a three-field formulation comes from the three water fields are simulated by the software. 
+To more accurately capture the phenomena of interest during accident scenarios, the liquid and the gaseous phases are each divided into two distinct fields.
+The two fields of the liquid phase are a continuous liquid field and an entrained liquid droplet field.
 The gaseous phase in composed of a \ncg{} field and a water-vapor field. 
 This ability to track the different fields within a phase provides two important benefits to safety analysis: the ability to account for the effects of \ncgs{} on condensation, and the ability to model the effects of dispersed liquid droplets on heat transfer.
-The benefits of modeling the dispersed liquid field allow to capture these complex hydrodynamic phenomena have inspired the French CATHARE software developers to migrate to a similar three-field formulation in the next version of their software \cite{Emonot2011}.
+The benefits of modeling the dispersed liquid field allow to capture these complex hydrodynamic phenomena have inspired the developers of the French CATHARE software to migrate to a similar three-field formulation in the next version of their software \cite{Emonot2011}.
 
 Given the four fields of interest, in axial flow there are twelve conservation equations, one each for the mass, momentum, and energy of each of the four fields.
 These equations allow for a description of the time-dependent behavior of the in-core fluid.
@@ -191,7 +191,7 @@ The wall-shear effects of viscosity are accounted for via empirically based fric
 \subsection{Governing Equations}
 \label{subsect:governing_equations}
 
-Following the application of the above assumptions, nine governing PDEs remain: four for mass conservation, two for energy conservation, and three for momentum conservation.
+Following the application of the above assumptions, nine governing PDEs for axial flow remain: four for mass conservation, two for energy conservation, and three for momentum conservation.
 The details of this system of PDEs are discussed below.
 
 \subsubsection{Conservation of Mass Equations}
@@ -228,7 +228,7 @@ S^{'''}_l + S^{'''}_e = 0
 \end{equation}
 
 Within the conservation of mass equations, several assumptions from \sect{subsect:assumptions} are evident.
-The mechanical equilibrium of the \ncg{} and the vapor field manifest itself in a singular velocity for the two fields, $\vec{u}_g$, where the $g$ subscript denotes the total gaseous phase.
+The mechanical equilibrium of the \ncg{} and the vapor field manifest itself in a singular velocity for the two gaseous fields: $\vec{u}_g$, where the $g$ subscript denotes the total gaseous phase.
 Dalton's Law allows the two gaseous fields to occupy the same volume, thus providing for a singular volume fraction, $\alpha_g$.
 The thermodynamic equilibrium of the two liquid fields result in only one liquid density, $\rho_l$.
 
