@@ -232,7 +232,7 @@ In some cases, a more quantifiable measure may be used.
 Quantifiable metrics may be that the comparison of two separate simulations with different \dtmax{} are dissimilar if the solutions produces ``calculated peak fuel cladding temperature different by more than $50\,^{\circ}\mathrm{F}$" from a previously approved result \cite{CFR10}.
 
 While it may be that the change in the chosen parameters of interest does not exceed the limits placed upon it as the time-step size is refined, that behavior does not imply that the solution obtained is the solution to the discrete nonlinear problem.
-However, a metric that can quantify the probability that a solution is not accurately temporally converged would be of great value.
+However, a metric that can quantify the degree to which the obtained solution satisfies the nonlinear system of equations would be of great value.
 The previously mentioned work into nonlinear convergence shows that a solution may be time-step size insensitive but not be the converged solution of the discretized problem \cite{Knoll2001}.
 If the nonlinearities of the discrete governing equations are not resolved, then temporal convergence rate can be degraded.
 This degradation can produce results that qualitatively appear to be converged due an almost zeroth order of temporal accuracy.
@@ -436,13 +436,13 @@ The solution produced by the nonlinear mode at 1 [s] $\Delta t_{\text{MAX}}$ is 
 \centering
 \subfloat[Nonlinear mode solution.]{\includegraphics[width=0.49\textwidth]{images/nl_flashing_1em0_1em1.eps}
 \label{fig:nl_flashing_compare}}
-\subfloat[Legacy mode solution.]{\includegraphics[width=0.49\textwidth]{images/cobra_flashing_1em3_1em4.eps}
+\subfloat[Legacy mode solution.]{\includegraphics[width=0.49\textwidth]{images/cobra_flashing_1em1_1em4.eps}
 \label{fig:cobra_flashing_compare}}
 \caption{Time-step size insensitive Flashing solutions.}
 \label{fig:flashing_res_comp_1}
 \end{figure}
 
-The time-step size insensitive solution produced by the nonlinearly convergent solver in \cobra{} occurs at maximum time-step size three orders of magnitude greater than that achieved by the single-shot linearization solver in \cobra{}.
+The time-step size insensitive solution produced by the nonlinearly convergent solver occurs at maximum time-step size three orders of magnitude greater than that achieved by the single-shot linearization solver in \cobra{}.
 An examination of the nonlinear residual over the course of the transient provides insight into why this behavior is observed.
 The scaled nonlinear residual for the legacy Flashing problem indicates that even for small time-step sizes, the solution obtained still does not satisfy the discrete nonlinear equations, \fig{fig:legacy_flashing_residual}.
 This is in contrast to the nonlinear flashing problem, which shows a lower nonlinear residual over the course of the simulation, \fig{fig:nonlinear_flashing_residual}.
@@ -497,7 +497,7 @@ This indicates that the linearized solver is adequate in regions where the solut
 \label{fig:single_compare_2}
 \end{figure}
 
-The residual of the legacy mode solution for the single-phase problem, \fig{fig:leg_single_res}, shows that the nonlinear residuals is almost zero except in to regions.
+The residual of the legacy mode solution for the single-phase problem, \fig{fig:leg_single_res}, shows that the nonlinear residuals is almost zero except in two regions.
 At larger \dtmax{}, the nonlinear residual is larger at the initiation of the inlet flow at 1 [s].
 Also, the nonlinear residual below 0.5 [s], where the solution should be steady-state, shows a non-zero residual.
 For the nonlinear mode solution, \fig{fig:nl_single_res}, the same to regions exhibit larger nonlinear residuals.

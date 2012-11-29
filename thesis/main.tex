@@ -86,8 +86,7 @@
 % Include custom variables based on ifthen commands
 \input{commandsgeneral}
 
-\noappendixtables                % Don't have appendix tables
-\noappendixfigures               % Don't have appendix figures
+
 \numberwithin{figure}{chapter}
 %=======================================================================
 % Start Document
@@ -111,13 +110,14 @@
 %=======================================================================
 % Appendices
 %=======================================================================
+\noappendixtables
+\noappendixfigures
 \begin{appendices}
-
 \include{input_decks}         % Appendix: Input Decks
+\include{semilog}
 %\include{residual_functions}  % Appendix: Nonlinear Math
 %\include{two_phase_flow}      % Appendix: Two Phase Flow
 %\include{newton}              % Appendix: Newton Formulation
-
 \end{appendices}
 
 %=======================================================================
