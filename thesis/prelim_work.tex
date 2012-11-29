@@ -201,7 +201,7 @@ For this work, the constant $C_1$ was set equal to 100, and the exponent $C_2$ w
 This particular phase transition scaling produced the regular operator scaling factor when the volume fraction of a phase is at least two orders of magnitude greater than the minimum volume fraction for that phase.
 This drove the scaled residuals for phase that were nominally not present to zero.
 The original coding of \cobra{} has a minimum volume fraction of $\alpha_{k,\text{MIN}}$ = 1.0E-6.
-For the work performed here, that value was dropped down to $\alpha_{k,\text{MIN}}$ = 1.0E-9.
+For the work performed here, that value was reduced to $\alpha_{k,\text{MIN}}$ = 1.0E-9.
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -519,7 +519,6 @@ While the solutions at \dtmax{} = 1.0 [s] and \dtmax{} = 1.0E-5 [s] are identica
 In particular, the nonlinearly converged solution at \dtmax{} = 1.0E-3 [s] is wrong, \fig{fig:single_compare_3}.
 The two solutions agree for most of the domain, \fig{fig:single_1em3}, except at the initiation of flow at 1 [s], \fig{fig:single_1em3_zoom}.
 
-
 \begin{figure}[h!t]
 \centering
 \includegraphics[width=0.49\textwidth]{images/nl_res_single_zoom.eps}
@@ -527,19 +526,23 @@ The two solutions agree for most of the domain, \fig{fig:single_1em3}, except at
 \label{fig:nl_res_single_zoom}
 \end{figure}
 
-This difference manifests itself in the nonlinear residuals of the nonlinear mode solution around 1 [s], \fig{fig:nl_res_single_zoom}.
-At \dtmax{} = 1.0E-3, the nonlinear residual increases from effectively zero at \dtmax{} = 1.0E-2.
-This behavior of the solution at those 	
-
-The convergence metric will be used to determine if a qualitative temporal-convergence determination can lead to the acceptance of solution that is not nonlinearly converged.
-For each of the test cases, these variables were compared at different time-steps.
-To examine efficacy of the the temporal convergence criteria, both the average and moment based temporal convergence criteria were evaluated for each of the twenty-three successful simulations.
+This difference is manifested in the nonlinear residuals for the nonlinear mode solution around 1 [s], \fig{fig:nl_res_single_zoom}.
+At \dtmax{} = 1.0E-3, the nonlinear residual has a marked increase from effectively zero at \dtmax{} = 1.0E-2.
+The reason for this behavior is, as of yet, unknown.
+It most is likely related to the same nonlinear nonconvergence behavior remarked upon for the flashing problem. 
 
 One way to quantify the difference between the solutions is by measuring the nonlinear residual metric outlined in \ref{sect:temporal_convergence}.
 This metric provides a measure of how poorly the discrete nonlinear equations are being solved at every time-step in the transient.
 The resolution of the nonlinear residual allows for a solution that is less sensitive to time-step size selection than the solution that does not resolve the nonlinear residual.
+The convergence metric will be used to determine if a qualitative temporal-convergence determination can lead to the acceptance of solution that is not nonlinearly converged.
+For each of the test cases, these variables were compared at different time-steps.
+To examine efficacy of the the temporal convergence criteria, both the average and moment based temporal convergence criteria were evaluated for each of the twenty-three successful simulations.
 
-See \tab{tab:flashing_criteria} and \tab{tab:single_criteria} for the data.
+First, the two different nonlinear convergence metrics will be examined for the flashing problem.
+\tab{tab:flashing_criteria} shows both the average metric, $\tilde{R}$, and the moment based metric, $\tilde{R}$.
+The entry for the legacy mode solution at 1 [s] is empty, reflecting its inability to solve the problem.
+For the nonlinear solve, the both metrics are decreasing as the \dtmax{} is decreased.
+While the legacy solver also shows a decreasing nonlinear residual, it is does not change order of magnitude, indicating that as the \dtmax{} is reduced, the nonlinearities in the problem are not being sufficiently reduced.
 
 \begin{table}[h!t]
 \centering
@@ -560,19 +563,6 @@ $\Delta t_{\text{MAX}}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlin
 \label{tab:flashing_criteria}
 \end{table}
 
-The average metric for the legacy flashing problem shows that the single-shot case has unresolved nonlinearities of greater magnitude than the nonlinear case.
-This is expected.
-Other scientist have noted this behavior.
-
-The single-phase problem should be relatively linear.
-As such, the solution produced by the linear solver should be the same as that produced by the linear solver.
-In addition, the solution should be time-step size insensitive from the beginning.
-
-
-This poor behavior could be the result of multiple issues.
-One possibility is the inconsistency between the scaled update vector used in the line-search algorithm and  the one used in the Newton loop convergence criteria.
-Another possibility is the limiters used in the operator-based scaling were chosen poorly.
-
 \begin{table}[h!t]
 \centering
 \begin{tabular}{@{}l r@{.}l r@{.}l r@{.}l r@{.}l @{}}
@@ -592,11 +582,24 @@ $\Delta t_{\text{MAX}}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlin
 \label{tab:single_criteria}
 \end{table}
 
+\tab{tab:single_criteria} shows the two metrics for the single-phase problem.
+Since the single-phase problem is relatively linear, the legacy solver produces metrics that are on the same order as those for the nonlinear solver.
+Due to the nonconvergence of the nonlinear solver at \dtmax{} = 1.0E-3 produces a moment based metric that is greater than the equivalent nonlinear metric.
+
+There are several issues that need to be addressed.
+The first is that the scaled residual has non-trivial values during the steady state portion of the simulation.
+It is believed that this behavior is a result of either the choice of phase transition logic for the scaling factor or the nonlinear convergence criteria.
+Another possibility is the inconsistency between the scaled update vector used in the line-search algorithm and the one used in the Newton loop convergence criteria.
+
 \section{Review}
 \label{sect:review}
 
 In review, the single-shot semi-implicit \cobra{} software was converted to a nonlinearly convergent, semi-implicit algorithm.
-An operator-based scaling was introduced and implemented into the nonlinear \cobra{}.
-Deficiencies were identified with the current implementation of the operator-based scaling.
-A metric to quantify the nonlinear convergence of a temporally converged simulation was developed and implemented.
-Tests indicated that a time-step size insensitive solution may not be nonlinearly converged and can be an incorrect solution to the nonlinear discrete equations.
+An operator-based scaling was introduced and implemented into the both the legacy and the nonlinear \cobra{} solvers.
+It was shown that the nonlinearly convergent solver produces results that are indistinguishable from legacy solver for the problem where the nonlinearities are small.
+The nonlinearly convergent solver produced results that were qualitatively different than those obtained from the legacy solver for the problem with high nonlinearities.
+Several deficiencies were identified with the current implementation of the operator-based scaling.
+The scaling produced high nonlinear residuals when the problem was at steady state.
+A metric to quantify the nonlinear convergence of a time-step size insensitive simulation was developed and implemented.
+Tests indicated that a time-step size insensitive solution may not be nonlinearly converged.
+This nonconvergence of the discrete nonlinear system in the legacy solver mode produces a qualitatively different solution from the nonlinearly convergent solution discrete equations.
