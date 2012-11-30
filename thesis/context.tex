@@ -1218,7 +1218,7 @@ The \dt{} for any time-step is given by \eqref{eqn:time_step}.
 
 \begin{equation}
 \label{eqn:time_step}
-\Delta t^{n \rightarrow n+1} = \max\left[ \Delta t_{\text{MIN}}, \min\left[\frac{6}{5}\Delta t^{n-1 \rightarrow n}, \frac{5}{6}\Delta t_{\text{CRNT}}, \Delta t_{\text{MAX}} \right]\right]
+\Delta t^{n \rightarrow n+1} = \max\left[ \Delta t_{\text{MIN}}, \min\left[1.2 \Delta t^{n-1 \rightarrow n}, 0.85 \Delta t_{\text{CRNT}}, \Delta t_{\text{MAX}} \right]\right]
 \end{equation}
 
 $\Delta t_{\text{CRNT}}$ is the most restrictive Courant number calculated for both axial and transverse flow.
