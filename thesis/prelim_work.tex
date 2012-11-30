@@ -6,7 +6,7 @@ In order to determine the effects of nonlinear convergence upon the time-step si
 To aid in the development of the nonlinear convergence metric and the nonlinear solver, a novel operator-based scaling has been developed to obtain meaningful convergence thresholds.
 The scaling of the nonlinear residual is typically done in an arbitrary fashion; a scaling factor that is intrinsically linked to the physics of interest was developed.
 This scaling produces a non-dimensionalized residual whose magnitude is relative to the physical sources and sinks on a per equation basis. 
-Two test problems were developed to show that the nonlinear convergence metric can identify situations where a time-step size insensitive simulation may not satisfy the discrete nonlinear equations.
+Two temporal convergence test problems were developed to show that the nonlinear convergence metric can identify situations where a time-step size insensitive simulation may not satisfy the discrete nonlinear equations.
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -124,7 +124,7 @@ The overhead of the quality assurance procedures, while adding time to the devel
 \section{Operator-Based Scaling}
 \label{sect:operator_scaling}
 In order to determine the degree to which a state vector, $\vec{x}$, satisfies \eqref{eqn:conservation_equations}, the use of the nonlinear residual is required.
-However, due to the units of the residuals for the different conservation equations, their magnitudes can vary by orders of magnitude. 
+However, due to the units of the residuals for the different conservation equations, their values can vary by orders of magnitude. 
 For a given continuity volume, the nonlinear residual will have six components: four for the conservation of mass and two for the conservation of energy.
 For each momentum volume, the three conservation of momentum equations will form the three components of the nonlinear residual.
 These residuals have the units of the conserved quantities for their corresponding PDEs; \tab{tab:scaling_units_scales} shows the units for the different conservation equations.
@@ -151,14 +151,15 @@ Conservation of the Gaseous Phase Momentum & [ $\frac{\text{lb}_{\text{m}} \text
 
 Due to the range of magnitudes of these residuals, it is important to choose a proper scaling factor to ensure that the convergence of each equation is relative to their magnitude.
 A challenge that has been addressed in this work is the development of a method for scaling of these residuals that is based upon the physics of interest during a time-step.
-In constructing this scaling factor, it was determined that following characteristics were desirable:
+In constructing this scaling factor, it was determined that the following characteristics were desirable:
+
 \begin{itemize}
 \item{$(S_{i}^{k})^{-1} F^{k}_i \approx 1$ when $\vec{x}^{k}$ is a "poor" solution.}
 \item{$(S_{i}^{k})^{-1} F^{k}_i \rightarrow 0$ when phase $i$ disappears.}
 \item{$0 \leq (S_{i}^{k})^{-1} F^{k}_{i} \leq 1 $ for all values of $\vec{x}^{k}_i$.}
 \end{itemize}
 
-The scaling used in this work is an operator based approach.
+The scaling used in this work is an operator-based approach.
 The governing PDEs can be viewed as a collection of operators, both linear and nonlinear, acting upon the vector of independent parameters.
 The summation of these operators must balance to zero for the nonlinear equation to be satisfied.
 
@@ -170,7 +171,7 @@ The residual for \eqref{eqn:si_mass_liq} would be \eqref{eqn:res_mass_liq}.
 F_{m,l} = \Delta t \left[ V_c \frac{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho_l \right)^{n}}{\Delta t} + \sum_{NK}\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right) + \left[(1-\eta)\Gamma + S \right]^{n+1}\right]
 \end{equation}
 
-In this equation there are five physically meaningful quantities: the temporal difference, the mass flowing into  the volume, the mass flowing out of the volume, the mass exchange with other the gaseous phase, and the mass exchange with the entrained liquid field.
+In this equation there are five physically meaningful quantities: the temporal difference, the mass flowing into  the volume, the mass flowing out of the volume, the mass exchange with the gaseous phase, and the mass exchange with the entrained liquid field.
 
 The scaling chosen for this residual is shown by \eqref{eqn:scaling_factor}.
 \begin{equation}
@@ -179,17 +180,17 @@ S_{m,l} = \Delta t \left[ V_c \abs{\frac{\left(\alpha_l \rho_l \right)^{n+1} - \
 \end{equation}
 
 This scaling creates a relative measure of a nonlinear residual when compared to the magnitude of the physics involved in the process.
-The other mass, the energy, and the momentum equations each have similarly defined scaling factors for their respective residuals.
+The other mass, energy, and momentum equations each have similarly defined scaling factors for their respective residuals.
 For convergence testing in the nonlinear version of \cobra{} and residual evaluation during the legacy mode, the scaled nonlinear residual is used.
 
-The issue of phase transition needed to considered during this work.
-Since \cobra{} does not actually transition the governing equations to those for single-phase flow, there will always be a nonlinear residuals for those phases that are approximately absent.
+The issue of phase transition was considered during this work.
+Since \cobra{} does not actually transition the governing equations to those for single-phase flow, there will always be a nonlinear residual for those phases that are approximately absent.
 It was determined that the effects of maintaining a depleted phase in the system of equations when solving the nonlinear problem created a unique issue.
 The unscaled residuals would be on the order of machine round-off.
 The operator based scaling factors for these residuals would also be within orders of magnitude of machine round-off.
 This created the situation where the scaled nonlinear residual for the depleted field would be of $\mathcal{O}$(1).
 These depleted residuals would dominate the determination of convergence.
-To overcome this deficiency it was determined that when a phase or field began to deplete, the scale factor would be scaled up to create an artificial decrease in the residual to counter the artificial presence of the depleted field.
+To overcome this deficiency it was determined that when a phase or field began to deplete, the scaling factor would be scaled up to create an artificial decrease in the residual to counter the artificial presence of the depleted field.
 This scaling is shown by \eqref{eqn:scaling_factor_small}.
 
 \begin{equation}
@@ -199,7 +200,7 @@ S_k = \max[1.0, \left(C_1 \frac{\alpha_{k,\text{MIN}}}{\alpha_k}\right)^{C_2} ] 
 
 For this work, the constant $C_1$ was set equal to 100, and the exponent $C_2$ was set equal to 6.
 This particular phase transition scaling produced the regular operator scaling factor when the volume fraction of a phase is at least two orders of magnitude greater than the minimum volume fraction for that phase.
-This drove the scaled residuals for phase that were nominally not present to zero.
+This drove the scaled residuals for phases that were nominally not present to zero.
 The original coding of \cobra{} has a minimum volume fraction of $\alpha_{k,\text{MIN}}$ = 1.0E-6.
 For the work performed here, that value was reduced to $\alpha_{k,\text{MIN}}$ = 1.0E-9.
 
@@ -216,7 +217,7 @@ For the work performed here, that value was reduced to $\alpha_{k,\text{MIN}}$ =
 An important factor in thermal-hydraulic safety analysis is the temporal convergence of the solution.
 First, a definition of a temporally converged solution is required.
 In theory, a temporally converged solution is one where the local truncation error due to the discrete approximation of the temporal integral is orders of magnitude below both the engineering scales of interest and precision of the physical models being used in the simulation.
-Unfortunately, the precise measurement of the error in a simulation requires that an analytic solution be available for comparison to.
+Unfortunately, the precise measurement of the error in a simulation requires that an analytic solution be available for comparison.
 During the simulation of physically realistic systems, there is rarely an analytic solution to compare against.
 This situation requires a slightly different definition of a temporally converged solution; a definition that does not depend upon accurately measuring the local truncation error.
 
@@ -229,20 +230,20 @@ Examining only engineering parameters of interest is a weakness.
 This locality means that the entire solution domain is not being considered.
 Depending upon the context in which the work is being done, the degree of ``small enough" may be nothing more than looking at a graph of the parameter of interest and using engineering judgment to say that ``those two graphs look about the same."
 In some cases, a more quantifiable measure may be used.
-Quantifiable metrics may be that the comparison of two separate simulations with different \dtmax{} are dissimilar if the solutions produces ``calculated peak fuel cladding temperature different by more than $50\,^{\circ}\mathrm{F}$" from a previously approved result \cite{CFR10}.
+An example of a quantifiable metric would be that two simulations with different \dtmax{} were classified as dissimilar if the two solutions produce a ``calculated peak fuel cladding temperature different by more than $50\,^{\circ}\mathrm{F}$" \cite{CFR10}.
 
 While it may be that the change in the chosen parameters of interest does not exceed the limits placed upon it as the time-step size is refined, that behavior does not imply that the solution obtained is the solution to the discrete nonlinear problem.
 However, a metric that can quantify the degree to which the obtained solution satisfies the nonlinear system of equations would be of great value.
 The previously mentioned work into nonlinear convergence shows that a solution may be time-step size insensitive but not be the converged solution of the discretized problem \cite{Knoll2001}.
-If the nonlinearities of the discrete governing equations are not resolved, then temporal convergence rate can be degraded.
+If the nonlinearities of the discrete governing equations are not resolved, then the temporal convergence rate can be degraded.
 This degradation can produce results that qualitatively appear to be converged due an almost zeroth order of temporal accuracy.
 In practice, the time-step size insensitivity of a solution is often confused with temporal convergence.
-This apparent temporal convergence, or time-step size insensitivity, of the solution is not a result of reaching the solution to the discretized nonlinear equations, but instead is indicative of the degraded order of accuracy due to the failure to resolve the nonlinearities at each time-step.
-To determine if the time-step size insensitive transient solution is both time-step size insensitive and an accurate solution to the nonlinear problem, it is necessary to examine the nonlinear convergence of system as an issue separate from the temporal-convergence.
+This apparent temporal convergence, or time-step size insensitivity, of the solution may not be a result of reaching the solution to the discretized nonlinear equations, but instead could be indicative of the degraded order of accuracy due to the failure to resolve the nonlinearities at each time-step.
+To determine if the time-step size insensitive transient solution is both time-step size insensitive and an accurate solution to the nonlinear problem, it is necessary to examine the nonlinear convergence of the system as an issue separate from the temporal-convergence.
 
 The norm of the scaled residual from \sect{sect:operator_scaling} provides a well-scaled metric for instantaneous nonlinear convergence at any given time in the simulation.
 The residual vector norm is divided by the number of equations in the residual to provide an average residual value per equation.
-This equation averaged scaled residual provides a metric for determining the degree of nonlinear convergence at any time-step in the simulation.
+This equation-averaged scaled residual provides a metric for determining the degree of nonlinear convergence at any time-step in the simulation.
 The natural extension of this metric to transient problems would be a temporal integral, \eqref{eqn:trans_res_simple}, of said norm.
 
 \begin{equation}
@@ -268,7 +269,6 @@ However, this moment has the disadvantage of weighting the latter portion of the
 \tilde{R}_{\text{M}} = \frac{\int_{t^{0}}^{t^{N}} \,\tau\,||\vec{F}(\tau)||_2 \,\mathrm{d} \tau}{\int_{t^{0}}^{t^{N}} \,\tau \,\mathrm{d} \tau}
 \end{equation}
 
-For the preliminary work, the \eqref{eqn:trans_res_ave} and \eqref{eqn:trans_res_mom} were selected for evaluation.
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -315,8 +315,8 @@ The red triangle represents a specified flow at the bottom edge of the first con
 \label{subsect:ic_bc}
 
 The two problems, while having the same geometry, are different in their dominant physics.
-One problem was designed to simulate single-phase, single-field continuous liquid flow in a standpipe; this problem will be referred to as the "Single Phase" problem.
-The second problem was designed such that high-pressure liquid flashes into steam as it enters a standpipe initially filled with saturated vapor at a much lower pressure, known hereafter as the "Flashing" problem.
+One problem was designed to simulate single-phase, single-field continuous liquid flow in a standpipe; this problem will be referred to as the single-phase problem.
+The second problem was designed such that high-pressure liquid flashes into steam as it enters a standpipe initially filled with saturated vapor at a much lower pressure, known hereafter as the flashing problem.
 
 Table \ref{tab:ic} provides the initial conditions for the two problems.
 The pressure, enthalpy, and volume-fractions for the different fields allow for a complete description of the continuity variables.
@@ -327,7 +327,7 @@ The initial velocities are set to zero.
 \begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
 \multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
                          & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\text{lb}_{\text{m}}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
-Single Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
+Single-Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
 Flashing                 &  200&0                       & 1198&3                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
 \end{tabular}
 \caption{Initial conditions for test problems.}
@@ -342,10 +342,10 @@ Table \ref{tab:bc_pe} contains the pressure, enthalpy, and composition of the pr
 \begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
 \multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
                          & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\text{lb}_{\text{m}}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
-Single Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
+Single-Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
 Flashing                 &  200&0                       & 1198&3                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
 \end{tabular}
-\caption{Outlet pressure-enthalpy boundary conditions for test problems.}
+\caption{The pressure-enthalpy outlet boundary conditions for test problems.}
 \label{tab:bc_pe}
 \end{table}
 
@@ -357,10 +357,10 @@ Table \ref{tab:bc_fe} describes the inlet boundary condition for the two problem
 \begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
 \multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
                          & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\text{lb}_{\text{m}}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
-Single Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
+Single-Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
 Flashing                 & 1000&0                       &  542&6                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
 \end{tabular}
-\caption{Inlet f	low-enthalpy boundary conditions for test problems.}
+\caption{The flow-enthalpy inlet boundary conditions for test problems.}
 \label{tab:bc_fe}
 \end{table}
 
@@ -380,8 +380,8 @@ The is a time-dependent function give by \eqref{eqn:bc_time_func_single}.
 Both problems adjust their initial pressure distribution to account for hydrostatic head, which is not specified in the input files.
 The \cobra{} input files for both problems can be found in \app{app:input_decks}.
 
-\subsection{Results}
-\label{subsect:results}
+\subsection{Procedure}
+\label{subsect:procedures}
 
 The two problems were set up so that the maximum allowable time-step was varied.
 Each problem was run with the following maximum allowable time-steps: 1 [s], 0.1 [s], 0.01 [s], 0.001 [s], 0.0001 [s], and 0.00001 [s]. 
@@ -389,11 +389,14 @@ For the legacy runs, the scaled residuals were evaluated after a single Newton-s
 For the nonlinear runs, the scaled nonlinear residuals were evaluated at the end of the Newton-loop.
 The nonlinear convergence criteria used for the nonlinear runs are described in \sect{sect:nl_cobra}.
 The temporal convergence metric was evaluated during post-processing.
-
 In total, there were twenty-four simulations run.
-The two different problems were each run at six different maximum time-step sizes on each of the two version of \cobra.
+The two different problems were each run at six different maximum time-step sizes on each of the two version of \cobra{}.
+
+\subsection{Results}
+\label{subsect:results}
+
 Of the twenty-four simulations run, the legacy mode simulation of flashing problem at a \dtmax{} of 1 [s] failed to run to completion.
-The time-step limiting procedure outlined \sect{sect:algorithmic_concerns} was unable to prevent too large of a change in the independent parameters by reducing the time-step.
+The time-step limiting procedure outlined \sect{sect:algorithmic_concerns} was unable to prevent too large a change in the independent parameters by reducing the time-step.
 This caused the problem to try to run below a the minimum allowable time-step size, which resulted in the software aborting.
 However, the nonlinearly convergent \cobra{} was able to run at a \dtmax{} of 1 [s].
 Both versions of \cobra{} are subject to the same limits on change of independent variables.
@@ -411,12 +414,11 @@ For the flashing problem, the parameter of interest for temporal convergence tes
 \label{fig:flashing_compare_1}
 \end{figure}
 
-Note that the nonlinearly resolved solution is qualitatively different than the traditional single-shot solution, \fig{fig:flashing_1em1}.
+Note that the nonlinearly resolved solution is qualitatively different than the legacy single-shot solution, \fig{fig:flashing_1em1}.
 Even as the \dtmax{} is reduced, this discrepancy does not disappear, \fig{fig:flashing_1em5}.
-
 The two solutions do not converge to the same solution as the time-step size was reduced.
-Notice however, that the solution to the flashing problem produced by the nonlinear mode of \cobra{}, \fig{fig:nl_mode_flashing}, varies less as the time-step size is reduced that that produced by the legacy mode, \fig{fig:cobra_mode_flashing}.
-However, both \fig{fig:cobra_mode_flashing} and \fig{fig:nl_mode_flashing} show that as the time-step size is reduced the solution becomes more time-step size insensitive.
+However, the solution to the flashing problem produced by the nonlinear solver, \fig{fig:nl_mode_flashing}, qualitatively varies less as the time-step size is reduced than that produced by the legacy solver, \fig{fig:cobra_mode_flashing}.
+However, both \fig{fig:cobra_mode_flashing} and \fig{fig:nl_mode_flashing} show that as the time-step size is reduced the two different solutions become more time-step size insensitive.
 
 \begin{figure}[h!t]
 \centering
@@ -429,8 +431,9 @@ However, both \fig{fig:cobra_mode_flashing} and \fig{fig:nl_mode_flashing} show 
 \end{figure}
 
 The two modes of \cobra{}, when applied to the same problem that contains highly nonlinear physics, produce two different time-step size invariant solutions.
-These two solutions reach time-step size invariance at different time-step sizes.
-The solution produced by the nonlinear mode at 1 [s] $\Delta t_{\text{MAX}}$ is qualitatively as close to that produced with a 0.1 [s] $\Delta t_{\text{MAX}}$, \fig{fig:nl_flashing_compare}, as the legacy mode simulations at 1.0E-3 [s] and 1.0E-4 [s] $\Delta t_{\text{MAX}}$ are to each other, \fig{fig:cobra_flashing_compare}.
+These two solutions achieve qualitative time-step size invariance at different time-step sizes.
+The parameter of interest in the solution produced by the nonlinear solver with a 1 [s] $\Delta t_{\text{MAX}}$ is qualitatively close to that produced with a 0.1 [s] $\Delta t_{\text{MAX}}$, \fig{fig:nl_flashing_compare}.
+The same level of qualitative time-step size invariance is achieved in the legacy solver solutions between a \dtmax{} of 1.0E-3 [s] and 1.0E-4 [s], \fig{fig:cobra_flashing_compare}.
 
 \begin{figure}[h!t]
 \centering
@@ -438,36 +441,40 @@ The solution produced by the nonlinear mode at 1 [s] $\Delta t_{\text{MAX}}$ is 
 \label{fig:nl_flashing_compare}}
 \subfloat[Legacy mode solution.]{\includegraphics[width=0.49\textwidth]{images/cobra_flashing_1em1_1em4.eps}
 \label{fig:cobra_flashing_compare}}
-\caption{Time-step size insensitive Flashing solutions.}
+\caption{Time-step size insensitive flashing solutions.}
 \label{fig:flashing_res_comp_1}
 \end{figure}
 
-The time-step size insensitive solution produced by the nonlinearly convergent solver occurs at maximum time-step size three orders of magnitude greater than that achieved by the single-shot linearization solver in \cobra{}.
+The time-step size insensitive solution produced by the nonlinear solver occurs at a maximum time-step size three orders of magnitude greater than that achieved by the legacy solver in \cobra{}.
 An examination of the nonlinear residual over the course of the transient provides insight into why this behavior is observed.
-The scaled nonlinear residual for the legacy Flashing problem indicates that even for small time-step sizes, the solution obtained still does not satisfy the discrete nonlinear equations, \fig{fig:legacy_flashing_residual}.
-This is in contrast to the nonlinear flashing problem, which shows a lower nonlinear residual over the course of the simulation, \fig{fig:nonlinear_flashing_residual}.
+The scaled residual for the legacy flashing problem indicates that even for small time-step sizes, the solution obtained still does not satisfy the discrete nonlinear equations, \fig{fig:legacy_flashing_residual}.
+This is in contrast to the nonlinear flashing problem, which shows a lower residual over the course of the simulation, \fig{fig:nonlinear_flashing_residual}.
 
 \begin{figure}[h!t]
 \centering
-\subfloat[Nonlinear mode residuals.]{\includegraphics[width=0.49\textwidth]{images/cobra_flashing_res_compare.eps}
+\subfloat[Legacy solver residuals.]{\includegraphics[width=0.49\textwidth]{images/cobra_flashing_res_compare.eps}
 \label{fig:legacy_flashing_residual}}
-\subfloat[Legacy mode residuals.]{\includegraphics[width=0.49\textwidth]{images/nl_flashing_res_compare.eps}
+\subfloat[Nonlinear solver residuals.]{\includegraphics[width=0.49\textwidth]{images/nl_flashing_res_compare.eps}
 \label{fig:nonlinear_flashing_residual}}
 \caption[Flashing residual at $\Delta t_{\text{MAX}}$ = 1.0E-1 {[s]}and 1.0E-5 {[s]}]{Flashing residual at $\Delta t_{\text{MAX}}$ = 1.0E-1 {[s]} and 1.0E-5 {[s]}.}
 \label{fig:flashing_compare_2}
 \end{figure}
 
-The reduction in the residual exhibited by the legacy mode solution, \fig{fig:legacy_flashing_residual}, shows that the reduction of the time-step size now reduces two errors.
-As the time-step size is reduced, the nonlinear physics are being better resolved; however, even for small time-step sizes, the nonlinear residual is still large compared to the nonlinear residual of the nonlinearly convergent simulation, \fig{fig:nonlinear_flashing_residual}.
-The residuals of the nonlinearly convergent \cobra{} mode are non-zero at certain portions of the simulation at large time-step sizes.
-There are several possibilities as to why the residuals are non-zero.
-The convergence criteria outlined in \sect{sect:nl_cobra} include two paths through which Newton's method may terminate while not having a zero residual.
-The first is that the $k_{\text{MAX}}$ may be too small, terminating the iterative process prior to a solution being obtained.
+The reduction in the residual exhibited by the solution produced by the legacy solver, \fig{fig:legacy_flashing_residual}, shows that the reduction of the maximum allowable time-step size now serves two purposes.
+The first is that as \dtmax{} is reduced, the nonlinear physics are being better resolved; however, even for small maximum allowable time-step sizes, the residuals are still large compared to those of the nonlinear solution, \fig{fig:nonlinear_flashing_residual}.
+The second purpose is the of reducing \dtmax{} is to decrease the error due to the discrete approximation of the temporal integral of the governing equations.
+While the reduction of the max time-step size serves two purposes for the legacy solver, the nonlinear solver limits the impact of the unresolved nonlinearities upon the solution.
+For the nonlinear solver, reduction of the max time-step size primarily serves to reduce the error from the approximate discrete temporal integral.
+
+However, during simulations with large \dtmax{} there are three time periods of the transient where the residuals from the nonlinear solver are nontrivial.
+These are at the initiation of the inlet flow, during the 1 [s] long ramp to full flow, and after the inlet flow has achieved steady state at 2 [s].
+The convergence criteria outlined in \sect{sect:nl_cobra} include two paths through which Newton's method may terminate while having a non-trivial residual.
+The first is that the maximum allowable number of Newton iterates, $k_{\text{MAX}}$, may be too small, terminating the iterative process prior to a solution being obtained.
 The second is that the norm of the scaled independent parameter update vector may be below the convergence threshold.
-A concern is that the update vector is the vector based upon the limiting of the independent parameters.
-So, it may be impossible for the algorithm to reach a nonlinearly converged solution without pushing an independent parameter outside of the acceptable limits imposed by the software.
+A concern is that the update vector produced by the Newton step may be truncated based upon the limiting of the independent parameters at the end of a Newton step.
+It may be impossible for the algorithm to reach a nonlinearly converged solution without pushing an independent parameter outside of the acceptable limits imposed by the software.
 Since the global minimization problem is not formulated as a constrained minimization problem, there may be inconsistencies in the solution.
-This behavior needs additional investigation to determine both the cause and the impact upon the algorithmic frame work.
+This non-convergence of the residual needs additional investigation to determine its cause, its impact upon the algorithmic frame work, and its possible remedies.
 
 \begin{figure}[h!t]
 \centering
@@ -475,16 +482,16 @@ This behavior needs additional investigation to determine both the cause and the
 \label{fig:single_1em1}}
 \subfloat[\dtmax{} = 1.0E-5 {[s]}]{\includegraphics[width=0.49\textwidth]{images/single_1em5.eps}
 \label{fig:single_1em5}}
-\caption[Single phase solution at \dtmax{} = 1.0 {[s]}and 1.0E-5 {[s]}]{Single phase solution with \dtmax{} = 1.0 {[s]} and 1.0E-5 {[s]}.}
+\caption[Single-phase solution at \dtmax{} = 1.0 {[s]}and 1.0E-5 {[s]}]{Single-phase solution with \dtmax{} = 1.0 {[s]} and 1.0E-5 {[s]}.}
 \label{fig:single_compare_1}
 \end{figure}
 
-The single-phase case was designed to test if the linearized solver produced a simulation result that was equivalent to that produced by the nonlinearly convergent case.
-More specifically, it was designed to show that for problems where the physics of interest have relatively low nonlinearities, the linearized solution provides as accurate solution as the nonlinear solver.
-\fig{fig:single_compare_1} shows the solution produced by both the nonlinear and legacy mode of \cobra{}.
-Unlike the flashing problem, neither solver was unable to solve the problem for the \dtmax{} specified.
-Both solver modes produce solutions that are equivalent at \dtmax{} = 1.0 [s] and \dtmax{} = 1.0E-5 [s].
-This indicates that the linearized solver is adequate in regions where the solution is not highly nonlinear.
+The single-phase case was designed to test if the legacy solver produced a simulation result that was equivalent to that produced by the nonlinear solver.
+More specifically, it was designed to show that for problems where the physics of interest have relatively low nonlinearities, the legacy solver provides as accurate a solution as the nonlinear solver.
+\fig{fig:single_compare_1} shows the solution produced by both the nonlinear and legacy solvers of \cobra{}.
+Unlike the flashing problem, both solvers were able to solve the problem for all of the \dtmax{} specified.
+The solutions produced by both solvers are qualitatively equivalent at \dtmax{} = 1.0 [s] and \dtmax{} = 1.0E-5 [s].
+This indicates that the legacy solver is adequate in regions where the solution is not highly nonlinear.
 
 \begin{figure}[h!t]
 \centering
@@ -493,17 +500,18 @@ This indicates that the linearized solver is adequate in regions where the solut
 \label{fig:leg_single_res}}
 \subfloat[Nonlinear mode.]{\includegraphics[width=0.49\textwidth]{images/nl_single_res_v_dt.eps}
 \label{fig:nl_single_res}}
-\caption[Single phase residuals.]{Single phase residuals.}
+\caption[Single-phase residuals.]{Single-phase residuals.}
 \label{fig:single_compare_2}
 \end{figure}
 
-The residual of the legacy mode solution for the single-phase problem, \fig{fig:leg_single_res}, shows that the nonlinear residuals is almost zero except in two regions.
-At larger \dtmax{}, the nonlinear residual is larger at the initiation of the inlet flow at 1 [s].
-Also, the nonlinear residual below 0.5 [s], where the solution should be steady-state, shows a non-zero residual.
-For the nonlinear mode solution, \fig{fig:nl_single_res}, the same to regions exhibit larger nonlinear residuals.
-Two aspects of the nonlinear residual for the nonlinear mode should be noted.
-The first is that the nonlinear residual at the initiation of the ramp is approximately zero for \dtmax{} = 1 [s] and \dtmax{} = 1.0E-5 [s].
-It is only during intermediate steps where the residuals becomes non-zero.
+Examining the residual for the two different solvers will provide insight into how well each of them are solving the nonlinear problem.
+The residual of the legacy solver solution for the single-phase problem, \fig{fig:leg_single_res}, shows that the nonlinear residuals are nontrivial during two periods of the transient.
+The first region of nontrivial residuals is present only for larger values of \dtmax{} and occurs when the the inlet flow initiates at 1 [s].
+The second region occurs at smaller values of \dtmax{} and occurs near the beginning of transient.
+For the nonlinear solver solution residuals, \fig{fig:nl_single_res}, the same two regions, start of simulation and inlet flow initialization, exhibit similar nontrivial nonlinear residuals.
+However, the behavior of the residual for the nonlinear solver as a function of \dtmax{} exhibits an anomaly that is absent in the legacy solver.
+To put the anomaly in context, it should first be noted that the nonlinear residual at the initiation of the ramp is approximately zero for \dtmax{} = 1 [s] and \dtmax{} = 1.0E-5 [s].
+It is only during intermediate values of \dtmax{} where the residuals becomes nontrivial during the ramp initiation.
 
 \begin{figure}[h!t]
 \centering
@@ -511,13 +519,13 @@ It is only during intermediate steps where the residuals becomes non-zero.
 \label{fig:single_1em3}}
 \subfloat[Zoomed Solution]{\includegraphics[width=0.49\textwidth]{images/single_1em3_zoom.eps}
 \label{fig:single_1em3_zoom}}
-\caption[Single phase solution at \dtmax{} = 1.0E-3 {[s]}]{Single phase solution with \dtmax{} = 1.0E-3 {[s]}.}
+\caption[Single-phase solution at \dtmax{} = 1.0E-3 {[s]}]{Single-phase solution with \dtmax{} = 1.0E-3 {[s]}.}
 \label{fig:single_compare_3}
 \end{figure}
 
 While the solutions at \dtmax{} = 1.0 [s] and \dtmax{} = 1.0E-5 [s] are identical for the two solver modes, the solutions at intermediate time-step sizes were not identical.
-In particular, the nonlinearly converged solution at \dtmax{} = 1.0E-3 [s] is wrong, \fig{fig:single_compare_3}.
-The two solutions agree for most of the domain, \fig{fig:single_1em3}, except at the initiation of flow at 1 [s], \fig{fig:single_1em3_zoom}.
+In particular, the nonlinear solver produces a solution at \dtmax{} = 1.0E-3 [s] that is inconsistent with both the solution produced by the legacy solver and, more importantly, with the specified inlet boundary conditions, see \fig{fig:single_compare_3}.
+The two solver produce solutions that agree for most of the domain, \fig{fig:single_1em3}, except at the initiation of the inlet flow at 1 [s], \fig{fig:single_1em3_zoom}.
 
 \begin{figure}[h!t]
 \centering
@@ -526,23 +534,25 @@ The two solutions agree for most of the domain, \fig{fig:single_1em3}, except at
 \label{fig:nl_res_single_zoom}
 \end{figure}
 
-This difference is manifested in the nonlinear residuals for the nonlinear mode solution around 1 [s], \fig{fig:nl_res_single_zoom}.
-At \dtmax{} = 1.0E-3, the nonlinear residual has a marked increase from effectively zero at \dtmax{} = 1.0E-2.
+This difference is manifested in the residuals for the nonlinear solver solution around 1 [s], \fig{fig:nl_res_single_zoom}.
+The residual at the time of inlet flow initialization has a marked increase between the \dtmax{} = 1.0E-3 and \dtmax{} = 1.0E-2.
 The reason for this behavior is, as of yet, unknown.
-It most is likely related to the same nonlinear nonconvergence behavior remarked upon for the flashing problem. 
+It most is likely related to the same nonlinear non-convergence behavior remarked upon for the flashing problem. 
 
-One way to quantify the difference between the solutions is by measuring the nonlinear residual metric outlined in \ref{sect:temporal_convergence}.
-This metric provides a measure of how poorly the discrete nonlinear equations are being solved at every time-step in the transient.
-The resolution of the nonlinear residual allows for a solution that is less sensitive to time-step size selection than the solution that does not resolve the nonlinear residual.
-The convergence metric will be used to determine if a qualitative temporal-convergence determination can lead to the acceptance of solution that is not nonlinearly converged.
-For each of the test cases, these variables were compared at different time-steps.
+One way to quantify the difference between the solutions is by measuring the residual convergence metrics outlined in \ref{sect:temporal_convergence}.
+These metrics provide a measure of how poorly the discrete nonlinear equations are being solved at every time-step in the transient.
+The resolution of the residual allows for a solution that is less sensitive to time-step size selection than for a solution that does not resolve the residual.
+The convergence metrics will be used to determine if a qualitative temporal-convergence determination can lead to the acceptance of solution that is not nonlinearly converged.
+
+For each of the test cases, the two different metrics were compared at the different \dtmax{}.
 To examine efficacy of the the temporal convergence criteria, both the average and moment based temporal convergence criteria were evaluated for each of the twenty-three successful simulations.
+The values of these metrics will be compared between different solvers for the same test problem. 
 
-First, the two different nonlinear convergence metrics will be examined for the flashing problem.
+The two different nonlinear convergence metrics will now be examined for the flashing problem.
 \tab{tab:flashing_criteria} shows both the average metric, $\tilde{R}$, and the moment based metric, $\tilde{R}$.
 The entry for the legacy mode solution at 1 [s] is empty, reflecting its inability to solve the problem.
-For the nonlinear solve, the both metrics are decreasing as the \dtmax{} is decreased.
-While the legacy solver also shows a decreasing nonlinear residual, it is does not change order of magnitude, indicating that as the \dtmax{} is reduced, the nonlinearities in the problem are not being sufficiently reduced.
+For the nonlinear solver, both metrics are decreasing as the \dtmax{} is decreased.
+While the legacy solver also shows a decreasing residual metric, it does not decrease in order-of-magnitude, indicating that as the \dtmax{} is reduced, the nonlinearities in the problem are not being sufficiently resolved.
 
 \begin{table}[h!t]
 \centering
@@ -559,7 +569,7 @@ $\Delta t_{\text{MAX}}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlin
 1.0E-5 & 2&166E-2 & 5&075E-5 & 1&922E-2 & 4&581E-5 \\
 \bottomrule  
 \end{tabular}
-\caption{Nonlinear convergence metrics for Flashing problem.}
+\caption{Nonlinear convergence metrics for flashing problem.}
 \label{tab:flashing_criteria}
 \end{table}
 
@@ -578,28 +588,23 @@ $\Delta t_{\text{MAX}}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlin
 1.0E-5 & 5&493E-4 & 2&758E-4 & 1&916E-5 & 8&939E-5 \\
 \bottomrule  
 \end{tabular}
-\caption{Nonlinear convergence metrics for Single Phase problem.}
+\caption{Nonlinear convergence metrics for the single-phase problem.}
 \label{tab:single_criteria}
 \end{table}
 
 \tab{tab:single_criteria} shows the two metrics for the single-phase problem.
 Since the single-phase problem is relatively linear, the legacy solver produces metrics that are on the same order as those for the nonlinear solver.
-Due to the nonconvergence of the nonlinear solver at \dtmax{} = 1.0E-3 produces a moment based metric that is greater than the equivalent nonlinear metric.
-
-There are several issues that need to be addressed.
-The first is that the scaled residual has non-trivial values during the steady state portion of the simulation.
-It is believed that this behavior is a result of either the choice of phase transition logic for the scaling factor or the nonlinear convergence criteria.
-Another possibility is the inconsistency between the scaled update vector used in the line-search algorithm and the one used in the Newton loop convergence criteria.
+Due to the non-convergence of the nonlinear solver at \dtmax{} = 1.0E-3, the moment based metric for the nonlinear solver is greater than the equivalent legacy solver metric.
 
 \section{Review}
 \label{sect:review}
 
 In review, the single-shot semi-implicit \cobra{} software was converted to a nonlinearly convergent, semi-implicit algorithm.
 An operator-based scaling was introduced and implemented into the both the legacy and the nonlinear \cobra{} solvers.
-It was shown that the nonlinearly convergent solver produces results that are indistinguishable from legacy solver for the problem where the nonlinearities are small.
-The nonlinearly convergent solver produced results that were qualitatively different than those obtained from the legacy solver for the problem with high nonlinearities.
-Several deficiencies were identified with the current implementation of the operator-based scaling.
-The scaling produced high nonlinear residuals when the problem was at steady state.
-A metric to quantify the nonlinear convergence of a time-step size insensitive simulation was developed and implemented.
+The nonlinear solver produced results that were qualitatively different than those obtained from the legacy solver for the problem with high nonlinearities.
 Tests indicated that a time-step size insensitive solution may not be nonlinearly converged.
-This nonconvergence of the discrete nonlinear system in the legacy solver mode produces a qualitatively different solution from the nonlinearly convergent solution discrete equations.
+It was shown that the nonlinear solver produces results that are indistinguishable from those produced by the legacy solver for the single-phase problem,  where the nonlinearities are small.
+A deficiency was identified with the current implementation of the operator-based scaling; the scaled residual produced nontrivial values during the initial portion of the steady state initialization for both problems.
+Additionally, a deficiency was detected with the convergence limits of the nonlinear solver.
+A metric to quantify the nonlinear convergence of a time-step size insensitive simulation was developed and implemented.
+This non-convergence of the discrete nonlinear system in the legacy solver mode produces a qualitatively different solution from the nonlinear solver.

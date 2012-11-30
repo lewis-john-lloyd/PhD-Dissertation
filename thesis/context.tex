@@ -1169,26 +1169,27 @@ In stage three, the nonlinear relation between the conserved quantities and the 
 \section{Algorithmic Concerns}
 \label{sect:algorithmic_concerns}
 
-The methods outlined in \sect{sect:solution_techniques} have algorithmic issues that need to be addressed.
-Given that the governing conservation laws in thermal-hydraulic analyses are those of two-phase flow, there is no systematic and widely agreed upon way of dealing with phase appearance or disappearance.
-While each algorithmic implementation of the various methods addresses these issues out of necessity, there is no systematic, or optimal, way of doing so. 
+The methods outlined in \sect{sect:solution_techniques} have several algorithmic issues that need to be addressed.
+Among these issues are phase appearance and disappearance, hereafter referred to as phase transition, time-step solution acceptance criteria, and time-step size selection.
 
-Phase and field appearance or disappearance, hereafter referred to as phase transitions, is a concern for any algorithmic implementation of thermal hydraulic methods.
+Given that the governing conservation laws in thermal-hydraulic analyses are those of two-phase flow, phase transition is integral to accurate simulations.
 The methods for addressing phase transitions within two-phase analysis software are ad-hoc procedures that vary from software to software.
+While each algorithmic implementation of the various methods addresses this issue out of necessity, there is no systematic or optimal way of doing so.
 However, certain physical limits have been identified that need to be considered \cite{Bestion2000}.
-Since the manner in which \cobra{} treats phase transitions is of importance to this work, a brief description will follow.
 
-\begin{itemize}
-\item{Velocity equilibrium enforced by enhanced interfacial drag.}
-\item{Minimum field threshold for the three water fields.}
-\item{Partial pressure of \ncg field allowed to go to zero.}
-\end{itemize}
+When the two-phase flow within \cobra{} approaches that of single phase flow, there is a lower limit imposed upon the volume fraction of the phase that is disappearing.
+This means that \cobra{} does not transition between the two-phase flow governing equations and the governing equations for single-phase flow.
+Even during simulated single-phase flow, the non-dominant phase is still present, but at a very small volume fraction.
+However, since the \ncgs{} and the vapor liquid fields share a common volume fraction, the partial pressure of the \ncgs{} is allows to go to zero. 
+Since \cobra{} incorporates two liquid fields, the lower limit for the aggregate liquid volume fraction, $\alpha_e + \alpha_l$, is equally divided between the two liquid fields.
+As a phase approaches depletion, $\alpha_k \rightarrow \alpha_{k,\text{MIN}}$, the velocities between the two phases are required to approach.
+This velocity equilibrium is imposed by artificially increasing the interfacial drag between the two phases.
 
-Within \cobra{}, there are certain constraints that are imposed upon the independent parameters.
-These constraints are dealt with in a mitigative manner.
-After a single Newton step, the updated parameters are evaluated to determine their validity in the context of a single-shot method.
+Upon completion of a timestep within \cobra{}, there are certain constraints that are imposed upon the independent parameters.
+These constraints are designed to deal with the possibility that the obtained solution may not be an accurate one.
+After the single Newton step, the updated parameters are evaluated to determine their validity.
 There are two ways of resolving potentially invalid solutions: limiting and failure.
-The limiting procedure can either truncate the updated parameter, so that is falls within a valid range, or the time-step can be considered a failure.
+The limiting procedure can either truncate the updated parameter so that it falls within a valid range, or the time-step can be considered a failure.
 When a predicted volume fraction falls outside of its valid range, it is truncated to obey the constraint of equation \eqref{eqn:volume_fraction}.
 
 \begin{equation}
@@ -1196,7 +1197,9 @@ When a predicted volume fraction falls outside of its valid range, it is truncat
 \alpha_{k,\text{min}} \leq \alpha_k \leq \alpha_{k,\text{max}} 
 \end{equation}
 
-There are also limits placed upon the changes thermodynamic parameters within a timestep in \cobra{}.
+There are also limits placed upon the changes of the thermodynamic parameters within a timestep in \cobra{}.
+The constrained thermodynamic parameters and the limits imposed upon their per-timestep changes are listed below.
+
 \begin{itemize}
 \item{Change of phasic enthalpy cannot be greater than 45 [$\frac{\text{BTU}}{\text{lb}_{\text{m}}}$].}
 \item{Change in pressure cannot be greater than 20 [psia].}
@@ -1204,8 +1207,8 @@ There are also limits placed upon the changes thermodynamic parameters within a 
 \item{Thermodynamic variables would fall outside of the range of validity of the equations of state.}
 \end{itemize}
 
-The first three limits are an attempt to mitigate an initial guess that may be outside of the Newton's step radius of convergence.
-If any of the above limits are exceeded, the time-step is considered a failure and is repeated with a smaller time-step size.
+The first three limits are an attempt to mitigate an initial guess that may be outside of the Newton step's radius of convergence.
+If any of the above limits are exceeded, the timestep is considered a failure and is repeated with a smaller timestep size.
 
 Another algorithmic concern is how to identify a potentially poor linearization point in the presence of phase transitions. 
 This can be considered a predictive error correction technique.
@@ -1222,8 +1225,9 @@ The \dt{} for any time-step is given by \eqref{eqn:time_step}.
 \end{equation}
 
 $\Delta t_{\text{CRNT}}$ is the most restrictive Courant number calculated for both axial and transverse flow.
-In addition, there is a continuity volume based $\Delta t$ that is based upon the time calculated to empty a given volume of the mass of a given field.
-The most restrictive of the Courant time-step is used as $\Delta t_{\text{CRNT}}$.
+In addition, there is a $\Delta t$ that is based upon the time calculated to empty a given volume of the mass of a given field.
+The most restrictive of the Courant timestep is used as $\Delta t^{n \rightarrow n+1}$.
+
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1234,8 +1238,8 @@ The most restrictive of the Courant time-step is used as $\Delta t_{\text{CRNT}}
 \section{Domain Coupling}
 \label{sect:code_coupling}
 
-\cobra{} possesses the physics necessary to model the complicated flow patterns encountered during LOCA within the core of an NPP.
-However, it lacks the detailed models for NPP components (pumps, valves, accumulators, pressurizers, etc) that are traditionally available from system-analysis codes.
+\cobra{} possesses the physics necessary to model the complicated flow patterns within the core encountered during postulated LOCAs.
+However, it lacks the detailed models for NPP components (pumps, valves, accumulators, pressurizers, etc) that are traditionally available from system analysis codes.
 When modeling full NPP transients, it is advantageous to use sub-channel software for the core and system analysis software to model the rest of the NPP.
 The combination of different specialized software is a common practice.
 This coupling of capabilities can be accomplished in two ways: the two pieces of software can be merged, or they can be coupled via data exchange.
@@ -1243,14 +1247,14 @@ Examples of the first method are MARS \cite{Jeong2008}, COBRA/TRAC \cite{Thurgoo
 Coupling software via data exchange is the more common option \cite{Makihara2003, Aumiller2002, Aumiller2001, Avramova2006, Weaver2002, Rodriguez2002}.
 
 The use of explicit coupling can lead to a sonic Courant limit imposed at the boundary of the two coupled systems \cite{Ragusa2009, Aumiller2001}.
-The coupling of software via data exchange has led to the development of a semi-implicit coupling technique for thermal-hydraulic simulations \cite{Weaver2002, Aumiller2002}.
-This coupling technique allows for the material Courant limit to be uniformly applied between the two pieces of software.
+To circumvent the sonic Courant limit, a semi-implicit method for the coupling of software via data exchange has been developed for thermal-hydraulic simulations \cite{Weaver2002, Aumiller2002}.
+This coupling technique allows for the material Courant limit to be uniformly applied across the two pieces of software.
 This technique is of direct interest to the work that will be performed.
 
 The coupling of the different software involves the use of a third-party message passing interface.
 The program used for the software coupling in the papers of interest is the Parallel Virtual Machine (PVM) software \cite{Geist1994}.
 PVM allows the data exchange to occur between separate software.
-As formulated in the original papers, the software coupling technique involves decomposing the coupled problem into two pieces, the master and the slave domain.
+As formulated in the original papers, the software coupling technique involves decomposing the coupled problem into two pieces, the master and the slave domains.
 The master and slave domains have a one-to-one correspondence with the different software domains.
 In this respect, the problem can be thought of as being decomposed into a subdomain controlled by a master program and a slave domain being controlled by a slave program.
 The original paper presents the method in terms of the RELAP5-3D conservation equations, which are different from those in \cobra{}.
@@ -1296,19 +1300,16 @@ The pressure update for the connected master boundaries, $\delta P_{\text{cbv}}^
 \end{IEEEeqnarray}
 
 This formulation allows for the updated pressure in the master domain to be calculated internally to the slave domain without inter-software communication.
-The original intent of this formulation was to enable the semi-implicit method to be used for software coupling.
-This enables coupled simulations to exceed the sonic Courant limit.
+The intent of this formulation was to enable the semi-implicit method to be used for software coupling.
 
 The coupling of system analysis codes and sub-channel codes can also be viewed through a different lens.
-If the global problem, the balance-of-plant (e.g., RELAP5-3D) and the in-core region (e.g., \cobra{}) are considered to a part of a global domain, $\Omega$, then each piece of software can be viewed as solving a smaller portion of the global domain, $\Omega_i$.
+If the global problem, the balance-of-plant (e.g., RELAP5-3D) and the in-core region (e.g., \cobra{}), are considered to a part of a global domain, $\Omega$, then each piece of software can be viewed as solving a smaller portion of the global domain, $\Omega_i$.
 The use of more detailed physics for the in-core thermal-hydraulic behavior is a particular application of model reduction \cite{Paraschivoiu1999}.
 In this decomposition of the global domain, if the boundary values are explicitly evaluated then this decomposition could be viewed as an application of an additive Schwarz domain decomposition algorithm.
 In an additive Schwarz algorithm, the boundary values for each subdomain are functions only of the old-time values in the other domains.
 If the information exchange between the two domains is purely explicit in nature, then the sonic Courant limit becomes the time-step limiter \cite{Aumiller2001}.
 
-The sonic Courant limit of explicit domain coupling led to the development of semi-implicit domain coupling.
-This domain coupling technique, like the Semi-Implicit technique for safety analysis codes, enables the global problem to run at time-steps that exceed the sonic Courant limit, but that are still limited by the material Courant limit.
-This particular mode of domain decomposition allows for each domain to use the most recent information from each domain in its calculation.
+In the semi-implicit coupling software coupling, This method of domain decomposition allows for each domain to use the most recent information from each domain in its calculation.
 This method is similar to the multiplicative Schwarz domain decomposition.
 However, the multiplicative Schwarz domain decomposition is traditionally viewed as a sequential solution over the subdomains.
 Each subdomain utilizes the most recent information from the other subdomains to formulate its boundary conditions.
@@ -1328,7 +1329,7 @@ However, this application does not worry about consistency at the boundaries of 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Research Objectives}
 
-The methods used to simulate thermal-hydraulic behavior in NPP are characterized by the manner in which the temporal-integration of the governing conservation equations and the manner in which the nonlinearities inherent in those fully discrete equations are resolved.
+The methods used to simulate thermal-hydraulic behavior in NPPs are characterized by the manner in which the temporal-integration of the governing conservation equations and the manner in which the nonlinearities inherent in those fully discrete equations are resolved.
 Each of the methods outlined in \sect{sect:solution_techniques} has one thing in common: the nonlinear problem is solved globally, either through a single-shot linearization or through an iterative Newton procedure.
 
 \begin{figure}[h!t]
@@ -1343,23 +1344,27 @@ Each of the methods outlined in \sect{sect:solution_techniques} has one thing in
 \draw (4.5,3) node[anchor=south] {Iterative Convergence};
 \draw (6,2) node[anchor=west] {CATHARE};
 \draw (6,1.5) node[anchor=west] {TRACE};
-\draw[pattern=north west lines, pattern color=blue] (0,-4) rectangle +(3,3);
-\draw[pattern=north east lines, pattern color=red] (0.75,-3.25) rectangle +(1.5,1.5);
+\draw (0,-4) rectangle +(3,3);
+\path[pattern=north west lines, pattern color=blue] (0,-4) rectangle +(0.75,3);
+\path[pattern=north west lines, pattern color=blue] (2.25,-4) rectangle +(0.75,3);
+\path[pattern=north west lines, pattern color=blue] (0.75,-1.75) rectangle +(1.5,0.75);
+\path[pattern=north east lines, pattern color=red] (0.75,-3.25) rectangle +(1.5,1.5);
+\path[pattern=north west lines, pattern color=blue] (0.75,-4) rectangle +(1.5,0.75);
 \draw (1.5,-1) node[anchor=south] {Proposed Method};
 \end{tikzpicture}
 \end{center}
-\caption{Current software for thermal-hydraulic safety analysis.}
+\caption{Current and proposed software paradigms for thermal-hydraulic safety analysis.}
 \label{fig:my_diagram}
 \end{figure}
 
-The advantages of the single-shot linearization is the reduction in computational costs; however, the accuracy in region of highly non-linear physics is suspect.
+The advantages of the single-shot linearization is the reduction in computational costs; however, the accuracy in regions of highly non-linear physics is suspect.
 This has traditionally been mitigated by limitations placed upon the maximum change in independent parameters. 
 The resolution of the nonlinearities within a time-step requires the use of an iterative method.
 The benefits of an iterative Newton solver is that the nonlinearities are resolved at each time-step; however, the computational cost of multiple global Newton steps is high.
 If nonlinear effects are spatially isolable, then the computational expenditure of iteratively solving the global nonlinear problem may be unnecessary.
 \fig{fig:my_diagram} shows where the current work will fit into this paradigm.
 
-The objective of this research is the design, implementation, and evaluation of a novel spatially selective nonlinearly convergent solution framework for nuclear thermal hydraulic safety analysis.
+The objective of this research is the design, implementation, and evaluation of a novel, spatially selective, nonlinear solution framework for nuclear thermal-hydraulic safety analysis.
 The method should be able to quantify the nonlinearity of spatial subdomains within a given problem.
 Isolation of those subdomains where nonlinearities are high will be achieved by using a variant of the code coupling algorithm discussed in \sect{sect:code_coupling}.
 For this work, the subdomains to be isolated will be geometric components predetermined by the user.
