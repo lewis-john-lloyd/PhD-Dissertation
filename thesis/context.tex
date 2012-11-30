@@ -1305,20 +1305,20 @@ The intent of this formulation was to enable the semi-implicit method to be used
 The coupling of system analysis codes and sub-channel codes can also be viewed through a different lens.
 If the global problem, the balance-of-plant (e.g., RELAP5-3D) and the in-core region (e.g., \cobra{}), are considered to a part of a global domain, $\Omega$, then each piece of software can be viewed as solving a smaller portion of the global domain, $\Omega_i$.
 The use of more detailed physics for the in-core thermal-hydraulic behavior is a particular application of model reduction \cite{Paraschivoiu1999}.
-In this decomposition of the global domain, if the boundary values are explicitly evaluated then this decomposition could be viewed as an application of an additive Schwarz domain decomposition algorithm.
-In an additive Schwarz algorithm, the boundary values for each subdomain are functions only of the old-time values in the other domains.
-If the information exchange between the two domains is purely explicit in nature, then the sonic Courant limit becomes the time-step limiter \cite{Aumiller2001}.
 
-In the semi-implicit coupling software coupling, This method of domain decomposition allows for each domain to use the most recent information from each domain in its calculation.
-This method is similar to the multiplicative Schwarz domain decomposition.
-However, the multiplicative Schwarz domain decomposition is traditionally viewed as a sequential solution over the subdomains.
-Each subdomain utilizes the most recent information from the other subdomains to formulate its boundary conditions.
+Through this lens, if the semi-implicit coupling methodology is used to couple two pieces of software that use the semi-implicit method, then the boundaries between the two domains no longer represent a disparity in the global method used.
+This fact enables the use of the material Courant limit at coupling boundaries.
+then This method of domain decomposition allows for each domain to use the most recent information from each domain in its calculation.
+
+Additionally, if the boundary values are explicitly evaluated, then the decomposition of the global problem could be viewed as an application of an additive Schwarz domain decomposition algorithm.
+In an additive Schwarz algorithm, the boundary values for each subdomain are functions only of the old-time values in the other domains.
+From this view point, the sonic Courant limit observed at domain coupling boundaries follows naturally \cite{Aumiller2001}.
 
 The additive Schawrz method has seen extensive use as a nonlinear preconditioner for fully implicit CFD calculations \cite{Cai2009, Cai2002}.
 In particular a nonlinearly convergent solution within each subdomain is obtained at each time-step.
 It has been shown that the treatment of localized nonlinearities via domain decomposition allows for globalization strategies to be used that would otherwise exhibit stalled convergence if the full domain was subjected to a globalization strategy \cite{Cai2011}.
 This work is based upon the concept of nonlinear domain decomposition and nonlinear elimination \cite{Lanzkron1996, Dryja1997}.
-However, this application does not worry about consistency at the boundaries of the subdomains since the obtained subdomain solutions are used as a preconditioned initial guess for a global Newton-Krylov-Schwarz algorithm \cite{Chan1984}.
+However, these applications does not worry about consistency at the boundaries of the subdomains since the obtained subdomain solutions are used as a preconditioned initial guess for a global Newton-Krylov-Schwarz algorithm \cite{Chan1984}.
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
