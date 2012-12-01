@@ -633,7 +633,7 @@ The conserved quantities within a continuity volume are nonlinear functions of t
 \vec{y}^{n+1} = \vec{y}(\vec{x}^{n+1})
 \end{equation}
 
-This nonlinearity necessitates the use of a nonlinear solver at every time-step.
+This nonlinearity necessitates the use of a nonlinear solver at every timestep.
 Any dependence of $\vec{E}^{*}$ on the new time parameters can create additional nonlinearities.
 The semi-discrete formulation, \eqref{eqn:simple_partial_t}, is expressed as a nonlinear function of $\vec{x}$ by \eqref{eqn:nonlinear_residuals}.
 
@@ -643,8 +643,8 @@ The semi-discrete formulation, \eqref{eqn:simple_partial_t}, is expressed as a n
 \end{equation}
 
 Depending upon the approximation of $\vec{E}^{*}$ and the number of stage, the temporal integration method used has an associated temporal accuracy.
-The temporal accuracy is a way of quantifying the behavior of the solution as the time-step is reduced.
-Order of accuracy estimates for temporal integration techniques are proportionality statements between the numerical error and a power of the time-step, $\mathcal{O}(\Delta t^k)$ \cite{LeVeque2007}. 
+The temporal accuracy is a way of quantifying the behavior of the solution as the timestep is reduced.
+Order of accuracy estimates for temporal integration techniques are proportionality statements between the numerical error and a power of the timestep, $\mathcal{O}(\Delta t^k)$ \cite{LeVeque2007}. 
 However, it has been shown that if the nonlinear problem, \eqref{eqn:nonlinear_residuals}, is not solved at every time step, the temporal accuracy of a method can be degraded \cite{Knoll2001, Mahaffy1993}.
 
 \subsection{Nonlinear Approximations}
@@ -670,8 +670,8 @@ The algorithm is then one of finding successive updates, $\vec{\delta x}^k$, by 
 \vec{J}(\vec{x}^{n+1,k})\cdot \vec{\delta x}^k = -\vec{F}(\vec{x^{n+1,k}})
 \end{equation} 
 
-Since the system of nonlinear equations being solved represents a transient simulation, the iterations at each time-step start with an initial guess for the new time variables that is equal to the old-time variables, $\vec{x}^{n+1,0} = \vec{x}^{n}$.
-The underlying assumption of this initial value is that the independent parameters will not change greatly over a time-step, and the old-time variables will provide an initial vector that is within the radius of convergence of Newton's method.
+Since the system of nonlinear equations being solved represents a transient simulation, the iterations at each timestep start with an initial guess for the new time variables that is equal to the old-time variables, $\vec{x}^{n+1,0} = \vec{x}^{n}$.
+The underlying assumption of this initial value is that the independent parameters will not change greatly over a timestep, and the old-time variables will provide an initial vector that is within the radius of convergence of Newton's method.
 \alg{alg:local_newton} provides an overview of a transient simulation using a local Newton's method for a single-stage temporal integration scheme.
 The algorithm generalizes to a multi-stage method by enclosing the Newton loop within a stage loop.
 
@@ -720,7 +720,7 @@ While each of the following methods may have many subtly varying algorithmic imp
 
 \subsection{Fully Explicit Method}
 \label{subsect:numerics_explicit}
-The least computationally expensive method on a per time-step basis for temporally integrating \eqref{eqn:simple_partial_t} is a single-stage fully explicit method.
+The least computationally expensive method on a per timestep basis for temporally integrating \eqref{eqn:simple_partial_t} is a single-stage fully explicit method.
 In the fully explicit method, the driving function is approximated as $\vec{E}(\vec{x}^n)$.
 The nonlinear vector notation formulation for this method is given by \eqref{eqn:explicit}.
 
@@ -749,7 +749,7 @@ While the momentum conservation equations have the identity matrix, $\vec{I}$, f
 \end{algorithmic}
 \end{algo}
 
-While this particular method is the least computationally expensive on a per time-step basis, it has a severe weakness.
+While this particular method is the least computationally expensive on a per timestep basis, it has a severe weakness.
 That weakness is the Courant-Friedrichs-Lewy (CFL) limit imposed upon the time step size, $\Delta t$.
 The CFL limit is a relationship between the spatial and temporal discretization and the characteristic velocities of information propagation in the problem of interest \cite{LeVeque2007, Tannehill1997}.
 For the case of \eqref{eqn:explicit}, the CFL limit is given in \eqref{eqn:cfl_explicit}.
@@ -761,15 +761,15 @@ For the case of \eqref{eqn:explicit}, the CFL limit is given in \eqref{eqn:cfl_e
 
 Where $c_j$ is the speed of sound and $u_j$ is the magnitude of a given phasic velocity at a given location within the domain.
 $\Delta t_j$ is calculated at every point within the domain using the known local fluid conditions.
-The $\Delta t$ chosen for the $t^{n} \rightarrow t^{n+1}$ time-step is the most restrictive calculated value over the domain.
-While the explicit method may provide the least computational cost on a per-time-step basis, the number of time-steps required for a given problem will be much higher due to this restrictive CFL limitation.
+The $\Delta t$ chosen for the $t^{n} \rightarrow t^{n+1}$ timestep is the most restrictive calculated value over the domain.
+While the explicit method may provide the least computational cost on a per-timestep basis, the number of timesteps required for a given problem will be much higher due to this restrictive CFL limitation.
 
 \begin{equation}
 \label{eqn:global_cfl}
 \Delta t = \min_{j \in \Omega} \Delta t_j
 \end{equation}
 
-Stated in words, the maximum permissible time-step size is determined by the most restrictive CFL limit within the domain which is limited by the local speed of sound, referred to as the sonic Courant limit.
+Stated in words, the maximum permissible timestep size is determined by the most restrictive CFL limit within the domain which is limited by the local speed of sound, referred to as the sonic Courant limit.
 This limitation of the explicit method prompted the development of alternative methods that were capable of exceeding this Courant limit.
 
 \subsection{Fully Implicit Method}
@@ -783,8 +783,8 @@ The fully implicit method temporally approximates $\vec{E}^{*}$ as a function on
 \end{equation}
 
 This method has the advantage of not being limited by a CFL number.
-While this allows for greatly increased time-steps to be taken, the numerical scheme introduces nonphysical diffusion into the solution \cite{Mahaffy1993}.
-Additionally, the solution of \eqref{eqn:implicit} is the most computationally expensive on a per time-step basis of the methods considered.
+While this allows for greatly increased timesteps to be taken, the numerical scheme introduces nonphysical diffusion into the solution \cite{Mahaffy1993}.
+Additionally, the solution of \eqref{eqn:implicit} is the most computationally expensive on a per timestep basis of the methods considered.
 This computational expense comes from the full inter-volume coupling of the Jacobian matrix during the nonlinear solve.
 The computational implementation of a fully implicit method is presented in \alg{algo:implicit}.
 
@@ -842,7 +842,7 @@ The implicit evaluation of the pressure gradient in the momentum equations is wh
 Similar to the sonic Courant limit discussed in \sect{subsect:numerics_explicit}, the material Courant limit dictates the largest $\Delta t$ that can be achieved while maintaining a stable solution algorithm.
 In this method, the Courant limit is given by \eqref{eqn:si_cfl}.
 The characteristic velocity is now a phasic velocity only.
-This allows for much greater time-step sizes than the explicit method, but it is still limited.
+This allows for much greater timestep sizes than the explicit method, but it is still limited.
 This limitation is due to the explicit evaluation of the donored quantities in the flux terms in the conservation equations.
 
 \begin{equation}
@@ -1054,7 +1054,7 @@ As \cobra{} is a single-shot algorithm, no additional Newton steps are taken.
 \subsection{Stability-Enhancing Two-Step Method} 
 \label{subsect:numerics_sets}
 In order to overcome the material Courant limit placed upon the simulation by the semi-implicit method, the Stability Enhancing Two-Step (SETS) method was developed \cite{Mahaffy1982}.
-While not unconditionally stable, as the fully implicit method, the SETS method allows for time-steps to exceeds the material Courant limit.
+While not unconditionally stable, as the fully implicit method, the SETS method allows for timesteps to exceeds the material Courant limit.
 The SETS method overcomes the material Courant limit by taking a multi-stage approach to the temporal integration.
 The SETS method presented below uses velocities as independent parameters, not momenta.
 While there are variants of the SETS method \cite{TRACE}, \alg{alg:sets} reflects the original publication.
@@ -1072,7 +1072,7 @@ The nonlinear continuity equations are then solved via Newton's method.
 Stated another way, the Jacobians for the momentum equations are fixed at the first iterate, while the Jacobians for the mass and energy equations are updated at each iterate.
 The only results from stage two that are used in stage three are the final velocities, $\vec{u}^{n+1}$.
 Stage three, the mass and energy equations are solved such that all continuity variables are implicit and the final time velocities are from stage two.
-This final stage allows for time-steps that exceed the material courant limit.
+This final stage allows for timesteps that exceed the material courant limit.
 The resulting system of coupled continuity equations is then solved.
 For each stage, the residual and Jacobian matrix will be denoted by $\vec{F}_k$ and $\vec{J}_k$, with $k = 1 \to 3$.
 
@@ -1170,14 +1170,14 @@ In stage three, the nonlinear relation between the conserved quantities and the 
 \label{sect:algorithmic_concerns}
 
 The methods outlined in \sect{sect:solution_techniques} have several algorithmic issues that need to be addressed.
-Among these issues are phase appearance and disappearance, hereafter referred to as phase transition, time-step solution acceptance criteria, and time-step size selection.
+Among these issues are phase appearance and disappearance, hereafter referred to as phase transition, timestep solution acceptance criteria, and timestep size selection.
 
 Given that the governing conservation laws in thermal-hydraulic analyses are those of two-phase flow, phase transition is integral to accurate simulations.
 The methods for addressing phase transitions within two-phase analysis software are ad-hoc procedures that vary from software to software.
 While each algorithmic implementation of the various methods addresses this issue out of necessity, there is no systematic or optimal way of doing so.
 However, certain physical limits have been identified that need to be considered \cite{Bestion2000}.
 
-When the two-phase flow within \cobra{} approaches that of single phase flow, there is a lower limit imposed upon the volume fraction of the phase that is disappearing.
+When the two-phase flow within \cobra{} approaches that of single-phase flow, there is a lower limit imposed upon the volume fraction of the phase that is disappearing.
 This means that \cobra{} does not transition between the two-phase flow governing equations and the governing equations for single-phase flow.
 Even during simulated single-phase flow, the non-dominant phase is still present, but at a very small volume fraction.
 However, since the \ncgs{} and the vapor liquid fields share a common volume fraction, the partial pressure of the \ncgs{} is allows to go to zero. 
@@ -1189,7 +1189,7 @@ Upon completion of a timestep within \cobra{}, there are certain constraints tha
 These constraints are designed to deal with the possibility that the obtained solution may not be an accurate one.
 After the single Newton step, the updated parameters are evaluated to determine their validity.
 There are two ways of resolving potentially invalid solutions: limiting and failure.
-The limiting procedure can either truncate the updated parameter so that it falls within a valid range, or the time-step can be considered a failure.
+The limiting procedure can either truncate the updated parameter so that it falls within a valid range, or the timestep can be considered a failure.
 When a predicted volume fraction falls outside of its valid range, it is truncated to obey the constraint of equation \eqref{eqn:volume_fraction}.
 
 \begin{equation}
@@ -1215,9 +1215,9 @@ This can be considered a predictive error correction technique.
 It uses information from the explicit portion of the nonlinear residual to identify situations where the linearization point may be poor.
 In \cobra{} this method is used only for the prediction of \ncg{} appearance.
 
-The \cobra{} software uses an adaptive time-step selection algorithm.
-This algorithm is based upon a maximum permissible time-step based upon the material Courant limit.
-The \dt{} for any time-step is given by \eqref{eqn:time_step}.
+The \cobra{} software uses an adaptive timestep selection algorithm.
+This algorithm is based upon a maximum permissible timestep based upon the material Courant limit.
+The \dt{} for any timestep is given by \eqref{eqn:time_step}.
 
 \begin{equation}
 \label{eqn:time_step}
@@ -1315,7 +1315,7 @@ In an additive Schwarz algorithm, the boundary values for each subdomain are fun
 From this view point, the sonic Courant limit observed at domain coupling boundaries follows naturally \cite{Aumiller2001}.
 
 The additive Schawrz method has seen extensive use as a nonlinear preconditioner for fully implicit CFD calculations \cite{Cai2009, Cai2002}.
-In particular a nonlinearly convergent solution within each subdomain is obtained at each time-step.
+In particular a nonlinearly convergent solution within each subdomain is obtained at each timestep.
 It has been shown that the treatment of localized nonlinearities via domain decomposition allows for globalization strategies to be used that would otherwise exhibit stalled convergence if the full domain was subjected to a globalization strategy \cite{Cai2011}.
 This work is based upon the concept of nonlinear domain decomposition and nonlinear elimination \cite{Lanzkron1996, Dryja1997}.
 However, these applications does not worry about consistency at the boundaries of the subdomains since the obtained subdomain solutions are used as a preconditioned initial guess for a global Newton-Krylov-Schwarz algorithm \cite{Chan1984}.
@@ -1359,8 +1359,8 @@ Each of the methods outlined in \sect{sect:solution_techniques} has one thing in
 
 The advantages of the single-shot linearization is the reduction in computational costs; however, the accuracy in regions of highly non-linear physics is suspect.
 This has traditionally been mitigated by limitations placed upon the maximum change in independent parameters. 
-The resolution of the nonlinearities within a time-step requires the use of an iterative method.
-The benefits of an iterative Newton solver is that the nonlinearities are resolved at each time-step; however, the computational cost of multiple global Newton steps is high.
+The resolution of the nonlinearities within a timestep requires the use of an iterative method.
+The benefits of an iterative Newton solver is that the nonlinearities are resolved at each timestep; however, the computational cost of multiple global Newton steps is high.
 If nonlinear effects are spatially isolable, then the computational expenditure of iteratively solving the global nonlinear problem may be unnecessary.
 \fig{fig:my_diagram} shows where the current work will fit into this paradigm.
 
@@ -1370,5 +1370,5 @@ Isolation of those subdomains where nonlinearities are high will be achieved by 
 For this work, the subdomains to be isolated will be geometric components predetermined by the user.
 Upon isolation, the coupled subdomain will be subjected to a globally convergent Newton method to resolve the nonlinearities.
 This converged solution will be communicated via the coupling coefficients to the rest of the problem domain for use in calculating its single-shot Newton step.
-This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling may provide a route to nonlinearly converged time-step size insensitive solutions for traditional two-phase flow methods.
-The convergence of the nonlinearities may allow for the utilization of time-step sizes unattainable in current single-shot linearization methods.
+This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling may provide a route to nonlinearly converged timestep size insensitive solutions for traditional two-phase flow methods.
+The convergence of the nonlinearities may allow for the utilization of timestep sizes unattainable in current single-shot linearization methods.
