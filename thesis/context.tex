@@ -1,6 +1,6 @@
 \chapter{Introduction}
 \label{chap:intro}
-In the United States, the goal of Nuclear Power Plant (NPP) designers, builders, operators, and regulators is to ensure the safety of the public during both normal operations and during posstulated accident scenarios.
+In the United States, the goal of Nuclear Power Plant (NPP) designers, builders, operators, and regulators is to ensure the safety of the public during both normal operations and postulated accident scenarios.
 It is the responsibility of the Nuclear Regulatory Commission (NRC) to issue licenses for the construction and operation of nuclear reactors.
 Chapter 1 of Title 10 of the Code of Federal Regulations (10CFR) details the regulatory procedures that govern the NRC.
 Part 50 of 10CFR (10CFR50), lays out the process by which an applicant can obtain both construction and operating licenses for NPPs.
@@ -12,11 +12,9 @@ The diverse physical conditions experienced by the reactor during postulated acc
 For each of these disciplines there are dedicated pieces of software under continual development to improve their predictive capabilities.
 The work that follows is concerned with the mathematical formulation and solution of the equations governing the thermal-hydraulic behavior within the reactor core.
 
-All operating commercial reactors within the United States are of an LWR design.
+All operating commercial reactors within the United States are of a vertically oriented LWR design.
 The safety analyses required for licensing necessitate the modeling of water in both its liquid and its gaseous phases.
 This fact has driven the development of safety software that can model the behavior of water under an extensive range of thermodynamic states, including multiple phases.
-There are several formulations of the governing conservation equations used to predict the thermal-hydraulic response of the nuclear reactor core to transient plant conditions.
-
 Several codes are widely available for simulating the thermal-hydraulic response of an NPP during postulated accidents.
 These safety codes can be divided into two large categories: system analysis codes, and sub-channel analysis codes.
 While there is a swath of overlap between the capabilities of these two categories, each has its own particular strengths and weaknesses.
@@ -33,13 +31,12 @@ In the work that follows, the governing physics and the computational framework 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Geometry of Interest}
 \label{sect:topology}
-The first step in any simulation, in this case the thermal-hydraulic behavior of the core of a nuclear reactor, is to create a discrete computational representation of the domain.
+The first step in any simulation of the thermal-hydraulic behavior of the core of a nuclear reactor is to create a discrete computational representation of the domain.
 The computational grid used in \cobra{} to represent the physical model is a staggered mesh.
 With a staggered mesh, the domain is divide into two overlapping meshes.
 There is one mesh comprised of continuity volumes and another comprised of momentum volumes; see \fig{fig:staggered_mesh}.
 Thermodynamic variables are defined as constant over the continuity volumes, while momenta are defined as constant over momentum volumes.
 The edges of the continuity volumes align with the center of the momentum volumes.
-The total number of continuity volumes in a given channel is $n$ while the number of momentum volumes is $n+1$.
 
 \begin{figure}[ht]
 \begin{center}
@@ -63,6 +60,7 @@ The total number of continuity volumes in a given channel is $n$ while the numbe
 The computational modeling framework involves two primary components: sections and channels.
 The total axial length of the problem, $L$, is divided into $M$ sections, $S_i$.
 Each section is defined by two bounding elevations and a spatial discretization of that span into $J$ discrete non-overlapping axial segments, $\Delta x_{i,j}$, that represent the axial spacing of the continuity volumes.
+The total number of continuity volumes in a given channel is $n$ while the number of momentum volumes is $n+1$.
 The particular spatial discretization of a given section is independent from that of the other sections.
 A sum of the lengths of each section provides the total axial length of a given problem, \eqref{eqn:sections}.
 
@@ -71,7 +69,7 @@ A sum of the lengths of each section provides the total axial length of a given 
 L = \sum_{i=1}^{M} S_i = \sum_{i=1}^{M}\sum_{j=1}^{J(i)} \Delta x_{i,j}
 \end{equation}
 
-Within a given section, channels, $C_{k}$, are defined.
+Within a given section, channels are defined.
 A channel inherits the axial discretization of its parent section.
 The number of channels in a given section, $T(i)$, is independent of the number of channels in other sections.
 The total number of channels, $K$, within a given problem is defined given by \eqref{eqn:number_of_channels}.
@@ -148,6 +146,7 @@ The primary purpose of sub-channel analysis codes it to determine fuel integrity
 This necessitates the ability to effectively model the heat transfer between the coolant and the nuclear fuel. 
 \cobra{} is designed specifically for the evaluation of core cooling in LWRs.
 During postulated accidents, the coolant, H$_2$O, can undergo phase-change.
+There are several formulations of the governing conservation equations of fluid mechanics used to predict the thermal-hydraulic response of the nuclear reactor core to transient plant conditions.
 To model the complex phenomena of phase-change, the governing equations for the fluid mechanics within the core will be those of a multicomponent fluid \cite{Drew1998}.
 In particular, they are a subcategory of two-phase flow \cite{Todreas2011, Stewart1984, Ishii1984}.
 
@@ -168,23 +167,23 @@ Since all quantities are area-averaged, the tilde in \eqref{eqn:area_average} wi
 \end{equation}
 
 The particular formulation of the two-phase flow equation used in \cobra{} is commonly referred to as a two-phase, three-field formulation.
-The designation as a three-field formulation comes from the three water fields are simulated by the software. 
+The designation as a three-field formulation comes from the three water fields that are simulated by the software. 
 To more accurately capture the phenomena of interest during accident scenarios, the liquid and the gaseous phases are each divided into two distinct fields.
 The two fields of the liquid phase are a continuous liquid field and an entrained liquid droplet field.
 The gaseous phase in composed of a \ncg{} field and a water-vapor field. 
-This ability to track the different fields within a phase provides two important benefits to safety analysis: the ability to account for the effects of \ncgs{} on condensation, and the ability to model the effects of the dispersed liquid droplets on heat transfer.
-The benefits of modeling the dispersed liquid field allow to capture these complex hydrodynamic phenomena have inspired the developers of the French CATHARE software to migrate to a similar three-field formulation in the next version of their software \cite{Emonot2011}.
+This ability to track the different fields within a phase provides two important benefits to safety analysis: the ability to account for the effects of \ncgs{} on condensation, and the ability to model the effects of the entrained liquid droplets on heat transfer.
+The benefits of modeling the entrained liquid field which allow the capturing of these complex hydrodynamic phenomena have inspired the developers of the French CATHARE software to migrate to a similar three-field formulation in the next version of their software \cite{Emonot2011}.
 
-Given the four fields of interest, in axial flow there are twelve conservation equations, one each for the mass, momentum, and energy of each of the four fields.
+Given the four fields of interest, there are twelve conservation equations in axial flow, one each for the mass, momentum, and energy of each of the four fields.
 These equations allow for a description of the time-dependent behavior of the in-core fluid.
 In addition, closure relationships are necessary to describe the interactions between the various fields and their interfacial transfer terms.
 However, additional assumptions are made to reduce the number of required conservation laws and the number of corresponding closure relationships.
-The following is a list of assumptions that are made to reduce the complexity of the governing equations.
+The following is a list of the assumptions that are made in \cobra{} to reduce the complexity of the governing equations.
 
 \begin{itemize}
 \item{
-Thermodynamic and pressure equilibrium exists between the continuous liquid film and the entrained liquid droplets.
-The basis for this assumption is that while the entrained droplets are here being modeled by a separate set of governing equations than those of the continuous liquid field, in reality the droplets are constantly entraining and depositing with the continuous liquid field. 
+Thermodynamic and pressure equilibrium exists between the continuous liquid field and the entrained liquid field.
+The basis for this assumption is that while the entrained droplets are here being modeled by a separate set of governing equations than those of the continuous liquid field, in reality the droplets are constantly entraining from and depositing to the continuous liquid field. 
 }
 \item{
 The liquid and gaseous phases are assumed to be in pressure equilibrium with the interface between the phases.
@@ -202,6 +201,10 @@ The wall-shear effects of viscosity are accounted for via empirically based fric
 }
 \item{
 Being that \cobra{} was developed primarily as a sub-channel analysis tool for NPPs with a vertically oriented core, there is an assumption that the primary flow direction is in-line with the gravity vector, which will be referred to as the axial flow direction.}
+\item{
+The mechanical energy of the phases is neglected in the conservation of energy. 
+The assumption is that in the simulations of interest the mechanical energy term is negligible.
+}
 \end{itemize}
 
 \subsection{Governing Equations}
@@ -213,7 +216,7 @@ The details of this system of PDEs are discussed below.
 \subsubsection{Conservation of Mass Equations}
 \label{subsubsect:mass_equations}
 
-There are four equations representing the conservation of mass of the \ncg{} field \eqref{eqn:conservation_of_ncg}, the water vapor field \eqref{eqn:conservation_of_vap}, the continuous liquid field \eqref{eqn:conservation_of_liq}, and the dispersed liquid field \eqref{eqn:conservation_of_ent}.
+There are four equations representing the conservation of mass of the \ncg{} field \eqref{eqn:conservation_of_ncg}, the vapor field \eqref{eqn:conservation_of_vap}, the continuous liquid field \eqref{eqn:conservation_of_liq}, and the entrained liquid field \eqref{eqn:conservation_of_ent}.
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:conservation_of_ncg}
@@ -228,7 +231,7 @@ There are four equations representing the conservation of mass of the \ncg{} fie
 
 The left hand sides of \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:conservation_of_ent} represent the Lagrangian derivative for the given field.
 The terms on the right hand side represent the volumetric inter-field ($S^{'''}$), inter-phase ($\Gamma^{'''}$),  and external ($s_{m,k}$) sources or sinks of mass.
-Since there are two liquid fields, the net phasic mass transfer between the water-vapor field and the liquid fields, $\Gamma^{'''}$, is apportioned between the continuous liquid field and the dispersed liquid field.
+Since there are two liquid fields, the net phasic mass transfer between the water-vapor field and the liquid fields, $\Gamma^{'''}$, is apportioned between the continuous liquid field and the entrained liquid field.
 This division is given by \eqref{eqn:apportionment_of_mass_transfer}, where $\eta$ is an apportionment factor. 
 
 \begin{equation}
@@ -236,7 +239,7 @@ This division is given by \eqref{eqn:apportionment_of_mass_transfer}, where $\et
 \Gamma^{'''} = \Gamma^{'''}_v = -( \Gamma^{'''}_e + \Gamma^{'''}_l ) =  \eta \Gamma^{'''} + (1 - \eta)\Gamma^{'''} = \Gamma^{'''}
 \end{equation}
 
-The inter-field transfer of mass occurs only between the continuous and dispersed liquid fields, \eqref{eqn:entrainment_deentrainment}.
+The inter-field transfer of mass occurs only between the continuous and entrained liquid fields, \eqref{eqn:entrainment_deentrainment}.
 
 \begin{equation}
 \label{eqn:entrainment_deentrainment}
@@ -244,9 +247,9 @@ S^{'''}_l + S^{'''}_e = 0
 \end{equation}
 
 Within the conservation of mass equations, several assumptions from \sect{subsect:assumptions} are evident.
-The mechanical equilibrium of the \ncg{} and the vapor field manifest itself in a singular velocity for the two gaseous fields: $\vec{u}_g$, where the $g$ subscript denotes the total gaseous phase.
+The mechanical equilibrium of the \ncg{} and the vapor field manifest itself in the singular velocity for the two gaseous fields: $\vec{u}_g$, where the $g$ subscript denotes the total gaseous phase.
 Dalton's Law allows the two gaseous fields to occupy the same volume, thus providing for a singular volume fraction, $\alpha_g$.
-The thermodynamic equilibrium of the two liquid fields result in only one liquid density, $\rho_l$.
+The thermodynamic equilibrium of the two liquid fields results in only one liquid density, $\rho_l$.
 
 \subsubsection{Conservation of Energy Equations}
 \label{subsubsect:energy_equations}
@@ -398,7 +401,7 @@ The vector, $\vec{y}$, of conserved quantities is defined in \eqref{eqn:conserve
 \section{Numeric Approximations}
 \label{sect:numeric_approximation}
 The set of conservation laws, \eqref{eqn:conservation_equations}, governing the fluid mechanics within the geometry of interest do not have a general closed form solution.
-As such, methods need to be selected to numerically approximate their solutions.
+As such, methods need to be selected to numerically approximate its solution.
 
 \subsection{Spatial Approximations}
 \label{subsect:spatial_approx}
@@ -431,10 +434,9 @@ For example, the velocity $u_j$ would be spatially located at center of the mome
 \label{fig:vertical_pipe_with_cells}
 \end{figure}
 
-Recalling the staggered grid from \sect{sect:topology}, the six scalar conservation laws, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:con_energy_liq}, are each integrated over the continuity volumes.
+Recalling the staggered mesh from \sect{sect:topology}, the six scalar conservation laws, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:con_energy_liq}, are each integrated over the continuity volumes.
 The assumption in these integrals is that the value of the conserved quantities and all thermodynamically-related variables are constant within a given volume.
-\fig{fig:constant_value} shows a graphical representation of this idea for a generic function $f(x)$ over several spatial continuity volumes. For illustrative purposes, \eqref{eqn:conservation_of_liq} will be integrated over a given volume, $V_j$, as shown in \fig{fig:single_volume}.
-
+\fig{fig:constant_value} shows a graphical representation of this idea for a generic function $f(x)$ over several spatial continuity volumes. 
 
 \begin{figure}[ht]
 \begin{center}
@@ -457,6 +459,10 @@ The assumption in these integrals is that the value of the conserved quantities 
 \label{fig:constant_value}
 \end{figure}
 
+Within a channel, a given continuity volume has a constant cross-sectional area, $A_{c_{j}}$, and a length of $\Delta x_{j}$.
+The cross-sectional area of the boundary between two continuity volumes is given by the cross-section area of the momentum volume at that boundary, $A_{m}$.
+The volume integrated equation is given by \eqref{eqn:spatially_discrete_liq_m_con}.
+For illustrative purposes, \eqref{eqn:conservation_of_liq} will be integrated over a given volume, $V_j$, as shown in \fig{fig:single_volume}.
 
 \begin{figure}[h!t]
 \begin{center}
@@ -480,12 +486,8 @@ The assumption in these integrals is that the value of the conserved quantities 
 \label{fig:single_volume}
 \end{figure}
 
-Within a channel, a given continuity volume has a constant cross-sectional area, $A_{c_{j}}$, and a length of $\Delta x_{j}$.
-The cross-sectional area of the boundary between two continuity volumes is given by the cross-section area of the momentum volume at that boundary, $A_{m}$.
-The volume integrated equation is given by \eqref{eqn:spatially_discrete_liq_m_con}.
-
 For the mass-flux terms evaluated on the continuity volume edge, the advected quantity is evaluated using a 1st order upwind method \cite{Tannehill1997}.
-The velocity and cross-sectional area utilized in the continuity flux terms, $u_j$ and $A_{m,j}$, have the values defined at the center of the momentum volume that aligns with the edge of continuity volumes.
+The velocity and cross-sectional area utilized in the continuity flux terms, $A_{m,j}$ and $u_j$, have the values defined in the momentum volume that aligns with the edge of continuity volumes.
 The sign of the velocity at the volume boundary determines the value of the donored quantity, $<a>_{d,j-\frac{1}{2}}$.
 A generic formulation for this scheme is given by \eqref{eqn:upwind_donoring}.
 The same general procedure is used for the other five scalar conservation equations.
@@ -493,13 +495,11 @@ The same general procedure is used for the other five scalar conservation equati
 \begin{IEEEeqnarray}{lcl}
 \int_{V_j}\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } & + & \nabla \cdot \left( \alpha_l \rho_l u_l \right) \mathrm{d}V = \int_{V_j} \left(-(1-\eta)\Gamma^{'''} - S^{'''} + s_{m,l}\right) \mathrm{d}V \nonumber \\
 V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\int_{V_j}\nabla \cdot \left( \alpha_l \rho_l u_l \right) \mathrm{d}V -(1-\eta_j)\Gamma_j - S_j + s_{m,l,j}V_j \nonumber \\
-V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -A_{m,j}\left[\alpha_l \rho_l u_l \right]_{x_{j-\frac{1}{2}}}^{x_{j+\frac{1}{2}}} -(1-\eta_j)\Gamma_j - S_j + s_{m,l,j}V_j \nonumber \\
+V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left[\alpha_l \rho_l u_l A_{m}\right]_{x_{j-\frac{1}{2}}}^{x_{j+\frac{1}{2}}} -(1-\eta_j)\Gamma_j - S_j + s_{m,l,j}V_j \nonumber \\
 \label{eqn:spatially_discrete_liq_m_con}
-V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -A_{m,j}\left( <\alpha_l \rho_l>_{d,j+\frac{1}{2}} u_{l,j+1} - <\alpha_l \rho_l>_{d,j-\frac{1}{2}} u_{l,j} \right) \nonumber \\
+V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left( <\alpha_l \rho_l>_{d,j+\frac{1}{2}} u_{l,j+1} A_{m,j+1} - <\alpha_l \rho_l>_{d,j-\frac{1}{2}} u_{l,j} A_{m,j}\right) \nonumber \\
 & & -(1-\eta)\Gamma_j - S_j + s_{m,l,j}V_j
 \end{IEEEeqnarray}
-
-
 
 \begin{equation}
 \label{eqn:upwind_donoring}
@@ -511,10 +511,17 @@ The cross-sectional area for a momentum volume, $A_{m,j}$, can be defined indepe
 The momentum flux terms, \eqref{eqn:momentum_flux_terms}, are treated similarly to the flux terms in the continuity equations.
 \begin{equation}
 \label{eqn:momentum_flux_terms}
--\min\left(A_{m,j}, A_{m,j+1}\right)\left[<\alpha_l \rho_l u_l>_{d} u_l\right]_{x_{j-\frac{1}{2}}}^{x_{j+\frac{1}{2}}}
+-\left[<\alpha_l \rho_l u_l>_{d} u_l \tilde{A}\right]_{x_{j-\frac{1}{2}}}^{x_{j+\frac{1}{2}}}
 \end{equation}
+
 There are two primary differences.
-First, the momentum cross-sectional area is taken as the minimum of two areas from the adjoining momentum volumes.
+First, the area in the flux term, $\tilde{A}$, is taken as the minimum of two areas from the adjoining momentum volumes, \eqref{eqn:area_def}.
+
+\begin{equation}
+\label{eqn:area_def}
+\min\left(A_{m,j}, A_{m,j+1}\right)
+\end{equation}
+
 Second, the velocity that is used to determine the origination of the donored quantity is the arithmetic mean of the velocities from the two adjacent momentum volumes, \eqref{eqn:average_advecting_vel}.
 
 \begin{equation}
@@ -522,7 +529,7 @@ Second, the velocity that is used to determine the origination of the donored qu
 u_{k,j+\frac{1}{2}} = \frac{1}{2}\left(u_{k,j} + u_{k, j+1}\right)
 \end{equation}
 
-The ordering of the governing equations within a continuity volumes is as follows:
+The ordering of the governing equations within a given continuity volumes is as follows:
 
 \begin{enumerate}
 \item{Conservation of the \ncg{} field mass.}
@@ -552,12 +559,12 @@ Using the spatially discrete approximations defined in \sect{subsect:spatial_app
 \frac{\partial \,\vec{y} }{\partial t} = \vec{E}(\vec{y}(t))
 \end{equation}
 
-Given that there are nine conservation equations, the choice of which nine variables should be the independent parameters which will be solved for is another distinguishing characteristic of safety analysis codes.
+Given that there are nine conservation equations, the choice of which nine variables should be the independent parameters which will be solved for is another distinguishing characteristic of safety analysis.
 \cobra{} uses the following set of nine independent variables \eqref{eqn:independent_variables}.
 
 \begin{equation}
 \label{eqn:independent_variables}
-\vec{x} = [\alpha_{ncg}P_{ncg}, \alpha_g, P, \alpha_e, \alpha_gS h_v, (1 - \alpha_g) h_l, \dot{m}_g, \dot{m}_l, \dot{m}_e]^{T}
+\vec{x} = [\alpha_{ncg}P_{ncg}, \alpha_g, P, \alpha_e, \alpha_g h_v, (1 - \alpha_g) h_l, \dot{m}_g, \dot{m}_l, \dot{m}_e]^{T}
 \end{equation}
 
 The definition of $\dot{m}_k$ is given by \eqref{eqn:mom_dot}.
@@ -571,7 +578,7 @@ The averaging operator $<a>_{a}$ provides the average of a quantity from the two
 
 \begin{equation}
 \label{eqn:average_val}
-<a>_{j,a} = \frac{a_{j} + a_{j+1}}{2}
+<a>_{a,j} = \frac{a_{j} + a_{j+1}}{2}
 \end{equation}
 
 The choice of independent parameters used in \cobra{} is not the only option .
@@ -622,9 +629,9 @@ There are two subcategories for solving this one-step temporal-integration probl
 
 The final-stage conserved variables will be the new-time variables, $\vec{y}^{J} = \vec{y}^{n+1}$. 
 At each stage the choice of how to approximate the driving function, $\vec{E}_{j}^{*}$, can change in both its functional dependence upon the stage values of $\vec{y}^{j}$ and in which components of $\vec{E}^{*}$ are included.
-By excluding certain portions of $\vec{E}^{*}$ at certain stages, a time-splitting algorithm is developed.
+By excluding certain portions of $\vec{E}^{*}$ at certain stages, a time-splitting algorithm, or an operator-splitting algorithm, is developed.
 By changing the functional dependencies of terms within $\vec{E}^{*}$ at different stages, predictor-corrector methods, also called stabilizing correction methods, are generated. 
-A single-stage method is the degenerate case of $J = 1$.
+A single-stage method is the degenerate multi-stage case of $J = 1$.
 
 The conserved quantities within a continuity volume are nonlinear functions of the chosen independent parameters, \eqref{eqn:nonlinear_functions}, regardless of the approximation chosen for $\vec{E}^{*}$.
 
@@ -635,7 +642,7 @@ The conserved quantities within a continuity volume are nonlinear functions of t
 
 This nonlinearity necessitates the use of a nonlinear solver at every timestep.
 Any dependence of $\vec{E}^{*}$ on the new time parameters can create additional nonlinearities.
-The semi-discrete formulation, \eqref{eqn:simple_partial_t}, is expressed as a nonlinear function of $\vec{x}$ by \eqref{eqn:nonlinear_residuals}.
+The semi-discrete formulation, \eqref{eqn:simple_partial_t}, is expressed as a fully-discrete nonlinear function of $\vec{x}$ by \eqref{eqn:nonlinear_residuals}.
 
 \begin{equation}
 \label{eqn:nonlinear_residuals}
@@ -653,7 +660,7 @@ However, it has been shown that if the nonlinear problem, \eqref{eqn:nonlinear_r
 The method used to solve \eqref{eqn:nonlinear_residuals} for $\vec{x}^{n+1}$ in this work is Newton's method \cite{Deuflhard2004, Dennis1996}.
 The nonlinear residual being solved is a function of the new-time unknowns, $\vec{x}^{n+1}$.
 Newton's method is an iterative procedure to obtain $\vec{x}^{*}$ such that $\vec{F}(\vec{x}^{*}) = 0$.
-Since Newton's method is an iterative procedure for obtaining new-time variables, two superscripts will be required.
+Since Newton's method is an iterative procedure for obtaining the correct new-time variables, two superscripts will be required.
 The nonlinear iterate superscript will be $k$.
 This iteration is done by successive linearization of the nonlinear problem \eqref{eqn:newton_taylor}, where $\vec{\delta x}^k = \vec{x}^{n+1,k+1} - \vec{x}^{n+1,k}$.
 
@@ -672,8 +679,8 @@ The algorithm is then one of finding successive updates, $\vec{\delta x}^k$, by 
 
 Since the system of nonlinear equations being solved represents a transient simulation, the iterations at each timestep start with an initial guess for the new time variables that is equal to the old-time variables, $\vec{x}^{n+1,0} = \vec{x}^{n}$.
 The underlying assumption of this initial value is that the independent parameters will not change greatly over a timestep, and the old-time variables will provide an initial vector that is within the radius of convergence of Newton's method.
-\alg{alg:local_newton} provides an overview of a transient simulation using a local Newton's method for a single-stage temporal integration scheme.
-The algorithm generalizes to a multi-stage method by enclosing the Newton loop within a stage loop.
+\alg{alg:local_newton} provides an overview of a transient simulation using a Newton's method for a single-stage temporal integration scheme.
+The algorithm generalizes to a multi-stage temporal integration method by enclosing the Newton loop within a stage loop.
 
 \begin{algo}[H]
 \caption{Local Newton's method for single-stage temporal integration.}
@@ -726,7 +733,7 @@ The nonlinear vector notation formulation for this method is given by \eqref{eqn
 
 \begin{equation}
 \label{eqn:explicit}
-\vec{F}(\vec{x}^{n+1}) = \vec{y}^{n+1} - \vec{y}^{n} - \Delta t \vec{E}(\vec{y}(\vec{x}^{n}))
+\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \Delta t \vec{E}(\vec{y}(\vec{x}^{n}))
 \end{equation}
 
 The algorithmic implementation is shown in \alg{algo:explicit}.
@@ -779,7 +786,7 @@ The fully implicit method temporally approximates $\vec{E}^{*}$ as a function on
 
 \begin{equation}
 \label{eqn:implicit}
-\vec{F}(\vec{x}^{n+1}) = \vec{y}^{n+1} - \vec{y}^{n} - \Delta t \vec{E}(\vec{y}(\vec{x}^{n+1}))
+\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \Delta t \vec{E}(\vec{y}(\vec{x}^{n+1}))
 \end{equation}
 
 This method has the advantage of not being limited by a CFL number.
@@ -816,9 +823,9 @@ The computational implementation of a fully implicit method is presented in \alg
 \subsection{Semi-Implicit Method}
 \label{subsect:semi_implicit}
 
-The semi-implicit method was developed to overcome the sonic Courant limitations of the explicit method while avoiding the computational cost of the fully implicit method \cite{Liles1978}.
+The semi-implicit method was developed to overcome the sonic Courant limitations of the explicit method while avoiding the high  computational cost of the fully implicit method \cite{Liles1978}.
 The distinguishing characteristic of the semi-implicit method is the evaluation of the pressure gradient terms in the momentum conservation equations using new-time values. 
-Since the work being done here will deal with the semi-implicit method, detailed description of the semi-implicit equations used in \cobra{} are provided.
+Since the work being done here will deal with the semi-implicit method, a detailed description of the semi-implicit equations used in \cobra{} are provided.
 The momentum equations, neglecting spatial discretization notation and external sources, are given in \eqref{eqn:si_mom_liq} -- \eqref{eqn:si_mom_ent}.
 
 \begin{IEEEeqnarray}{rCl}
@@ -837,7 +844,7 @@ The momentum equations, neglecting spatial discretization notation and external 
 In the above equations, the flux terms are summed over $NK$, which indicates the number of continuity volumes connected to a given momentum volume.
 The coefficients $K$ represent effective friction factors calculated using parameters only from time n.
 The interfacial transfer terms are explicitly evaluated.
-The only new time parameters used in \eqref{eqn:si_mom_liq} -- \eqref{eqn:si_mom_ent} are flow rates and pressures.
+The only new time parameters used in \eqref{eqn:si_mom_liq} -- \eqref{eqn:si_mom_ent} are momenta and pressures.
 The implicit evaluation of the pressure gradient in the momentum equations is what leads to a CFL limits known as the material Courant limit.
 Similar to the sonic Courant limit discussed in \sect{subsect:numerics_explicit}, the material Courant limit dictates the largest $\Delta t$ that can be achieved while maintaining a stable solution algorithm.
 In this method, the Courant limit is given by \eqref{eqn:si_cfl}.
@@ -881,7 +888,7 @@ u^{n+1}_k = \frac{\dot{m}^{n+1}_k}{A_m <\alpha_k \rho_k>^{n}_{a}}
 \end{equation}
 
 The donoring operator $<a^n>^{n}_{d}$ is an extension of \eqref{eqn:upwind_donoring}.
-The donored quantities and the velocity used to determine the direction of donoring are evaluated with their old-time values.
+The donored quantities and the velocities used to determine the direction of donoring are evaluated with their old-time values.
 
 By default, \cobra{} uses a single-shot linearization method to resolve the nonlinearities.
 \alg{alg:si_legacy} shows the traditional algorithm.
@@ -909,12 +916,12 @@ The linear algebra problem to be solved during step 5 is presented in \eqref{eqn
  \begin{equation}
  \label{eqn:si_solve}
  \begin{bmatrix} 
- \vec{J}_{m_1,m_1} & \vec{J}_{m_1,c_1} & \vec{0} & \vec{0} & \vec{0} & \vec{0}\\
- \vec{J}_{c_1,m_1} & \vec{J}_{c_1,c_1} & \vec{J}_{c_1,m_2} & \vec{0} & \vec{0} & \vec{0} \\
- \vec{0} & \vec{J}_{m_2,c_1} & \vec{J}_{m_2,m_2} & \vec{J}_{m_2,c_2} & \vec{0} & \vec{0} \\
- \vec{0} & \vec{0} & \vec{J}_{c_2,m_2} & \vec{J}_{c_2,c_2} & \vec{J}_{c_2,m_3} & \vec{0} \\
- \vec{0} & \vec{0} & \vec{0} & \vec{J}_{m_3,c_2} & \vec{J}_{m_3,m_3} & \vec{J}_{m_3,c_3} \\ 
- \vec{0} & \vec{0} & \vec{0} & \vec{0} & \vec{J}_{c_3,m_3} & \vec{J}_{c_3,c_3}  
+ \vec{J}_{m_1} & \vec{J}_{m_1,c_1} & \vec{0} & \vec{0} & \vec{0} & \vec{0}\\
+ \vec{J}_{c_1,m_1} & \vec{J}_{c_1} & \vec{J}_{c_1,m_2} & \vec{0} & \vec{0} & \vec{0} \\
+ \vec{0} & \vec{J}_{m_2,c_1} & \vec{J}_{m_2} & \vec{J}_{m_2,c_2} & \vec{0} & \vec{0} \\
+ \vec{0} & \vec{0} & \vec{J}_{c_2,m_2} & \vec{J}_{c_2} & \vec{J}_{c_2,m_3} & \vec{0} \\
+ \vec{0} & \vec{0} & \vec{0} & \vec{J}_{m_3,c_2} & \vec{J}_{m_3} & \vec{J}_{m_3,c_3} \\ 
+ \vec{0} & \vec{0} & \vec{0} & \vec{0} & \vec{J}_{c_3,m_3} & \vec{J}_{c_3}  
  \end{bmatrix} \begin{bmatrix}
  \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
  \vec{\delta m}_{2} \\ \vec{\delta c}_{2} \\
@@ -1044,7 +1051,7 @@ For the simple geometry considered in this example, the resultant pressure matri
  \end{equation}
 
 In step four, the pressure matrix is then solved for the pressure updates in every continuity volume.
-This step is performed using the sparse-matrix solver, SuperLU \cite{Li1999}. 
+This step is performed using either the sparse-matrix solver, SuperLU \cite{Li1999} or direct Gaussian elimination. 
 
 Step five is the use the vector of pressure updates to obtain the continuity updates in every volume from \eqref{eqn:si_solve_4} and to obtain the updates for the momentum variables from the momentum rows of \eqref{eqn:si_solve_1}.
 
@@ -1053,7 +1060,7 @@ As \cobra{} is a single-shot algorithm, no additional Newton steps are taken.
 
 \subsection{Stability-Enhancing Two-Step Method} 
 \label{subsect:numerics_sets}
-In order to overcome the material Courant limit placed upon the simulation by the semi-implicit method, the Stability Enhancing Two-Step (SETS) method was developed \cite{Mahaffy1982}.
+In order to overcome the material Courant limit placed upon simulations by the semi-implicit method, the Stability Enhancing Two-Step (SETS) method was developed \cite{Mahaffy1982}.
 While not unconditionally stable, as the fully implicit method, the SETS method allows for timesteps to exceeds the material Courant limit.
 The SETS method overcomes the material Courant limit by taking a multi-stage approach to the temporal integration.
 The SETS method presented below uses velocities as independent parameters, not momenta.
@@ -1069,10 +1076,10 @@ The first difference is that the momentum flux terms are evaluated using the sta
 The second difference is that the nonlinearities in the momementum equations, arising from interfacial and wall drag, are subject to a single-shot linearization.
 The single-shot nature of the momentum equations allows for the reduction of the system into coupled continuity volumes as in the semi-implicit method.
 The nonlinear continuity equations are then solved via Newton's method.
-Stated another way, the Jacobians for the momentum equations are fixed at the first iterate, while the Jacobians for the mass and energy equations are updated at each iterate.
-The only results from stage two that are used in stage three are the final velocities, $\vec{u}^{n+1}$.
+Stated another way, the Jacobians for the momentum equations are fixed at their first Newton iterate value, while the Jacobians for the mass and energy equations are updated at each iterate.
+The only results from stage two that are used in stage three are the velocities, $\vec{u}^{n+1}$.
 Stage three, the mass and energy equations are solved such that all continuity variables are implicit and the final time velocities are from stage two.
-This final stage allows for timesteps that exceed the material courant limit.
+This final stage allows for timesteps that exceed the material Courant limit.
 The resulting system of coupled continuity equations is then solved.
 For each stage, the residual and Jacobian matrix will be denoted by $\vec{F}_k$ and $\vec{J}_k$, with $k = 1 \to 3$.
 
@@ -1106,7 +1113,6 @@ The TRACE code uses an $L_{\infty}$ norm of the unscaled Newton updates for the 
 \subsection{Nearly-Implicit Method}
 \label{subsect:numerics_nearly_implicit}
 Another possible method used to overcome the material Courant limit without incurring the same computational cost as the fully implicit method is the Nearly-Implicit method \cite{Trapp1986, RELAP}.
-
 The Nearly-Implicit method is a multi-stage temporal integration scheme.
 In the first stage, the approximation  of $\vec{E}^{*}$ is one in which the mass and energy terms are implicit except for the donored values in the flux terms. 
 In addition, the the chain rule is applied to the continuous temporal derivatives, resulting in mass equations like \eqref{eqn:ni_dt}.
@@ -1180,15 +1186,15 @@ However, certain physical limits have been identified that need to be considered
 When the two-phase flow within \cobra{} approaches that of single-phase flow, there is a lower limit imposed upon the volume fraction of the phase that is disappearing.
 This means that \cobra{} does not transition between the two-phase flow governing equations and the governing equations for single-phase flow.
 Even during simulated single-phase flow, the non-dominant phase is still present, but at a very small volume fraction.
-However, since the \ncgs{} and the vapor liquid fields share a common volume fraction, the partial pressure of the \ncgs{} is allows to go to zero. 
+However, since the \ncgs{} and the vapor fields share a common volume fraction, the partial pressure of the \ncgs{} is allows to go to zero. 
 Since \cobra{} incorporates two liquid fields, the lower limit for the aggregate liquid volume fraction, $\alpha_e + \alpha_l$, is equally divided between the two liquid fields.
-As a phase approaches depletion, $\alpha_k \rightarrow \alpha_{k,\text{MIN}}$, the velocities between the two phases are required to approach.
+As a phase approaches depletion, $\alpha_k \rightarrow \alpha_{k,\text{MIN}}$, the velocities between the two phases are required to converge.
 This velocity equilibrium is imposed by artificially increasing the interfacial drag between the two phases.
 
 Upon completion of a timestep within \cobra{}, there are certain constraints that are imposed upon the independent parameters.
 These constraints are designed to deal with the possibility that the obtained solution may not be an accurate one.
 After the single Newton step, the updated parameters are evaluated to determine their validity.
-There are two ways of resolving potentially invalid solutions: limiting and failure.
+There are two ways of resolving potentially invalid solutions: parameter limiting and timestep failure.
 The limiting procedure can either truncate the updated parameter so that it falls within a valid range, or the timestep can be considered a failure.
 When a predicted volume fraction falls outside of its valid range, it is truncated to obey the constraint of equation \eqref{eqn:volume_fraction}.
 
@@ -1224,8 +1230,7 @@ The \dt{} for any timestep is given by \eqref{eqn:time_step}.
 \Delta t^{n \rightarrow n+1} = \max\left[ \Delta t_{\text{MIN}}, \min\left[1.2 \Delta t^{n-1 \rightarrow n}, 0.85 \Delta t_{\text{CRNT}}, \Delta t_{\text{MAX}} \right]\right]
 \end{equation}
 
-$\Delta t_{\text{CRNT}}$ is the most restrictive Courant number calculated for both axial and transverse flow.
-In addition, there is a $\Delta t$ that is based upon the time calculated to empty a given volume of the mass of a given field.
+$\Delta t_{\text{CRNT}}$ is the most restrictive Courant number calculated for both axial and transverse flow, and a $\Delta t$ that is based upon the time calculated to empty a given volume of the mass of a given field.
 The most restrictive of the Courant timestep is used as $\Delta t^{n \rightarrow n+1}$.
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1238,13 +1243,13 @@ The most restrictive of the Courant timestep is used as $\Delta t^{n \rightarrow
 \section{Domain Coupling}
 \label{sect:code_coupling}
 
-\cobra{} possesses the physics necessary to model the complicated flow patterns within the core encountered during postulated LOCAs.
+\cobra{} possesses the physics necessary to model the complicated in-core flow patterns and heat transfer encountered during a postulated LOCA.
 However, it lacks the detailed models for NPP components (pumps, valves, accumulators, pressurizers, etc) that are traditionally available from system analysis codes.
-When modeling full NPP transients, it is advantageous to use sub-channel software for the core and system analysis software to model the rest of the NPP.
+When modeling full NPP transients, it is advantageous to use sub-channel software for the core and system analysis software for the rest of the NPP.
 The combination of different specialized software is a common practice.
 This coupling of capabilities can be accomplished in two ways: the two pieces of software can be merged, or they can be coupled via data exchange.
 Examples of the first method are MARS \cite{Jeong2008}, COBRA/TRAC \cite{Thurgood1983c}, and TRACE \cite{TRACE}.
-Coupling software via data exchange is the more common option \cite{Makihara2003, Aumiller2002, Aumiller2001, Avramova2006, Weaver2002, Rodriguez2002}.
+Coupling software via data exchange is a more common option \cite{Makihara2003, Aumiller2002, Aumiller2001, Avramova2006, Weaver2002, Rodriguez2002}.
 
 The use of explicit coupling can lead to a sonic Courant limit imposed at the boundary of the two coupled systems \cite{Ragusa2009, Aumiller2001}.
 To circumvent the sonic Courant limit, a semi-implicit method for the coupling of software via data exchange has been developed for thermal-hydraulic simulations \cite{Weaver2002, Aumiller2002}.
@@ -1252,13 +1257,12 @@ This coupling technique allows for the material Courant limit to be uniformly ap
 This technique is of direct interest to the work that will be performed.
 
 The coupling of the different software involves the use of a third-party message passing interface.
-The program used for the software coupling in the papers of interest is the Parallel Virtual Machine (PVM) software \cite{Geist1994}.
-PVM allows the data exchange to occur between separate software.
+The program used for the software coupling in the papers of interest is the Parallel Virtual Machine (PVM) \cite{Geist1994}.
+PVM allows the data exchange to occur between the coupled software.
 As formulated in the original papers, the software coupling technique involves decomposing the coupled problem into two pieces, the master and the slave domains.
-The master and slave domains have a one-to-one correspondence with the different software domains.
 In this respect, the problem can be thought of as being decomposed into a subdomain controlled by a master program and a slave domain being controlled by a slave program.
 The original paper presents the method in terms of the RELAP5-3D conservation equations, which are different from those in \cobra{}.
-The coupling method developed presents RELAP5-3D as both the master and slave software \cite{Weaver2002}.
+The coupling method first developed presented RELAP5-3D as both the master and slave software \cite{Weaver2002}.
 Later work showed how this base method could be extended to allow coupling between RELAP5-3D and the \cobra{} subchannel analysis software \cite{Aumiller2002}.
 This reformulation was designed to allow for a consistent transition between a two-phase, two-field based solver and and a two-phase, three-field based solver. 
 A short outline of the method as formulated for RELAP5-3D coupling is presented below.
@@ -1266,7 +1270,7 @@ A short outline of the method as formulated for RELAP5-3D coupling is presented 
 The semi-implicit domain decomposition is accomplished via the staggered mesh formulation.
 The master domain is truncated on a continuity volume.
 The unknowns at the boundary of the coupled volumes, the fluxes of conserved continuity quantities, are retained as intrinsic unknowns during the decomposition of the domain into a pressure matrix.
-Upon formulation of the pressure matrix, the Newton update for the pressure will be expressed a linear combination of all of the unknown mass and energy fluxes through the coupled boundaries of the domain, \eqref{eqn:si_relap} \cite{Weaver2002}.
+Upon formulation of the pressure matrix, the Newton update for the pressures will be expressed as a linear combination of all of the unknown mass and energy fluxes through the coupled boundaries of the domain, \eqref{eqn:si_relap} \cite{Weaver2002}.
 
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:si_relap}
@@ -1285,7 +1289,7 @@ Upon formulation of the pressure matrix, the Newton update for the pressure will
 From the point-of-view of the slave process, the momentum volume between the master domain and the slave domain is a traditional momentum volume.
 Since the interface boundary between the slave and master domain is composed entirely of momentum volumes, the only implicit unknowns from the master domain used in the slave domain are the pressures from the coupled continuity volumes.
 These implicit pressures are expressed in terms of the old-time pressures and an update to the pressure from the old-time value and the new-time values.
-The pressure update for the connected master boundaries, $\delta P_{\text{cbv}}^{n+1}$, is expressed in terms of the unknown velocities in the slave momentum volumes adjacent to the boundary of the master continuity volumes, \eqref{eqn:pressure_coupled} \cite{Weaver2002}.
+The pressure update for the continuity volumes at the boundary of the master domain, $\delta P_{\text{cbv}}^{n+1}$, is expressed in terms of the unknown velocities in the slave momentum volumes adjacent to the boundary of the master continuity volumes, \eqref{eqn:pressure_coupled} \cite{Weaver2002}.
 
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:pressure_coupled}
@@ -1302,13 +1306,13 @@ The pressure update for the connected master boundaries, $\delta P_{\text{cbv}}^
 This formulation allows for the updated pressure in the master domain to be calculated internally to the slave domain without inter-software communication.
 The intent of this formulation was to enable the semi-implicit method to be used for software coupling.
 
-The coupling of system analysis codes and sub-channel codes can also be viewed through a different lens.
-If the global problem, the balance-of-plant (e.g., RELAP5-3D) and the in-core region (e.g., \cobra{}), are considered to a part of a global domain, $\Omega$, then each piece of software can be viewed as solving a smaller portion of the global domain, $\Omega_i$.
+The coupling of system analysis codes and sub-channel codes can also be viewed through the following lens.
+If the global problem, the balance-of-plant (e.g., RELAP5-3D) and the in-core region (e.g., \cobra{}), are considered to be part of a global domain, $\Omega$, then each piece of software can be viewed as solving a smaller portion of the global domain, $\Omega_i$.
 The use of more detailed physics for the in-core thermal-hydraulic behavior is a particular application of model reduction \cite{Paraschivoiu1999}.
 
 Through this lens, if the semi-implicit coupling methodology is used to couple two pieces of software that use the semi-implicit method, then the boundaries between the two domains no longer represent a disparity in the global method used.
 This fact enables the use of the material Courant limit at coupling boundaries.
-then This method of domain decomposition allows for each domain to use the most recent information from each domain in its calculation.
+This method of domain decomposition allows for each domain to use consistent information from each domain in its calculation.
 
 Additionally, if the boundary values are explicitly evaluated, then the decomposition of the global problem could be viewed as an application of an additive Schwarz domain decomposition algorithm.
 In an additive Schwarz algorithm, the boundary values for each subdomain are functions only of the old-time values in the other domains.
@@ -1316,9 +1320,9 @@ From this view point, the sonic Courant limit observed at domain coupling bounda
 
 The additive Schawrz method has seen extensive use as a nonlinear preconditioner for fully implicit CFD calculations \cite{Cai2009, Cai2002}.
 In particular a nonlinearly convergent solution within each subdomain is obtained at each timestep.
-It has been shown that the treatment of localized nonlinearities via domain decomposition allows for globalization strategies to be used that would otherwise exhibit stalled convergence if the full domain was subjected to a globalization strategy \cite{Cai2011}.
+It has been shown that the treatment of localized nonlinearities via domain decomposition allows for globalization strategies to be used in the global Newton step that would otherwise exhibit stalled convergence if the full domain was initially subjected to a globalization strategy \cite{Cai2011}.
 This work is based upon the concept of nonlinear domain decomposition and nonlinear elimination \cite{Lanzkron1996, Dryja1997}.
-However, these applications does not worry about consistency at the boundaries of the subdomains since the obtained subdomain solutions are used as a preconditioned initial guess for a global Newton-Krylov-Schwarz algorithm \cite{Chan1984}.
+However, these applications do not worry about consistency at the boundaries of the subdomains since the obtained subdomain solutions are only used as a preconditioned initial guess for a global Newton-Krylov-Schwarz algorithm \cite{Chan1984}.
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
