@@ -9,63 +9,59 @@
 %============================================================================
 
 \begin{nomenclature}
-\begin{description}
-\NomItem{NPP}{Nuclear Power Plant}
-\NomItem{NRC}{Nuclear Regulatory Commission}
-\NomItem{10CFR}{Title 10 of the Code of Federal Regulations}
-\NomItem{10CFR50}{Part 50 of 10CFR}
-\NomItem{SAR}{Safety Analysis Report}
-\NomItem{LWR}{Light Water Reactor}
-\NomItem{ECCS}{Emergency Core Cooling System}
-\NomItem{LOCA}{Loss-of-Coolant Accident}
-\NomItem{PWR}{Pressurized Water Reactor}
-\NomItem{BWR}{Boiling Water Reactors}
-\NomItem{$n$}{total number of continuity volumes}
-\NomItem{$n+1$}{total number of momentum volumes}
-\NomItem{$L$}{total axial length of the problem}
-\NomItem{$M$}{total number of sections a problem is divided into}
-\NomItem{$S_{i}$}{any given section a problem is divided into}
-\NomItem{$J$}{total number of discrete non-overlapping axial segments}
-\NomItem{$\Delta x_{i,j}$}{the length of any given discrete non-overlapping axial segments}
-\NomItem{$C_{k}$}{any given channel within a section}
-\NomItem{$T(i)$}{total number of channels within a section}
-\NomItem{K}{total number of channels within a problem}
-\NomItem{$A_{c_{k,j}}$}{the cross-sectional area of any given continuity volume}
-\NomItem{$A_{m_{k,j}}$}{the cross-sectional area of any given momentum volume}
-\NomItem{$\omega_{k}$}{total volume of a channel}
-\NomItem{$\Omega$}{total domain volume, the sum of all channel volumes}
-\NomItem{$\tilde{a}$}{any quantity of interest averaged over the cross-sectional flow area}
-\NomItem{A}{cross-sectional flow area}
-\NomItem{$S^{'''}$}{volumetric inter-field source or sink of mass}
-\NomItem{$\Gamma^{'''}$}{volumetric inter-phase source or sink of mass}
-\NomItem{$s_{m,k}$}{external source or sink of mass for a given field or phase k}
-\NomItem{$\eta$}{apportionment factor}
-\NomItem{$\vec{u}_{k}$}{velocity vector for field or phase k}
-\NomItem{$\rho_{k}$}{density of field or phase k}
-\NomItem{$\alpha_{k}$}{volume fraction of field or phase k}
-\NomItem{$\rho_{k}$}{density of field or phase k}
-\NomItem{$\alpha_{k} \rho_{k} h_{k}$}{enthalpy of field or phase k}
-\NomItem{$\Gamma^{'''} h^{'}_{k}$}{energy transfer due to phase change of water}
-\NomItem{$q^{'''}_{i,k}$}{energy transfer between the saturated interface and any given field or phase k}
-\NomItem{$q^{'''}_{g,l}$}{energy transfer between the non-condensable gases field and the liquid phase}
-\NomItem{$q^{'''}_{w,k}$}{energy transfer between a solid structure and any given field or phase k}
-\NomItem{$\alpha_k \frac{\delta P}{\delta t}$}{pressure work done by a given field or phase k}
-\NomItem{$s_{e,k}$}{external source or sink of energy for a given field or phase k}
-\NomItem{$\alpha_{k} \nabla P$}{pressure gradient acting on a field or phase k}
-\NomItem{$\alpha_{k} \rho_{k} \vec{g}$}{gravity body force acting upon field or phase k}
-\NomItem{$\tau^{'}_{w,k}$}{shear forces from contact between the channel wall and field or phase k}
-\NomItem{$\tau^{'}_{i,k_{1} k_{2}}$}{shear forces from contact between the field or phase $k_{1}$ and $k_{2}$}
-\NomItem{$\Gamma^{'''} \vec{u}^{'}$}{momentum contribution from the exchange of mass due to the phase change of water}
-\NomItem{$S^{'''} \vec{u}^{'}$}{momentum contribution from the exchange of mass between two liquid fields}
-\NomItem{$s_{p,k}$}{external source or sink of momentum for a given field or phase k}
-\NomItem{$\vec{e}$}{vector of conservation equations, except the temporal derivatives of the conserved quantities}
-\NomItem{$\vec{y}$}{vector of conserved quantities}
-\NomItem{$V_{j}$}{any given volume}
-\NomItem{$<a>_{d,j-\frac{1}{2}}$}{donored quantity}
-\NomItem{$\vec{E}$}{vector of conservation equations, spatially discrete version of $\vec{e}$}
-\NomItem{$\vec{x}$}{vector of nine independent variables used by COBRA}
-\NomItem{$\dot{m}_{k}$}{momentum of any given field or phase}
-\NomItem{$\vec{E}^{*}$}{vector of conservation equations, $\vec{E}(\vec{y}(\vec{x}))$, with approximated temporal integral of sources and sinks}
-\NomItem{$t^{i}$}{a discrete point in time}
-\end{description}
+\begin{longtable}{p{.15\textwidth} p{.70\textwidth} c} 
+\NomItem{NPP}{Nuclear Power Plan}{}
+\NomItem{NRC}{Nuclear Regulatory Commission}{}
+\NomItem{10CFR}{Title 10 of the Code of Federal Regulations}{}
+\NomItem{10CFR50}{Part 50 of 10CFR}{}
+\NomItem{SAR}{Safety Analysis Report}{}
+\NomItem{LWR}{Light Water Reactor}{}
+\NomItem{ECCS}{Emergency Core Cooling System}{}
+\NomItem{LOCA}{Loss-of-Coolant Accident}{}
+\NomItem{PWR}{Pressurized Water Reactor}{}
+\NomItem{BWR}{Boiling Water Reactors}{}
+\NomItem{$L$}{Axial length of the problem.}{$\displaystyle \left[\, \text{ft} \,\right]$}
+\NomItem{$M$}{Number of sections in problem.}{}
+\NomItem{$S_{i}$}{Indexed section.}{}
+\NomItem{$J_{i}$}{Number of axial continuity volumes in section $i$.}{}
+\NomItem{$\Delta x_{i,j}$}{Indexed axial continuity volume length.}{$\displaystyle \left[\, \text{ft} \,\right]$ }
+\NomItem{$T(i)$}{Number of channels in section $i$.}{}
+\NomItem{K}{Total number of channels in a problem.}{}
+\NomItem{$A_{c_{k,j}}$}{Cross-sectional area of indexed continuity volume.}{$\left[\, \text{ft}^2 \,\right]$ }
+\NomItem{$A_{m_{k,j}}$}{Cross-sectional area of indexed momentum volume.}{$\left[\, \text{ft}^2 \,\right]$ }
+\NomItem{$\omega_{k}$}{Volume of a geometric sub-component.}{$\left[\, \text{ft}^3 \,\right]$ }
+\NomItem{$\Omega$}{Volume of whole domain.}{$\left[\, \text{ft}^3 \,\right]$ }
+\NomItem{$\tilde{a}$}{Cross-sectionally averaged variable.}{}
+\NomItem{A}{cross-sectional flow area}{$\left[\, \text{ft}^2 \,\right]$ }
+\NomItem{$S^{'''}$}{Volumetric inter-field source or sink of mass}{ $\displaystyle \left[\, \frac{\text{lb}_{\text{m}}}{\text{ft}^3} \,\right] $}
+\NomItem{$\Gamma^{'''}$}{Volumetric inter-phase source or sink of mass}{ $\displaystyle \left[\, \frac{\text{lb}_{\text{m}}}{\text{ft}^3} \,\right] $}
+\NomItem{$s_{m,k}$}{Volumetric source or sink of mass for a given field or phase k}{ $\displaystyle \left[\, \frac{\text{lb}_{\text{m}}}{\text{ft}^3} \,\right] $}
+\NomItem{$\eta$}{apportionment factor}{ $\left[\, - \,\right] $}
+\NomItem{$\vec{u}_{k}$}{velocity vector for field or phase k}{}
+\NomItem{$\rho_{k}$}{Density of field or phase k}{}
+\NomItem{$\alpha_{k}$}{Volume fraction of field or phase k}{}
+\NomItem{$\alpha_{k} \rho_{k} h_{k}$}{enthalpy of field or phase k}{}
+\NomItem{$\Gamma^{'''} h^{'}_{k}$}{energy transfer due to phase change of water}{}
+\NomItem{$q^{'''}_{i,k}$}{energy transfer between the saturated interface and any given field or phase k}{}
+\NomItem{$q^{'''}_{g,l}$}{energy transfer between the non-condensable gases field and the liquid phase}{}
+\NomItem{$q^{'''}_{w,k}$}{energy transfer between a solid structure and any given field or phase k}{}
+\NomItem{$\alpha_k \frac{\delta P}{\delta t}$}{pressure work done by a given field or phase k}{}
+\NomItem{$s_{e,k}$}{external source or sink of energy for a given field or phase k}{}
+\NomItem{$\alpha_{k} \nabla P$}{pressure gradient acting on a field or phase k}{}
+\NomItem{$\alpha_{k} \rho_{k} \vec{g}$}{gravity body force acting upon field or phase k}{}
+\NomItem{$\tau^{'}_{w,k}$}{shear forces from contact between the channel wall and field or phase k}{}
+\NomItem{$\tau^{'}_{i,k_{1} k_{2}}$}{shear forces from contact between the field or phase $k_{1}$ and $k_{2}$}{}
+\NomItem{$\Gamma^{'''} \vec{u}^{'}$}{momentum contribution from the exchange of mass due to the phase change of water}{}
+\NomItem{$S^{'''} \vec{u}^{'}$}{momentum contribution from the exchange of mass between two liquid fields}{}
+\NomItem{$s_{p,k}$}{external source or sink of momentum for a given field or phase k}{}
+\NomItem{$\vec{e}$}{vector of conservation equations, except the temporal derivatives of the conserved quantities}{}
+\NomItem{$\vec{y}$}{vector of conserved quantities}{}
+\NomItem{$V_{j}$}{any given volume}{}
+\NomItem{$<a>_{d,j-\frac{1}{2}}$}{donored quantity}{}
+\NomItem{$\vec{E}$}{vector of conservation equations, spatially discrete version of $\vec{e}$}{}
+\NomItem{$\vec{x}$}{vector of nine independent variables used by COBRA}{}
+\NomItem{$\dot{m}_{k}$}{momentum of any given field or phase}{}
+\NomItem{$\vec{E}^{*}$}{vector of conservation equations, $\vec{E}(\vec{y}(\vec{x}))$, with approximated temporal integral of sources and sinks}{}
+\LastNomItem{$t^{i}$}{a discrete point in time}{}
+\end{longtable}
 \end{nomenclature}

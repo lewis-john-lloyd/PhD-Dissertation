@@ -395,6 +395,9 @@ The two different problems were each run at six different maximum timestep sizes
 \subsection{Results}
 \label{subsect:results}
 
+The results from the simulation runs will now be analyzed to determine the impact of nonlinear convergence upon time-step size sensitivity.
+The solutions produced by both solvers will be compared to determine the efficacy of the residual metric in determining the validity of the nonlinear solution.  
+
 Of the twenty-four simulations run, the legacy solver solution of the flashing problem with a \dtmax{} of 1 [s] failed to run to completion.
 The timestep limiting procedure outlined in  \sect{sect:algorithmic_concerns} was unable to prevent too large a change in the independent parameters by reducing the timestep.
 This caused the problem to try to run below the minimum allowable timestep size, which resulted in the software aborting.
