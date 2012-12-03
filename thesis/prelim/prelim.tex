@@ -1,42 +1,418 @@
-\documentclass{beamer}
+\documentclass[compress]{beamer}
 
+\usepackage{multicol}
 \usetheme{Szeged}
+%\usetheme{PaloAlto}
 \usecolortheme{beaver}
 
-\title[Department of Nuclear Engineering and Engineering Physics]{Selective spatial-temporal nonlinear refinement}
+\title[Department of Nuclear Engineering and Engineering Physics]{Selective Spatial-Temporal Nonlinear Refinement For
+Thermal-Hydraulic Safety Analysis Codes}
 \subtitle{A quick road to nowhere.}
-\author[Lloyd]{Lewis John Lloyd\inst{1}}
+\author[Lloyd]{Lewis John Lloyd}
 \institute[University of Wisconsin - Madison]
 {
-  \inst{1}%
+  Department of Nuclear Engineering and Engineering Physics \\
   University of Wisconsin - Madison
 }
-\date[KPT 2004]{Preliminary Defense, 2012}
-\subject{Informatik}
+\date[Prelim Defense 2012]{Preliminary Defense, 2012}
+\subject{Nuclear Engineering}
+
+\setbeamertemplate{navigation symbols}{}
+
+\newcommand{\origaddtocontents}{\addtocontents}
+\newcommand{\dontaddtocontents}{}
 
 \begin{document}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
 
+%\AtBeginSubsection[]
+%{
+%\begin{frame}
+%\tableofcontents[subsectionstyle=show/shaded/hide,sectionstyle=show/shaded]
+%\end{frame}
+%}
+
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
 \frame{\titlepage}
-
+%------------------------------------------------
+%------------------------------------------------
 \begin{frame}
-\frametitle{Table of Contents}
-\tableofcontents[currentsection]
+\begin{multicols}{2}
+\tableofcontents
+\end{multicols}
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\section[Background and Introduction]{Background and Introduction}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Introduction}
+
+Here be an introduction.
 
 \end{frame}
-
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Geometry]{Geometry of Interest}
+%------------------------------------------------
+%------------------------------------------------
 \begin{frame}
-\frametitle{This is the first slide}
+\frametitle{Geometry}
 
-I am less stuff.
+I will talk about staggered grids?
 
 \end{frame}
-
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Two-Phase Flow]{Two-Phase Flow}
+%------------------------------------------------
+%------------------------------------------------
 \begin{frame}
-\frametitle{This is the second slide}
-\framesubtitle{A bit more information about this}
+\frametitle{Two-Phase, Three-Field Model}
+
+Yay for math.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{More Two-Phase Flow Stuff}
+
+Yay for more math.
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Numeric Approximation]{Numerical Approximations}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Spatial Stuff}
+
+This is spatial.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Temporal Stuff}
+
+This is temporal.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Nonlinear Stuff}
+
+I am non-linear.
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Solution Methods]{Solution Methods}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Fully-Explicit Method}
+
+Here I talk about the Fully-Explicit Method
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Fully-Implicit Method}
+
+Here I talk about the fully-implicit method.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Semi-Implicit Method}
+
+Semi-Implicit method.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Stability-Enhancing Two-Step Method}
+
+Sets.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Nearly-Implicit Method}
+
+Nearly Implicit
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Algorithmic Concerns]{Algorithmic Concerns}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Phase Transition.}
+
+Phases are transitioned.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Time Step Failure Mitigation.}
+
+Time step failures are mitigated.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Time-step selection.}
+
+Time step are selected.
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Domain Coupling]{Domain Coupling}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Code Coupling.}
+
+Codes are coupled.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Domain Decomposition.}
+
+Domains are decomposed.
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Research Objectives]{Research Objectives}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Research Objectives}
+
+I am the objective.
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\section[Preliminary Work]{Preliminary Work}
+%------------------------------------------------
+%------------------------------------------------
+\subsection[COBRA]{Nonlinear COBRA}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Work on COBRA.}
+
+I work on cobra.
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Scaling]{Operator Based Scaling}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Scaling.}
+
+Stuff gets scaled.
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Convergence]{Temporal Convergence}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Time is Converged.}
+
+Convergence occurs.
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Experiments]{Numerical Experiments}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Purpose}
+
+I am the purpose.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Geometry}
+
+Geometry goes here.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Initial and Boundary Conditions}
+
+Here are the conditions.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Procedure}
+
+Procedures are good.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Results 1}
+
+Stuff
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Results 2}
+
+Results are good.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Results 3}
+
+Results are better.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Results 4}
+
+Results are best.
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Review]{Review}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Review of Work.}
+
+Here I review.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Review 2.}
+
+Review part 2.
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\section[Proposed Work]{Proposed Work}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Here is a time line overview.}
+
+Timeline goes here.
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Scaling]{Scaling Work}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Scaling Work.}
+
+Scaling stuff.
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Domain Decomposition]{Domain Decomposition}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Domains get decomposed.}
+
+More decomposition.
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Testing]{Testing and Benchmarking}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Testing.}
+
+Here there be testing.
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Time Line]{Time Line}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Time Line Again.}
 
 I am stuff.
 
 \end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Possible Outcomes]{Possible Outcomes}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{This is the fourth slide.}
 
+I am stuff.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{This is the sixth slide.}
+
+I am stuff.
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
 \end{document}
