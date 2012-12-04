@@ -11,57 +11,233 @@
 \begin{nomenclature}
 \begin{longtable}{p{.15\textwidth} p{.70\textwidth} c} 
 \NomItem{NPP}{Nuclear Power Plan}{}
+%
 \NomItem{NRC}{Nuclear Regulatory Commission}{}
+%
 \NomItem{10CFR}{Title 10 of the Code of Federal Regulations}{}
+%
 \NomItem{10CFR50}{Part 50 of 10CFR}{}
+%
 \NomItem{SAR}{Safety Analysis Report}{}
+%
 \NomItem{LWR}{Light Water Reactor}{}
+%
 \NomItem{ECCS}{Emergency Core Cooling System}{}
+%
 \NomItem{LOCA}{Loss-of-Coolant Accident}{}
+%
 \NomItem{PWR}{Pressurized Water Reactor}{}
+%
 \NomItem{BWR}{Boiling Water Reactors}{}
-\NomItem{$L$}{Axial length of the problem.}{$\displaystyle \left[\, \text{ft} \,\right]$}
-\NomItem{$M$}{Number of sections in problem.}{}
-\NomItem{$S_{i}$}{Indexed section.}{}
-\NomItem{$J_{i}$}{Number of axial continuity volumes in section $i$.}{}
-\NomItem{$\Delta x_{i,j}$}{Indexed axial continuity volume length.}{$\displaystyle \left[\, \text{ft} \,\right]$ }
-\NomItem{$T(i)$}{Number of channels in section $i$.}{}
-\NomItem{K}{Total number of channels in a problem.}{}
-\NomItem{$A_{c_{k,j}}$}{Cross-sectional area of indexed continuity volume.}{$\left[\, \text{ft}^2 \,\right]$ }
-\NomItem{$A_{m_{k,j}}$}{Cross-sectional area of indexed momentum volume.}{$\left[\, \text{ft}^2 \,\right]$ }
-\NomItem{$\omega_{k}$}{Volume of a geometric sub-component.}{$\left[\, \text{ft}^3 \,\right]$ }
-\NomItem{$\Omega$}{Volume of whole domain.}{$\left[\, \text{ft}^3 \,\right]$ }
-\NomItem{$\tilde{a}$}{Cross-sectionally averaged variable.}{}
-\NomItem{A}{cross-sectional flow area}{$\left[\, \text{ft}^2 \,\right]$ }
-\NomItem{$S^{'''}$}{Volumetric inter-field source or sink of mass}{ $\displaystyle \left[\, \frac{\text{lb}_{\text{m}}}{\text{ft}^3} \,\right] $}
-\NomItem{$\Gamma^{'''}$}{Volumetric inter-phase source or sink of mass}{ $\displaystyle \left[\, \frac{\text{lb}_{\text{m}}}{\text{ft}^3} \,\right] $}
-\NomItem{$s_{m,k}$}{Volumetric source or sink of mass for a given field or phase k}{ $\displaystyle \left[\, \frac{\text{lb}_{\text{m}}}{\text{ft}^3} \,\right] $}
-\NomItem{$\eta$}{apportionment factor}{ $\left[\, - \,\right] $}
-\NomItem{$\vec{u}_{k}$}{velocity vector for field or phase k}{}
-\NomItem{$\rho_{k}$}{Density of field or phase k}{}
-\NomItem{$\alpha_{k}$}{Volume fraction of field or phase k}{}
-\NomItem{$\alpha_{k} \rho_{k} h_{k}$}{enthalpy of field or phase k}{}
-\NomItem{$\Gamma^{'''} h^{'}_{k}$}{energy transfer due to phase change of water}{}
-\NomItem{$q^{'''}_{i,k}$}{energy transfer between the saturated interface and any given field or phase k}{}
-\NomItem{$q^{'''}_{g,l}$}{energy transfer between the non-condensable gases field and the liquid phase}{}
-\NomItem{$q^{'''}_{w,k}$}{energy transfer between a solid structure and any given field or phase k}{}
-\NomItem{$\alpha_k \frac{\delta P}{\delta t}$}{pressure work done by a given field or phase k}{}
-\NomItem{$s_{e,k}$}{external source or sink of energy for a given field or phase k}{}
-\NomItem{$\alpha_{k} \nabla P$}{pressure gradient acting on a field or phase k}{}
-\NomItem{$\alpha_{k} \rho_{k} \vec{g}$}{gravity body force acting upon field or phase k}{}
-\NomItem{$\tau^{'}_{w,k}$}{shear forces from contact between the channel wall and field or phase k}{}
-\NomItem{$\tau^{'}_{i,k_{1} k_{2}}$}{shear forces from contact between the field or phase $k_{1}$ and $k_{2}$}{}
-\NomItem{$\Gamma^{'''} \vec{u}^{'}$}{momentum contribution from the exchange of mass due to the phase change of water}{}
-\NomItem{$S^{'''} \vec{u}^{'}$}{momentum contribution from the exchange of mass between two liquid fields}{}
-\NomItem{$s_{p,k}$}{external source or sink of momentum for a given field or phase k}{}
-\NomItem{$\vec{e}$}{vector of conservation equations, except the temporal derivatives of the conserved quantities}{}
-\NomItem{$\vec{y}$}{vector of conserved quantities}{}
-\NomItem{$V_{j}$}{any given volume}{}
-\NomItem{$<a>_{d,j-\frac{1}{2}}$}{donored quantity}{}
-\NomItem{$\vec{E}$}{vector of conservation equations, spatially discrete version of $\vec{e}$}{}
-\NomItem{$\vec{x}$}{vector of nine independent variables used by COBRA}{}
-\NomItem{$\dot{m}_{k}$}{momentum of any given field or phase}{}
-\NomItem{$\vec{E}^{*}$}{vector of conservation equations, $\vec{E}(\vec{y}(\vec{x}))$, with approximated temporal integral of sources and sinks}{}
-\LastNomItem{$t^{i}$}{a discrete point in time}{}
+%
+\NomItem{$L$}{Axial length of the problem}{
+$\displaystyle \left[\, \text{ft} \,\right]$
+}
+%
+\NomItem{$M$}{Number of sections in problem}{}
+%
+\NomItem{$S_{i}$}{Indexed section}{}
+%
+\NomItem{$J_{i}$}{Number of axial continuity volumes in section $i$}{}
+%
+\NomItem{$\Delta x_{i,j}$}{Indexed axial continuity volume length}{
+$\displaystyle \left[\, \text{ft} \,\right]$
+}
+%
+\NomItem{$T(i)$}{Number of channels in section $i$}{}
+%
+\NomItem{K}{Total number of channels in a problem}{}
+%
+\NomItem{$A_{c_{k,j}}$}{Cross-sectional area of indexed continuity volume}{
+$\displaystyle \left[\, \text{ft}^2 \,\right]$
+}
+%
+\NomItem{$A_{m_{k,j}}$}{Cross-sectional area of indexed momentum volume}{
+$\displaystyle \left[\, \text{ft}^2 \,\right]$
+}
+%
+\NomItem{$\omega_{k}$}{Volume of a geometric sub-component}{
+$\displaystyle \left[\, \text{ft}^3 \,\right]$
+}
+%
+\NomItem{$\Omega$}{Volume of whole domain}{
+$\displaystyle \left[\, \text{ft}^3 \,\right]$
+}
+%
+\NomItem{$\tilde{a}$}{Cross-sectionally averaged variable}{}
+%
+\NomItem{A}{Cross-sectional flow area}{
+$\displaystyle \left[\, \text{ft}^2 \,\right]$
+}
+%
+\NomItem{$S^{'''}$}{Volumetric inter-field source or sink of mass}{
+$\displaystyle \left[\, \frac{ \lbm }{ \text{ft}^3 \text{s} } \,\right]$
+}
+%
+\NomItem{$\Gamma^{'''}$}{Volumetric inter-phase source or sink of mass}{
+$\displaystyle \left[\, \frac{ \lbm }{\text{ft}^3 \text{s} } \,\right]$
+}
+%
+\NomItem{$s_{m,k}$}{Volumetric source or sink of mass for a given field or phase k}{
+$\displaystyle \left[\, \frac{ \lbm }{\text{ft}^3 \text{s} } \,\right]$
+}
+%
+\NomItem{$\eta$}{Apportionment factor}{
+$\displaystyle \left[\, - \,\right]$
+}
+%
+\NomItem{$\vec{u}_{k}$}{Velocity vector for field or phase k}{
+$\displaystyle \left[\, \frac{\text{ft}}{\text{s}} \,\right]$
+}
+%
+\NomItem{$\rho_{k}$}{Density of field or phase k}{
+$\displaystyle \left[\, \frac{ \lbm }{\text{ft}^3} \,\right]$
+}
+%
+\NomItem{$\alpha_{k}$}{Volume fraction of field or phase k}{
+$\displaystyle \left[\, - \,\right]$
+}
+%
+\NomItem{$h_{k}$}{Enthalpy of field or phase k}{
+$\displaystyle \left[\, \frac{\text{BTU}}{ \lbm } \,\right]$
+}
+%
+\NomItem{$\Gamma^{'''} h^{'}_{k}$}{Volumetric energy transfer due to aqueous phase change}{
+$\displaystyle \left[\, \frac{\text{BTU}}{\text{ft}^3 \text{s}} \,\right]$
+}
+%
+\NomItem{$q^{'''}_{i,k}$}{Volumetric energy transfer between the saturated interface and any given field or phase k}{
+$\displaystyle \left[\, \frac{\text{BTU}}{\text{ft}^3 \text{s}} \,\right]$
+}
+%
+\NomItem{$q^{'''}_{g,l}$}{Volumetric energy transfer between the \ncg{} field and the liquid water phase}{
+$\displaystyle \left[\, \frac{\text{BTU}}{\text{ft}^3 \text{s}} \,\right]$
+}
+%
+\NomItem{$q^{'''}_{w,k}$}{Volumetric energy transfer between a solid structure and any given field or phase k}{
+$\displaystyle \left[\, \frac{\text{BTU}}{\text{ft}^3 \text{s}} \,\right]$
+}
+%
+\NomItem{$\alpha_k \frac{\delta P}{\delta t}$}{Pressure work done by a given field or phase k}{
+$\displaystyle \left[\, \frac{\text{BTU}}{\text{ft}^3 \text{s}} \,\right]$
+}
+%
+\NomItem{$s_{e,k}$}{External source or sink of volumetric energy for a given field or phase k}{
+$\displaystyle \left[\, \frac{\text{BTU}}{\text{ft}^3 \text{s}} \,\right]$
+}
+%
+\NomItem{$\vec{g}$}{Gravitational acceleration vector}{
+$\displaystyle \left[\, \frac{\text{ft}}{\text{s}^2} \,\right]$
+}
+%
+\NomItem{$\tau^{'}_{w,k}$}{Shear force from contact between the channel wall and field or phase k}{
+$\displaystyle \left[\, \frac{ \lbf }{\text{ft}^3} \,\right]$
+}
+%
+\NomItem{$\tau^{'}_{i,k_{1} k_{2}}$}{Shear force from contact between the field or phase $k_{1}$ and $k_{2}$}{
+$\displaystyle \left[\, \frac{ \lbf }{ \text{ft}^3 } \,\right]$
+}
+%
+\NomItem{$\Gamma^{'''} \vec{u}^{'}$}{Momentum transfer due to the exchange of mass between the aqueous phases}{
+$\displaystyle \left[\, \frac{ \lbf }{ \text{ft}^3 } \,\right] $
+}
+%
+\NomItem{$S^{'''} \vec{u}^{'}$}{Momentum transfer due to the exchange of mass between the two liquid fields}{
+$\displaystyle \left[\, \frac{ \lbf }{ \text{ft}^3 } \,\right] $
+}
+%
+\NomItem{$s_{p,k}$}{External source or sink of momentum for a given field or phase k}{
+$\displaystyle \left[\, \frac{ \lbf }{ \text{ft}^3 } \,\right] $
+}
+%
+\NomItem{$\vec{e}$}{Vector of conservation equations, except the temporal derivatives of the conserved quantities}{
+
+}
+%
+\NomItem{$\vec{y}$}{Vector of conserved quantities}{
+
+}
+%
+\NomItem{$V_{j}$}{Indexed volume}{
+$\displaystyle \left[\, \text{ft}^3 \,\right]$
+}
+%
+\NomItem{$<a>_{d,j-\frac{1}{2}}$}{Donored quantity}{
+
+}
+%
+\NomItem{$\vec{E}$}{Vector of spatially discrete conservation equations}{
+
+}
+%
+\NomItem{$\vec{x}$}{Vector of nine independent variables used by \cobra{}}{
+
+}
+%
+\NomItem{$\dot{m}_{k}$}{Momentum of a given phase or field flowing through a cross-sectional area}{
+$\displaystyle \left[\, \frac{ \lbm }{\text{s}} \,\right]$
+}
+%
+\NomItem{$\vec{E}^{*}$}{Approximation of temporal integral of $\vec{E}(\vec{y}(\vec{x}))$}{
+
+}
+%
+\NomItem{$\delta \vec{x}^{k}$}{Newton update vector}{
+
+}
+%
+\NomItem{$\lambda_j $}{Linesearch scaling parameter}{
+$\displaystyle \left[\, - \,\right]$
+}
+%
+\NomItem{$\alpha $}{Linesearch termination parameter}{
+$\displaystyle \left[\, - \,\right]$
+}
+%
+\NomItem{$\vec{S} $}{Vector of scaling parameters}{
+
+}
+%
+\NomItem{$\vec{F} $}{Vector of nonlinear residuals}{
+
+}
+\NomItem{$R $}{Integral of nonlinear residuals}{
+$\displaystyle \left[\, - \,\right]$
+}
+\NomItem{$\tilde{R} $}{Time-averaged integral of nonlinear residuals}{
+$\displaystyle \left[\, - \,\right]$
+}
+%
+\NomItem{$\tilde{R}_{M} $}{Time-moment integral of nonlinear residuals}{
+$\displaystyle \left[\, - \,\right]$
+}
+%
+\NomItem{\dtmax{}}{Maximum timestep allowed for a simulation}{
+$\displaystyle \left[\, \text{s} \,\right]$
+}
+%
+\NomItem{\dt{}}{Timestep between time $t^{n}$ and $t^{n+1}$ for a simulation}{
+$\displaystyle \left[\, \text{s} \,\right]$
+}
+%
+\NomItem{$n^{n+1}_{g,j}$}{Flux of \ncg{} mass in RELAP5-3D}{
+$\displaystyle \left[\, \frac{ \lbm }{\text{s}} \,\right]$
+}
+%
+\NomItem{$m^{n+1}_{k,j}$}{Flux of mass for phase k in RELAP5-3D}{
+$\displaystyle \left[\, \frac{ \lbm }{\text{s}} \,\right]$
+}
+%
+\NomItem{$w^{n+1}_{k,j}$}{Volumetric flux for phase k in RELAP5-3D}{
+$\displaystyle \left[\, \frac{ \text{ft}^3 }{\text{s}} \,\right]$
+}
+%
+\NomItem{$u^{n+1}_{k,j}$}{Flux of internal energy for phase k in RELAP5-3D}{
+$\displaystyle \left[\, \frac{ \text{BTU} }{\text{s}} \,\right]$
+}
+%
+\LastNomItem{$t^{i}$}{Discrete points in time}{
+$\displaystyle \left[\, \text{s} \,\right]$
+}
 \end{longtable}
 \end{nomenclature}

@@ -45,21 +45,22 @@
         $\displaystyle \underline{\Vec{#1}\!}$%
     \fi
 }
-\DeclareRobustCommand{\mat}[1]{%
+\DeclareRobustCommand{\lbm}{%
     \ifmmode
-        \underline{\Vec{#1}\!}
+        \text{lb}_{\text{m}}
     \else
-        $\displaystyle\underline{\Vec{#1}\!}$%
+        $\displaystyle \text{lb}_{\text{m}}$%
     \fi
 }
 
-\DeclareRobustCommand{\norm}[2]{%
+\DeclareRobustCommand{\lbf}{%
     \ifmmode
-        \| #1\|_{#2}
+        \text{lb}_{\text{f}}
     \else
-        $\| #1\|_{#2}$
+        $\displaystyle \text{lb}_{\text{f}}$
     \fi
 }
+
 \DeclareRobustCommand{\Ens}[1]{%
     \ifmmode
         <\! #1 \! >
