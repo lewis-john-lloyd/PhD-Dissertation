@@ -1,12 +1,12 @@
 \chapter{Proposed Work}
 \label{chap:proposal}
 To evaluate the efficacy of an algorithm that employs  spatially selective nonlinear refinement, three objectives will be pursued.
-The first is that the coding of the operator-based scaling for the residuals will be examined and modified as necessary to address the noted convergence issues.
-Second, an appropriate scaling of the Newton updates for convergence testing both within the linesearch algorithm and in the Newton loop will be determined.
-Third, the domain decomposition algorithm will be mathematically developed, coded, and evaluated.
-Once the preceding three objectives have been met, a test problem will be developed to test both the legacy solver and the nonlinear solver with the domain decomposition applied to a predetermined subdomain.
+The first will be to examine and modify as necessary the coding of the operator-based scaling for the residuals in order to address the noted convergence issues.
+The second objective will be to complete an appropriate scaling of the Newton updates for convergence testing both within the linesearch algorithm and in the Newton loop will be determined.
+Lastly, the domain decomposition algorithm will be mathematically developed, coded, and evaluated.
+Once the three proceeding objectives have been met, a test problem will be developed to test both the legacy solver and the nonlinear solver with the domain decomposition applied to a predetermined subdomain.
 After the algorithmic framework has been evaluated, several geometrically complex problems with a high incidence of local-nonlinearities will be developed to obtain convergence benchmarks for the legacy solver.
-The same problems will then be evaluated using the global nonlinear solver to determine the computational run time impact of solving the global nonlinear problem everywhere. 
+The same problems will then be evaluated using the global nonlinear solver to determine the computational run time impact of solving the global nonlinear problem over the whole domain. 
 After the two bounding cases, the global legacy solver and the global nonlinear solver, have been run, the solutions will be compared to determine the impact of resolving the nonlinearities upon the accuracy of the transient result.
 At that time, the hybrid method will be tested, with regions of high-nonlinearities targeted as predetermined subdomains.
 The run-time performance of the hybrid method will be compared to that of the fully nonlinear case and the legacy solver.
@@ -16,11 +16,11 @@ Parametric studies will then be conducted to determine the impact of nonlinear c
 \section{Scaling Work}
 \label{sect:proposal_scaling}
 The current implementation of the operator-based scaling method outlined in \sect{sect:operator_scaling} has several issues that need to be addressed.
-The first is that the scaled residual has non-trivial values during the steady state portion of the simulation.
+The first is that the scaled residual has nontrivial values during the steady state portion of the simulation.
 The second issue is the sporadic non-convergence of the nonlinear problem when using the nonlinear solver during simulations where nonlinear physics are not dominant.
 It is believed that this behavior may be a result of the choice of phase transition logic for the scaling factor.
 Another possibility is the inconsistency between the scaled update vector used in the line-search algorithm and the one used in the Newton loop convergence criteria.
-Both avenues of investigation will be pursued to determine the root cause of to both of the aforementioned problems.
+Both avenues of investigation will be pursued to determine the root cause of the aforementioned problems.
 
 Another scaling issues that needs to be addressed is the proper scaling for the Newton update.
 The current algorithmic implementation has different convergence criteria for the linesearch step and the Newton step.
@@ -46,7 +46,7 @@ Theoretical operation counts should be calculated for legacy mode and nonlinear 
 Run time calculations for various problems should be calculated.
 Convergence criteria, max iteration count, and globalization parameters should be varied for a set number of problems to determine performance.
 
-\section{Time Line}
+\section{Timeline}
 \label{sect:proposal_time_line}
 
 \newcommand{\cc}{\cellcolor{black}}
@@ -74,7 +74,7 @@ Task & \multicolumn{1}{r}{Month} & Jan & Feb & Mar & Apr & May & Jun & Jul & Aug
 & Writing        & \cc & \cc & \cc & \cc & \cc & \cc & \cc & \cc & \cc & \cc \\
 \bottomrule  
 \end{tabular}
-\caption{Proposed research time line}
+\caption{Proposed research timeline}
 \label{tab:time_line}
 \end{table}
 

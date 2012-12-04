@@ -2,7 +2,7 @@
 \label{chap:prelim_work}
 As preliminary work, several steps were taken to evaluate the validity of the proposed research.
 In order to determine the effects of nonlinear convergence upon the timestep size insensitivity of a solution, the \cobra{} software was modified to enable an iterative global Newton's method.
-A metric was be developed for the evaluation of the nonlinear convergence of a timestep.
+A metric was developed for the evaluation of the nonlinear convergence of a timestep.
 To aid in the development of the nonlinear convergence metric and the nonlinear solver, a novel operator-based scaling has been developed to obtain meaningful convergence thresholds.
 The scaling of the nonlinear residual is typically done in an arbitrary fashion; a scaling factor that is intrinsically linked to the physics of interest was developed.
 This scaling produces a non-dimensionalized residual whose magnitude is relative to the physical sources and sinks on a per equation basis. 
@@ -41,8 +41,6 @@ Once the appropriate variables were used for the evaluation of the nonlinear res
 \alg{alg:nl_cobra} contains the current algorithmic implementation of the nonlinear semi-implicit method.
 
 \begin{algo}[H]
-\caption{Nonlinear \cobra{} solution algorithm.}
-\label{alg:nl_cobra}
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Require $\vec{x}^{0}$ and $t^{0}$
@@ -75,6 +73,8 @@ Once the appropriate variables were used for the evaluation of the nonlinear res
 	\State $n = n + 1$
 \EndLoop
 \end{algorithmic}
+\caption{Nonlinear \cobra{} algorithm.}
+\label{alg:nl_cobra}
 \end{algo}
 
 In \alg{alg:nl_cobra}, there are three steps that require discussion.
@@ -444,7 +444,7 @@ The same level of qualitative timestep size invariance is achieved in the legacy
 \label{fig:nl_flashing_compare}}
 \subfloat[Legacy mode solution.]{\includegraphics[width=0.49\textwidth]{images/cobra_flashing_1em1_1em4.eps}
 \label{fig:cobra_flashing_compare}}
-\caption{timestep size insensitive flashing solutions.}
+\caption{Timestep size insensitive flashing solutions.}
 \label{fig:flashing_res_comp_1}
 \end{figure}
 
@@ -478,7 +478,7 @@ The second is that the norm of the scaled independent parameter update vector ma
 A concern is that the update vector produced by the Newton step may be truncated based upon the limiting of the independent parameters at the end of a Newton step.
 It may be impossible for the algorithm to reach a nonlinearly converged solution without pushing an independent parameter outside of the acceptable limits imposed by the software.
 Since the global minimization problem is not formulated as a constrained minimization problem, there may be inconsistencies in the solution.
-This non-convergence of the residual needs additional investigation to determine its cause, its impact upon the algorithmic frame work, and its possible remedies.
+This non-convergence of the residual needs additional investigation to determine its cause, its impact upon the algorithmic framework, and its possible remedies.
 
 \begin{figure}[h!t]
 \centering
@@ -508,7 +508,7 @@ This indicates that the legacy solver is adequate in regions where the solution 
 \label{fig:single_compare_2}
 \end{figure}
 
-Examining the residual for the two different solvers will provide insight into how well each of them are solving the nonlinear problem.
+Examining the residual for the two different solvers will provide insight into how well each of them are at solving the nonlinear problem.
 The residual of the legacy solver solution for the single-phase problem, \fig{fig:leg_single_res}, shows that the nonlinear residuals are nontrivial during two periods of the transient.
 The first region of nontrivial residuals is present only for larger values of \dtmax{} and occurs when the the inlet flow initiates at 1 [s].
 The second region occurs at smaller values of \dtmax{} and occurs near the beginning of the transient.
