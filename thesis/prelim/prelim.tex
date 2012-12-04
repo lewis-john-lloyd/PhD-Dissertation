@@ -1,6 +1,11 @@
 \documentclass[compress]{beamer}
 
 \usepackage{multicol}
+\usepackage{tikz}
+\usetikzlibrary{shapes}
+\usetikzlibrary{arrows}
+\usetikzlibrary{patterns}
+
 \usetheme{Szeged}
 %\usetheme{PaloAlto}
 \usecolortheme{beaver}
@@ -57,7 +62,10 @@ Thermal-Hydraulic Safety Analysis Codes}
 \begin{frame}
 \frametitle{Introduction}
 
-Here be an introduction.
+\begin{itemize}
+\item{test1}
+\item{test2}
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -66,9 +74,85 @@ Here be an introduction.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Geometry}
+\frametitle{Geometric Components}
+\begin{columns}
+\column{0.5\textwidth}
 
+\begin{itemize}
+\item{Sections}
+\item{Channels}
+\item{Gaps}
+\item{Solid Structures}
+\end{itemize}
+
+\column{0.5\textwidth}
+\begin{figure}[t]
+\centering
+\resizebox{!}{0.7\textheight}{
+\begin{tikzpicture}
+\draw [thick] (-2,-2) rectangle (-1,2);
+\draw [thick] (1,-2) rectangle (2,2);
+\draw [thick] (-0.5,3) rectangle (0.5,7);
+\draw [thick] (-0.5,-7) rectangle (0.5,-3);
+\draw [dashed] (-1.5,2.5) -- (1.5,2.5);
+\draw [dashed](-1.5,-2.5) -- (1.5,-2.5);
+\draw [dashed,<-] (0,3) -- (0,2.5);
+\draw [dashed,->] (-1.5,2.5) -- (-1.5,2);
+\draw [dashed,->] (1.5,2.5) -- (1.5,2);
+\draw [dashed,->] (0,-2.5) -- (0,-3);
+\draw [dashed,<-] (-1.5,-2) -- (-1.5,-2.5);
+\draw [dashed,<-] (1.5,-2) -- (1.5,-2.5);
+\foreach \y in {-1.5, -0.5, 0.5, 1.5}
+	\draw [dashed, <->] (-1,\y) -- (1,\y);
+\foreach \y in {-6,-5,-4,4,5,6}
+	\draw (-0.5,\y) -- (0.5,\y);
+\foreach \y in {-1,0,1}
+	\draw (-2,\y) -- (-1,\y);
+\foreach \y in {-1,0,1}
+	\draw (1,\y) -- (2,\y);
+\foreach \y/\ytext in {-5/ 1,0/ 2,5/ 3}
+	\draw (2.2,\y) node [anchor=west] {\huge Section $\ytext$};
+\end{tikzpicture}
+}
+\end{figure}
+
+\end{columns}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Staggered Grid}
+
+\begin{columns}
+\column{0.5\textwidth}
 I will talk about staggered grids?
+I may talk about staggered grids.
+Who knows.
+\begin{itemize}
+\item{Continuity Volumes}
+\item{Momentum Volumes}
+\end{itemize}
+\column{0.5\textwidth}
+\begin{figure}
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tikzpicture}
+\draw (-3,0) rectangle +(1,5);
+\draw (0,0) rectangle +(1,1) (0,1) rectangle +(1,1) (0, 2) rectangle +(1,1) (0,3) rectangle +(1,1) (0,4) rectangle +(1,1);
+\draw[dashed] (3,-0.5) rectangle +(1,1) (3,0.5) rectangle +(1,1) (3,1.5) rectangle +(1,1) (3, 2.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3, 4.5) rectangle +(1,1) ;
+\draw[dashed] (-3,0) -- (4,0);
+\draw[dashed] (-3,5) -- (4,5);
+\draw (-2.5,-1) node {\textbf{Channel}};
+\draw (0.5,-1) node {\textbf{Continuity}};
+\draw (0.5,-1.5) node {\textbf{Volume}};
+\draw (3.5,-1) node {\textbf{Momentum}};
+\draw (3.5,-1.5) node {\textbf{Volume}};
+\end{tikzpicture}
+}
+\end{figure}
+\end{columns}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -77,15 +161,35 @@ I will talk about staggered grids?
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Two-Phase, Three-Field Model}
+\frametitle{Two-Phase Flow}
 
-Yay for math.
+\begin{itemize}
+\item{Background}
+\item{Assumptions}
+\item{Equations}
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{More Two-Phase Flow Stuff}
+\frametitle{Conservation of Mass}
+
+Yay for more math.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Conservation of Momentum}
+
+Yay for more math.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Conservation of Energy}
 
 Yay for more math.
 
@@ -96,25 +200,36 @@ Yay for more math.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Spatial Stuff}
+\frametitle{Spatial Approximations}
 
-This is spatial.
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Temporal Stuff}
-
-This is temporal.
+\begin{itemize}
+\item{1st Order Upwind}
+\item{Continuity Volume}
+\item{Momentum Volume}
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Nonlinear Stuff}
+\frametitle{Temporal Approximations}
 
-I am non-linear.
+\begin{itemize}
+\item{Single-Step}
+\item{Single-Stage}
+\item{Multi-Stage}
+\end{itemize}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Nonlinear Equations}
+
+\begin{itemize}
+\item{System of nonlinear Equations.}
+\item{Residuals.}
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -139,9 +254,25 @@ Here I talk about the fully-implicit method.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Semi-Implicit Method}
+\frametitle{Semi-Implicit Method Overview}
 
 Semi-Implicit method.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Semi-Implicit Method Solver}
+
+Details
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Semi-Implicit Method Solver}
+
+More Details
 
 \end{frame}
 %------------------------------------------------
@@ -166,7 +297,7 @@ Nearly Implicit
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Phase Transition.}
+\frametitle{Phase Transition}
 
 Phases are transitioned.
 
@@ -174,7 +305,7 @@ Phases are transitioned.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Time Step Failure Mitigation.}
+\frametitle{Time Step Failure Mitigation}
 
 Time step failures are mitigated.
 
@@ -182,7 +313,7 @@ Time step failures are mitigated.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Time-step selection.}
+\frametitle{Time-step selection}
 
 Time step are selected.
 
@@ -193,9 +324,22 @@ Time step are selected.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Code Coupling.}
+\frametitle{Code Coupling}
 
 Codes are coupled.
+
+Figure of two codes talking.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{RELAP5-3D coupling}
+
+Pressure Updates
+Codes are coupled.
+
+Figure of two codes talking.
 
 \end{frame}
 %------------------------------------------------
@@ -203,7 +347,9 @@ Codes are coupled.
 \begin{frame}
 \frametitle{Domain Decomposition.}
 
-Domains are decomposed.
+Figure of one domain with two sub components.
+Talk about additive Schwarz methods.
+Talk about multiplicative Schwarz methods.
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -215,6 +361,8 @@ Domains are decomposed.
 \frametitle{Research Objectives}
 
 I am the objective.
+Here is where I talk about stuff.
+Fun stuff.
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -228,7 +376,21 @@ I am the objective.
 \begin{frame}
 \frametitle{Work on COBRA.}
 
-I work on cobra.
+Issues.
+Coding Details
+Nonlinear Solver
+
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Linesearch Algorithm}
+
+Issues.
+Coding Details
+Nonlinear Solver
+
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -237,9 +399,17 @@ I work on cobra.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Scaling.}
+\frametitle{Scaling One}
 
 Stuff gets scaled.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Scaling Two}
+
+Stuff gets scaled again.
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -405,12 +575,31 @@ I am stuff.
 I am stuff.
 
 \end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\section*{}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{This is the sixth slide.}
+\frametitle{Acknowledgments}
 
-I am stuff.
+This research was performed under appointment to the Rickover Fellowship Program in Nuclear Engineering sponsored by Naval Reactors Division of the U.S. Department of Energy.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{I am another extra slide.}
+
+I am more excess.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{I am another extra slide.}
+
+I am more excess.
 
 \end{frame}
 %------------------------------------------------------------------------------
