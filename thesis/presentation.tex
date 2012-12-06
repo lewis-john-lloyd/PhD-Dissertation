@@ -593,33 +593,166 @@ Procedures are good.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Numerical Experiments: Results 1}
+\frametitle{Flashing solution at \dtmax{} = 1.0E-1 {[s]}}
 
-Stuff
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Numerical Experiments: Results 2}
-
-Results are good.
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/flashing_1em1.eps}
+\end{figure}
 
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Numerical Experiments: Results 3}
+\frametitle{Flashing solution at \dtmax{} = 1.0E-5 {[s]}}
 
-Results are better.
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=.94\textwidth]{images/flashing_1em5.eps}
+\end{figure}
 
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Numerical Experiments: Results 4}
+\frametitle{Legacy solver flashing solution}
 
-Results are best.
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=.94\textwidth]{images/cobra_flashing_al_2in.eps}
+\end{figure}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Nonlinear solver flashing solution}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=.94\textwidth]{images/nl_flashing_al_2in.eps}
+\end{figure}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Nonlinear solver timestep size insensitive flashing solution}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=.94\textwidth]{images/nl_flashing_1em0_1em1.eps}
+\end{figure}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Legacy solver timestep size insensitive flashing solution}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=.94\textwidth]{images/cobra_flashing_1em1_1em4.eps}
+\end{figure}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Residual of the flashing solution for the legacy solver}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/cobra_flashing_res_compare.eps}
+\end{figure}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Residual of the flashing solution for the nonlinear solver}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/nl_flashing_res_compare.eps}
+\end{figure}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Single-phase solution with \dtmax{} = 1.0 {[s]}}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/single_1em0.eps}
+\end{figure}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Single-phase solution with \dtmax{} = 1.0E-5 {[s]}}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/single_1em5.eps}
+\end{figure}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Legacy solver single-phase residuals}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/cobra_single_res_v_dt.eps}
+\end{figure}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Nonlinear solver single-phase residuals}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/nl_single_res_v_dt.eps}
+\end{figure}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Zoomed nonlinear solver single-phase residuals}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/nl_res_single_zoom.eps}
+\end{figure}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Single-phase solution with \dtmax{} = 1.0E-3 {[s]}}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/single_1em3.eps}
+\end{figure}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Zoomed single-phase solution with \dtmax{} = 1.0E-3 {[s]}}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/single_1em3_zoom.eps}
+\end{figure}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -630,15 +763,10 @@ Results are best.
 \begin{frame}
 \frametitle{Preliminary Work Review}
 
-Here I review.
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Preliminary Work Review}
-
-Review part 2.
+\begin{itemize}
+\item{Timestep size insensitive solutions}
+\item{Blarger}
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------------------------------------

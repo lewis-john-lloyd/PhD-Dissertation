@@ -1393,7 +1393,7 @@ Each of the methods outlined in \sect{sect:solution_techniques} has one thing in
 \end{figure}
 
 The advantage of the single-shot linearization is the reduction in computational costs; however, the accuracy in regions of highly non-linear physics is suspect.
-This has traditionally been mitigated by limitations placed upon the maximum change in independent parameters. 
+This has traditionally been mitigated by limitations placed upon the maximum change in independent parameters during a timestep. 
 The resolution of the nonlinearities within a timestep requires the use of an iterative method.
 The benefits of an iterative Newton solver is that the nonlinearities are resolved at each timestep; however, the computational cost of multiple global Newton steps is high.
 If nonlinear effects are spatially isolable, then the computational expenditure of iteratively solving the global nonlinear problem may be unnecessary.
