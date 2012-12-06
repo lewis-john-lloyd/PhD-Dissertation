@@ -238,7 +238,7 @@ While it may be that the change in the chosen parameters of interest does not ex
 A metric that can quantify the degree to which the obtained solution satisfies the nonlinear system of equations would be of great value.
 The previously mentioned work into nonlinear convergence shows that a solution may be timestep size insensitive but not be the converged solution of the discretized problem \cite{Knoll2001}.
 If the nonlinearities of the discrete governing equations are not resolved, then the temporal convergence rate can be degraded.
-This degradation can produce results that qualitatively appear to be converged due an almost zeroth order of temporal accuracy.
+This degradation can produce results that qualitatively appear to be converged due to an almost zeroth order of temporal accuracy.
 In practice, the timestep size insensitivity of a solution is often interpreted as temporal convergence.
 This apparent temporal convergence, or timestep size insensitivity, of the solution may not be a result of reaching the solution to the discretized nonlinear equations, but instead could be indicative of the degraded order of accuracy due to the failure to resolve the nonlinearities at each timestep.
 To determine if the timestep size insensitive transient solution is both timestep size insensitive and an accurate solution to the nonlinear problem, it is necessary to examine the nonlinear convergence of the system as an issue separate from the temporal-convergence.
@@ -392,7 +392,7 @@ For the nonlinear runs, the scaled nonlinear residuals were evaluated at the end
 The nonlinear convergence criteria used is the nonlinear solver are described in \sect{sect:nl_cobra}.
 The temporal convergence metric was evaluated during post-processing.
 In total, there were twenty-four simulations run.
-The two different problems were each run at six different maximum timestep sizes on each of the two version of \cobra{}.
+The two different problems were each run at six different maximum timestep sizes on each of the two versions of \cobra{}.
 
 \subsection{Results}
 \label{subsect:results}
