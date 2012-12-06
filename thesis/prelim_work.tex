@@ -15,12 +15,12 @@ Two temporal convergence test problems were developed to show that the nonlinear
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Nonlinear \cobra{} Implementation}
-\label{sect:nl_cobra}
+\label{sect:nl_cobra}  
 The first stage of the preliminary work was to modify the \cobra{} software.
 As obtained, the \cobra{} software used a single-shot linearization  of the semi-implicit method.
 In order to evaluate the subdomain nonlinear refinement algorithm, \cobra{} was converted to include a fully iterative Newton solver based upon a linesearch globalization strategy.
 When it is necessary to distinguish between the single-shot linearization algorithmic implementation of \cobra{} and the iterative nonlinear \cobra{} implementation, the former shall be referred to as the legacy solver and the latter as the nonlinear solver.
-As such, the objectives of this work were to modify the software to be able do the following:
+As such, the \cobra{} software needed to be modified to be able do the following:
 
 \begin{itemize}
 \item{Create a data framework for constructing vector quantities such as $\vec{x}^{k}$ and $\vec{F}$.}
@@ -109,9 +109,11 @@ Additional source code modifications were necessary to construct and gather the 
 The development of the nonlinear solver within \cobra{} took place under strict quality assurance guidelines.
 At every step of the development, the legacy solver was required to maintain the same solution.
 This verification was dependent upon a larger number of verification and assessment problems.
-The binary output of the simulation was required.
-Backup testing needed to be done.
-Restart testing needed to be done.
+The output of the unmodified \cobra{} and the modified \cobra{} software was compared to machine precision.
+It was required that either the results of the two simulations be identical or that the reason for the difference be identified and understood.
+The \cobra{} software has the ability to repeat a time-step.
+As such, it was required that the backup capabilities continued to work while nonlinear solver was being implemented.
+Additionally, testing was done to ensure that the ability to restart the software mid-simulation was unaffected.
 The overhead of the quality assurance procedures, while adding time to the development cycle, ensured that the legacy solver could continue to be used for design purposes.
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -211,7 +213,7 @@ For the work performed here, that value was reduced to $\alpha_{k,\text{MIN}}$ =
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Temporal Convergence}
+\section{Metric for Convergence}
 \label{sect:temporal_convergence}
 
 An important factor in thermal-hydraulic safety analysis is the temporal convergence of the solution.
@@ -326,7 +328,7 @@ The initial velocities are set to zero.
 \centering
 \begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
 \multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
-                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\text{lb}_{\text{m}}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
+                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
 Single-Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
 Flashing                 &  200&0                       & 1198&3                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
 \end{tabular}
@@ -341,7 +343,7 @@ Table \ref{tab:bc_pe} contains the pressure, enthalpy, and composition of the pr
 \centering
 \begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
 \multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
-                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\text{lb}_{\text{m}}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
+                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
 Single-Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
 Flashing                 &  200&0                       & 1198&3                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
 \end{tabular}
@@ -356,7 +358,7 @@ Table \ref{tab:bc_fe} describes the inlet boundary condition for the two problem
 \centering
 \begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
 \multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
-                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\text{lb}_{\text{m}}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
+                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
 Single-Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
 Flashing                 & 1000&0                       &  542&6                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
 \end{tabular}
@@ -371,9 +373,9 @@ The is a time-dependent function give by \eqref{eqn:bc_time_func_single}.
 \label{eqn:bc_time_func_single}
 \dot{m}(t) = \left\{
 \begin{array}{cclrcll}
- 0.0           & [\frac{\text{lb}_{\text{m}}}{\text{s}}] & , &         & t & \leq 1 &[\text{s}] \\
- 0.5 ( t - 1)  & [\frac{\text{lb}_{\text{m}}}{\text{s}}] & , & 1 [\text{s}] < & t & \leq 2 &[\text{s}] \\
- 0.5           & [\frac{\text{lb}_{\text{m}}}{\text{s}}] & , &         & t & > 2    &[\text{s}]
+ 0.0           & [\frac{ \lbm{} }{\text{s}}] & , &                & t & \leq 1 & [\text{s}] \\
+ 0.5 ( t - 1)  & [\frac{ \lbm{} }{\text{s}}] & , & 1\; [\text{s}] < & t & \leq 2 & [\text{s}] \\
+ 0.5           & [\frac{ \lbm{} }{\text{s}}] & , &                & t & > 2    & [\text{s}]
 \end{array}\right.
 \end{equation}
 
@@ -407,14 +409,28 @@ Both versions of \cobra{} are subject to the same limits on change of independen
 For the flashing problem, the parameter of interest for temporal convergence testing is $\alpha_g$ at 2 [in] from the inlet of the stand pipe.
 \fig{fig:flashing_1em1} shows the gaseous volume fraction 2 [in] from the inlet of the stand pipe as a function of time for a \dtmax{} of 1.0E-1 [s] for both the legacy and the nonlinear solvers.
 
+%\begin{figure}[h!t]
+%\centering
+%\subfloat[Solution with \dtmax{} = 1.0E-1 {[s]}]{\includegraphics[width=0.49\textwidth]{images/flashing_1em1.eps}
+%\label{fig:flashing_1em1}}
+%\subfloat[Solution with \dtmax{} = 1.0E-5 {[s]}]{\includegraphics[width=0.49\textwidth]{images/flashing_1em5.eps}
+%\label{fig:flashing_1em5}}
+%\caption[Flashing solution at \dtmax{} = 1.0E-1 {[s]}and 1.0E-5 {[s]}]{Flashing solution at \dtmax{} = 1.0E-1 {[s]} and 1.0E-5 {[s]}.}
+%\label{fig:flashing_compare_1}
+%\end{figure}
+
 \begin{figure}[h!t]
 \centering
-\subfloat[Solution with \dtmax{} = 1.0E-1 {[s]}]{\includegraphics[width=0.49\textwidth]{images/flashing_1em1.eps}
-\label{fig:flashing_1em1}}
-\subfloat[Solution with \dtmax{} = 1.0E-5 {[s]}]{\includegraphics[width=0.49\textwidth]{images/flashing_1em5.eps}
-\label{fig:flashing_1em5}}
-\caption[Flashing solution at \dtmax{} = 1.0E-1 {[s]}and 1.0E-5 {[s]}]{Flashing solution at \dtmax{} = 1.0E-1 {[s]} and 1.0E-5 {[s]}.}
-\label{fig:flashing_compare_1}
+\includegraphics[width=0.94\textwidth]{images/flashing_1em1.eps}
+\caption{Flashing solution at \dtmax{} = 1.0E-1 {[s]}}
+\label{fig:flashing_1em1}
+\end{figure}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=.94\textwidth]{images/flashing_1em5.eps}
+\caption{Flashing solution at \dtmax{} = 1.0E-5 {[s]}.}
+\label{fig:flashing_1em5}
 \end{figure}
 
 Note that the nonlinearly resolved solution is qualitatively different than the legacy single-shot solution, \fig{fig:flashing_1em1}.
@@ -423,14 +439,28 @@ The two solutions do not converge to the same solution as the timestep size was 
 However, the solution to the flashing problem produced by the nonlinear solver, \fig{fig:nl_mode_flashing}, qualitatively varies less as the timestep size is reduced than that produced by the legacy solver, \fig{fig:cobra_mode_flashing}.
 However, both \fig{fig:cobra_mode_flashing} and \fig{fig:nl_mode_flashing} show that as the timestep size is reduced the two different solutions become more timestep size insensitive.
 
+%\begin{figure}[h!t]
+%\centering
+%\subfloat[Legacy mode solution.]{\includegraphics[width=0.49\textwidth]{images/cobra_flashing_al_2in.eps}
+%\label{fig:cobra_mode_flashing}}
+%\subfloat[Nonlinear mode solution.]{\includegraphics[width=0.49\textwidth]{images/nl_flashing_al_2in.eps}
+%\label{fig:nl_mode_flashing}}
+%\caption{Flashing simulation.}
+%\label{fig:flashing_solutions_1}
+%\end{figure}
+
 \begin{figure}[h!t]
 \centering
-\subfloat[Legacy mode solution.]{\includegraphics[width=0.49\textwidth]{images/cobra_flashing_al_2in.eps}
-\label{fig:cobra_mode_flashing}}
-\subfloat[Nonlinear mode solution.]{\includegraphics[width=0.49\textwidth]{images/nl_flashing_al_2in.eps}
-\label{fig:nl_mode_flashing}}
-\caption{Flashing simulation.}
-\label{fig:flashing_solutions_1}
+\includegraphics[width=.94\textwidth]{images/cobra_flashing_al_2in.eps}
+\caption{Legacy solver flashing solution.}
+\label{fig:cobra_mode_flashing}
+\end{figure}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=.94\textwidth]{images/nl_flashing_al_2in.eps}
+\caption{Nonlinear solver flashing solution.}
+\label{fig:nl_mode_flashing}
 \end{figure}
 
 The two solvers, when applied to the same problem that contains highly nonlinear physics, produce two different timestep size invariant solutions.
@@ -438,14 +468,28 @@ These two solutions achieve qualitative timestep size invariance at different ti
 The parameter of interest in the solution produced by the nonlinear solver with a 1 [s] $\Delta t_{\text{MAX}}$ is qualitatively close to that produced with a 0.1 [s] $\Delta t_{\text{MAX}}$, \fig{fig:nl_flashing_compare}.
 The same level of qualitative timestep size invariance is achieved in the legacy solver solutions between a \dtmax{} of 1.0E-3 [s] and 1.0E-4 [s], \fig{fig:cobra_flashing_compare}.
 
+%\begin{figure}[h!t]
+%\centering
+%\subfloat[Nonlinear mode solution.]{\includegraphics[width=0.49\textwidth]{images/nl_flashing_1em0_1em1.eps}
+%\label{fig:nl_flashing_compare}}
+%\subfloat[Legacy mode solution.]{\includegraphics[width=0.49\textwidth]{images/cobra_flashing_1em1_1em4.eps}
+%\label{fig:cobra_flashing_compare}}
+%\caption{Timestep size insensitive flashing solutions.}
+%\label{fig:flashing_res_comp_1}
+%\end{figure}
+
 \begin{figure}[h!t]
 \centering
-\subfloat[Nonlinear mode solution.]{\includegraphics[width=0.49\textwidth]{images/nl_flashing_1em0_1em1.eps}
-\label{fig:nl_flashing_compare}}
-\subfloat[Legacy mode solution.]{\includegraphics[width=0.49\textwidth]{images/cobra_flashing_1em1_1em4.eps}
-\label{fig:cobra_flashing_compare}}
-\caption{Timestep size insensitive flashing solutions.}
-\label{fig:flashing_res_comp_1}
+\includegraphics[width=.94\textwidth]{images/nl_flashing_1em0_1em1.eps}
+\caption{Nonlinear solver timestep size insensitive flashing solution.}
+\label{fig:nl_flashing_compare}
+\end{figure}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=.94\textwidth]{images/cobra_flashing_1em1_1em4.eps}
+\caption{Legacy solver timestep size insensitive flashing solution.}
+\label{fig:cobra_flashing_compare}
 \end{figure}
 
 The timestep size insensitive solution produced by the nonlinear solver occurs at a maximum timestep size three orders of magnitude greater than that achieved by the legacy solver in \cobra{}.
@@ -453,14 +497,28 @@ An examination of the nonlinear residual over the course of the transient provid
 The scaled residual for the legacy flashing problem indicates that even for small timestep sizes, the solution obtained still does not satisfy the discrete nonlinear equations, \fig{fig:legacy_flashing_residual}.
 This is in contrast to the nonlinear flashing problem, which shows a lower residual over the course of the simulation, \fig{fig:nonlinear_flashing_residual}.
 
+%\begin{figure}[h!t]
+%\centering
+%\subfloat[Legacy solver residuals.]{\includegraphics[width=0.49\textwidth]{images/cobra_flashing_res_compare.eps}
+%\label{fig:legacy_flashing_residual}}
+%\subfloat[Nonlinear solver residuals.]{\includegraphics[width=0.49\textwidth]{images/nl_flashing_res_compare.eps}
+%\label{fig:nonlinear_flashing_residual}}
+%\caption[Flashing residual at $\Delta t_{\text{MAX}}$ = 1.0E-1 {[s]}and 1.0E-5 {[s]}]{Flashing residual at $\Delta t_{\text{MAX}}$ = 1.0E-1 {[s]} and 1.0E-5 {[s]}.}
+%\label{fig:flashing_compare_2}
+%\end{figure}
+
 \begin{figure}[h!t]
 \centering
-\subfloat[Legacy solver residuals.]{\includegraphics[width=0.49\textwidth]{images/cobra_flashing_res_compare.eps}
-\label{fig:legacy_flashing_residual}}
-\subfloat[Nonlinear solver residuals.]{\includegraphics[width=0.49\textwidth]{images/nl_flashing_res_compare.eps}
-\label{fig:nonlinear_flashing_residual}}
-\caption[Flashing residual at $\Delta t_{\text{MAX}}$ = 1.0E-1 {[s]}and 1.0E-5 {[s]}]{Flashing residual at $\Delta t_{\text{MAX}}$ = 1.0E-1 {[s]} and 1.0E-5 {[s]}.}
-\label{fig:flashing_compare_2}
+\includegraphics[width=0.94\textwidth]{images/cobra_flashing_res_compare.eps}
+\caption{Residual of the flashing solution for the legacy solver.}
+\label{fig:legacy_flashing_residual}
+\end{figure}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/nl_flashing_res_compare.eps}
+\caption{Residual of the flashing solution for the nonlinear solver.}
+\label{fig:nonlinear_flashing_residual}
 \end{figure}
 
 The reduction in the residual exhibited by the solution produced by the legacy solver, \fig{fig:legacy_flashing_residual}, shows that the reduction of the maximum allowable timestep size now serves two purposes.
@@ -480,32 +538,60 @@ It may be impossible for the algorithm to reach a nonlinearly converged solution
 Since the global minimization problem is not formulated as a constrained minimization problem, there may be inconsistencies in the solution.
 This non-convergence of the residual needs additional investigation to determine its cause, its impact upon the algorithmic framework, and its possible remedies.
 
+%\begin{figure}[h!t]
+%\centering
+%\subfloat[\dtmax{} = 1.0 {[s]}]{\includegraphics[width=0.49\textwidth]{images/single_1em0.eps}
+%\label{fig:single_1em1}}
+%\subfloat[\dtmax{} = 1.0E-5 {[s]}]{\includegraphics[width=0.49\textwidth]{images/single_1em5.eps}
+%\label{fig:single_1em5}}
+%\caption[Single-phase solution at \dtmax{} = 1.0 {[s]}and 1.0E-5 {[s]}]{Single-phase solution with \dtmax{} = 1.0 {[s]} and 1.0E-5 {[s]}.}
+%\label{fig:single_compare_1}
+%\end{figure}
+
 \begin{figure}[h!t]
 \centering
-\subfloat[\dtmax{} = 1.0 {[s]}]{\includegraphics[width=0.49\textwidth]{images/single_1em0.eps}
-\label{fig:single_1em1}}
-\subfloat[\dtmax{} = 1.0E-5 {[s]}]{\includegraphics[width=0.49\textwidth]{images/single_1em5.eps}
-\label{fig:single_1em5}}
-\caption[Single-phase solution at \dtmax{} = 1.0 {[s]}and 1.0E-5 {[s]}]{Single-phase solution with \dtmax{} = 1.0 {[s]} and 1.0E-5 {[s]}.}
-\label{fig:single_compare_1}
+\includegraphics[width=0.94\textwidth]{images/single_1em0.eps}
+\caption{Single-phase solution with \dtmax{} = 1.0 {[s]}.}
+\label{fig:single_1em1}
+\end{figure}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/single_1em5.eps}
+\caption{Single-phase solution with \dtmax{} = 1.0E-5 {[s]}.}
+\label{fig:single_1em5}
 \end{figure}
 
 The single-phase case was designed to test if the legacy solver produced a simulation result that was equivalent to that produced by the nonlinear solver.
 More specifically, it was designed to show that for problems where the physics of interest have relatively low nonlinearities, the legacy solver provides as accurate a solution as the nonlinear solver.
-\fig{fig:single_compare_1} shows the solution produced by both the nonlinear and legacy solvers of \cobra{}.
+\fig{fig:single_1em1} and \fig{fig:single_1em5} show the solution produced by both the nonlinear and legacy solvers of \cobra{}.
 Unlike the flashing problem, both solvers were able to solve the problem for all of the \dtmax{} specified.
 The solutions produced by both solvers are qualitatively equivalent at \dtmax{} = 1.0 [s] and \dtmax{} = 1.0E-5 [s].
 This indicates that the legacy solver is adequate in regions where the solution is not highly nonlinear.
 
+%\begin{figure}[h!t]
+%\centering
+%\subfloat[Legacy mode.]
+%{\includegraphics[width=0.49\textwidth]{images/cobra_single_res_v_dt.eps}
+%\label{fig:leg_single_res}}
+%\subfloat[Nonlinear mode.]{\includegraphics[width=0.49\textwidth]{images/nl_single_res_v_dt.eps}
+%\label{fig:nl_single_res}}
+%\caption[Single-phase residuals.]{Single-phase residuals.}
+%\label{fig:single_compare_2}
+%\end{figure}
+
 \begin{figure}[h!t]
 \centering
-\subfloat[Legacy mode.]
-{\includegraphics[width=0.49\textwidth]{images/cobra_single_res_v_dt.eps}
-\label{fig:leg_single_res}}
-\subfloat[Nonlinear mode.]{\includegraphics[width=0.49\textwidth]{images/nl_single_res_v_dt.eps}
-\label{fig:nl_single_res}}
-\caption[Single-phase residuals.]{Single-phase residuals.}
-\label{fig:single_compare_2}
+\includegraphics[width=0.94\textwidth]{images/cobra_single_res_v_dt.eps}
+\caption{Legacy solver single-phase residuals.}
+\label{fig:leg_single_res}
+\end{figure}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/nl_single_res_v_dt.eps}
+\caption{Nonlinear solver single-phase residuals.}
+\label{fig:nl_single_res}
 \end{figure}
 
 Examining the residual for the two different solvers will provide insight into how well each of them are at solving the nonlinear problem.
@@ -517,24 +603,45 @@ However, the behavior of the residual for the nonlinear solver as a function of 
 To put the anomaly in context, it should first be noted that the nonlinear residual at the initiation of the ramp is approximately zero for \dtmax{} = 1 [s] and \dtmax{} = 1.0E-5 [s].
 It is only during intermediate values of \dtmax{} where the residuals becomes nontrivial during the ramp initiation.
 
+%\begin{figure}[h!t]
+%\centering
+%\subfloat[Transient Solution]{\includegraphics[width=0.49\textwidth]{images/single_1em3.eps}
+%\label{fig:single_1em3}}
+%\subfloat[Zoomed Solution]{\includegraphics[width=0.49\textwidth]{images/single_1em3_zoom.eps}
+%\label{fig:single_1em3_zoom}}
+%\caption[Single-phase solution at \dtmax{} = 1.0E-3 {[s]}]{Single-phase solution with \dtmax{} = 1.0E-3 {[s]}.}
+%\label{fig:single_compare_3}
+%\end{figure}
+
 \begin{figure}[h!t]
 \centering
-\subfloat[Transient Solution]{\includegraphics[width=0.49\textwidth]{images/single_1em3.eps}
-\label{fig:single_1em3}}
-\subfloat[Zoomed Solution]{\includegraphics[width=0.49\textwidth]{images/single_1em3_zoom.eps}
-\label{fig:single_1em3_zoom}}
-\caption[Single-phase solution at \dtmax{} = 1.0E-3 {[s]}]{Single-phase solution with \dtmax{} = 1.0E-3 {[s]}.}
-\label{fig:single_compare_3}
+\includegraphics[width=0.94\textwidth]{images/single_1em3.eps}
+\caption{Full transient single-phase solution with \dtmax{} = 1.0E-3 {[s]}.}
+\label{fig:single_1em3}
+\end{figure}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/single_1em3_zoom.eps}
+\caption{Zoomed single-phase solution with \dtmax{} = 1.0E-3 {[s]}.}
+\label{fig:single_1em3_zoom}
 \end{figure}
 
 While the solutions at \dtmax{} = 1.0 [s] and \dtmax{} = 1.0E-5 [s] are identical for the two solver modes, the solutions at intermediate timestep sizes were not identical.
-In particular, the nonlinear solver produces a solution at \dtmax{} = 1.0E-3 [s] that is inconsistent with both the solution produced by the legacy solver and, more importantly, with the specified inlet boundary conditions, see \fig{fig:single_compare_3}.
+In particular, the nonlinear solver produces a solution at \dtmax{} = 1.0E-3 [s] that is inconsistent with both the solution produced by the legacy solver and, more importantly, with the specified inlet boundary conditions.
 The two solvers produce solutions that agree for most of the domain, \fig{fig:single_1em3}, except at the initiation of the inlet flow at 1 [s], \fig{fig:single_1em3_zoom}.
+
+%\begin{figure}[h!t]
+%\centering
+%\includegraphics[width=0.49\textwidth]{images/nl_res_single_zoom.eps}
+%\caption{Nonlinear mode solution residual for single-phase problem.}
+%\label{fig:nl_res_single_zoom}
+%\end{figure}
 
 \begin{figure}[h!t]
 \centering
-\includegraphics[width=0.49\textwidth]{images/nl_res_single_zoom.eps}
-\caption{Nonlinear mode solution residual for single-phase problem.}
+\includegraphics[width=0.94\textwidth]{images/nl_res_single_zoom.eps}
+\caption{Zoomed residuals for the single-phase solution from the nonlinear solver.}
 \label{fig:nl_res_single_zoom}
 \end{figure}
 

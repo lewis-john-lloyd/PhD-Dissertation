@@ -1,15 +1,24 @@
-\documentclass[compress]{beamer}
-
+\documentclass[compress,xcolor=table]{beamer}
 \usepackage{multicol}
 \usepackage{tikz}
+\usepackage{IEEEtrantools}
 \usetikzlibrary{shapes}
 \usetikzlibrary{arrows}
 \usetikzlibrary{patterns}
+\usepackage{booktabs}
+\usepackage{multirow}
+
+\usepackage{algpseudocode}
+
+\input{commandsmath}
+\input{commandsgeneral}
 
 \usetheme{Szeged}
-%\usetheme{PaloAlto}
 \usecolortheme{beaver}
+\setbeamertemplate{navigation symbols}{}
 
+%----------------------------------------------------------------------------
+%----------------------------------------------------------------------------
 \title[Department of Nuclear Engineering and Engineering Physics]{Selective Spatial-Temporal Nonlinear Refinement For
 Thermal-Hydraulic Safety Analysis Codes}
 \author[Lloyd]{Lewis John Lloyd}
@@ -21,10 +30,8 @@ Thermal-Hydraulic Safety Analysis Codes}
 \date[Prelim Defense 2012]{Preliminary Defense, 2012}
 \subject{Nuclear Engineering}
 
-\setbeamertemplate{navigation symbols}{}
-
-\newcommand{\origaddtocontents}{\addtocontents}
-\newcommand{\dontaddtocontents}{}
+%----------------------------------------------------------------------------
+%----------------------------------------------------------------------------
 
 \begin{document}
 %------------------------------------------------------------------------------
@@ -67,7 +74,7 @@ Thermal-Hydraulic Safety Analysis Codes}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Geometric Components}
+\frametitle{Hydrodynamic Components}
 \begin{columns}
 \column{0.5\textwidth}
 
@@ -75,7 +82,6 @@ Thermal-Hydraulic Safety Analysis Codes}
 \item{Sections}
 \item{Channels}
 \item{Gaps}
-\item{Solid Structures}
 \end{itemize}
 
 \column{0.5\textwidth}
@@ -168,7 +174,16 @@ Who knows.
 \begin{frame}
 \frametitle{Conservation of Mass}
 
-Yay for more math.
+\begin{IEEEeqnarray}{rCl}
+\label{eqn:conservation_of_ncg}
+\frac{\partial \left(\alpha_g \rho_{n}\right) }{\partial t } + \nabla \cdot \left( \alpha_g \rho_{n} \vec{u}_g \right) & = & s_{m,n} \nonumber \\
+\label{eqn:conservation_of_vap}
+\frac{\partial \left(\alpha_g \rho_v \right)}{\partial t } + \nabla \cdot \left( \alpha_g \rho_v \vec{u}_g \right)         & = & \Gamma^{'''} + s_{m,v} \nonumber \\
+\label{eqn:conservation_of_liq}
+\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \right)         & = & -(1-\eta)\Gamma^{'''} - S^{'''} + s_{m,l} \nonumber \\
+\label{eqn:conservation_of_ent}
+\frac{\partial \left(\alpha_e \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_e \rho_l \vec{u}_e \right)         & = & -\eta\Gamma^{'''} + S^{'''}+ s_{m,e} \nonumber
+\end{IEEEeqnarray}
 
 \end{frame}
 %------------------------------------------------
@@ -176,7 +191,17 @@ Yay for more math.
 \begin{frame}
 \frametitle{Conservation of Momentum}
 
-Yay for more math.
+\begin{IEEEeqnarray}{rCl}
+\label{eqn:con_mom_liq}
+\frac{\partial \left( \alpha_l \rho_l \vec{u}_l \right )}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \vec{u}_l \right) & = & \nonumber \\
+ -\alpha_l \nabla P + \alpha_l \rho_l \vec{g} - \vec{\tau}^{'}_{w,l} + \vec{\tau}^{'}_{i,gl} - (1 - \eta)\Gamma^{'''}\vec{u}^{'} - S^{'''}\vec{u}^{'} + s_{p,l} & & \nonumber \\
+\label{eqn:con_mom_gas}
+\frac{\partial \left( \alpha_g \rho_g \vec{u}_g \right) }{\partial t } + \nabla \cdot \left( \alpha_g \rho_g \vec{u}_g \vec{u}_g \right) & = & \nonumber \\
+ -\alpha_g \nabla P + \alpha_g \rho_g \vec{g} - \vec{\tau}^{'}_{w,g} - \vec{\tau}^{'}_{i,gl} - \vec{\tau}^{'}_{i,ge} + \Gamma^{'''}\vec{u}^{'} + s_{p,g} & & \nonumber \\
+\label{eqn:con_mom_ent}
+\frac{\partial \left( \alpha_e \rho_l \vec{u}_e \right) }{\partial t } + \nabla \cdot \left( \alpha_e \rho_l \vec{u}_e \vec{u}_e \right) & = & \nonumber \\
+ -\alpha_e \nabla P + \alpha_e \rho_l \vec{g} - \vec{\tau}^{'}_{w,l} + \vec{\tau}^{'}_{i,ge} - \eta \Gamma^{'''}\vec{u}^{'} + S^{'''}\vec{u}^{'} + s_{p,l} & & \nonumber
+\end{IEEEeqnarray}
 
 \end{frame}
 %------------------------------------------------
@@ -184,7 +209,14 @@ Yay for more math.
 \begin{frame}
 \frametitle{Conservation of Energy}
 
-Yay for more math.
+\begin{IEEEeqnarray}{rCl}
+\label{eqn:con_energy_gas}
+\frac{\partial \left( \alpha_g \{\rho_g h_g\} \right)}{\partial t } + \nabla \cdot \left(  \alpha_g \{\rho_g h_g\} \vec{u}_g \right) & =& \nonumber \\
+\Gamma^{'''} h^{'}_v + q^{'''}_{i,v} + q^{'''}_{n,l}  + q^{'''}_{w,g} + \alpha_g\frac{\partial P}{\partial t} + s_{e,g}  & & \nonumber \\
+\label{eqn:con_energy_liq}
+\frac{\partial \left( (1 - \alpha_g) \rho_l h_l \right) }{\partial t } + \nabla \cdot \left( \alpha_l \rho_l h_l \vec{u}_l \right) + \nabla \cdot \left( \alpha_e \rho_l h_l \vec{u}_e \right)& = & \nonumber \\
+-\Gamma^{'''} h^{'}_l +  q^{'''}_{i,l} - q^{'''}_{n,l}  + q^{'''}_{w,l} + (1 - \alpha_g) \frac{\partial P}{\partial t} + s_{e,l}  & & \nonumber
+\end{IEEEeqnarray}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -207,11 +239,23 @@ Yay for more math.
 \begin{frame}
 \frametitle{Temporal Approximations}
 
+Integrate conservation equations over a time-step.
+
+\begin{columns}
+\column{0.4\textwidth}
 \begin{itemize}
-\item{Single-Step}
-\item{Single-Stage}
+\item{Single Step}
 \item{Multi-Stage}
 \end{itemize}
+\column{0.6\textwidth}
+\begin{IEEEeqnarray}{rcl}
+\int^{t^{n+1}}_{t^n}\frac{\partial \vec{y}(\vec{x})}{\partial t}\mathrm{d}\tau & = & \int^{t^{n+1}}_{t^n}\vec{E}(\vec{y}(\vec{x}))\mathrm{d}\tau \nonumber \\
+\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n}) & = & \int_{t^{n+1}}^{t^n}\vec{E}(\vec{y}(\vec{x}))\mathrm{d}\tau \nonumber  \\
+\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n}) & = & \Delta t \vec{E}(\vec{y}(\vec{x}^{*})) \nonumber  \\
+\label{eqn:simple_partial_t}
+\frac{\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n})}{\Delta t} & = & \vec{E}(\vec{y}(\vec{x}^{*})) \nonumber
+\end{IEEEeqnarray}
+\end{columns}
 
 \end{frame}
 %------------------------------------------------
@@ -233,7 +277,23 @@ Yay for more math.
 \begin{frame}
 \frametitle{Fully-Explicit Method}
 
-Here I talk about the Fully-Explicit Method
+\begin{columns}
+\column{0.45\textwidth}
+
+
+\column{0.55\textwidth}
+\begin{algorithmic}
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Take a Time Step
+    \State $t^{n+1} : = t^{n} + \Delta t$
+    \Calculate $\vec{F}(\vec{x}^n)$ and $\vec{J}(\vec{x}^n)$
+    \Calculate $\vec{\delta x} = -\vec{J}^{-1}\vec{F}$
+    \Calculate $\vec{x}^{n+1} = \vec{x}^{n} + \vec{\delta x}$ 
+\EndLoop{\;$n = n+1$}
+\end{algorithmic}
+
+\end{columns}
 
 \end{frame}
 %------------------------------------------------
@@ -392,7 +452,7 @@ Nonlinear Solver
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Scaling One}
+\frametitle{Operator-Based Scaling}
 
 Stuff gets scaled.
 
@@ -400,7 +460,7 @@ Stuff gets scaled.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Scaling Two}
+\frametitle{Operator-Based Scaling}
 
 Stuff gets scaled again.
 
@@ -411,7 +471,7 @@ Stuff gets scaled again.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Time is Converged.}
+\frametitle{Temporal Convergence vs Timestep Size Insensitivity}
 
 Convergence occurs.
 
@@ -422,7 +482,7 @@ Convergence occurs.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Purpose}
+\frametitle{Numerical Experiments: Purpose}
 
 I am the purpose.
 
@@ -430,23 +490,102 @@ I am the purpose.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Geometry}
+\frametitle{Numerical Experiments: Geometry}
+\begin{columns}
+\column{0.7\textwidth}
 
-Geometry goes here.
+\begin{itemize}
+\item{Cross-sectional area: 4 [in$^2$]}
+\item{Total height: 48 [in]}
+\item{\dx{} is constant: 4 [in]}
+\item{ Boundary Conditions
+	\begin{itemize}
+	\item{Specified inlet flow-enthalpy}
+	\item{Specified outlet pressure-enthalpy}
+\end{itemize}
+}
+\end{itemize}
+
+\column{0.3\textwidth}
+\begin{figure}[h!t]
+\centering
+\resizebox{!}{0.7\textheight}{
+\begin{tikzpicture}
+\foreach \x in {1,..., 12} \draw(0, 0.5*\x-0.5) rectangle +(.5,.5);
+\filldraw[fill=red] (0, 6) rectangle +(.5,.5); 
+\filldraw[fill=red] (0, -0.5) -- (0.25, 0) -- (0.5, -0.5) -- cycle;
+\draw[->] (2,0) -- (2, 1) node[anchor=west] {z};
+\draw[->] (2,0) -- (3, 0) node[anchor=west] {$\perp$ z};
+\end{tikzpicture}
+}
+\end{figure}
+\end{columns}
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Numerical Experiments: Initial Conditions}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
+\multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
+                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
+Single-Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
+Flashing                 &  200&0                       & 1198&3                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
+\end{tabular}
+\label{tab:ic}
+\end{table}
 
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Initial and Boundary Conditions}
+\frametitle{Numerical Experiments: Outlet Boundary Conditions}
 
-Here are the conditions.
+\begin{table}[ht]
+\centering
+\begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
+\multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
+                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{BTU}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
+Single-Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
+Flashing                 &  200&0                       & 1198&3                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
+\end{tabular}
+\label{tab:bc_pe}
+\end{table}
 
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Procedure}
+\frametitle{Numerical Experiments: Inlet Boundary Conditions}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
+\multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
+                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{BTU}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
+Single-Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
+Flashing                 & 1000&0                       &  542&6                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
+\end{tabular}
+\label{tab:bc_fe}
+\end{table}
+
+\begin{equation*}
+\label{eqn:bc_time_func_single}
+\dot{m}(t) = \left\{
+\begin{array}{cclrcll}
+ 0.0           & [\frac{ \lbm{} }{\text{s}}] & , &                & t & \leq 1 & [\text{s}] \\
+ 0.5 ( t - 1)  & [\frac{ \lbm{} }{\text{s}}] & , & 1\; [\text{s}] < & t & \leq 2 & [\text{s}] \\
+ 0.5           & [\frac{ \lbm{} }{\text{s}}] & , &                & t & > 2    & [\text{s}]
+\end{array}\right.
+\end{equation*}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Numerical Experiments: Procedure}
 
 Procedures are good.
 
@@ -454,7 +593,7 @@ Procedures are good.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Results 1}
+\frametitle{Numerical Experiments: Results 1}
 
 Stuff
 
@@ -462,7 +601,7 @@ Stuff
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Results 2}
+\frametitle{Numerical Experiments: Results 2}
 
 Results are good.
 
@@ -470,7 +609,7 @@ Results are good.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Results 3}
+\frametitle{Numerical Experiments: Results 3}
 
 Results are better.
 
@@ -478,7 +617,7 @@ Results are better.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Results 4}
+\frametitle{Numerical Experiments: Results 4}
 
 Results are best.
 
@@ -489,7 +628,7 @@ Results are best.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Review of Work.}
+\frametitle{Preliminary Work Review}
 
 Here I review.
 
@@ -497,7 +636,7 @@ Here I review.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Review 2.}
+\frametitle{Preliminary Work Review}
 
 Review part 2.
 
@@ -508,9 +647,36 @@ Review part 2.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Here is a time line overview.}
+\frametitle{Proposed Timeline}
 
-Timeline goes here.
+
+\newcommand{\cc}{\cellcolor{black}}
+\begin{table}
+\centering
+\resizebox{0.9\textwidth}{!}{
+\begin{tabular}{@{}l l c c c c  c c c c c c @{}} \toprule
+Task & \multicolumn{1}{r}{Month} & Jan & Feb & Mar & Apr & May & Jun & Jul & Aug & Sep & Oct\\
+\midrule
+\multicolumn{12}{l}{Scaling}  \\
+& Implementation & \cc & \cc &     &     &     &     &     &     &     &     \\
+& Testing        &     & \cc & \cc &     &     &     &     &     &     &     \\
+\multicolumn{12}{l}{Domain Decomposition} \\
+& Development    & \cc & \cc &     &     &     &     &     &     &     &     \\
+& Implementation &     & \cc & \cc & \cc & \cc &     &     &     &     &     \\
+& Testing        &     &     &     &     & \cc & \cc &     &     &     &     \\
+\multicolumn{12}{l}{Temporal Convergence Criteria}\\
+& Implementation & \cc & \cc &     &     &     &     &     &     &     &     \\
+& Testing        &     &     & \cc & \cc &     &     &     &     &     &     \\
+\multicolumn{12}{l}{Performance Evaluation} \\
+& Testing        &     &     &     &     &     & \cc & \cc &     &     &     \\
+\multicolumn{12}{l}{Parametric Studies} \\
+& Testing        &     &     &     &     &     & \cc & \cc & \cc &     &     \\
+\multicolumn{12}{l}{Dissertation} \\
+& Writing        & \cc & \cc & \cc & \cc & \cc & \cc & \cc & \cc & \cc & \cc \\
+\bottomrule  
+\end{tabular}
+}
+\end{table}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -519,7 +685,7 @@ Timeline goes here.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Scaling Work.}
+\frametitle{Proposed Scaling Work}
 
 Scaling stuff.
 
@@ -530,29 +696,29 @@ Scaling stuff.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Domains get decomposed.}
+\frametitle{Proposed Domains Decomposition}
 
 More decomposition.
 
 \end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
-\subsection[Testing]{Testing and Benchmarking}
+\subsection[Testing]{Proposed Testing}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Testing.}
+\frametitle{Proposed Testing}
 
 Here there be testing.
 
 \end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
-\subsection[Time Line]{Time Line}
+\subsection[Timeline]{Timeline}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Time Line Again.}
+\frametitle{Timeline}
 
 I am stuff.
 
@@ -563,7 +729,7 @@ I am stuff.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{This is the fourth slide.}
+\frametitle{Possible Outcomes}
 
 I am stuff.
 

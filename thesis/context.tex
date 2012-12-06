@@ -157,7 +157,7 @@ The first simplification for modeling the fluid mechanics during a LOCA is recog
 Since the exact deterministic behavior of the phasic-interface is not necessary, the governing equations are subjected to an averaging procedure to produce conservation laws for averaged quantities.
 There are several averaging techniques that have been used to motivate the conservation laws for two-phase flow.
 There are spatial, temporal, and ensemble averaging techniques, each of which has its own physical interpretation and mathematical formulation \cite{Drew1998, Todreas2011}.
-The particular formulation used in this work is spatial averaging, in particular, area averaging.
+The formulation used in this work is a particular form of spatial averaging, area averaging.
 In the area-averaged formulation, the quantities of interest, $\tilde{a}$, are defined as an average over the cross-sectional flow area, $A$, \eqref{eqn:area_average}.
 Since all quantities are area-averaged, the tilde in \eqref{eqn:area_average} will be dropped.
 
@@ -183,7 +183,7 @@ The following is a list of the assumptions that are made in \cobra{} to reduce t
 \begin{itemize}
 \item{
 Thermodynamic and pressure equilibrium exists between the continuous liquid field and the entrained liquid field.
-The basis for this assumption is that while the entrained droplets are here being modeled by a separate set of governing equations than those of the continuous liquid field, in reality the droplets are constantly entraining from and depositing to the continuous liquid field. 
+The basis for this assumption is that while the entrained droplets are being modeled by a separate set of governing equations than those of the continuous liquid field, the droplets are constantly entraining from and depositing to the continuous liquid field. 
 }
 \item{
 The liquid and gaseous phases are assumed to be in pressure equilibrium with the interface between the phases.
@@ -523,7 +523,7 @@ First, the area in the flux term, $\tilde{A}$, is taken as the minimum of two ar
 \min\left(A_{m,j}, A_{m,j+1}\right)
 \end{equation}
 
-Second, the velocity that is used to determine the origination of the donored quantity is the arithmetic mean of the velocities from the two adjacent momentum volumes, \eqref{eqn:average_advecting_vel}.
+Second, the velocity that is used to determine the origin of the donored quantity is the arithmetic mean of the velocities from the two adjacent momentum volumes, \eqref{eqn:average_advecting_vel}.
 
 \begin{equation}
 \label{eqn:average_advecting_vel}
@@ -602,7 +602,7 @@ The term one-step refers to the fact that the temporal derivative involves only 
 \begin{IEEEeqnarray}{rcl}
 \int^{t^{n+1}}_{t^n}\frac{\partial \vec{y}(\vec{x})}{\partial t}\mathrm{d}\tau & = & \int^{t^{n+1}}_{t^n}\vec{E}(\vec{y}(\vec{x}))\mathrm{d}\tau \nonumber \\
 \vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n}) & = & \int_{t^{n+1}}^{t^n}\vec{E}(\vec{y}(\vec{x}))\mathrm{d}\tau \nonumber  \\
-\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n}) & = & \Delta t \vec{E}(\vec{x}^{*}) \nonumber  \\
+\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n}) & = & \Delta t \vec{E}(\vec{y}(\vec{x}^{*})) \nonumber  \\
 \label{eqn:simple_partial_t}
 \frac{\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n})}{\Delta t} & = & \vec{E}(\vec{y}(\vec{x}^{*}))
 \end{IEEEeqnarray}
@@ -684,8 +684,6 @@ The underlying assumption of this initial value is that the independent paramete
 The algorithm generalizes to a multi-stage temporal integration method by enclosing the Newton loop within a stage loop.
 
 \begin{algo}[H]
-\caption{Local Newton's method for single-stage temporal integration.}
-\label{alg:local_newton}
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Require $\vec{x}^{0}$ and $t^{0}$
@@ -704,6 +702,8 @@ The algorithm generalizes to a multi-stage temporal integration method by enclos
 	\State $n = n + 1$
 \EndLoop
 \end{algorithmic}
+\caption{Local Newton's method for single-stage temporal integration.}
+\label{alg:local_newton}
 \end{algo}
 
 In \alg{alg:local_newton}, there are two black box calculations: the calculation of the updated independent parameters, $\vec{x}^{n+1,k+1}$; and the calculation of the loop termination criteria.
@@ -777,7 +777,7 @@ While the explicit method may provide the least computational cost on a per-time
 \Delta t = \min_{j \in \Omega} \Delta t_j
 \end{equation}
 
-Stated in words, the maximum permissible timestep size is determined by the most restrictive CFL limit within the domain which is limited by the local speed of sound, referred to as the sonic Courant limit.
+Put another way, the maximum permissible timestep size is determined by the most restrictive CFL limit within the domain which is limited by the local speed of sound, referred to as the sonic Courant limit.
 This limitation of the explicit method prompted the development of alternative methods that were capable of exceeding this Courant limit.
 
 \subsection{Fully Implicit Method}
@@ -1270,8 +1270,8 @@ A short outline of the method as formulated for RELAP5-3D coupling is presented 
 
 The semi-implicit domain decomposition is accomplished via the staggered mesh formulation.
 The master domain is truncated on a continuity volume.
-The unknowns at the boundary of the coupled volumes, the fluxes of conserved continuity quantities, are retained as intrinsic unknowns during the decomposition of the domain into a pressure matrix.
-Upon formulation of the pressure matrix, the Newton update for the pressures will be expressed as a linear combination of all of the unknown mass and energy fluxes through the coupled boundaries of the domain, \eqref{eqn:si_relap} \cite{Weaver2002}.
+The fluxes of conserved continuity quantities at the boundary of the coupled volumes are retained as unknowns during the formulation of the domain into a pressure matrix.
+Upon forming the pressure matrix, the Newton update for the pressures will be expressed as a linear combination of all of the unknown mass and energy fluxes through the coupled boundaries of the domain, \eqref{eqn:si_relap} \cite{Weaver2002}.
 
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:si_relap}
@@ -1391,7 +1391,7 @@ Each of the methods outlined in \sect{sect:solution_techniques} has one thing in
 \label{fig:my_diagram}
 \end{figure}
 
-The advantages of the single-shot linearization is the reduction in computational costs; however, the accuracy in regions of highly non-linear physics is suspect.
+The advantage of the single-shot linearization is the reduction in computational costs; however, the accuracy in regions of highly non-linear physics is suspect.
 This has traditionally been mitigated by limitations placed upon the maximum change in independent parameters. 
 The resolution of the nonlinearities within a timestep requires the use of an iterative method.
 The benefits of an iterative Newton solver is that the nonlinearities are resolved at each timestep; however, the computational cost of multiple global Newton steps is high.
