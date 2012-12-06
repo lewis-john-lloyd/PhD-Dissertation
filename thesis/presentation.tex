@@ -253,8 +253,10 @@ Integrate conservation equations over a time-step.
 \vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n}) & = & \int_{t^{n+1}}^{t^n}\vec{E}(\vec{y}(\vec{x}))\mathrm{d}\tau \nonumber  \\
 \vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n}) & = & \Delta t \vec{E}(\vec{y}(\vec{x}^{*})) \nonumber  \\
 \label{eqn:simple_partial_t}
-\frac{\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n})}{\Delta t} & = & \vec{E}(\vec{y}(\vec{x}^{*})) \nonumber
+\frac{\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n})}{\Delta t} & = & \vec{E}^{*} \nonumber \\
+0 = \vec{y}(\vec{x}^{n+1}) & - & \vec{y}(\vec{x}^{n}) - \Delta t \vec{E}^{*} \nonumber
 \end{IEEEeqnarray}
+
 \end{columns}
 
 \end{frame}
@@ -301,7 +303,25 @@ Integrate conservation equations over a time-step.
 \begin{frame}
 \frametitle{Fully-Implicit Method}
 
-Here I talk about the fully-implicit method.
+\begin{algorithmic}
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \State $t^{n+1} : = t^{n} + \Delta t$
+    \For{$j = 1 \to 2$} \; Stage Loop
+    \State $k = 0$
+    \State $\vec{x}^{k} = \vec{x}^{n}$
+    \Loop \; Newton Loop
+		\Calculate $\vec{F}(\vec{x}^{k})$ and $\vec{J}(\vec{x}^{k})$
+		\Calculate $\vec{\delta x}^k = - \vec{J}^{-1}\cdot\vec{F}$
+		\BlackBox $\vec{x}^{k+1}$
+		\State $k = k + 1$
+		\BlackBox Loop Termination Criteria
+	\EndLoop	
+	\EndFor
+	\State $n = n + 1$
+\EndLoop
+\end{algorithmic}
 
 \end{frame}
 %------------------------------------------------
@@ -358,7 +378,7 @@ Phases are transitioned.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Time Step Failure Mitigation}
+\frametitle{Timestep Failure Mitigation}
 
 Time step failures are mitigated.
 
@@ -366,7 +386,7 @@ Time step failures are mitigated.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Time-step selection}
+\frametitle{Timestep Size Selection}
 
 Time step are selected.
 
@@ -387,7 +407,7 @@ Figure of two codes talking.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{RELAP5-3D coupling}
+\frametitle{RELAP5-3D Coupling}
 
 Pressure Updates
 Codes are coupled.
@@ -398,7 +418,7 @@ Figure of two codes talking.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Domain Decomposition.}
+\frametitle{Domain Decomposition}
 
 Figure of one domain with two sub components.
 Talk about additive Schwarz methods.
@@ -427,7 +447,7 @@ Fun stuff.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Work on COBRA.}
+\frametitle{Nonlinear COBRA}
 
 Issues.
 Coding Details
@@ -473,7 +493,9 @@ Stuff gets scaled again.
 \begin{frame}
 \frametitle{Temporal Convergence vs Timestep Size Insensitivity}
 
-Convergence occurs.
+\begin{itemize}
+\item{stuff}
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -484,7 +506,10 @@ Convergence occurs.
 \begin{frame}
 \frametitle{Numerical Experiments: Purpose}
 
-I am the purpose.
+\begin{itemize}
+\item{Purpose 1}
+\item{Purpose 2}
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------
@@ -587,7 +612,11 @@ Flashing                 & 1000&0                       &  542&6                
 \begin{frame}
 \frametitle{Numerical Experiments: Procedure}
 
-Procedures are good.
+\begin{itemize}
+\item{Two problems}
+\item{single phase}
+\item{flashing}
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------
@@ -842,17 +871,6 @@ Here there be testing.
 \end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
-\subsection[Timeline]{Timeline}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Timeline}
-
-I am stuff.
-
-\end{frame}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
 \subsection[Possible Outcomes]{Possible Outcomes}
 %------------------------------------------------
 %------------------------------------------------
@@ -876,18 +894,44 @@ This research was performed under appointment to the Rickover Fellowship Program
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{I am another extra slide.}
+\frametitle{Legacy flashing residual}
 
-I am more excess.
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/flashing_semilogy_res_compare_lin.eps}
+\end{figure}
 
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{I am another extra slide.}
+\frametitle{Nonlinear flashing residual}
 
-I am more excess.
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/flashing_semilogy_res_compare_nl.eps}
+\end{figure}
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Legacy single-phase residual}
 
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/single_semilogy_res_v_dt_lin.eps}
+\end{figure}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Nonlinear single-phase residual}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/single_semilogy_res_v_dt_nl.eps}
+\end{figure}
 \end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
