@@ -76,15 +76,30 @@ Thermal-Hydraulic Safety Analysis Codes}
 \begin{frame}
 \frametitle{Hydrodynamic Components}
 \begin{columns}
-\column{0.5\textwidth}
+\column{0.65\textwidth}
 
 \begin{itemize}
-\item{Sections}
-\item{Channels}
-\item{Gaps}
+\item{Sections
+\begin{itemize}
+\item{Contain channels}
+\item{Defines spatial discretization of channels within section.}
+\item{Splitting and merging of channels occur at section boundaries.}
+\end{itemize}
+}
+\item{Channels
+\begin{itemize}
+\item{Defines cross-sectional areas.}
+\end{itemize}
+}
+\item{Gaps
+\begin{itemize}
+\item{Connect channels within a section.}
+\item{Defines transverse length.}
+\end{itemize}
+}
 \end{itemize}
 
-\column{0.5\textwidth}
+\column{0.35\textwidth}
 \begin{figure}[t]
 \centering
 \resizebox{!}{0.7\textheight}{
@@ -115,42 +130,6 @@ Thermal-Hydraulic Safety Analysis Codes}
 }
 \end{figure}
 
-\end{columns}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{Staggered Grid}
-
-\begin{columns}
-\column{0.5\textwidth}
-I will talk about staggered grids?
-I may talk about staggered grids.
-Who knows.
-\begin{itemize}
-\item{Continuity Volumes}
-\item{Momentum Volumes}
-\end{itemize}
-\column{0.5\textwidth}
-\begin{figure}
-\centering
-\resizebox{\textwidth}{!}{
-\begin{tikzpicture}
-\draw (-3,0) rectangle +(1,5);
-\draw (0,0) rectangle +(1,1) (0,1) rectangle +(1,1) (0, 2) rectangle +(1,1) (0,3) rectangle +(1,1) (0,4) rectangle +(1,1);
-\draw[dashed] (3,-0.5) rectangle +(1,1) (3,0.5) rectangle +(1,1) (3,1.5) rectangle +(1,1) (3, 2.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3, 4.5) rectangle +(1,1) ;
-\draw[dashed] (-3,0) -- (4,0);
-\draw[dashed] (-3,5) -- (4,5);
-\draw (-2.5,-1) node {\textbf{Channel}};
-\draw (0.5,-1) node {\textbf{Continuity}};
-\draw (0.5,-1.5) node {\textbf{Volume}};
-\draw (3.5,-1) node {\textbf{Momentum}};
-\draw (3.5,-1.5) node {\textbf{Volume}};
-\end{tikzpicture}
-}
-\end{figure}
 \end{columns}
 
 \end{frame}
@@ -227,11 +206,35 @@ Who knows.
 \begin{frame}
 \frametitle{Spatial Approximations}
 
+\begin{columns}
+\column{0.5\textwidth}
+
 \begin{itemize}
-\item{1st Order Upwind}
-\item{Continuity Volume}
-\item{Momentum Volume}
+\item{Continuity volumes: mass and energy conservation equations}
+\item{Momentum volumes: momentum conservation equations}
+\item{1st Order upwind at boundaries.}
 \end{itemize}
+
+
+\column{0.5\textwidth}
+\begin{figure}
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tikzpicture}
+\draw (-3,0) rectangle +(1,5);
+\draw (0,0) rectangle +(1,1) (0,1) rectangle +(1,1) (0, 2) rectangle +(1,1) (0,3) rectangle +(1,1) (0,4) rectangle +(1,1);
+\draw[dashed] (3,-0.5) rectangle +(1,1) (3,0.5) rectangle +(1,1) (3,1.5) rectangle +(1,1) (3, 2.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3, 4.5) rectangle +(1,1) ;
+\draw[dashed] (-3,0) -- (4,0);
+\draw[dashed] (-3,5) -- (4,5);
+\draw (-2.5,-1) node {\textbf{Channel}};
+\draw (0.5,-1) node {\textbf{Continuity}};
+\draw (0.5,-1.5) node {\textbf{Volume}};
+\draw (3.5,-1) node {\textbf{Momentum}};
+\draw (3.5,-1.5) node {\textbf{Volume}};
+\end{tikzpicture}
+}
+\end{figure}
+\end{columns}
 
 \end{frame}
 %------------------------------------------------
@@ -244,8 +247,8 @@ Integrate conservation equations over a time-step.
 \begin{columns}
 \column{0.4\textwidth}
 \begin{itemize}
-\item{Single Step}
-\item{Multi-Stage}
+\item{Single Step Method}
+\item{Temporal integral defined by approximation $\dt{} \vec{E}^{*}$}
 \end{itemize}
 \column{0.6\textwidth}
 \begin{IEEEeqnarray}{rcl}
@@ -277,7 +280,7 @@ Integrate conservation equations over a time-step.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Fully-Explicit Method}
+\frametitle{Fully Explicit Method}
 
 \begin{columns}
 \column{0.45\textwidth}
@@ -285,10 +288,11 @@ Integrate conservation equations over a time-step.
 
 \column{0.55\textwidth}
 \begin{algorithmic}
+\scriptsize
 \Require $\vec{x}^{0}$ and $t^{0}$
 \Set $n = 0$
 \Loop \; Take a Time Step
-    \State $t^{n+1} : = t^{n} + \Delta t$
+    \Set $t^{n+1} : = t^{n} + \Delta t$
     \Calculate $\vec{F}(\vec{x}^n)$ and $\vec{J}(\vec{x}^n)$
     \Calculate $\vec{\delta x} = -\vec{J}^{-1}\vec{F}$
     \Calculate $\vec{x}^{n+1} = \vec{x}^{n} + \vec{\delta x}$ 
@@ -301,33 +305,35 @@ Integrate conservation equations over a time-step.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Fully-Implicit Method}
+\frametitle{Fully Implicit Method}
+\begin{columns}
+\column{0.5\textwidth}
 
+\column{0.5\textwidth}
 \begin{algorithmic}
+\scriptsize
 \Require $\vec{x}^{0}$ and $t^{0}$
 \Set $n = 0$
 \Loop \; Transient Loop
-    \State $t^{n+1} : = t^{n} + \Delta t$
-    \For{$j = 1 \to 2$} \; Stage Loop
-    \State $k = 0$
-    \State $\vec{x}^{k} = \vec{x}^{n}$
+    \Set $t^{n+1} : = t^{n} + \Delta t$
+    \Set $k = 0$
+    \Set $\vec{x}^{k} = \vec{x}^{n}$
     \Loop \; Newton Loop
 		\Calculate $\vec{F}(\vec{x}^{k})$ and $\vec{J}(\vec{x}^{k})$
 		\Calculate $\vec{\delta x}^k = - \vec{J}^{-1}\cdot\vec{F}$
-		\BlackBox $\vec{x}^{k+1}$
-		\State $k = k + 1$
-		\BlackBox Loop Termination Criteria
-	\EndLoop	
-	\EndFor
-	\State $n = n + 1$
-\EndLoop
+		\BlackBox Calculate $\vec{x}^{k+1}$
+		\BlackBox Terminate Loop
+	\EndLoop{\;$k = k + 1$} 	
+\EndLoop{\;$n = n + 1$}
 \end{algorithmic}
 
+
+\end{columns}
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Semi-Implicit Method Overview}
+\frametitle{Semi-Implicit Method}
 
 Semi-Implicit method.
 
@@ -507,7 +513,7 @@ Stuff gets scaled again.
 \frametitle{Numerical Experiments: Purpose}
 
 \begin{itemize}
-\item{Purpose 1}
+\item{Determine the impact of }
 \item{Purpose 2}
 \end{itemize}
 
@@ -613,9 +619,9 @@ Flashing                 & 1000&0                       &  542&6                
 \frametitle{Numerical Experiments: Procedure}
 
 \begin{itemize}
-\item{Two problems}
-\item{single phase}
-\item{flashing}
+\item{\dtmax{} reduced.}
+\item{Comparison of solutions}
+\item{Comparison of metrics}
 \end{itemize}
 
 \end{frame}
@@ -784,6 +790,56 @@ Flashing                 & 1000&0                       &  542&6                
 \end{figure}
 
 \end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Convergence Metrics for Flashing Problem}
+
+\begin{table}[h!t]
+\centering
+\resizebox{0.9\textwidth}{!}{
+\begin{tabular}{@{}l r@{.}l r@{.}l r@{.}l r@{.}l @{}}
+\toprule
+& \multicolumn{4}{c}{$\tilde{R}$} & \multicolumn{4}{c}{$\tilde{R}_{\text{M}}$}  \\
+$\dtmax{}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlinear} & \multicolumn{2}{c}{Legacy}& \multicolumn{2}{c}{Nonlinear}  \\
+\midrule
+1.0    & \multicolumn{2}{c}{-} & 1&177E-3 & \multicolumn{2}{c}{-} & 6&885E-4 \\
+1.0E-1 & 5&487E-2 & 1&141E-3 & 5&044E-2 & 6&730E-4 \\
+1.0E-2 & 4&960E-2 & 3&413E-4 & 4&570E-2 & 2&511E-4 \\
+1.0E-3 & 3&172E-2 & 2&669E-4 & 2&372E-2 & 1&975E-4 \\
+1.0E-4 & 2&504E-2 & 1&346E-4 & 1&838E-2 & 8&974E-5 \\
+1.0E-5 & 2&166E-2 & 5&075E-5 & 1&922E-2 & 4&581E-5 \\
+\bottomrule  
+\end{tabular}
+}
+\end{table}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Convergence Metrics for Single-Phase Problem}
+
+\begin{table}[h!t]
+\centering
+\resizebox{0.9\textwidth}{!}{
+\begin{tabular}{@{}l r@{.}l r@{.}l r@{.}l r@{.}l @{}}
+\toprule
+& \multicolumn{4}{c}{$\tilde{R}$} & \multicolumn{4}{c}{$\tilde{R}_{\text{M}}$}  \\
+$\dtmax{}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlinear} & \multicolumn{2}{c}{Legacy}& \multicolumn{2}{c}{Nonlinear}  \\
+\midrule
+1.0    & 3&149E-3 & 1&700E-3 & 1&485E-3 & 1&070E-4 \\
+1.0E-1 & 2&866E-3 & 1&700E-3 & 1&287E-3 & 1&070E-4 \\
+1.0E-2 & 3&412E-4 & 1&357E-3 & 1&417E-4 & 7&701E-5 \\
+1.0E-3 & 2&207E-4 & 4&584E-4 & 8&805E-5 & 1&178E-4 \\
+1.0E-4 & 1&672E-4 & 1&588E-3 & 1&834E-5 & 4&958E-5 \\
+1.0E-5 & 5&493E-4 & 2&758E-4 & 1&916E-5 & 8&939E-5 \\
+\bottomrule  
+\end{tabular}
+}
+\end{table}
+
+\end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \subsection[Review]{Review}
@@ -793,8 +849,9 @@ Flashing                 & 1000&0                       &  542&6                
 \frametitle{Preliminary Work Review}
 
 \begin{itemize}
-\item{Timestep size insensitive solutions}
-\item{Blarger}
+\item{Methods that resolve nonlinearities during a timestep allows for a timestep size insensitive solution at larger \dtmax{} than methods that do not.}
+\item{A timestep size insensitive solution produced by a linearized approximation may be different than one produced by a nonlinearly convergent solver.}
+\item{Both solvers produce similar solutions in simple problems.} 
 \end{itemize}
 
 \end{frame}
@@ -844,7 +901,12 @@ Task & \multicolumn{1}{r}{Month} & Jan & Feb & Mar & Apr & May & Jun & Jul & Aug
 \begin{frame}
 \frametitle{Proposed Scaling Work}
 
-Scaling stuff.
+Issues that need to be addressed in scaling:
+\begin{itemize}
+\item{Nontrivial values of the residual during steady-state portion of transients.}
+\item{Nonconvergence of nonlinear solver.}
+\item{Inconsistent scaling of the update vector in the Newton loop and the linesearch algorithm.} 
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -853,9 +915,16 @@ Scaling stuff.
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Proposed Domains Decomposition}
+\frametitle{Proposed Domains Decomposition Work}
 
-More decomposition.
+Milestones required for implementation of domain decomposition:
+
+\begin{itemize}
+\item{Generation of mathematical formulation for COBRA-COBRA domain decomposition.}
+\item{Implementation of decomposition logic into COBRA software.}
+\item{Development of problems with geometric complexity.}
+\item{Test legacy solver using domain decomposition logic.} 
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -877,7 +946,11 @@ Here there be testing.
 \begin{frame}
 \frametitle{Possible Outcomes}
 
-I am stuff.
+Possible outcomes
+
+\begin{itemize}
+\item{I am stuff.}
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------------------------------------
