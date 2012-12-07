@@ -1,18 +1,18 @@
 %============================================================================
 % abstract.tex
 %============================================================================
-The methods used to simulate the thermal-hydraulic behavior in the core of a nuclear power plant during postulated accidents are characterized by the manner in which the temporal-integration of the governing conservation equations and the manner in which the nonlinearities in those fully discrete equations are resolved.
-Each of the methods used in has one thing in common: the discrete nonlinear problem is solved globally at each timestep.
-This is done either through a single Newton step or through an iterative Newton procedure.
+The methods used to simulate the thermal-hydraulic behavior in the core of a nuclear power plant during postulated accidents can be characterized by the manner in which the governing conservation equations are discretized and the manner in which any nonlinearities present in those fully discrete equations are resolved.
+While each method has a different way of approximating the governing equations, they all require that a discrete nonlinear problem be approximately solved at each timestep.
+This is been done either through a single Newton step or through an iterative Newton procedure.
 
-The primary advantage of the single Newton step approach is the low computational costs; however, the accuracy of this method in regions of highly non-linear physics is suspect.
-This has traditionally been mitigated by limitations placed upon the maximum change in independent parameters during a timestep.
-The resolution of the nonlinearities within a timestep requires the use of an iterative method.
-The benefits of an iterative Newton solver is that the nonlinearities are resolved at each timestep; however, the computational cost of a global Newton method is high.
+The primary advantage of using a single Newton step is the low computational cost; however, the accuracy of a linear approximation in regions of highly non-linear physics may be suspect.
+This has traditionally been mitigated by limitations placed upon the maximum change in independent parameters within a timestep.
+Alternatively, resolving the nonlinearities within a timestep reduces errors from the linear approximation but requires the use of an iterative solver.
+The benefits of an iterative Newton solver is that the nonlinearities are resolved at each timestep; however, the computational cost of global Newton methods is high.
 
 For spatially isolable nonlinearities the computational expenditure of iteratively solving the global nonlinear problem may be unnecessary.
 The objectives of this research are the design, implementation, and evaluation of a novel, spatially selective, nonlinear solution method for nuclear thermal-hydraulic safety analysis.
-Isolation of those subdomains where nonlinearities are high will be achieved by domain decomposition.
+Isolation of subdomains where nonlinearities are high will be achieved by domain decomposition.
 The method of decomposition chosen enables feedback across the subdomain boundaries. 
 Upon isolation, the nonlinear subdomain will be subjected to a globalized Newton method to resolve the local nonlinearities.
 The nonlinearly converged solution from the subdomain will then be communicated via coupling coefficients to the rest of the problem domain for use in calculating its single Newton step.
