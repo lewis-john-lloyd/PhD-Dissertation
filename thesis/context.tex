@@ -405,7 +405,7 @@ As such, methods need to be selected to approximate its solution numerically.
 
 \subsection{Spatial Approximations}
 \label{subsect:spatial_approx}
-In the thermal-hydraulic safety analysis methods of interest, the governing equation are discretized by using the finite-volume method \cite{LeVeque2002}.
+In the thermal-hydraulic safety analysis methods of interest the governing equation are discretized by using the finite-volume method \cite{LeVeque2002}.
 The discussion that follows is specific to \cobra{}, but other safety analysis software use similar procedures \cite{RELAP,TRACE}.
 
 The labeling scheme for the finite volumes is shown in \fig{fig:vertical_pipe_with_cells}, which is a segment of a channel.
@@ -553,7 +553,7 @@ The conservation of momentum equations within a given momentum volume are ordere
 \label{subsect:temporal_approx}
 
 Once the governing conservation equations have been spatially discretized utilizing the method outlined above, the temporal derivatives need to be approximated numerically .
-Using the spatially discrete approximations defined in \sect{subsect:spatial_approx}, the temporally continuous differential equations, \eqref{eqn:conservation_equations}, are now semi-discrete approximations given by \eqref{eqn:temporal_semi_discrete}, where $\vec{E}$ now represents the spatially discrete version of $\vec{e}$.
+The continuous conservation equations, \eqref{eqn:conservation_equations}, are now a spatially-discrete, temporally-continuous set of equations given by \eqref{eqn:temporal_semi_discrete}, where $\vec{E}$ now represents the spatially discrete approximation to $\vec{e}$.
 
 \begin{equation}
 \label{eqn:temporal_semi_discrete}
@@ -588,7 +588,7 @@ Other software, such as TRACE and RELAP5-3D, use variants of these parameters.
 These variations include the use of velocities instead of momenta and temperatures or internal energies instead of enthalpies \cite{RELAP, TRACE}.
 
 A distinguishing feature of the numerical method in \cobra{} is its treatment of the temporal derivative for the conservation of momentum.
-In the work that follows, the temporal derivative of the conserved momentum equations is directly discretized, which is known as the conservative form.
+In the work that follows the temporal derivative of the conserved momentum equations is directly discretized, which is known as the conservative form.
 The other option, the non-conservative form, is to expand analytically the temporal derivative via the chain rule, \eqref{eqn:non_conservative}, and these equations are then temporally discretized.
 
 \begin{equation}
@@ -596,7 +596,7 @@ The other option, the non-conservative form, is to expand analytically the tempo
 \frac{\partial \alpha_k \rho_k u_k}{\partial t} = \alpha_k \rho_k \frac{\partial u_k}{\partial t} + u_k \frac{\partial \alpha_k \rho_k}{\partial t}
 \end{equation}
 
-Within \cobra{}, the temporal derivative is approximated by a one-step difference scheme, \eqref{eqn:simple_partial_t}, where the continuous time variables are now evaluated at discrete points, $t^0, t^1, \ldots, t^N$.
+Within \cobra{} the temporal derivative is approximated by a one-step difference scheme, \eqref{eqn:simple_partial_t}, where the continuous time variables are now evaluated at discrete points, $t^0, t^1, \ldots, t^N$.
 The notations $t^0$ and $t^N$ represent the initial and final time, respectively.
 The term one-step refers to the fact that the temporal derivative involves only two consecutive points in time.
 
@@ -709,9 +709,9 @@ The algorithm generalizes to a multi-stage temporal integration method by enclos
 \end{algo}
 
 In \alg{alg:local_newton}, there are two black box calculations: the calculation of the updated independent parameters, $\vec{x}^{n+1,k+1}$, and the calculation of the loop termination criteria.
-In the case of the loop termination criteria being $k > 0$, the resultant method is labeled as a single-shot linearization.
+In the case of the loop termination criteria being $k > 0$ the resultant method is labeled as a single-shot linearization.
 The exact nature of those two black box calculations is method-dependent and various options will be discussed later.
-In multi-stage temporal integration methods, both the update method and the loop termination criteria may vary between stages. 
+In multi-stage temporal integration methods both the update method and the loop termination criteria may vary between stages. 
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -844,13 +844,13 @@ The momentum equations, neglecting spatial discretization notation and external 
 &+& \left. K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 - (\eta \Gamma u^{'})^{n} + (S u^{'})^n\vphantom{\sum_{NK}}\right)
 \end{IEEEeqnarray}
 
-In the above equations, the flux terms are summed over $NK$, which indicates the number of continuity volumes connected to a given momentum volume.
+In the above equations the flux terms are summed over $NK$, which indicates the number of continuity volumes connected to a given momentum volume.
 The coefficients $K$ represent effective friction factors calculated using parameters only from time n.
 The interfacial transfer terms are explicitly evaluated.
 The only new time parameters used in \eqref{eqn:si_mom_liq} -- \eqref{eqn:si_mom_ent} are momenta and pressures.
 The implicit evaluation of the pressure gradient in the momentum equations is what leads to a CFL limit known as the material Courant limit.
 Similar to the sonic Courant limit discussed in \sect{subsect:numerics_explicit}, the material Courant limit dictates the largest $\Delta t$ that can be achieved while maintaining a stable solution algorithm.
-In this method, the Courant limit is given by \eqref{eqn:si_cfl}.
+In this method the Courant limit is given by \eqref{eqn:si_cfl}.
 The characteristic velocity is now a phasic velocity only.
 This allows for much greater timestep sizes than the explicit method, but it is still limited.
 This limitation is due to the explicit evaluation of the donored quantities in the flux terms in the conservation equations.
@@ -1075,17 +1075,19 @@ Stage one is a single-shot linearized solution of the momentum equations where o
 This first stage only involves the solution of the momentum equations; the mass and energy equations are not solved during this step.
 The lack of implicit dependence upon any continuity variables allows for coupling only between momentum volumes.
 This step results in predicted $u^{*}_{k}$ phasic velocities.
+
 In stage two, the momentum and continuity equations are solved using a traditional semi-implicit scheme with two exceptions.
 The first is that the momentum flux terms are evaluated using the stage-one predicted velocities as the advecting velocities.
 The second is that the nonlinearities in the momementum equations, arising from interfacial and wall drag, are subject to a single-shot linearization.
 The single-shot nature of the momentum equations allows for the reduction of the system into coupled continuity volumes as in the semi-implicit method.
 The nonlinear continuity equations are then solved via Newton's method.
 Stated another way, the Jacobians for the momentum equations are fixed at their first Newton iterate value, while the Jacobians for the mass and energy equations are updated at each iterate.
-The only results from stage two that are used in stage three are the velocities, $\vec{u}^{n+1}$.
+
 In the third stage the mass and energy equations are solved such that all continuity variables are implicitly evaluated and the velocities are from stage two.
-This final stage allows for timesteps that exceed the material Courant limit.
+The only results from stage two that are used in stage three are the velocities, $\vec{u}^{n+1}$.
 The resulting system of coupled continuity equations is then solved.
-For each stage, the residual and Jacobian matrix will be denoted by $\vec{F}_k$ and $\vec{J}_k$, with $k = 1 \to 3$.
+This final stage allows timestep sizes that exceed the material Courant limit.
+For each stage the residual and Jacobian matrix will be denoted by $\vec{F}_k$ and $\vec{J}_k$, with $k = 1 \to 3$.
 
 \begin{algo}[H]
 \setlength{\baselineskip}{0.625\baselineskip}
@@ -1118,7 +1120,7 @@ The TRACE code uses an $L_{\infty}$ norm of the unscaled Newton updates for the 
 \label{subsect:numerics_nearly_implicit}
 Another possible method used to overcome the material Courant limit without incurring the same computational cost as the fully implicit method is the Nearly-Implicit method \cite{Trapp1986, RELAP}.
 The Nearly-Implicit method is a multi-stage temporal integration scheme.
-In the first stage, the approximation  of $\vec{E}^{*}$ is one in which the mass and energy terms are implicit except for the donored values in the flux terms. 
+In the first stage the approximation  of $\vec{E}^{*}$ is one in which the mass and energy terms are implicit except for the donored values in the flux terms. 
 In addition, the the chain rule is applied to the continuous temporal derivatives, resulting in mass equations like \eqref{eqn:ni_dt}.
 The energy temporal derivatives are similarly expanded.
 
@@ -1321,7 +1323,7 @@ This fact enables the use of the material Courant limit at coupling boundaries.
 This domain decomposition method allows each subdomain to use consistent boundary information in its calculations.
 
 Additionally, if the boundary values are explicitly evaluated, then the decomposition of the global problem could be viewed as an application of an additive Schwarz domain decomposition algorithm.
-In an additive Schwarz algorithm, the boundary values for each subdomain are functions only of the old-time values in the other domains.
+In an additive Schwarz algorithm the boundary values for each subdomain are functions only of the old-time values in the other domains.
 From this view point, the sonic Courant limit observed at domain coupling boundaries follows naturally \cite{Aumiller2001}.
 
 The additive Schawrz method has seen extensive use as a nonlinear preconditioner for fully implicit CFD calculations \cite{Cai2009, Cai2002}.

@@ -151,9 +151,9 @@ Conservation of the Gaseous Phase Momentum & [ $\frac{\text{lb}_{\text{m}} \text
 \label{tab:scaling_units_scales}
 \end{table}
 
-Due to the range of magnitudes of these residuals, it is important to choose a proper scaling factor to ensure that the convergence of each equation is relative to their magnitude.
+Due to the range of magnitudes of these residuals it is important to choose a proper scaling factor to ensure that the convergence of each equation is relative to their magnitude.
 A challenge that has been addressed in this work is the development of a method for scaling of these residuals that is based upon the physics of interest during a timestep.
-In constructing this scaling factor, it was determined that the following characteristics were desirable:
+In constructing this scaling factor it was determined that the following characteristics were desirable:
 
 \begin{itemize}
 \item{$(S_{i}^{k})^{-1} F^{k}_i \approx 1$ when $\vec{x}^{k}$ is a "poor" solution.}
@@ -526,7 +526,7 @@ The reduction in the residual exhibited by the solution produced by the legacy s
 The first is that as \dtmax{} is reduced the nonlinear physics are being better resolved; however, even for small maximum allowable timestep sizes, the residuals are still large compared to those of the nonlinear solution, \fig{fig:nonlinear_flashing_residual}.
 The second purpose in reducing \dtmax{} is to decrease the error due to the discrete approximation of the temporal integral of the governing equations.
 While the reduction of the maximum timestep size in the legacy solver serves the purpose of reducing the residual, the nonlinear solver performs this task naturally.
-Therefore, in the nonlinear solver, the reduction of the maximum timestep size primarily serves to reduce the error from the approximate discrete temporal integral.
+Therefore, in the nonlinear solver the reduction of the maximum timestep size primarily serves to reduce the error from the approximate discrete temporal integral.
 
 During simulations with large \dtmax{} there are three time periods of the transient where the residuals from the nonlinear solver are nontrivial.
 These are at the initiation of the inlet flow, during the 1 [s] long ramp to full flow, and after the inlet flow has achieved steady state at 2 [s].
@@ -601,7 +601,7 @@ The first region of nontrivial residuals is present only for larger values of \d
 The second region occurs at smaller values of \dtmax{} and occurs near the beginning of the transient.
 For the nonlinear solver solution residuals, \fig{fig:nl_single_res}, the same two regions, the start of simulation and the inlet flow initialization, exhibit similar nontrivial nonlinear residuals.
 However, the behavior of the residual for the nonlinear solver as a function of \dtmax{} exhibits an anomaly that is absent in the legacy solver.
-To put the anomaly in context, it should first be noted that the nonlinear residual at the initiation of the ramp is approximately zero for \dtmax{} = 1 [s] and \dtmax{} = 1.0E-5 [s].
+To put the anomaly in context it should first be noted that the nonlinear residual at the initiation of the ramp is approximately zero for \dtmax{} = 1 [s] and \dtmax{} = 1.0E-5 [s].
 It is only during intermediate values of \dtmax{} that the residuals becomes nontrivial during the ramp initiation.
 
 %\begin{figure}[h!t]
@@ -664,7 +664,7 @@ The two different nonlinear convergence metrics will now be examined for the fla
 \tab{tab:flashing_criteria} shows both the average metric, $\tilde{R}$, and the moment based metric, $\tilde{R}_{\text{M}}$.
 The entry for the legacy mode solution at 1 [s] is empty, reflecting its inability to solve the problem.
 For the nonlinear solver, both metrics are decreasing as the \dtmax{} is decreased.
-While the legacy solver also shows a decreasing residual metric, it does not decrease in order-of-magnitude, indicating that as the \dtmax{} is reduced, the nonlinearities in the problem are not being sufficiently resolved.
+While the legacy solver also shows a decreasing residual metric, it does not decrease in order-of-magnitude, indicating that as the \dtmax{} is reduced the nonlinearities in the problem are not being sufficiently resolved.
 
 \begin{table}[h!t]
 \centering
