@@ -33,7 +33,7 @@ As a result of that design decision, certain memory saving techniques were emplo
 In particular, there was the implicit assumption within the software that the current Newton iterate, $\vec{x}^{n+1, 0}$, was the old-time variable $\vec{x}^{n}$.
 This design decision required the vetting of all subroutines involved with the evaluation of the components of both the nonlinear residual and the Jacobian.
 In addition, the assumption that $\vec{x}^{n+1, k} = \vec{x}^{n}$ produced source code that was inconsistent with an iterative Newton method.
-This required that the source code be modified to reflect the intended discretization of the governing conservation laws.
+The source code was modified to reflect the intended discretization of the governing conservation laws.
 To do this, areas had to be identified where: there were implicit cancellation of terms, the new-time variables were used in place of old-time variables, and the old-time variables were used in place of new-time variables.
 Where appropriate, the software was changed to reflect the distinction between old-time and iterate variables and to introduce terms that had been assumed to be equal to zero.
 
@@ -98,7 +98,7 @@ The two globalization loop termination criteria are:
 \item{$||\lambda_{j+1} \vec{\delta x}^{k}||_{\infty} < \delta_{\text{abs}}$}
 \end{enumerate}
 
-If neither of the loop termination criteria are met, then the step-length parameter, $\lambda_j$ is calculated.
+If neither of the loop termination criteria are met, then the step-length parameter, $\lambda_j$, is calculated.
 On the first pass through the globalization loop within a given Newton step, a quadratic backtracking model is adopted.
 On subsequent passes, a cubic-backtracking model is used.
  
@@ -114,7 +114,7 @@ It was required that either the results of the two simulations be identical or t
 The \cobra{} software has the ability to repeat a time-step.
 As such, it was required that the backup capabilities continued to work while nonlinear solver was being implemented.
 Additionally, testing was done to ensure that the ability to restart the software mid-simulation was unaffected.
-The overhead of the quality assurance procedures, while adding time to the development cycle, ensured that the legacy solver could continue to be used for design purposes.
+While adding time to the development cycle, the overhead of the quality assurance procedures ensured that the legacy solver could continue to be used for design purposes.
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -213,15 +213,15 @@ For the work performed here, that value was reduced to $\alpha_{k,\text{MIN}}$ =
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Metric for Convergence}
+\section{Convergence}
 \label{sect:temporal_convergence}
 
 An important factor in thermal-hydraulic safety analysis is the temporal convergence of the solution.
 First, a definition of a temporally converged solution is required.
 In theory, a temporally converged solution is one where the local truncation error due to the discrete approximation of the temporal integral is orders of magnitude below both the engineering scales of interest and precision of the physical models being used in the simulation.
 Unfortunately, the precise measurement of the error in a simulation requires that an analytic solution be available for comparison.
-During the simulation of physically realistic systems, there is rarely an analytic solution to compare against.
-This situation requires a slightly different definition of a temporally converged solution; a definition that does not depend upon accurately measuring the local truncation error.
+During the simulation of physically realistic systems, there is rarely an analytic solution against which to compare.
+This situation requires a slightly different definition of a temporally converged solution --- a definition that does not depend upon accurately measuring the local truncation error.
 
 An alternative definition for temporal convergence could be ``as the timestep size is reduced, the change in the solution is small enough."
 While commonly used, this definition is subjective.
@@ -317,7 +317,8 @@ The red triangle represents a specified flow at the bottom edge of the first con
 \label{subsect:ic_bc}
 
 The two problems, while having the same geometry, are different in their dominant physics.
-One problem was designed to simulate single-phase, single-field continuous liquid flow in a standpipe; this problem will be referred to as the single-phase problem.
+One problem was designed to simulate single-phase, single-field continuous liquid flow in a standpipe.
+This problem will be referred to as the single-phase problem.
 The second problem was designed such that high-pressure liquid flashes into steam as it enters a standpipe initially filled with saturated vapor at a much lower pressure, known hereafter as the flashing problem.
 
 Table \ref{tab:ic} provides the initial conditions for the two problems.
@@ -328,7 +329,7 @@ The initial velocities are set to zero.
 \centering
 \begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
 \multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
-                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
+                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{BTU}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
 Single-Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
 Flashing                 &  200&0                       & 1198&3                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
 \end{tabular}
@@ -343,7 +344,7 @@ Table \ref{tab:bc_pe} contains the pressure, enthalpy, and composition of the pr
 \centering
 \begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
 \multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
-                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
+                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{BTU}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
 Single-Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
 Flashing                 &  200&0                       & 1198&3                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
 \end{tabular}
@@ -358,7 +359,7 @@ Table \ref{tab:bc_fe} describes the inlet boundary condition for the two problem
 \centering
 \begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
 \multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
-                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
+                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{BTU}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
 Single-Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
 Flashing                 & 1000&0                       &  542&6                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
 \end{tabular}
@@ -494,7 +495,7 @@ The same level of qualitative timestep size invariance is achieved in the legacy
 
 The timestep size insensitive solution produced by the nonlinear solver occurs at a maximum timestep size three orders of magnitude greater than that achieved by the legacy solver in \cobra{}.
 An examination of the nonlinear residual over the course of the transient provides insight into why this behavior is observed.
-The scaled residual for the legacy flashing problem indicates that even for small timestep sizes, the solution obtained still does not satisfy the discrete nonlinear equations, \fig{fig:legacy_flashing_residual}.
+The scaled residual for the legacy flashing problem indicates that, even for small timestep sizes, the solution obtained still does not satisfy the discrete nonlinear equations, \fig{fig:legacy_flashing_residual}.
 This is in contrast to the nonlinear flashing problem, which shows a lower residual over the course of the simulation, \fig{fig:nonlinear_flashing_residual}.
 
 %\begin{figure}[h!t]
@@ -601,7 +602,7 @@ The second region occurs at smaller values of \dtmax{} and occurs near the begin
 For the nonlinear solver solution residuals, \fig{fig:nl_single_res}, the same two regions, the start of simulation and the inlet flow initialization, exhibit similar nontrivial nonlinear residuals.
 However, the behavior of the residual for the nonlinear solver as a function of \dtmax{} exhibits an anomaly that is absent in the legacy solver.
 To put the anomaly in context, it should first be noted that the nonlinear residual at the initiation of the ramp is approximately zero for \dtmax{} = 1 [s] and \dtmax{} = 1.0E-5 [s].
-It is only during intermediate values of \dtmax{} where the residuals becomes nontrivial during the ramp initiation.
+It is only during intermediate values of \dtmax{} that the residuals becomes nontrivial during the ramp initiation.
 
 %\begin{figure}[h!t]
 %\centering
@@ -714,8 +715,9 @@ In review, the single-shot semi-implicit \cobra{} software was converted to a no
 An operator-based scaling was introduced and implemented into both the legacy and the nonlinear \cobra{} solvers.
 The nonlinear solver produced results that were qualitatively different than those obtained from the legacy solver for the problem with high nonlinearities.
 Tests indicated that a timestep size insensitive solution may not be nonlinearly converged.
-It was shown that the nonlinear solver produces results that are indistinguishable from those produced by the legacy solver for the single-phase problem,  where the nonlinearities are small.
-A deficiency was identified with the current implementation of the operator-based scaling; the scaled residual produced nontrivial values during the steady state initialization portion of both problems.
+It was shown that the nonlinear solver produces results that are indistinguishable from those produced by the legacy solver for the single-phase problem, which has relatively mild nonlinearities.
+A deficiency was identified with the current implementation of the operator-based scaling.
+The scaled residual had nontrivial values during the steady state initialization portion of both problems.
 Additionally, a deficiency was detected with the convergence limits of the nonlinear solver.
 A metric to quantify the nonlinear convergence of a timestep size insensitive simulation was developed and implemented.
 This non-convergence of the discrete nonlinear system in the legacy solver mode produces a qualitatively different solution from the nonlinear solver.
