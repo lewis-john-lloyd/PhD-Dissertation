@@ -358,16 +358,57 @@ More Details
 %------------------------------------------------
 \begin{frame}
 \frametitle{Stability-Enhancing Two-Step Method}
+\begin{columns}
+\column{0.5\textwidth}
 
-Sets.
 
+
+\column{0.5\textwidth}
+\begin{algorithmic}
+\scriptsize
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \State $t^{n+1} : = t^{n} + \Delta t$
+	\Calculate $\vec{F}_1$ and $\vec{J}_1$
+	\Calculate $\vec{u}^{*}$ from $\vec{\delta u}^{*} = -\vec{J}^{-1}_1\vec{F}_1$
+	\Loop \; Newton Loop
+		\Calculate $\vec{F}_2$ and $\vec{J}_2$
+		\Calculate $\vec{\delta x} = - \vec{J}_2^{-1}\vec{F}_2$
+		\Calculate $\vec{x}^{n+1} = \vec{x}^{n} + \vec{\delta x}$
+	\EndLoop
+	\Calculate $\vec{x}^{n+1}$ from $\vec{F}_3$.
+\EndLoop{\; $n = n + 1$} 
+\end{algorithmic}
+
+
+\end{columns}
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
 \frametitle{Nearly-Implicit Method}
+\begin{columns}
+\column{0.5\textwidth}
 
-Nearly Implicit
+
+\column{0.5\textwidth}
+\begin{algorithmic}
+\scriptsize
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \State $t^{n+1} : = t^{n} + \Delta t$
+	\Calculate $\vec{F}_1$ and $\vec{J}_1$
+	\Calculate $\vec{\delta x}^{*} = -\vec{J}^{-1}_1\vec{F}_1$
+	\Calculate $\vec{c}^{*}$ and $\vec{u}^{n+1}$
+	\Calculate $\vec{F}_2$
+	\Calculate $\vec{c}^{**}$ from $\vec{F}_2$
+	\Calculate $\vec{c}^{n+1}$ from $\vec{F}_3$.
+\EndLoop{\; $n = n + 1$}
+\end{algorithmic}
+
+\end{columns}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -378,23 +419,31 @@ Nearly Implicit
 \begin{frame}
 \frametitle{Phase Transition}
 
-Phases are transitioned.
+When the two-phase flow within \cobra{} approaches that of single-phase flow, there is a lower limit imposed upon the volume fraction of the phase that is disappearing.
+This means that \cobra{} does not transition between the two-phase flow governing equations and the governing equations for single-phase flow.
+Even during simulated single-phase flow, the non-dominant phase is still present but at a very small volume fraction.
+However, since the \ncgs{} and the vapor fields share a common volume fraction, the partial pressure of the \ncgs{} is allowed to go to zero. 
+Since \cobra{} incorporates two liquid fields, the lower limit for the aggregate liquid volume fraction, $\alpha_e + \alpha_l$, is equally divided between the two liquid fields.
+As a phase approaches depletion, $\alpha_k \rightarrow \alpha_{k,\text{MIN}}$, the velocities between the two phases are required to converge.
+This velocity equilibrium is imposed by artificially increasing the interfacial drag between the two phases.
 
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Timestep Failure Mitigation}
+\frametitle{Timestep Failure Mitigation and Size Selection}
 
-Time step failures are mitigated.
+\begin{itemize}
+\item{Change of phasic enthalpy cannot be greater than 45 [$\frac{\text{BTU}}{\lbm{}}$].}
+\item{Change in pressure cannot be greater than 20 [psia].}
+\item{Change in partial pressure of the \ncg{} field cannot be greater than 20 [psia].}
+\item{Thermodynamic variables would fall outside of the range of validity of the equations of state.}
+\end{itemize}
 
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Timestep Size Selection}
-
-Time step are selected.
+\begin{equation*}
+\label{eqn:time_step}
+\Delta t^{n} = \max\left[ \Delta t_{\text{MIN}}, \min\left[1.2 \Delta t^{n-1}, 0.85 \Delta t_{\text{CRNT}}, \Delta t_{\text{MAX}} \right]\right]
+\end{equation*}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -619,9 +668,23 @@ Flashing                 & 1000&0                       &  542&6                
 \frametitle{Numerical Experiments: Procedure}
 
 \begin{itemize}
-\item{Two simulations are run at sequentially reduced \dtmax{}.}
-\item{Comparison of parameters of interest.}
-\item{Comparison of convergence metrics.}
+\item{Two simulations are run at sequentially smaller \dtmax{}:
+\begin{itemize}
+\item{\dtmax{} = 1.0 [s], 1.0E-1 [s], ..., 1.0E-5 [s]}
+\end{itemize}
+}
+\item{Parameters of interest:
+\begin{itemize}
+\item{Flashing problem: $\alpha_g$ @ 2 [in] from inlet.}
+\item{Single-phase problem: $\dot{m}_l$ @ 4 [in] from inlet.}
+\end{itemize}
+}
+\item{Comparison of convergence metrics:
+\begin{itemize}
+\item{$\tilde{R}$}
+\item{$\tilde{R}_{\text{M}}$}
+\end{itemize}
+}
 \end{itemize}
 
 \end{frame}

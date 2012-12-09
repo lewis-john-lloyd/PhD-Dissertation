@@ -1213,9 +1213,9 @@ There are also limits placed upon the changes of the thermodynamic parameters wi
 The constrained thermodynamic parameters and the limits imposed upon their per-timestep changes are listed below.
 
 \begin{itemize}
-\item{Change of phasic enthalpy cannot be greater than 45 [$\frac{\text{BTU}}{\text{lb}_{\text{m}}}$].}
+\item{Change of phasic enthalpy cannot be greater than 45 [$\frac{\text{BTU}}{\lbm{}}$].}
 \item{Change in pressure cannot be greater than 20 [psia].}
-\item{Change in partial pressure of the \ncg field cannot be greater than 20 [psia].}
+\item{Change in partial pressure of the \ncg{} field cannot be greater than 20 [psia].}
 \item{Thermodynamic variables would fall outside of the range of validity of the equations of state.}
 \end{itemize}
 
@@ -1236,7 +1236,7 @@ The \dt{} for any timestep is given by \eqref{eqn:time_step}.
 \Delta t^{n \rightarrow n+1} = \max\left[ \Delta t_{\text{MIN}}, \min\left[1.2 \Delta t^{n-1 \rightarrow n}, 0.85 \Delta t_{\text{CRNT}}, \Delta t_{\text{MAX}} \right]\right]
 \end{equation}
 
-$\Delta t_{\text{CRNT}}$ is the most restrictive Courant number calculated for both axial and transverse flow, and a $\Delta t$ that is based upon the time calculated to empty a given volume of the mass of a given field.
+$\Delta t_{\text{CRNT}}$ is the most restrictive Courant number calculated for both axial and transverse flow, and a \dt{} that is based upon the time calculated to empty a given volume of the mass of a given field.
 The most restrictive of the Courant timestep is used as $\Delta t^{n \rightarrow n+1}$.
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
