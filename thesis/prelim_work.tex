@@ -90,6 +90,7 @@ There are three Newton loop termination mechanisms, listed below.
 Current values for $k_{\,\text{MAX}}$, $F_{\text{ABS}}$ and $\delta_{\text{ABS}}$ are $35$, $1.0$E$-05$, and $1.0$E$-10$, respectively.
 The scaling vectors, $\vec{S}$ and $\vec{D}$, will be addressed later.
 
+The second is the globalization loop termination criteria.
 The globalization strategy implemented in \cobra{} is a linesearch algorithm \cite{Dennis1996}.
 The two globalization loop termination criteria are:
 
@@ -98,7 +99,8 @@ The two globalization loop termination criteria are:
 \item{$||\lambda_{j+1} \vec{\delta x}^{k}||_{\infty} < \delta_{\text{abs}}$}
 \end{enumerate}
 
-If neither of the loop termination criteria are met, then the step-length parameter, $\lambda_j$, is calculated.
+The third point requiring discussion is the calculation of the Newton update vector.
+If neither of the loop termination criteria are met, then a step-length parameter, $\lambda_j$, is calculated.
 On the first pass through the globalization loop within a given Newton step, a quadratic backtracking model is adopted.
 On subsequent passes, a cubic-backtracking model is used.
  
@@ -181,7 +183,7 @@ The scaling chosen for this residual is shown by \eqref{eqn:scaling_factor}.
 S_{m,l} = \Delta t \left[ V_c \abs{\frac{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho_l \right)^{n}}{\Delta t}} + \sum_{NK}\abs{\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right)} + \left[\abs{(1-\eta)\Gamma} + \abs{S} \right]^{n+1}\right]
 \end{equation}
 
-This scaling creates a relative measure of a nonlinear residual when compared to the magnitude of the physics involved in the process.
+This scaling creates a relative measure of the nonlinear residual when compared to the magnitude of the physics involved in the process.
 The other mass, energy, and momentum equations each have similarly defined scaling factors for their respective residuals.
 For convergence testing in the nonlinear version of \cobra{} and residual evaluation during the legacy mode, the scaled nonlinear residual is used.
 
@@ -217,7 +219,7 @@ For the work performed here, that value was reduced to $\alpha_{k,\text{MIN}}$ =
 \label{sect:temporal_convergence}
 
 An important factor in thermal-hydraulic safety analysis is the temporal convergence of the solution.
-First, a definition of a temporally converged solution is required.
+A definition for a temporally converged solution is required.
 In theory, a temporally converged solution is one where the local truncation error due to the discrete approximation of the temporal integral is orders of magnitude below both the engineering scales of interest and precision of the physical models being used in the simulation.
 Unfortunately, the precise measurement of the error in a simulation requires that an analytic solution be available for comparison.
 During the simulation of physically realistic systems, there is rarely an analytic solution against which to compare.
@@ -368,7 +370,7 @@ Flashing                 & 1000&0                       &  542&6                
 \end{table}
 
 The specified mass flow, $\dot{m}(t)$, at the bottom of the channels is the same for both problems. 
-The is a time-dependent function give by \eqref{eqn:bc_time_func_single}.
+This time-dependent function is given by \eqref{eqn:bc_time_func_single}.
 
 \begin{equation}
 \label{eqn:bc_time_func_single}
@@ -390,7 +392,7 @@ The two problems were set up so that the maximum allowable timestep was varied.
 Each problem was run with the following maximum allowable timesteps: 1 [s], 0.1 [s], 0.01 [s], 0.001 [s], 0.0001 [s], and 0.00001 [s]. 
 For the legacy runs, the scaled residuals were evaluated after a single Newton step, $\vec{F}(\vec{x}^{1})$.
 For the nonlinear runs, the scaled nonlinear residuals were evaluated at the end of the Newton-loop.
-The nonlinear convergence criteria used is the nonlinear solver are described in \sect{sect:nl_cobra}.
+The nonlinear convergence criteria used in the nonlinear solver are described in \sect{sect:nl_cobra}.
 The temporal convergence metric was evaluated during post-processing.
 In total, there were twenty-four simulations run.
 The two different problems were each run at six different maximum timestep sizes on each of the two versions of \cobra{}.
@@ -599,7 +601,7 @@ Examining the residual for the two different solvers will provide insight into h
 The residual of the legacy solver solution for the single-phase problem, \fig{fig:leg_single_res}, shows that the nonlinear residuals are nontrivial during two periods of the transient.
 The first region of nontrivial residuals is present only for larger values of \dtmax{} and occurs when the the inlet flow initiates at 1 [s].
 The second region occurs at smaller values of \dtmax{} and occurs near the beginning of the transient.
-For the nonlinear solver solution residuals, \fig{fig:nl_single_res}, the same two regions, the start of simulation and the inlet flow initialization, exhibit similar nontrivial nonlinear residuals.
+For the nonlinear solver solution residuals, \fig{fig:nl_single_res}, the same two regions, the start of simulation and the inlet flow initialization, exhibit similar nontrivial residuals.
 However, the behavior of the residual for the nonlinear solver as a function of \dtmax{} exhibits an anomaly that is absent in the legacy solver.
 To put the anomaly in context it should first be noted that the nonlinear residual at the initiation of the ramp is approximately zero for \dtmax{} = 1 [s] and \dtmax{} = 1.0E-5 [s].
 It is only during intermediate values of \dtmax{} that the residuals becomes nontrivial during the ramp initiation.
@@ -654,7 +656,7 @@ It is likely related to the same nonlinear non-convergence behavior remarked upo
 One way to quantify the difference between the solutions is by measuring the residual convergence metrics outlined in \sect{sect:temporal_convergence}.
 These metrics provide a measure of how poorly the discrete nonlinear equations are being solved at every timestep in the transient.
 The resolution of the residual allows for a solution that is less sensitive to timestep size selection than for a solution that does not resolve the residual.
-The convergence metrics will be used to determine if a qualitative temporal-convergence determination can lead to the acceptance of solution that is not nonlinearly converged.
+The convergence metrics will be used to determine if a qualitative temporal-convergence determination can lead to the acceptance of a solution that is not nonlinearly converged.
 
 For each of the test cases, the two different metrics were compared at the different \dtmax{}.
 To examine efficacy of the the temporal convergence criteria, both the average and moment based temporal convergence criteria were evaluated for each of the twenty-three successful simulations.
@@ -720,4 +722,4 @@ A deficiency was identified with the current implementation of the operator-base
 The scaled residual had nontrivial values during the steady state initialization portion of both problems.
 Additionally, a deficiency was detected with the convergence limits of the nonlinear solver.
 A metric to quantify the nonlinear convergence of a timestep size insensitive simulation was developed and implemented.
-This non-convergence of the discrete nonlinear system in the legacy solver mode produces a qualitatively different solution from the nonlinear solver.
+This non-convergence of the discrete nonlinear system in the legacy solver mode produced a qualitatively different solution from the nonlinear solver.

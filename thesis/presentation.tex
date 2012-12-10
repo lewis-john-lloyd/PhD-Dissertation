@@ -197,6 +197,11 @@ Thermal-Hydraulic Safety Analysis Codes}
 -\Gamma^{'''} h^{'}_l +  q^{'''}_{i,l} - q^{'''}_{n,l}  + q^{'''}_{w,l} + (1 - \alpha_g) \frac{\partial P}{\partial t} + s_{e,l}  & & \nonumber
 \end{IEEEeqnarray}
 
+\begin{equation*}
+\label{eqn:gaseous_enthalpy}
+\alpha_g \{\rho_g h_g\} = \alpha_g \rho_v h_v + \alpha_g \rho_n h_n
+\end{equation*}
+
 \end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
@@ -212,7 +217,8 @@ Thermal-Hydraulic Safety Analysis Codes}
 \begin{itemize}
 \item{Continuity volumes: mass and energy conservation equations}
 \item{Momentum volumes: momentum conservation equations}
-\item{1st Order upwind at boundaries.}
+\item{Conserved quantities are constant over their respective volumes.}
+\item{1st Order upwind at volume edges.}
 \end{itemize}
 
 
@@ -222,15 +228,16 @@ Thermal-Hydraulic Safety Analysis Codes}
 \resizebox{\textwidth}{!}{
 \begin{tikzpicture}
 \draw (-3,0) rectangle +(1,5);
+\draw (3,0) rectangle +(1,5);
 \draw (0,0) rectangle +(1,1) (0,1) rectangle +(1,1) (0, 2) rectangle +(1,1) (0,3) rectangle +(1,1) (0,4) rectangle +(1,1);
 \draw[dashed] (3,-0.5) rectangle +(1,1) (3,0.5) rectangle +(1,1) (3,1.5) rectangle +(1,1) (3, 2.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3, 4.5) rectangle +(1,1) ;
 \draw[dashed] (-3,0) -- (4,0);
 \draw[dashed] (-3,5) -- (4,5);
 \draw (-2.5,-1) node {\textbf{Channel}};
 \draw (0.5,-1) node {\textbf{Continuity}};
-\draw (0.5,-1.5) node {\textbf{Volume}};
+\draw (0.5,-1.5) node {\textbf{Volumes}};
 \draw (3.5,-1) node {\textbf{Momentum}};
-\draw (3.5,-1.5) node {\textbf{Volume}};
+\draw (3.5,-1.5) node {\textbf{Volumes}};
 \end{tikzpicture}
 }
 \end{figure}
@@ -245,19 +252,20 @@ Thermal-Hydraulic Safety Analysis Codes}
 Integrate conservation equations over a time-step.
 
 \begin{columns}
-\column{0.4\textwidth}
+\column{0.5\textwidth}
 \begin{itemize}
-\item{Single Step Method}
+\item{Single step method}
 \item{Temporal integral defined by approximation $\dt{} \vec{E}^{*}$}
+\item{Multistage or single-stage approximations to $\vec{E}^{*}$ are possible.}
 \end{itemize}
-\column{0.6\textwidth}
+\column{0.5\textwidth}
 \begin{IEEEeqnarray}{rcl}
-\int^{t^{n+1}}_{t^n}\frac{\partial \vec{y}(\vec{x})}{\partial t}\mathrm{d}\tau & = & \int^{t^{n+1}}_{t^n}\vec{E}(\vec{y}(\vec{x}))\mathrm{d}\tau \nonumber \\
-\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n}) & = & \int_{t^{n+1}}^{t^n}\vec{E}(\vec{y}(\vec{x}))\mathrm{d}\tau \nonumber  \\
-\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n}) & = & \Delta t \vec{E}(\vec{y}(\vec{x}^{*})) \nonumber  \\
+\int^{t^{n+1}}_{t^n}\frac{\partial \vec{y}}{\partial t}\mathrm{d}\tau & = & \int^{t^{n+1}}_{t^n}\vec{E}(\vec{y})\mathrm{d}\tau \nonumber \\
+\vec{y}^{n+1} - \vec{y}^{n} & = & \int_{t^{n+1}}^{t^n}\vec{E}(\vec{y})\mathrm{d}\tau \nonumber  \\
+\vec{y}^{n+1} - \vec{y}^{n} & = & \Delta t \vec{E}(\vec{y}^{*}) \nonumber  \\
 \label{eqn:simple_partial_t}
-\frac{\vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^{n})}{\Delta t} & = & \vec{E}^{*} \nonumber \\
-0 = \vec{y}(\vec{x}^{n+1}) & - & \vec{y}(\vec{x}^{n}) - \Delta t \vec{E}^{*} \nonumber
+\frac{\vec{y}^{n+1} - \vec{y}^{n}}{\Delta t} & = & \vec{E}^{*} \nonumber \\
+0 = \vec{y}^{n+1} & - & \vec{y}^{n} - \Delta t \vec{E}^{*} \nonumber
 \end{IEEEeqnarray}
 
 \end{columns}
@@ -268,10 +276,36 @@ Integrate conservation equations over a time-step.
 \begin{frame}
 \frametitle{Nonlinear Equations}
 
+Residual: $\vec{F} = \vec{y}^{n+1} - \vec{y}^{n} - \dt{} \vec{E}^{*}$.
+
+\begin{columns}
+\column{0.7\textwidth}
 \begin{itemize}
-\item{System of nonlinear Equations.}
-\item{Residuals.}
+\item{Nine conservation equations require nine independent parameters.}
+\item{$ \dot{m}_{k} = <\alpha_k \rho_k>_{a} u_{k} A_{m}$}
+\item{$ P = P_{n} + P_{v} $}
+\item{$ 1 = \alpha_g + \alpha_e + \alpha_l$}
 \end{itemize}
+
+\column{0.3\textwidth}
+\begin{equation*}
+\label{eqn:independent_variables}
+\vec{x} = \begin{bmatrix}
+\alpha_{g}P_{n}    \\
+\alpha_g           \\
+P                  \\
+\alpha_e           \\
+\alpha_g h_v       \\
+(1 - \alpha_g) h_l \\
+\dot{m}_g          \\
+\dot{m}_l          \\
+\dot{m}_e          \\
+\end{bmatrix}
+\end{equation*}
+\end{columns}
+
+Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{} \vec{E}(\vec{x}^{*})$.
+
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -281,10 +315,14 @@ Integrate conservation equations over a time-step.
 %------------------------------------------------
 \begin{frame}
 \frametitle{Fully Explicit Method}
-
+Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{} \vec{E}(\vec{x}^{n})$.
 \begin{columns}
 \column{0.45\textwidth}
-
+\begin{itemize}
+\item{Smallest per timestep computational cost.}
+\item{Nonlinearities in the new-time conserved quantities.}
+\item{Sonic Courant limit: $ \Delta t \lesssim \frac{\Delta x}{|u|+|c|}$}
+\end{itemize}
 
 \column{0.55\textwidth}
 \begin{algorithmic}
@@ -306,10 +344,21 @@ Integrate conservation equations over a time-step.
 %------------------------------------------------
 \begin{frame}
 \frametitle{Fully Implicit Method}
-\begin{columns}
-\column{0.5\textwidth}
 
-\column{0.5\textwidth}
+Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{} \vec{E}(\vec{x}^{n+1})$.
+
+\begin{columns}
+\column{0.45\textwidth}
+
+\begin{itemize}
+\item{Highest per timestep computational cost.}
+\item{Nonlinearities in $\vec{E}(\vec{x}^{*})$.}
+\item{No Courant limit.}
+\item{CATHARE}
+\end{itemize}
+
+\column{0.55\textwidth}
+
 \begin{algorithmic}
 \scriptsize
 \Require $\vec{x}^{0}$ and $t^{0}$
@@ -334,8 +383,32 @@ Integrate conservation equations over a time-step.
 %------------------------------------------------
 \begin{frame}
 \frametitle{Semi-Implicit Method}
+Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{} \vec{E}(\vec{x}^{n+1},\vec{x}^{n})$.
 
-Semi-Implicit method.
+\begin{columns}
+\column{0.45\textwidth}
+
+\begin{itemize}
+\item{Nonlinearities in $\vec{E}(\vec{x}^{*})$.}
+\item{Material Courant limit: $ \Delta t \lesssim \frac{\Delta x}{|u|}$}
+\item{COBRA, RELAP, SPACE, MARS}
+\end{itemize}
+
+\column{0.5\textwidth}
+
+\begin{algorithmic}
+\scriptsize
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \State $t^{n+1} : = t^{n} + \Delta t$
+	\Calculate $\vec{F}(\vec{x}^{n})$ and $\vec{J}(\vec{x}^{n})$
+	\Calculate $\vec{\delta x} = - \vec{J}^{-1}\cdot\vec{F}$
+	\Calculate $\vec{x}^{n+1} = \vec{x}^{n} + \vec{\delta x}$
+\EndLoop{\; $n = n + 1$} 
+\end{algorithmic}
+
+\end{columns}
 
 \end{frame}
 %------------------------------------------------
@@ -358,10 +431,16 @@ More Details
 %------------------------------------------------
 \begin{frame}
 \frametitle{Stability-Enhancing Two-Step Method}
+
 \begin{columns}
-\column{0.5\textwidth}
+\column{0.45\textwidth}
 
-
+\begin{itemize}
+\item{Developed to overcome material Courant limit of the semi-implicit method.}
+\item{Multistage approximation to $\vec{E}(\vec{x}^{*})$.}
+\item{Courant limit above the material Courant limit but not unbounded.}
+\item{TRACE}
+\end{itemize}
 
 \column{0.5\textwidth}
 \begin{algorithmic}
@@ -381,16 +460,23 @@ More Details
 \EndLoop{\; $n = n + 1$} 
 \end{algorithmic}
 
-
 \end{columns}
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
 \frametitle{Nearly-Implicit Method}
-\begin{columns}
-\column{0.5\textwidth}
 
+\begin{columns}
+\column{0.45\textwidth}
+
+\begin{itemize}
+\item{Derivative of SETS method.}
+\item{Developed to overcome material Courant limit of the semi-implicit method.}
+\item{Three-stage approximation to $\vec{E}(\vec{x}^{*})$.}
+\item{Courant limit above the material Courant limit but not unbounded.}
+\item{Two-stage variant used in RELAP5-3D}
+\end{itemize}
 
 \column{0.5\textwidth}
 \begin{algorithmic}
@@ -419,13 +505,13 @@ More Details
 \begin{frame}
 \frametitle{Phase Transition}
 
-When the two-phase flow within \cobra{} approaches that of single-phase flow, there is a lower limit imposed upon the volume fraction of the phase that is disappearing.
-This means that \cobra{} does not transition between the two-phase flow governing equations and the governing equations for single-phase flow.
-Even during simulated single-phase flow, the non-dominant phase is still present but at a very small volume fraction.
-However, since the \ncgs{} and the vapor fields share a common volume fraction, the partial pressure of the \ncgs{} is allowed to go to zero. 
-Since \cobra{} incorporates two liquid fields, the lower limit for the aggregate liquid volume fraction, $\alpha_e + \alpha_l$, is equally divided between the two liquid fields.
-As a phase approaches depletion, $\alpha_k \rightarrow \alpha_{k,\text{MIN}}$, the velocities between the two phases are required to converge.
-This velocity equilibrium is imposed by artificially increasing the interfacial drag between the two phases.
+\begin{itemize}
+\item{Does not switch to single-phase flow conservation equations.}
+\item{Minimum volume fraction for each water phase is enforced: $\alpha_{k,\text{MIN}}$ = 1.0E-9.}
+\item{The two liquid water fields split the minimum presence equally.}
+\item{Velocity equilibrium of fields during psuedo single-phase flow is enforced through an artificial interfacial drag.}
+\item{The \ncg{} field, through its partial pressure $P_n$, is allowed to go zero.}
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------
@@ -454,20 +540,34 @@ This velocity equilibrium is imposed by artificially increasing the interfacial 
 \begin{frame}
 \frametitle{Code Coupling}
 
-Codes are coupled.
+Master Process
 
-Figure of two codes talking.
+
 
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{RELAP5-3D Coupling}
+\frametitle{RELAP5-3D Semi-Implicit Coupling}
 
-Pressure Updates
-Codes are coupled.
+\begin{IEEEeqnarray}{rcl}
+\label{eqn:si_relap}
+\delta P^{n+1}_{k} = a_k & + & 
+\sum_{j = 1}^{N_c} \left[ b_{k,j}n_{g,j}^{n+1} + c_{k,j}u_{g,j}^{n+1} + d_{k,j}u_{f,j}^{n+1} + e_{k,j}m_{g,j}^{n+1} \right. \nonumber \\
+& + & \left. f_{k,j}m_{f,j}^{n+1} + g_{k,j}w_{g,j}^{n+1} +h_{k,j}w_{f,j}^{n+1} \right] \nonumber
+\end{IEEEeqnarray}
 
-Figure of two codes talking.
+\begin{IEEEeqnarray}{rcl}
+\label{eqn:pressure_coupled}
+\delta P^{n+1}_{\text{cbv}} = a_{\text{cbv}} & + & 
+\sum_{j = 1}^{N_c} A_j \left[ b_{\text{cbv},j}<\alpha^n_g \rho^n_n>^{n}_{d} v_{g,j}^{n+1} \right. \nonumber \\
+& + & c_{\text{cbv},j}<\alpha_g^n \rho_g^n u^n_g>_d^n v_{g,j}^{n+1} +
+d_{\text{cbv},j} <\alpha_f^n \rho_f^n u_f^n>_d^n v_{f,j}^{n+1}  \nonumber \\
+& + & e_{\text{cbv},j} <\alpha_g^n \rho_g^n>_d^n v_{g,j}^{n+1} +
+f_{\text{cbv},j} < \alpha_f^n \rho_f^n>_d^n v_{f,j}^{n+1} \nonumber \\
+& + & \left. g_{\text{cbv},j} <\alpha^n_g>_d^n v_{g,j}^{n+1} +
+h_{\text{cbv},j} <\alpha_f^n>_d^n v_{f,j}^{n+1} \right] \nonumber
+\end{IEEEeqnarray}
 
 \end{frame}
 %------------------------------------------------
@@ -488,9 +588,12 @@ Talk about multiplicative Schwarz methods.
 \begin{frame}
 \frametitle{Research Objectives}
 
-I am the objective.
-Here is where I talk about stuff.
-Fun stuff.
+\begin{itemize}
+\item{Develop, implement, and test a domain decomposition method based upon RELAP5-3D semi-implicit code coupling.}
+\item{Quantification of nonlinearities within subdomain.}
+\item{Resolution of nonlinearities within a subdomain using consistent boundary values.}
+\item{Develop and test metric for possible nonlinear nonconvergence of a time-step size insensitive solution.}
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -504,21 +607,18 @@ Fun stuff.
 \begin{frame}
 \frametitle{Nonlinear COBRA}
 
-Issues.
-Coding Details
-Nonlinear Solver
-
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Linesearch Algorithm}
-
-Issues.
-Coding Details
-Nonlinear Solver
-
+\begin{itemize}
+\item{Original source code assumes that $\vec{x}^{n+1,k} = \vec{x}^{n}$.
+    \begin{itemize}
+    \item{Temporal derivative terms missing from continuity residuals.}
+    \item{Use of $\vec{x}^{n+1,k}$ for $\vec{x}^{n}$.}
+    \item{Use of $\vec{x}^{n}$ for $\vec{x}^{n+1,k}$.}
+    \item{Drag terms reformulated.}
+    \end{itemize}
+}
+\item{Linesearch algorithm with cubic backtracking.}
+\item{Quality assurance framework.}
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -529,15 +629,9 @@ Nonlinear Solver
 \begin{frame}
 \frametitle{Operator-Based Scaling}
 
-Stuff gets scaled.
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Operator-Based Scaling}
-
-Stuff gets scaled again.
+\begin{itemize}
+\item{Things are scaled.}
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -549,8 +643,16 @@ Stuff gets scaled again.
 \frametitle{Temporal Convergence vs Timestep Size Insensitivity}
 
 \begin{itemize}
-\item{stuff}
+\item{Timestep size insensitivity: solution is insensitive to reduction of \dtmax{}.}
+\item{Temporal convergence: error due to numerical approximation of temporal integral below engineering scales of interest.}
 \end{itemize}
+Metrics for nonlinear convergence testing:
+\begin{equation*}
+\tilde{R} = \frac{\int_{t^{0}}^{t^{N}} ||\vec{F}(\tau)||_2 \,\mathrm{d} \tau}{t^{N} - t^{0}}
+\end{equation*}
+\begin{equation*}
+\tilde{R}_{\text{M}} = \frac{\int_{t^{0}}^{t^{N}} \,\tau\,||\vec{F}(\tau)||_2 \,\mathrm{d} \tau}{\int_{t^{0}}^{t^{N}} \,\tau \,\mathrm{d} \tau}
+\end{equation*}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -562,8 +664,9 @@ Stuff gets scaled again.
 \frametitle{Numerical Experiments: Purpose}
 
 \begin{itemize}
-\item{Determine the impact of }
-\item{Purpose 2}
+\item{Test nonlinear solver framework.}
+\item{Determine the impact of nonlinear convergence upon timestep size insensitivity.}
+\item{Determine the efficacy of nonlinear convergence metric in predicting timestep size insensitivity.}
 \end{itemize}
 
 \end{frame}
@@ -983,7 +1086,7 @@ Issues that need to be addressed in scaling:
 Milestones required for implementation of domain decomposition:
 
 \begin{itemize}
-\item{Generation of mathematical formulation for COBRA-COBRA domain decomposition.}
+\item{Generation of mathematical formulation for COBRA-COBRA semi-implicit domain decomposition.}
 \item{Implementation of decomposition logic into COBRA software.}
 \item{Development of problems with geometric complexity.}
 \item{Test legacy solver using domain decomposition logic.} 
@@ -998,7 +1101,8 @@ Milestones required for implementation of domain decomposition:
 \begin{frame}
 \frametitle{Proposed Testing}
 
-Here there be testing.
+I need to test convergence tolerances of the newton-loop.
+I need to test metric values to determine when a solution is "good enough."
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -1009,10 +1113,14 @@ Here there be testing.
 \begin{frame}
 \frametitle{Possible Outcomes}
 
-Possible outcomes
+Possible outcomes of this research.
+It can provide a speed-up.
+It can provide an answer about nonlinear convergence affecting solutions.
 
 \begin{itemize}
-\item{I am stuff.}
+\item{I am a good outcome.}
+\item{I am a not-so-good outcome.}
+\item{I am the end.}
 \end{itemize}
 
 \end{frame}

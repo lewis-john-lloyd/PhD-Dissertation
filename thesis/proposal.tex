@@ -10,7 +10,7 @@ After the algorithmic framework has been evaluated, several geometrically comple
 The same problems will then be evaluated using the global nonlinear solver to determine the computational run time impact of solving the global nonlinear problem over the whole domain. 
 After the global legacy solver and the global nonlinear solver have been run to establish bounding runtime estimates, the solutions will be compared to determine the impact of resolving the nonlinearities upon the accuracy of the transient result.
 
-At that time the hybrid method will be tested, with regions of high-nonlinearities targeted as predetermined subdomains.
+At that time the hybrid method will be tested, with regions of high-nonlinearities targeted as predetermined subdomain.
 The run-time performance of the hybrid method will be compared to that of the fully nonlinear case and the legacy solver.
 Concurrent to the above work, the nonlinear convergence metric will be evaluated to determine its efficacy in detecting a nonlinearly converged solution.
 Parametric studies will then be conducted to determine the impact of nonlinear convergence tolerances, phase appearance and disappearance thresholds, and residual thresholds for activation of nonlinear refinements.
@@ -24,7 +24,7 @@ It is believed that this behavior may be a result of the choice of phase transit
 Another possibility is the inconsistency between the scaled update vector used in the line-search algorithm and the one used in the Newton loop convergence criteria.
 Both avenues of investigation will be pursued to determine the root cause of the aforementioned problems.
 
-Another scaling issues that needs to be addressed is the proper scaling for the Newton update.
+Another issue that needs to be addressed is the proper scaling for the Newton update.
 The current algorithmic implementation has different convergence criteria for the linesearch step and the Newton step.
 The interplay between the globalization termination criteria and the update scaling will be investigated to determine a consistent and effective scaling for the independent parameter update vector. 
 
@@ -45,8 +45,8 @@ Extensive testing of domain isolation will be necessary to test a representative
 Several problems with nonlinear phenomena should be constructed to test the temporal convergence criteria.
 These problems will test the validity of the temporal-convergence metric in detecting when a timestep size solution may not be the solution to the discrete nonlinear problem.
 Theoretical operation counts should be calculated for legacy mode and nonlinear mode.
-Run time calculations for various problems should be calculated.
-Convergence criteria, max iteration count, and globalization parameters should be varied for a set number of problems to determine performance.
+Run time for various problems should be evaluated.
+Convergence criteria, maximum iteration count, and globalization parameters should be varied for a set number of problems to determine performance.
 
 \section{Timeline}
 \label{sect:proposal_time_line}
