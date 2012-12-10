@@ -63,9 +63,8 @@ Thermal-Hydraulic Safety Analysis Codes}
 \frametitle{Introduction}
 
 \begin{itemize}
-\item{Loss-of-Coolant-Accidents}
-\item{Safety Analysis}
-\item{}
+\item{Core Cooling during Postulated Accidents}
+\item{Multi-phase Flow}
 \end{itemize}
 
 \end{frame}
@@ -143,65 +142,18 @@ Thermal-Hydraulic Safety Analysis Codes}
 \frametitle{Two-Phase Flow}
 
 \begin{itemize}
-\item{Background}
+\item{Three water fields: vapor, continuous liquid, and dispersed liquid.}
+\item{\Ncg{} field.}
 \item{Assumptions}
-\item{Equations}
+\item{One-dimensional flow: nine partial differential equations.
+\begin{itemize}
+\item{Four conservation of mass equations.}
+\item{Three conservation of momentum equations.}
+\item{Two conservation of energy equations.}
 \end{itemize}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Conservation of Mass}
-
-\begin{IEEEeqnarray}{rCl}
-\label{eqn:conservation_of_ncg}
-\frac{\partial \left(\alpha_g \rho_{n}\right) }{\partial t } + \nabla \cdot \left( \alpha_g \rho_{n} \vec{u}_g \right) & = & s_{m,n} \nonumber \\
-\label{eqn:conservation_of_vap}
-\frac{\partial \left(\alpha_g \rho_v \right)}{\partial t } + \nabla \cdot \left( \alpha_g \rho_v \vec{u}_g \right)         & = & \Gamma^{'''} + s_{m,v} \nonumber \\
-\label{eqn:conservation_of_liq}
-\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \right)         & = & -(1-\eta)\Gamma^{'''} - S^{'''} + s_{m,l} \nonumber \\
-\label{eqn:conservation_of_ent}
-\frac{\partial \left(\alpha_e \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_e \rho_l \vec{u}_e \right)         & = & -\eta\Gamma^{'''} + S^{'''}+ s_{m,e} \nonumber
-\end{IEEEeqnarray}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Conservation of Momentum}
-
-\begin{IEEEeqnarray}{rCl}
-\label{eqn:con_mom_liq}
-\frac{\partial \left( \alpha_l \rho_l \vec{u}_l \right )}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \vec{u}_l \right) & = & \nonumber \\
- -\alpha_l \nabla P + \alpha_l \rho_l \vec{g} - \vec{\tau}^{'}_{w,l} + \vec{\tau}^{'}_{i,gl} - (1 - \eta)\Gamma^{'''}\vec{u}^{'} - S^{'''}\vec{u}^{'} + s_{p,l} & & \nonumber \\
-\label{eqn:con_mom_gas}
-\frac{\partial \left( \alpha_g \rho_g \vec{u}_g \right) }{\partial t } + \nabla \cdot \left( \alpha_g \rho_g \vec{u}_g \vec{u}_g \right) & = & \nonumber \\
- -\alpha_g \nabla P + \alpha_g \rho_g \vec{g} - \vec{\tau}^{'}_{w,g} - \vec{\tau}^{'}_{i,gl} - \vec{\tau}^{'}_{i,ge} + \Gamma^{'''}\vec{u}^{'} + s_{p,g} & & \nonumber \\
-\label{eqn:con_mom_ent}
-\frac{\partial \left( \alpha_e \rho_l \vec{u}_e \right) }{\partial t } + \nabla \cdot \left( \alpha_e \rho_l \vec{u}_e \vec{u}_e \right) & = & \nonumber \\
- -\alpha_e \nabla P + \alpha_e \rho_l \vec{g} - \vec{\tau}^{'}_{w,l} + \vec{\tau}^{'}_{i,ge} - \eta \Gamma^{'''}\vec{u}^{'} + S^{'''}\vec{u}^{'} + s_{p,l} & & \nonumber
-\end{IEEEeqnarray}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Conservation of Energy}
-
-\begin{IEEEeqnarray}{rCl}
-\label{eqn:con_energy_gas}
-\frac{\partial \left( \alpha_g \{\rho_g h_g\} \right)}{\partial t } + \nabla \cdot \left(  \alpha_g \{\rho_g h_g\} \vec{u}_g \right) & =& \nonumber \\
-\Gamma^{'''} h^{'}_v + q^{'''}_{i,v} + q^{'''}_{n,l}  + q^{'''}_{w,g} + \alpha_g\frac{\partial P}{\partial t} + s_{e,g}  & & \nonumber \\
-\label{eqn:con_energy_liq}
-\frac{\partial \left( (1 - \alpha_g) \rho_l h_l \right) }{\partial t } + \nabla \cdot \left( \alpha_l \rho_l h_l \vec{u}_l \right) + \nabla \cdot \left( \alpha_e \rho_l h_l \vec{u}_e \right)& = & \nonumber \\
--\Gamma^{'''} h^{'}_l +  q^{'''}_{i,l} - q^{'''}_{n,l}  + q^{'''}_{w,l} + (1 - \alpha_g) \frac{\partial P}{\partial t} + s_{e,l}  & & \nonumber
-\end{IEEEeqnarray}
-
-\begin{equation*}
-\label{eqn:gaseous_enthalpy}
-\alpha_g \{\rho_g h_g\} = \alpha_g \rho_v h_v + \alpha_g \rho_n h_n
-\end{equation*}
+\item{$\displaystyle \frac{\partial \vec{y}}{\partial t} = \vec{e}(\vec{y})$}
+}
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -216,8 +168,12 @@ Thermal-Hydraulic Safety Analysis Codes}
 \column{0.5\textwidth}
 
 \begin{itemize}
+\item{Staggered Grid:
+\begin{itemize}
 \item{Continuity volumes: mass and energy conservation equations}
 \item{Momentum volumes: momentum conservation equations}
+\end{itemize}
+}
 \item{Conserved quantities are constant over their respective volumes.}
 \item{1st Order upwind at volume edges.}
 \end{itemize}
@@ -315,70 +271,55 @@ Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Fully Explicit Method}
-Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{} \vec{E}(\vec{x}^{n})$.
-\begin{columns}
-\column{0.45\textwidth}
+\frametitle{Methods}
 \begin{itemize}
-\item{Lowest per timestep computational cost.}
-\item{Nonlinearities in the new-time conserved quantities.}
-\item{Sonic Courant limit: $ \Delta t \lesssim \frac{\Delta x}{|u|+|c|}$}
+\item{Fully Explicit
+\begin{itemize}
+\item{Lowest computational cost per timestep}
+\item{Subject to sonic CFL limit: $ \dt{} \lesssim \frac{\dx{}}{|u|+|c|}$}
 \end{itemize}
-
-\column{0.55\textwidth}
-\begin{algorithmic}
-\scriptsize
-\Require $\vec{x}^{0}$ and $t^{0}$
-\Set $n = 0$
-\Loop \; Take a Time Step
-    \Set $t^{n+1} : = t^{n} + \Delta t$
-    \Calculate $\vec{F}(\vec{x}^n)$ and $\vec{J}(\vec{x}^n)$
-    \Calculate $\vec{\delta x} = -\vec{J}^{-1}\vec{F}$
-    \Calculate $\vec{x}^{n+1} = \vec{x}^{n} + \vec{\delta x}$ 
-\EndLoop{\;$n = n+1$}
-\end{algorithmic}
-
-\end{columns}
-
+}
+\item{Fully Implicit Method
+\begin{itemize}
+\item{Highest computational cost per timestep.}
+\item{Not subject to CFL limit.}
+\item{Nonlinearly convergent}
+\item{CATHARE (Barre and Bernard, 1990)}
+\end{itemize}
+}
+\item{Semi-Implicit Method (Liles and Reed, 1978)
+\begin{itemize}
+\item{Single Newton step}
+\item{Subject to material Courant limit: $ \dt{} \lesssim \frac{\dx{}}{|u|}$}
+\item{RELAP, TRACE, COBRA, MARS, SPACE} 
+\end{itemize}
+}
+\end{itemize}
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Fully Implicit Method}
-
-Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{} \vec{E}(\vec{x}^{n+1})$.
-
-\begin{columns}
-\column{0.45\textwidth}
-
+\frametitle{Methods}
 \begin{itemize}
-\item{Highest per timestep computational cost.}
-\item{Nonlinearities in $\vec{E}(\vec{x}^{*})$.}
-\item{No Courant limit.}
-\item{CATHARE}
+\item{Stability-Enhancing Two-Step Method (SETS) (Mahaffy, 1982)
+\begin{itemize}
+\item{Multistage method}
+\item{Nonlinearly convergent}
+\item{Capable of exceeding material Courant limit}
+\item{TRAC-M/Fortran 90, TRACE}
+\end{itemize}
+}
+\item{Nearly Implicit Method (Trapp and Riemke, 1986)
+\begin{itemize}
+\item{Derivative of SETS method}
+\item{Multistage method}
+\item{Single Newton step}
+\item{Capable of exceeding material Courant limit}
+\item{RELAP}
+\end{itemize}
+}
 \end{itemize}
 
-\column{0.55\textwidth}
-
-\begin{algorithmic}
-\scriptsize
-\Require $\vec{x}^{0}$ and $t^{0}$
-\Set $n = 0$
-\Loop \; Transient Loop
-    \Set $t^{n+1} : = t^{n} + \Delta t$
-    \Set $k = 0$
-    \Set $\vec{x}^{k} = \vec{x}^{n}$
-    \Loop \; Newton Loop
-		\Calculate $\vec{F}(\vec{x}^{k})$ and $\vec{J}(\vec{x}^{k})$
-		\Calculate $\vec{\delta x}^k = - \vec{J}^{-1}\cdot\vec{F}$
-		\BlackBox Calculate $\vec{x}^{k+1}$
-		\BlackBox Terminate Loop
-	\EndLoop{\;$k = k + 1$} 	
-\EndLoop{\;$n = n + 1$}
-\end{algorithmic}
-
-
-\end{columns}
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
@@ -392,7 +333,7 @@ Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{}
 \begin{itemize}
 \item{Nonlinearities in $\vec{E}(\vec{x}^{*})$.}
 \item{Material Courant limit: $ \Delta t \lesssim \frac{\Delta x}{|u|}$}
-\item{COBRA, RELAP, SPACE, MARS}
+\item{TRACE, COBRA, RELAP, SPACE, MARS}
 \end{itemize}
 
 \column{0.5\textwidth}
@@ -410,6 +351,25 @@ Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{}
 \end{algorithmic}
 
 \end{columns}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Semi-Implicit Continuous Liquid Mass and Momentum Equations}
+
+Conservation of continuous liquid mass:
+\begin{IEEEeqnarray}{rCl}
+V_c ( (\alpha_l \rho_l )^{n+1} & - & (\alpha_l \rho_l )^{n} ) =  -\Delta t \sum_{NK}\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right) \nonumber \\
+&- &\Delta t\left[(1-\eta)\Gamma + S \right]^{n+1} \nonumber
+\end{IEEEeqnarray}
+
+Conservation of continuous liquid momentum:
+\begin{IEEEeqnarray}{rcl}
+\dx{} ( \dot{m}_{l}^{n+1} & - & \dot{m}_{l}^{n} ) = - \dt{} \sum_{NK} \left( <\alpha_l \rho_l u_l>^n_d u^n_l \cdot \vec{\bar{A}}\right) \nonumber \\
+ & + & \dt{} V_m\left[ (\alpha_l \rho_l)^{n} g  - \alpha^{n}_l \nabla P^{n+1} - K^{n}_{wl}(\dot{m}_l^{n+1})^2 \right. \nonumber \\
+ & + & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2\right] - \dt{}\left[((1 - \eta)\Gamma u^{'})^{n} - (S u^{'})^{n}\right] \nonumber
+\end{IEEEeqnarray}
 
 \end{frame}
 %------------------------------------------------
@@ -462,76 +422,6 @@ Example: 3 continuity volumes and 3 momentum volumes.
 \end{equation*}
  
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Stability-Enhancing Two-Step Method}
-
-\begin{columns}
-\column{0.45\textwidth}
-
-\begin{itemize}
-\item{Developed to overcome material Courant limit of the semi-implicit method.}
-\item{Multistage approximation to $\vec{E}(\vec{x}^{*})$.}
-\item{Courant limit above the material Courant limit but not unbounded.}
-\item{TRACE}
-\end{itemize}
-
-\column{0.5\textwidth}
-\begin{algorithmic}
-\scriptsize
-\Require $\vec{x}^{0}$ and $t^{0}$
-\Set $n = 0$
-\Loop \; Transient Loop
-    \State $t^{n+1} : = t^{n} + \Delta t$
-	\Calculate $\vec{F}_1$ and $\vec{J}_1$
-	\Calculate $\vec{u}^{*}$ from $\vec{\delta u}^{*} = -\vec{J}^{-1}_1\vec{F}_1$
-	\Loop \; Newton Loop
-		\Calculate $\vec{F}_2$ and $\vec{J}_2$
-		\Calculate $\vec{\delta x} = - \vec{J}_2^{-1}\vec{F}_2$
-		\Calculate $\vec{x}^{n+1} = \vec{x}^{n} + \vec{\delta x}$
-	\EndLoop
-	\Calculate $\vec{x}^{n+1}$ from $\vec{F}_3$.
-\EndLoop{\; $n = n + 1$} 
-\end{algorithmic}
-
-\end{columns}
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Nearly-Implicit Method}
-
-\begin{columns}
-\column{0.45\textwidth}
-
-\begin{itemize}
-\item{Derivative of SETS method.}
-\item{Developed to overcome material Courant limit of the semi-implicit method.}
-\item{Three-stage approximation to $\vec{E}(\vec{x}^{*})$.}
-\item{Courant limit above the material Courant limit but not unbounded.}
-\item{Two-stage variant used in RELAP5-3D}
-\end{itemize}
-
-\column{0.5\textwidth}
-\begin{algorithmic}
-\scriptsize
-\Require $\vec{x}^{0}$ and $t^{0}$
-\Set $n = 0$
-\Loop \; Transient Loop
-    \State $t^{n+1} : = t^{n} + \Delta t$
-	\Calculate $\vec{F}_1$ and $\vec{J}_1$
-	\Calculate $\vec{\delta x}^{*} = -\vec{J}^{-1}_1\vec{F}_1$
-	\Calculate $\vec{c}^{*}$ and $\vec{u}^{n+1}$
-	\Calculate $\vec{F}_2$
-	\Calculate $\vec{c}^{**}$ from $\vec{F}_2$
-	\Calculate $\vec{c}^{n+1}$ from $\vec{F}_3$.
-\EndLoop{\; $n = n + 1$}
-\end{algorithmic}
-
-\end{columns}
-
-\end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \subsection[Algorithmic Concerns]{Algorithmic Concerns}
@@ -575,9 +465,10 @@ Example: 3 continuity volumes and 3 momentum volumes.
 \begin{frame}
 \frametitle{Code Coupling}
 
-Master Process
-
-
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=.94\textwidth]{images/coupled_domains.eps}
+\end{figure}
 
 \end{frame}
 %------------------------------------------------
@@ -603,16 +494,6 @@ f_{\text{cbv},j} < \alpha_f^n \rho_f^n>_d^n v_{f,j}^{n+1} \nonumber \\
 & + & \left. g_{\text{cbv},j} <\alpha^n_g>_d^n v_{g,j}^{n+1} +
 h_{\text{cbv},j} <\alpha_f^n>_d^n v_{f,j}^{n+1} \right] \nonumber
 \end{IEEEeqnarray}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Domain Decomposition}
-
-Figure of one domain with two sub components.
-Talk about additive Schwarz methods.
-Talk about multiplicative Schwarz methods.
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -1176,6 +1057,198 @@ Milestones required for implementation of domain decomposition:
 \frametitle{Acknowledgments}
 
 This research was performed under appointment to the Rickover Fellowship Program in Nuclear Engineering sponsored by Naval Reactors Division of the U.S. Department of Energy.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Conservation of Mass}
+
+\begin{IEEEeqnarray}{rCl}
+\label{eqn:conservation_of_ncg}
+\frac{\partial \left(\alpha_g \rho_{n}\right) }{\partial t } + \nabla \cdot \left( \alpha_g \rho_{n} \vec{u}_g \right) & = & s_{m,n} \nonumber \\
+\label{eqn:conservation_of_vap}
+\frac{\partial \left(\alpha_g \rho_v \right)}{\partial t } + \nabla \cdot \left( \alpha_g \rho_v \vec{u}_g \right)         & = & \Gamma^{'''} + s_{m,v} \nonumber \\
+\label{eqn:conservation_of_liq}
+\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \right)         & = & -(1-\eta)\Gamma^{'''} - S^{'''} + s_{m,l} \nonumber \\
+\label{eqn:conservation_of_ent}
+\frac{\partial \left(\alpha_e \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_e \rho_l \vec{u}_e \right)         & = & -\eta\Gamma^{'''} + S^{'''}+ s_{m,e} \nonumber
+\end{IEEEeqnarray}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Conservation of Momentum}
+
+\begin{IEEEeqnarray}{rCl}
+\label{eqn:con_mom_liq}
+\frac{\partial \left( \alpha_l \rho_l \vec{u}_l \right )}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \vec{u}_l \right) & = & \nonumber \\
+ -\alpha_l \nabla P + \alpha_l \rho_l \vec{g} - \vec{\tau}^{'}_{w,l} + \vec{\tau}^{'}_{i,gl} - (1 - \eta)\Gamma^{'''}\vec{u}^{'} - S^{'''}\vec{u}^{'} + s_{p,l} & & \nonumber \\
+\label{eqn:con_mom_gas}
+\frac{\partial \left( \alpha_g \rho_g \vec{u}_g \right) }{\partial t } + \nabla \cdot \left( \alpha_g \rho_g \vec{u}_g \vec{u}_g \right) & = & \nonumber \\
+ -\alpha_g \nabla P + \alpha_g \rho_g \vec{g} - \vec{\tau}^{'}_{w,g} - \vec{\tau}^{'}_{i,gl} - \vec{\tau}^{'}_{i,ge} + \Gamma^{'''}\vec{u}^{'} + s_{p,g} & & \nonumber \\
+\label{eqn:con_mom_ent}
+\frac{\partial \left( \alpha_e \rho_l \vec{u}_e \right) }{\partial t } + \nabla \cdot \left( \alpha_e \rho_l \vec{u}_e \vec{u}_e \right) & = & \nonumber \\
+ -\alpha_e \nabla P + \alpha_e \rho_l \vec{g} - \vec{\tau}^{'}_{w,l} + \vec{\tau}^{'}_{i,ge} - \eta \Gamma^{'''}\vec{u}^{'} + S^{'''}\vec{u}^{'} + s_{p,l} & & \nonumber
+\end{IEEEeqnarray}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Conservation of Energy}
+
+\begin{IEEEeqnarray}{rCl}
+\label{eqn:con_energy_gas}
+\frac{\partial \left( \alpha_g \{\rho_g h_g\} \right)}{\partial t } + \nabla \cdot \left(  \alpha_g \{\rho_g h_g\} \vec{u}_g \right) & =& \nonumber \\
+\Gamma^{'''} h^{'}_v + q^{'''}_{i,v} + q^{'''}_{n,l}  + q^{'''}_{w,g} + \alpha_g\frac{\partial P}{\partial t} + s_{e,g}  & & \nonumber \\
+\label{eqn:con_energy_liq}
+\frac{\partial \left( (1 - \alpha_g) \rho_l h_l \right) }{\partial t } + \nabla \cdot \left( \alpha_l \rho_l h_l \vec{u}_l \right) + \nabla \cdot \left( \alpha_e \rho_l h_l \vec{u}_e \right)& = & \nonumber \\
+-\Gamma^{'''} h^{'}_l +  q^{'''}_{i,l} - q^{'''}_{n,l}  + q^{'''}_{w,l} + (1 - \alpha_g) \frac{\partial P}{\partial t} + s_{e,l}  & & \nonumber
+\end{IEEEeqnarray}
+
+\begin{equation*}
+\label{eqn:gaseous_enthalpy}
+\alpha_g \{\rho_g h_g\} = \alpha_g \rho_v h_v + \alpha_g \rho_n h_n
+\end{equation*}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Fully Explicit Method}
+Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{} \vec{E}(\vec{x}^{n})$.
+\begin{columns}
+\column{0.45\textwidth}
+\begin{itemize}
+\item{Lowest per timestep computational cost.}
+\item{Nonlinearities in the new-time conserved quantities.}
+\item{Sonic Courant limit: $ \Delta t \lesssim \frac{\Delta x}{|u|+|c|}$}
+\end{itemize}
+
+\column{0.55\textwidth}
+\begin{algorithmic}
+\scriptsize
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Take a Time Step
+    \Set $t^{n+1} : = t^{n} + \Delta t$
+    \Calculate $\vec{F}(\vec{x}^n)$ and $\vec{J}(\vec{x}^n)$
+    \Calculate $\vec{\delta x} = -\vec{J}^{-1}\vec{F}$
+    \Calculate $\vec{x}^{n+1} = \vec{x}^{n} + \vec{\delta x}$ 
+\EndLoop{\;$n = n+1$}
+\end{algorithmic}
+
+\end{columns}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Fully Implicit Method}
+
+Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{} \vec{E}(\vec{x}^{n+1})$.
+
+\begin{columns}
+\column{0.45\textwidth}
+
+\begin{itemize}
+\item{Highest per timestep computational cost.}
+\item{Nonlinearities in $\vec{E}(\vec{x}^{*})$.}
+\item{No Courant limit.}
+\item{CATHARE}
+\end{itemize}
+
+\column{0.55\textwidth}
+
+\begin{algorithmic}
+\scriptsize
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \Set $t^{n+1} : = t^{n} + \Delta t$
+    \Set $k = 0$
+    \Set $\vec{x}^{k} = \vec{x}^{n}$
+    \Loop \; Newton Loop
+		\Calculate $\vec{F}(\vec{x}^{k})$ and $\vec{J}(\vec{x}^{k})$
+		\Calculate $\vec{\delta x}^k = - \vec{J}^{-1}\cdot\vec{F}$
+		\BlackBox Calculate $\vec{x}^{k+1}$
+		\BlackBox Terminate Loop
+	\EndLoop{\;$k = k + 1$} 	
+\EndLoop{\;$n = n + 1$}
+\end{algorithmic}
+
+\end{columns}
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Stability-Enhancing Two-Step Method}
+
+\begin{columns}
+\column{0.45\textwidth}
+
+\begin{itemize}
+\item{Developed to overcome material Courant limit of the semi-implicit method.}
+\item{Multistage approximation to $\vec{E}(\vec{x}^{*})$.}
+\item{Courant limit above the material Courant limit but not unbounded.}
+\item{TRACE}
+\end{itemize}
+
+\column{0.5\textwidth}
+\begin{algorithmic}
+\scriptsize
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \State $t^{n+1} : = t^{n} + \Delta t$
+	\Calculate $\vec{F}_1$ and $\vec{J}_1$
+	\Calculate $\vec{u}^{*}$ from $\vec{\delta u}^{*} = -\vec{J}^{-1}_1\vec{F}_1$
+	\Loop \; Newton Loop
+		\Calculate $\vec{F}_2$ and $\vec{J}_2$
+		\Calculate $\vec{\delta x} = - \vec{J}_2^{-1}\vec{F}_2$
+		\Calculate $\vec{x}^{n+1} = \vec{x}^{n} + \vec{\delta x}$
+	\EndLoop
+	\Calculate $\vec{x}^{n+1}$ from $\vec{F}_3$.
+\EndLoop{\; $n = n + 1$} 
+\end{algorithmic}
+
+\end{columns}
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Nearly-Implicit Method}
+
+\begin{columns}
+\column{0.45\textwidth}
+
+\begin{itemize}
+\item{Derivative of SETS method.}
+\item{Developed to overcome material Courant limit of the semi-implicit method.}
+\item{Three-stage approximation to $\vec{E}(\vec{x}^{*})$.}
+\item{Courant limit above the material Courant limit but not unbounded.}
+\item{Two-stage variant used in RELAP5-3D}
+\end{itemize}
+
+\column{0.5\textwidth}
+\begin{algorithmic}
+\scriptsize
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \State $t^{n+1} : = t^{n} + \Delta t$
+	\Calculate $\vec{F}_1$ and $\vec{J}_1$
+	\Calculate $\vec{\delta x}^{*} = -\vec{J}^{-1}_1\vec{F}_1$
+	\Calculate $\vec{c}^{*}$ and $\vec{u}^{n+1}$
+	\Calculate $\vec{F}_2$
+	\Calculate $\vec{c}^{**}$ from $\vec{F}_2$
+	\Calculate $\vec{c}^{n+1}$ from $\vec{F}_3$.
+\EndLoop{\; $n = n + 1$}
+\end{algorithmic}
+
+\end{columns}
 
 \end{frame}
 %------------------------------------------------
