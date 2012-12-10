@@ -63,8 +63,9 @@ Thermal-Hydraulic Safety Analysis Codes}
 \frametitle{Introduction}
 
 \begin{itemize}
-\item{test1}
-\item{test2}
+\item{Loss-of-Coolant-Accidents}
+\item{Safety Analysis}
+\item{}
 \end{itemize}
 
 \end{frame}
@@ -319,7 +320,7 @@ Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{}
 \begin{columns}
 \column{0.45\textwidth}
 \begin{itemize}
-\item{Smallest per timestep computational cost.}
+\item{Lowest per timestep computational cost.}
 \item{Nonlinearities in the new-time conserved quantities.}
 \item{Sonic Courant limit: $ \Delta t \lesssim \frac{\Delta x}{|u|+|c|}$}
 \end{itemize}
@@ -416,7 +417,26 @@ Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{}
 \begin{frame}
 \frametitle{Semi-Implicit Method Solver}
 
-Details
+Example: 3 continuity volumes and 3 momentum volumes.
+
+\begin{equation*}
+\label{eqn:si_solve}
+\begin{bmatrix} 
+\vec{J}_{m_1} & \vec{J}_{m_1,c_1} & \vec{0} & \vec{0} & \vec{0} & \vec{0}\\
+\vec{J}_{c_1,m_1} & \vec{J}_{c_1} & \vec{J}_{c_1,m_2} & \vec{0} & \vec{0} & \vec{0} \\
+\vec{0} & \vec{J}_{m_2,c_1} & \vec{J}_{m_2} & \vec{J}_{m_2,c_2} & \vec{0} & \vec{0} \\
+\vec{0} & \vec{0} & \vec{J}_{c_2,m_2} & \vec{J}_{c_2} & \vec{J}_{c_2,m_3} & \vec{0} \\
+\vec{0} & \vec{0} & \vec{0} & \vec{J}_{m_3,c_2} & \vec{J}_{m_3} & \vec{J}_{m_3,c_3} \\ 
+\vec{0} & \vec{0} & \vec{0} & \vec{0} & \vec{J}_{c_3,m_3} & \vec{J}_{c_3}  
+\end{bmatrix} \begin{bmatrix}
+\vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
+\vec{\delta m}_{2} \\ \vec{\delta c}_{2} \\
+\vec{\delta m}_{3} \\ \vec{\delta c}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+\vec{F}_{m_1} \\ \vec{F}_{c_1} \\
+\vec{F}_{m_2} \\ \vec{F}_{c_2} \\
+\vec{F}_{m_3} \\ \vec{F}_{c_3} \end{bmatrix}
+\end{equation*}
 
 \end{frame}
 %------------------------------------------------
@@ -424,8 +444,23 @@ Details
 \begin{frame}
 \frametitle{Semi-Implicit Method Solver}
 
-More Details
-
+\begin{equation*}
+\label{eqn:si_solve_3}
+\begin{bmatrix} 
+\vec{J}^{*}_{c_1} & \vec{C}_{c_1,P_2} & \vec{0} \\
+\vec{C}_{c_2,P_1} & \vec{J}^{*}_{c_2} & \vec{C}_{c_2,P_3} \\
+\vec{0}           & \vec{C}_{c_3,P_2} & \vec{J}^{*}_{c_3}
+\end{bmatrix} \begin{bmatrix}
+\vec{\delta c}_{1} \\
+\vec{\delta c}_{2} \\
+\vec{\delta c}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+\vec{F}^{*}_{c_1} \\
+\vec{F}^{*}_{c_2} \\
+\vec{F}^{*}_{c_3}
+\end{bmatrix}
+\end{equation*}
+ 
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
@@ -628,10 +663,20 @@ Talk about multiplicative Schwarz methods.
 %------------------------------------------------
 \begin{frame}
 \frametitle{Operator-Based Scaling}
+Nonlinear residuals have different units:
 
-\begin{itemize}
-\item{Things are scaled.}
-\end{itemize}
+\begin{IEEEeqnarray}{rcl}
+F_{m,l} & = & V_c \left[ \left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho_l \right)^{n} \right] + \dt{} \sum_{NK}\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right) \nonumber \\
+& + & \dt{} \left[(1-\eta)\Gamma + S \right]^{n+1} \nonumber
+\end{IEEEeqnarray}
+
+Scaling chosen:
+
+\begin{IEEEeqnarray}{rcl}
+S_{m,l} & = & V_c \abs{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho_l \right)^{n}} + \dt{} \sum_{NK}\abs{\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right)} \nonumber \\
+& + & \dt{} \left[\abs{(1-\eta)\Gamma} + \abs{S} \right]^{n+1}
+\end{IEEEeqnarray}
+
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -714,8 +759,8 @@ Metrics for nonlinear convergence testing:
 \begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
 \multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
                          & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{Btu}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
-Single-Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
-Flashing                 &  200&0                       & 1198&3                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
+Single-Phase & 200&0  &  355&5 & 0&0 & 1&0 & 0&0 \\
+Flashing     & 200&0  & 1198&3 & 1&0 & 0&0 & 0&0 \\ \bottomrule  
 \end{tabular}
 \label{tab:ic}
 \end{table}
@@ -731,8 +776,8 @@ Flashing                 &  200&0                       & 1198&3                
 \begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
 \multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
                          & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{BTU}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
-Single-Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
-Flashing                 &  200&0                       & 1198&3                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
+Single-Phase & 200&0 &  355&5 & 0&0 & 1&0 & 0&0 \\
+Flashing     & 200&0 & 1198&3 & 1&0 & 0&0 & 0&0 \\ \bottomrule  
 \end{tabular}
 \label{tab:bc_pe}
 \end{table}
@@ -748,8 +793,8 @@ Flashing                 &  200&0                       & 1198&3                
 \begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
 \multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
                          & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{BTU}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
-Single-Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
-Flashing                 & 1000&0                       &  542&6                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
+Single-Phase &  200&0 & 355&5 & 0&0 & 1&0 & 0&0 \\
+Flashing     & 1000&0 & 542&6 & 1&0 & 0&0 & 0&0 \\ \bottomrule  
 \end{tabular}
 \label{tab:bc_fe}
 \end{table}
@@ -1101,8 +1146,10 @@ Milestones required for implementation of domain decomposition:
 \begin{frame}
 \frametitle{Proposed Testing}
 
-I need to test convergence tolerances of the newton-loop.
-I need to test metric values to determine when a solution is "good enough."
+\begin{itemize}
+\item{I need to test convergence tolerances of the newton-loop.}
+\item{I need to test metric values to determine when a solution is "good enough."}
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -1113,14 +1160,10 @@ I need to test metric values to determine when a solution is "good enough."
 \begin{frame}
 \frametitle{Possible Outcomes}
 
-Possible outcomes of this research.
-It can provide a speed-up.
-It can provide an answer about nonlinear convergence affecting solutions.
-
 \begin{itemize}
-\item{I am a good outcome.}
-\item{I am a not-so-good outcome.}
-\item{I am the end.}
+\item{Demonstrate that not resolving the nonlinearities within a timestep reduces the temporal convergence of the solution.}
+\item{Develop a domain decomposition method to enable local nonlinearities to be resolved.}
+\item{By resolving local nonlinearities, a timestep size insensitive solution may be obtained at larger timesteps than otherwise achievable.}
 \end{itemize}
 
 \end{frame}
