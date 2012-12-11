@@ -63,7 +63,11 @@ Thermal-Hydraulic Safety Analysis Codes}
 
 \textbf{Context}:
 \begin{itemize}
-\item{COBRA subchannel analysis software: detailed in-core physics}
+\item{COBRA subchannel analysis software
+\begin{itemize}
+\item{Detailed fluid mechanics and heat transfer}
+\end{itemize}
+}
 \end{itemize}
 
 \end{frame}
@@ -80,7 +84,6 @@ Thermal-Hydraulic Safety Analysis Codes}
 \item{Computational Geometry}
 \item{Numeric Approximations}
 \item{Solution Methods}
-\item{Algorithmic Concerns}
 \item{Research Objectives}
 \end{itemize}
 }
@@ -121,15 +124,33 @@ Thermal-Hydraulic Safety Analysis Codes}
 \item{Three water fields: vapor, continuous liquid, and dispersed liquid.}
 \item{\Ncg{} field.}
 \item{Assumptions}
-\item{One-dimensional flow: nine partial differential equations.
+\item{For one-dimensional problems there are nine partial differential equations.
 \begin{itemize}
-\item{Four conservation of mass equations.}
-\item{Three conservation of momentum equations.}
-\item{Two conservation of energy equations.}
+\item{Four conservation of mass equations: \Ncg{} field, water vapor field, continuous liquid field, and entrained liquid field.}
+\item{Three conservation of momentum equations: Gaseous phase, continuous liquid field, and entrained liquid field.}
+\item{Two conservation of energy equations: Gaseous phase and liquid phase.}
 \end{itemize}
-\item{$\displaystyle \frac{\partial \vec{y}}{\partial t} = \vec{e}(\vec{y})$}
 }
 \end{itemize}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Two-Phase Flow: Conservation of Continuous Liquid Field Mass and Momentum and Total Liquid Phase Energy}
+
+\begin{IEEEeqnarray}{rcl}
+\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \right) & = & -(1-\eta)\Gamma^{'''} - S^{'''} + s_{m,l} \nonumber \\
+\frac{\partial \left( \alpha_l \rho_l \vec{u}_l \right )}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \vec{u}_l \right) & = &
+ -\alpha_l \nabla P + \alpha_l \rho_l \vec{g} - \vec{\tau}^{'}_{w,l} \nonumber \\
+ & + & \vec{\tau}^{'}_{i,gl} - (1 - \eta)\Gamma^{'''}\vec{u}^{'} - S^{'''}\vec{u}^{'} + s_{p,l} \nonumber \\
+\frac{\partial \left( (1 - \alpha_g) \rho_l h_l \right) }{\partial t } + \nabla \cdot \left( \alpha_l \rho_l h_l \vec{u}_l \right) & + & \nabla \cdot \left( \alpha_e \rho_l h_l \vec{u}_e \right) =  \nonumber \\
+-\Gamma^{'''} h^{'}_l +  q^{'''}_{i,l} & - & q^{'''}_{n,l}  + q^{'''}_{w,l} + (1 - \alpha_g) \frac{\partial P}{\partial t} + s_{e,l} \nonumber
+\end{IEEEeqnarray}
+
+\begin{equation*}
+\displaystyle \frac{\partial \vec{y}}{\partial t} = \vec{e}(\vec{y})
+\end{equation*}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -259,7 +280,7 @@ Integrate conservation equations over a time-step.
 \column{0.5\textwidth}
 \begin{IEEEeqnarray}{rcl}
 \int^{t^{n+1}}_{t^n}\frac{\partial \vec{y}}{\partial t}\mathrm{d}\tau & = & \int^{t^{n+1}}_{t^n}\vec{E}(\vec{y})\mathrm{d}\tau \nonumber \\
-\vec{y}^{n+1} - \vec{y}^{n} & = & \int_{t^{n+1}}^{t^n}\vec{E}(\vec{y})\mathrm{d}\tau \nonumber  \\
+\vec{y}^{n+1} - \vec{y}^{n} & = & \int_{t^{n}}^{t^{n+1}}\vec{E}(\vec{y})\mathrm{d}\tau \nonumber  \\
 \vec{y}^{n+1} - \vec{y}^{n} & = & \Delta t \vec{E}(\vec{y}^{*}) \nonumber  \\
 \label{eqn:simple_partial_t}
 \frac{\vec{y}^{n+1} - \vec{y}^{n}}{\Delta t} & = & \vec{E}^{*} \nonumber \\
@@ -283,6 +304,7 @@ Integrate conservation equations over a time-step.
 \item{$ \dot{m}_{k} = <\alpha_k \rho_k>_{a} u_{k} A_{m}$}
 \end{itemize}
 }
+\item{Nonlinearities in $\vec{y}(\vec{x}^{n+1})$ and potentially in $\vec{E}^{*}$}
 \item{Single Newton step or iterative}
 \end{itemize}
 
@@ -310,62 +332,47 @@ P                  \\
 \end{IEEEeqnarray}
 
 \end{frame}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
-\subsection[Solution Methods]{Solution Methods}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Methods}
+\frametitle{Single Newton Step vs. Iterative Newton Method}
+
 \begin{itemize}
-\item{Fully Explicit Method
+\item{Single Newton Step: Linearized Approximation
 \begin{itemize}
-\item{Lowest computational cost per timestep}
-\item{Subject to sonic CFL limit: $ \dt{} \lesssim \frac{\dx{}}{|u|+|c|}$}
+\item{Timestep acceptance based upon error mitigation and prevention.}
+\item{Limits placed upon changes in independent parameters.}
 \end{itemize}
 }
-\item{Fully Implicit Method
+\item{Iterative Newton Step: Nonlinearly Convergent
 \begin{itemize}
-\item{Highest computational cost per timestep.}
-\item{Not subject to CFL limit.}
-\item{Nonlinearly convergent}
-\item{CATHARE (Barre and Bernard, 1990)}
-\end{itemize}
-}
-\item{Semi-Implicit Method (Liles and Reed, 1978)
-\begin{itemize}
-\item{Single Newton step}
-\item{Subject to material Courant limit: $ \dt{} \lesssim \frac{\dx{}}{|u|}$}
-\item{RELAP, TRACE, COBRA, MARS, SPACE} 
-\end{itemize}
-}
-\end{itemize}
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Methods}
-\begin{itemize}
-\item{Stability-Enhancing Two-Step Method (SETS) (Mahaffy, 1982)
-\begin{itemize}
-\item{Multistage method}
-\item{Nonlinearly convergent}
-\item{Capable of exceeding material Courant limit}
-\item{TRAC-M/Fortran 90, TRACE}
-\end{itemize}
-}
-\item{Nearly Implicit Method (Trapp and Riemke, 1986)
-\begin{itemize}
-\item{Derivative of SETS method}
-\item{Multistage method}
-\item{Single Newton step}
-\item{Capable of exceeding material Courant limit}
-\item{RELAP}
+\item{Timestep acceptance based upon residuals.}
 \end{itemize}
 }
 \end{itemize}
 
+\begin{figure}[t]
+\centering
+\resizebox{1.0\textwidth}{!}{
+\begin{tikzpicture}
+\draw[pattern=north west lines, pattern color=blue] [thick] (-3,0) rectangle (0,3);
+\draw (-1.5,3) node[anchor=south] {Linearized Approximation};
+\draw (-3,2.5) node[anchor=east] {RELAP5-3D};
+\draw (-3,2) node[anchor=east] {COBRA};
+\draw (-3,1.5) node[anchor=east] {MARS};
+\draw (-3,1) node[anchor=east] {SPACE};
+\draw[pattern=north east lines, pattern color=red] [thick] (3,0) rectangle (6,3);
+\draw (4.5,3) node[anchor=south] {Nonlinearly Convergent};
+\draw (6,2) node[anchor=west] {CATHARE};
+\draw (6,1.5) node[anchor=west] {TRACE};
+\end{tikzpicture}
+}
+\end{figure}
+
 \end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Solution Methods]{Solution Methods}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
@@ -379,8 +386,6 @@ P                  \\
 \item{Nonlinearities in $\vec{E}(\vec{x}^{n+1},\vec{x}^{n})$}
 \item{Single Newton step}
 \item{Material Courant limit: $ \Delta t \lesssim \frac{\Delta x}{|u|}$}
-\item{[N x N] matrix of pressure equations}
-\item{TRACE, COBRA, RELAP, SPACE, MARS}
 \end{itemize}
 
 \column{0.5\textwidth}
@@ -396,8 +401,11 @@ P                  \\
 	\Calculate $\vec{x}^{n+1} = \vec{x}^{n} + \vec{\delta x}$
 \EndLoop{\; $n = n + 1$} 
 \end{algorithmic}
-
 \end{columns}
+
+Problem devolves to an [N x N] matrix for Newton updates of the pressure. 
+
+Used in TRACE, COBRA, RELAP, SPACE, MARS.
 
 \end{frame}
 %------------------------------------------------
@@ -450,7 +458,7 @@ Conservation of continuous liquid momentum:
 \begin{frame}
 \frametitle{Semi-Implicit Method Solution Algorithm}
 
-Example: 3 continuity volumes and 3 momentum volumes.
+Example: Single Newton step for channel with 3 continuity volumes and 3 momentum volumes.
 
 \begin{equation*}
 \label{eqn:si_solve}
@@ -477,166 +485,30 @@ Example: 3 continuity volumes and 3 momentum volumes.
 \begin{frame}
 \frametitle{Semi-Implicit Method Solution Algorithm}
 
-Multiply momentum equations by their inverse Jacobians.
-
-\begin{equation*}
-\label{eqn:si_solve_1}
-\begin{bmatrix} 
-\vec{I} & \frac{\partial \vec{m}_1}{\partial P_1} & \vec{0} & \vec{0} & \vec{0} & \vec{0}\\
-\vec{J}_{c_1,m_1} & \vec{J}_{c_1} & \vec{J}_{c_1,m_2} & \vec{0} & \vec{0} & \vec{0} \\
-\vec{0} & \frac{\partial \vec{m}_2}{\partial P_1} & \vec{I} & \frac{\partial \vec{m}_2}{\partial P_2} & \vec{0} & \vec{0} \\
-\vec{0} & \vec{0} & \vec{J}_{c_2,m_2} & \vec{J}_{c_2} & \vec{J}_{c_2,m_3} & \vec{0} \\
-\vec{0} & \vec{0} & \vec{0} & \frac{\partial \vec{m}_{3}}{\partial P_2} & \vec{I} & \frac{\partial \vec{m}_{3}}{\partial P_3} \\ 
-\vec{0} & \vec{0} & \vec{0} & \vec{0} & \vec{J}_{c_3,m_3} & \vec{J}_{c_3}  
-\end{bmatrix} \begin{bmatrix}
-\vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
-\vec{\delta m}_{2} \\ \vec{\delta c}_{2} \\
-\vec{\delta m}_{3} \\ \vec{\delta c}_{3}
-\end{bmatrix}  = -\begin{bmatrix}
-\vec{J}^{-1}_{m_1}\vec{F}_{m_1} \\ \vec{F}_{c_1} \\
-\vec{J}^{-1}_{m_2}\vec{F}_{m_2} \\ \vec{F}_{c_2} \\
-\vec{J}^{-1}_{m_3}\vec{F}_{m_3} \\ \vec{F}_{c_3} \end{bmatrix}
-\end{equation*}
-
-\begin{equation*}
-\frac{\partial \vec{m}_k}{\partial P_j} = \vec{J}^{-1}_{m_k}\vec{J}_{m_k,c_j}
-\end{equation*}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Semi-Implicit Method Solution Algorithm}
-
-\begin{equation*}
-\resizebox{1.0\textwidth}{!}{$
-\begin{bmatrix} 
-\vec{J}_{c_1} - \vec{J}_{c_1,m_1}\frac{\partial \vec{m}_1}{\partial P_1} - \vec{J}_{c_1,m_2}\frac{\partial \vec{m}_2}{\partial P_1} &
--\vec{J}_{c_1,m_2}\frac{\partial \vec{m}_2}{\partial P_2} &
-\vec{0} \\
--\vec{J}_{c_2,m_2}\frac{\partial \vec{m}_2}{\partial P_1} & 
-\vec{J}_{c_2} - \vec{J}_{c_2,m_2}\frac{\partial \vec{m}_2}{\partial P_2}-\vec{J}_{c_2,m_3}\frac{\partial \vec{m}_3}{\partial P_2} &
--\vec{J}_{c_2,m_3}\frac{\partial \vec{m}_3}{\partial P_3} \\
- \vec{0} &
--\vec{J}_{c_3,m_3}\frac{\partial \vec{m}_3}{\partial P_2} &
-\vec{J}_{c_3} -\vec{J}_{c_3,m_3}\frac{\partial \vec{m}_3}{\partial P_3} 
-\end{bmatrix}\begin{bmatrix}
-\vec{\delta c}_{1} \\
-\vec{\delta c}_{2} \\
-\vec{\delta c}_{3}
-\end{bmatrix}
-$}
-\end{equation*}
-\begin{equation*}
-= -\begin{bmatrix}
-\vec{F}_{c_1} -
-\vec{J}_{c_1,m_1}\vec{J}^{-1}_{m_1}\vec{F}_{m_1}-\vec{J}_{c_1,m_2}\vec{J}^{-1}_{m_2}\vec{F}_{m_2} \\
-\vec{F}_{c_2} - 
-\vec{J}_{c_2,m_2}\vec{J}^{-1}_{m_2}\vec{F}_{m_2}-\vec{J}_{c_2,m_3}\vec{J}^{-1}_{m_3}\vec{F}_{m_3} \\
-\vec{F}_{c_3} - 
-\vec{J}_{c_3,m_3}\vec{J}^{-1}_{m_3}\vec{F}_{m_3}
-\end{bmatrix}
-\end{equation*}
-
-Eliminate momentum equations from system.
-
-\begin{equation*}
-\label{eqn:si_solve_3}
-\begin{bmatrix} 
-\vec{J}^{*}_{c_1} & \vec{C}_{c_1,P_2} & \vec{0} \\
-\vec{C}_{c_2,P_1} & \vec{J}^{*}_{c_2} & \vec{C}_{c_2,P_3} \\
-\vec{0}           & \vec{C}_{c_3,P_2} & \vec{J}^{*}_{c_3}
-\end{bmatrix} \begin{bmatrix}
-\vec{\delta c}_{1} \\
-\vec{\delta c}_{2} \\
-\vec{\delta c}_{3}
-\end{bmatrix}  = -\begin{bmatrix}
-\vec{F}^{*}_{c_1} \\
-\vec{F}^{*}_{c_2} \\
-\vec{F}^{*}_{c_3}
-\end{bmatrix}
-\end{equation*}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Semi-Implicit Method Solution Algorithm}
-
-Multiply rows by the $\vec{L}^{-1}_{c_i}$ from LU decomposition of $\vec{J}^{*}_{c_i}$.
-
-\begin{equation*}
-\label{eqn:si_solve_4}
-\begin{bmatrix} 
-\vec{U}^{*}_{c_1} & \vec{L}^{-1}_{c_1}\vec{C}_{c_1,P_2} & \vec{0} \\
-\vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_1} & \vec{U}^{*}_{c_2} & \vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_3} \\
-\vec{0} & \vec{L}^{-1}_{c_3}\vec{C}_{c_3,P_2} & \vec{U}^{*}_{c_3}
-\end{bmatrix} \begin{bmatrix}
-\vec{\delta c}_{1} \\
-\vec{\delta c}_{2} \\
-\vec{\delta c}_{3}
-\end{bmatrix}  = -\begin{bmatrix}
-\vec{L}^{-1}_{c_1}\vec{F}^{*}_{c_1} \\
-\vec{L}^{-1}_{c_2}\vec{F}^{*}_{c_2} \\
-\vec{L}^{-1}_{c_3}\vec{F}^{*}_{c_3}
-\end{bmatrix}
-\end{equation*}
-
-Isolate last row from each continuity block.
+Full Newton step is reduced to an [N x N] system for pressure updates in each continuity cell.
 
 \begin{equation*}
 \label{eqn:si_pressure_matrix}
 \begin{bmatrix} 
- 1 & \frac{\vec{L}^{-1}_{c_1}\vec{C}_{c_1,P_2}[6]}{\vec{U}^{*}_{c_1}[6]} & \vec{0} \\
-\frac{\vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_1}[6]}{\vec{U}^{*}_{c_2}[6]} & 1 & \frac{\vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_3}[6]}{\vec{U}^{*}_{c_2}[6]} \\
-\vec{0}           & \frac{\vec{L}^{-1}_{c_3}\vec{C}_{c_3,P_2}[6]}{\vec{U}^{*}_{c_3}[6]} & 1
+ 1 & a_{1,2} & \vec{0} \\
+a_{2,1} & 1 & a_{2,3} \\
+\vec{0}           & a_{3,2} & 1
 \end{bmatrix} \begin{bmatrix}
 \vec{\delta P}_{1} \\
 \vec{\delta P}_{2} \\
 \vec{\delta P}_{3}
 \end{bmatrix}  = -\begin{bmatrix}
-\frac{\vec{L}^{-1}_{c_1}\vec{F}^{*}_{c_1}[6]}{\vec{U}^{*}_{c_1}[6]} \\
-\frac{\vec{L}^{-1}_{c_2}\vec{F}^{*}_{c_2}[6]}{\vec{U}^{*}_{c_2}[6]} \\
-\frac{\vec{L}^{-1}_{c_3}\vec{F}^{*}_{c_3}[6]}{\vec{U}^{*}_{c_3}[6]}
+f_{1} \\
+f_{2} \\
+f_{3}
 \end{bmatrix}
 \end{equation*}
 
 \end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
-\subsection[Algorithmic Concerns]{Algorithmic Concerns}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Phase Transition}
+%\subsection[Algorithmic Concerns]{Algorithmic Concerns}
 
-\begin{itemize}
-\item{Does not switch to single-phase flow conservation equations.}
-\item{Minimum volume fraction for each water phase is enforced: $\alpha_{k,\text{MIN}}$ = 1.0E-9.}
-\item{The two liquid water fields split the minimum presence equally.}
-\item{Velocity equilibrium of fields during psuedo single-phase flow is enforced through an artificial interfacial drag.}
-\item{The \ncg{} field, through its partial pressure $P_n$, is allowed to go zero.}
-\end{itemize}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Timestep Failure Mitigation and Size Selection}
-
-\begin{itemize}
-\item{Change of phasic enthalpy cannot be greater than 45 [$\frac{\text{BTU}}{\lbm{}}$].}
-\item{Change in pressure cannot be greater than 20 [psia].}
-\item{Change in partial pressure of the \ncg{} field cannot be greater than 20 [psia].}
-\item{Thermodynamic variables would fall outside of the range of validity of the equations of state.}
-\end{itemize}
-
-\begin{equation*}
-\label{eqn:time_step}
-\Delta t^{n} = \max\left[ \Delta t_{\text{MIN}}, \min\left[1.2 \Delta t^{n-1}, 0.85 \Delta t_{\text{CRNT}}, \Delta t_{\text{MAX}} \right]\right]
-\end{equation*}
-
-\end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \subsection[Domain Coupling]{Domain Coupling}
@@ -685,11 +557,41 @@ h_{\text{cbv},j} <\alpha_f^n>_d^n v_{f,j}^{n+1} \right] \nonumber
 \frametitle{Research Objectives}
 
 \begin{itemize}
-\item{Develop, implement, and test a domain decomposition method based upon RELAP5-3D semi-implicit code coupling.}
-\item{Quantification of nonlinearities within subdomain.}
-\item{Resolution of nonlinearities within a subdomain using consistent boundary values.}
+\item{Develop, implement, and test a unique domain decomposition method based upon RELAP5-3D semi-implicit code coupling within COBRA.}
+\item{Develop method for resolving the nonlinearities in a specified subdomain via an iterative Newton method while maintaining a consistent boundary with the linearized domain.}
 \item{Develop and test metric for possible nonlinear nonconvergence of a time-step size insensitive solution.}
 \end{itemize}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Research Objectives}
+
+\begin{figure}[t]
+\centering
+\resizebox{!}{0.7\textheight}{
+\begin{tikzpicture}
+\draw[pattern=north west lines, pattern color=blue] [thick] (-3,0) rectangle (0,3);
+\draw (-1.5,3) node[anchor=south] {Linearized Approximation};
+\draw (-3,2.5) node[anchor=east] {RELAP5-3D};
+\draw (-3,2) node[anchor=east] {COBRA};
+\draw (-3,1.5) node[anchor=east] {MARS};
+\draw (-3,1) node[anchor=east] {SPACE};
+\draw[pattern=north east lines, pattern color=red] [thick] (3,0) rectangle (6,3);
+\draw (4.5,3) node[anchor=south] {Nonlinearly Convergent};
+\draw (6,2) node[anchor=west] {CATHARE};
+\draw (6,1.5) node[anchor=west] {TRACE};
+\draw (0,-4) rectangle +(3,3);
+\path[pattern=north west lines, pattern color=blue] (0,-4) rectangle +(0.75,3);
+\path[pattern=north west lines, pattern color=blue] (2.25,-4) rectangle +(0.75,3);
+\path[pattern=north west lines, pattern color=blue] (0.75,-1.75) rectangle +(1.5,0.75);
+\path[pattern=north east lines, pattern color=red] (0.75,-3.25) rectangle +(1.5,1.5);
+\path[pattern=north west lines, pattern color=blue] (0.75,-4) rectangle +(1.5,0.75);
+\draw (1.5,-1) node[anchor=south] {Proposed Method};
+\end{tikzpicture}
+}
+\end{figure}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -709,7 +611,6 @@ h_{\text{cbv},j} <\alpha_f^n>_d^n v_{f,j}^{n+1} \right] \nonumber
     \item{Temporal derivative terms missing from continuity residuals.}
     \item{Use of $\vec{x}^{n+1,k}$ for $\vec{x}^{n}$.}
     \item{Use of $\vec{x}^{n}$ for $\vec{x}^{n+1,k}$.}
-    \item{Drag terms reformulated.}
     \end{itemize}
 }
 \item{Linesearch algorithm with cubic backtracking.}
@@ -735,9 +636,8 @@ Scaling chosen:
 
 \begin{IEEEeqnarray}{rcl}
 S_{m,l} & = & V_c \abs{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho_l \right)^{n}} + \dt{} \sum_{NK}\abs{\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right)} \nonumber \\
-& + & \dt{} \left[\abs{(1-\eta)\Gamma} + \abs{S} \right]^{n+1}
+& + & \dt{} \left[\abs{(1-\eta)\Gamma} + \abs{S} \right]^{n+1} \nonumber
 \end{IEEEeqnarray}
-
 
 \end{frame}
 %------------------------------------------------
@@ -1147,48 +1047,14 @@ $\dtmax{}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlinear} & \multi
 \begin{itemize}
 \item{Methods that resolve nonlinearities during a timestep allows for a timestep size insensitive solution at larger \dtmax{} than methods that do not.}
 \item{A timestep size insensitive solution produced by a linearized approximation may be different than one produced by a nonlinearly convergent solver.}
-\item{Both solvers produce similar solutions in simple problems.} 
+\item{Both solvers produce similar solutions in simple problems.}
+\item{Identified areas where the algorithmic implementation of the nonlinear solver needs work.}
 \end{itemize}
 
 \end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \section[Proposed Work]{Proposed Work}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Proposed Timeline}
-
-
-\newcommand{\cc}{\cellcolor{black}}
-\begin{table}
-\centering
-\resizebox{0.9\textwidth}{!}{
-\begin{tabular}{@{}l l c c c c  c c c c c c @{}} \toprule
-Task & \multicolumn{1}{r}{Month} & Jan & Feb & Mar & Apr & May & Jun & Jul & Aug & Sep & Oct\\
-\midrule
-\multicolumn{12}{l}{Scaling}  \\
-& Implementation & \cc & \cc &     &     &     &     &     &     &     &     \\
-& Testing        &     & \cc & \cc &     &     &     &     &     &     &     \\
-\multicolumn{12}{l}{Domain Decomposition} \\
-& Development    & \cc & \cc &     &     &     &     &     &     &     &     \\
-& Implementation &     & \cc & \cc & \cc & \cc &     &     &     &     &     \\
-& Testing        &     &     &     &     & \cc & \cc &     &     &     &     \\
-\multicolumn{12}{l}{Temporal Convergence Criteria}\\
-& Implementation & \cc & \cc &     &     &     &     &     &     &     &     \\
-& Testing        &     &     & \cc & \cc &     &     &     &     &     &     \\
-\multicolumn{12}{l}{Performance Evaluation} \\
-& Testing        &     &     &     &     &     & \cc & \cc &     &     &     \\
-\multicolumn{12}{l}{Parametric Studies} \\
-& Testing        &     &     &     &     &     & \cc & \cc & \cc &     &     \\
-\multicolumn{12}{l}{Dissertation} \\
-& Writing        & \cc & \cc & \cc & \cc & \cc & \cc & \cc & \cc & \cc & \cc \\
-\bottomrule  
-\end{tabular}
-}
-\end{table}
-
-\end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \subsection[Scaling]{Scaling Work}
@@ -1252,6 +1118,59 @@ Milestones required for implementation of domain decomposition:
 \end{itemize}
 
 \end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Proposed Timeline}
+
+\newcommand{\cc}{\cellcolor{black}}
+\begin{table}
+\centering
+\resizebox{0.9\textwidth}{!}{
+\begin{tabular}{@{}l l c c c c  c c c c c c @{}} \toprule
+Task & \multicolumn{1}{r}{Month} & Jan & Feb & Mar & Apr & May & Jun & Jul & Aug & Sep & Oct\\
+\midrule
+\multicolumn{12}{l}{Scaling}  \\
+& Implementation & \cc & \cc &     &     &     &     &     &     &     &     \\
+& Testing        &     & \cc & \cc &     &     &     &     &     &     &     \\
+\multicolumn{12}{l}{Domain Decomposition} \\
+& Development    & \cc & \cc &     &     &     &     &     &     &     &     \\
+& Implementation &     & \cc & \cc & \cc & \cc &     &     &     &     &     \\
+& Testing        &     &     &     &     & \cc & \cc &     &     &     &     \\
+%\multicolumn{12}{l}{Temporal Convergence Criteria}\\
+%& Implementation & \cc & \cc &     &     &     &     &     &     &     &     \\
+%& Testing        &     &     & \cc & \cc &     &     &     &     &     &     \\
+\multicolumn{12}{l}{Performance Evaluation} \\
+& Testing        &     &     &     &     &     & \cc & \cc &     &     &     \\
+\multicolumn{12}{l}{Parametric Studies} \\
+& Testing        &     &     &     &     &     & \cc & \cc & \cc &     &     \\
+\multicolumn{12}{l}{Dissertation} \\
+& Writing        & \cc & \cc & \cc & \cc & \cc & \cc & \cc & \cc & \cc & \cc \\
+\bottomrule  
+\end{tabular}
+}
+\end{table}
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Conclusion]{Conclusion}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Conclusion}
+
+\begin{itemize}
+\item{Demonstrated that there are problems where the traditional linear approximation fails to provide an accurate answer.}
+\item{Demonstrated that resolving nonlinearities for these problems allows for timestep size insensitive solutions to be reached with larger timesteps.}
+\item{Demonstrated that for certain problems the linear approximation provides as accurate a solution as a nonlinear solver.}
+\item{Proposed an original method that will allow for a nonlinearly converged solution to be obtained in only those regions where it is necessary.}
+\item{By only resolving nonlinearities where necessary, both the cost of a globally convergent Newton method and the potential inaccuracy of the linear approximation are avoided.}
+\end{itemize}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \section*{}
@@ -1269,13 +1188,9 @@ This research was performed under appointment to the Rickover Fellowship Program
 \frametitle{Conservation of Mass}
 
 \begin{IEEEeqnarray}{rCl}
-\label{eqn:conservation_of_ncg}
 \frac{\partial \left(\alpha_g \rho_{n}\right) }{\partial t } + \nabla \cdot \left( \alpha_g \rho_{n} \vec{u}_g \right) & = & s_{m,n} \nonumber \\
-\label{eqn:conservation_of_vap}
 \frac{\partial \left(\alpha_g \rho_v \right)}{\partial t } + \nabla \cdot \left( \alpha_g \rho_v \vec{u}_g \right)         & = & \Gamma^{'''} + s_{m,v} \nonumber \\
-\label{eqn:conservation_of_liq}
 \frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \right)         & = & -(1-\eta)\Gamma^{'''} - S^{'''} + s_{m,l} \nonumber \\
-\label{eqn:conservation_of_ent}
 \frac{\partial \left(\alpha_e \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_e \rho_l \vec{u}_e \right)         & = & -\eta\Gamma^{'''} + S^{'''}+ s_{m,e} \nonumber
 \end{IEEEeqnarray}
 
@@ -1286,13 +1201,10 @@ This research was performed under appointment to the Rickover Fellowship Program
 \frametitle{Conservation of Momentum}
 
 \begin{IEEEeqnarray}{rCl}
-\label{eqn:con_mom_liq}
 \frac{\partial \left( \alpha_l \rho_l \vec{u}_l \right )}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \vec{u}_l \right) & = & \nonumber \\
  -\alpha_l \nabla P + \alpha_l \rho_l \vec{g} - \vec{\tau}^{'}_{w,l} + \vec{\tau}^{'}_{i,gl} - (1 - \eta)\Gamma^{'''}\vec{u}^{'} - S^{'''}\vec{u}^{'} + s_{p,l} & & \nonumber \\
-\label{eqn:con_mom_gas}
 \frac{\partial \left( \alpha_g \rho_g \vec{u}_g \right) }{\partial t } + \nabla \cdot \left( \alpha_g \rho_g \vec{u}_g \vec{u}_g \right) & = & \nonumber \\
  -\alpha_g \nabla P + \alpha_g \rho_g \vec{g} - \vec{\tau}^{'}_{w,g} - \vec{\tau}^{'}_{i,gl} - \vec{\tau}^{'}_{i,ge} + \Gamma^{'''}\vec{u}^{'} + s_{p,g} & & \nonumber \\
-\label{eqn:con_mom_ent}
 \frac{\partial \left( \alpha_e \rho_l \vec{u}_e \right) }{\partial t } + \nabla \cdot \left( \alpha_e \rho_l \vec{u}_e \vec{u}_e \right) & = & \nonumber \\
  -\alpha_e \nabla P + \alpha_e \rho_l \vec{g} - \vec{\tau}^{'}_{w,l} + \vec{\tau}^{'}_{i,ge} - \eta \Gamma^{'''}\vec{u}^{'} + S^{'''}\vec{u}^{'} + s_{p,l} & & \nonumber
 \end{IEEEeqnarray}
@@ -1304,10 +1216,8 @@ This research was performed under appointment to the Rickover Fellowship Program
 \frametitle{Conservation of Energy}
 
 \begin{IEEEeqnarray}{rCl}
-\label{eqn:con_energy_gas}
 \frac{\partial \left( \alpha_g \{\rho_g h_g\} \right)}{\partial t } + \nabla \cdot \left(  \alpha_g \{\rho_g h_g\} \vec{u}_g \right) & =& \nonumber \\
 \Gamma^{'''} h^{'}_v + q^{'''}_{i,v} + q^{'''}_{n,l}  + q^{'''}_{w,g} + \alpha_g\frac{\partial P}{\partial t} + s_{e,g}  & & \nonumber \\
-\label{eqn:con_energy_liq}
 \frac{\partial \left( (1 - \alpha_g) \rho_l h_l \right) }{\partial t } + \nabla \cdot \left( \alpha_l \rho_l h_l \vec{u}_l \right) + \nabla \cdot \left( \alpha_e \rho_l h_l \vec{u}_e \right)& = & \nonumber \\
 -\Gamma^{'''} h^{'}_l +  q^{'''}_{i,l} - q^{'''}_{n,l}  + q^{'''}_{w,l} + (1 - \alpha_g) \frac{\partial P}{\partial t} + s_{e,l}  & & \nonumber
 \end{IEEEeqnarray}
@@ -1316,6 +1226,59 @@ This research was performed under appointment to the Rickover Fellowship Program
 \label{eqn:gaseous_enthalpy}
 \alpha_g \{\rho_g h_g\} = \alpha_g \rho_v h_v + \alpha_g \rho_n h_n
 \end{equation*}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Methods}
+\begin{itemize}
+\item{Fully Explicit Method
+\begin{itemize}
+\item{Lowest computational cost per timestep}
+\item{Subject to sonic CFL limit: $ \dt{} \lesssim \frac{\dx{}}{|u|+|c|}$}
+\end{itemize}
+}
+\item{Fully Implicit Method
+\begin{itemize}
+\item{Highest computational cost per timestep.}
+\item{Not subject to CFL limit.}
+\item{Nonlinearly convergent}
+\item{CATHARE (Barre and Bernard, 1990)}
+\end{itemize}
+}
+\item{Semi-Implicit Method (Liles and Reed, 1978)
+\begin{itemize}
+\item{Single Newton step}
+\item{Subject to material Courant limit: $ \dt{} \lesssim \frac{\dx{}}{|u|}$}
+\item{RELAP, TRACE, COBRA, MARS, SPACE} 
+\end{itemize}
+}
+\end{itemize}
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Methods}
+\begin{itemize}
+\item{Stability-Enhancing Two-Step Method (SETS) (Mahaffy, 1982)
+\begin{itemize}
+\item{Multistage method}
+\item{Nonlinearly convergent}
+\item{Capable of exceeding material Courant limit}
+\item{TRAC-M/Fortran 90, TRACE}
+\end{itemize}
+}
+\item{Nearly Implicit Method (Trapp and Riemke, 1986)
+\begin{itemize}
+\item{Derivative of SETS method}
+\item{Multistage method}
+\item{Single Newton step}
+\item{Capable of exceeding material Courant limit}
+\item{RELAP}
+\end{itemize}
+}
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------
@@ -1453,6 +1416,190 @@ Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{}
 \end{algorithmic}
 
 \end{columns}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Semi-Implicit Method Solution Algorithm}
+
+Example: 3 continuity volumes and 3 momentum volumes.
+
+\begin{equation*}
+\begin{bmatrix} 
+\vec{J}_{m_1} & \vec{J}_{m_1,c_1} & \vec{0} & \vec{0} & \vec{0} & \vec{0}\\
+\vec{J}_{c_1,m_1} & \vec{J}_{c_1} & \vec{J}_{c_1,m_2} & \vec{0} & \vec{0} & \vec{0} \\
+\vec{0} & \vec{J}_{m_2,c_1} & \vec{J}_{m_2} & \vec{J}_{m_2,c_2} & \vec{0} & \vec{0} \\
+\vec{0} & \vec{0} & \vec{J}_{c_2,m_2} & \vec{J}_{c_2} & \vec{J}_{c_2,m_3} & \vec{0} \\
+\vec{0} & \vec{0} & \vec{0} & \vec{J}_{m_3,c_2} & \vec{J}_{m_3} & \vec{J}_{m_3,c_3} \\ 
+\vec{0} & \vec{0} & \vec{0} & \vec{0} & \vec{J}_{c_3,m_3} & \vec{J}_{c_3}  
+\end{bmatrix} \begin{bmatrix}
+\vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
+\vec{\delta m}_{2} \\ \vec{\delta c}_{2} \\
+\vec{\delta m}_{3} \\ \vec{\delta c}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+\vec{F}_{m_1} \\ \vec{F}_{c_1} \\
+\vec{F}_{m_2} \\ \vec{F}_{c_2} \\
+\vec{F}_{m_3} \\ \vec{F}_{c_3} \end{bmatrix}
+\end{equation*}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Semi-Implicit Method Solution Algorithm}
+
+Multiply momentum equations by their inverse Jacobians.
+
+\begin{equation*}
+\begin{bmatrix} 
+\vec{I} & \frac{\partial \vec{m}_1}{\partial P_1} & \vec{0} & \vec{0} & \vec{0} & \vec{0}\\
+\vec{J}_{c_1,m_1} & \vec{J}_{c_1} & \vec{J}_{c_1,m_2} & \vec{0} & \vec{0} & \vec{0} \\
+\vec{0} & \frac{\partial \vec{m}_2}{\partial P_1} & \vec{I} & \frac{\partial \vec{m}_2}{\partial P_2} & \vec{0} & \vec{0} \\
+\vec{0} & \vec{0} & \vec{J}_{c_2,m_2} & \vec{J}_{c_2} & \vec{J}_{c_2,m_3} & \vec{0} \\
+\vec{0} & \vec{0} & \vec{0} & \frac{\partial \vec{m}_{3}}{\partial P_2} & \vec{I} & \frac{\partial \vec{m}_{3}}{\partial P_3} \\ 
+\vec{0} & \vec{0} & \vec{0} & \vec{0} & \vec{J}_{c_3,m_3} & \vec{J}_{c_3}  
+\end{bmatrix} \begin{bmatrix}
+\vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
+\vec{\delta m}_{2} \\ \vec{\delta c}_{2} \\
+\vec{\delta m}_{3} \\ \vec{\delta c}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+\vec{J}^{-1}_{m_1}\vec{F}_{m_1} \\ \vec{F}_{c_1} \\
+\vec{J}^{-1}_{m_2}\vec{F}_{m_2} \\ \vec{F}_{c_2} \\
+\vec{J}^{-1}_{m_3}\vec{F}_{m_3} \\ \vec{F}_{c_3} \end{bmatrix}
+\end{equation*}
+
+\begin{equation*}
+\frac{\partial \vec{m}_k}{\partial P_j} = \vec{J}^{-1}_{m_k}\vec{J}_{m_k,c_j}
+\end{equation*}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Semi-Implicit Method Solution Algorithm}
+
+\begin{equation*}
+\resizebox{1.0\textwidth}{!}{$
+\begin{bmatrix} 
+\vec{J}_{c_1} - \vec{J}_{c_1,m_1}\frac{\partial \vec{m}_1}{\partial P_1} - \vec{J}_{c_1,m_2}\frac{\partial \vec{m}_2}{\partial P_1} &
+-\vec{J}_{c_1,m_2}\frac{\partial \vec{m}_2}{\partial P_2} &
+\vec{0} \\
+-\vec{J}_{c_2,m_2}\frac{\partial \vec{m}_2}{\partial P_1} & 
+\vec{J}_{c_2} - \vec{J}_{c_2,m_2}\frac{\partial \vec{m}_2}{\partial P_2}-\vec{J}_{c_2,m_3}\frac{\partial \vec{m}_3}{\partial P_2} &
+-\vec{J}_{c_2,m_3}\frac{\partial \vec{m}_3}{\partial P_3} \\
+ \vec{0} &
+-\vec{J}_{c_3,m_3}\frac{\partial \vec{m}_3}{\partial P_2} &
+\vec{J}_{c_3} -\vec{J}_{c_3,m_3}\frac{\partial \vec{m}_3}{\partial P_3} 
+\end{bmatrix}\begin{bmatrix}
+\vec{\delta c}_{1} \\
+\vec{\delta c}_{2} \\
+\vec{\delta c}_{3}
+\end{bmatrix}
+$}
+\end{equation*}
+\begin{equation*}
+= -\begin{bmatrix}
+\vec{F}_{c_1} -
+\vec{J}_{c_1,m_1}\vec{J}^{-1}_{m_1}\vec{F}_{m_1}-\vec{J}_{c_1,m_2}\vec{J}^{-1}_{m_2}\vec{F}_{m_2} \\
+\vec{F}_{c_2} - 
+\vec{J}_{c_2,m_2}\vec{J}^{-1}_{m_2}\vec{F}_{m_2}-\vec{J}_{c_2,m_3}\vec{J}^{-1}_{m_3}\vec{F}_{m_3} \\
+\vec{F}_{c_3} - 
+\vec{J}_{c_3,m_3}\vec{J}^{-1}_{m_3}\vec{F}_{m_3}
+\end{bmatrix}
+\end{equation*}
+
+Eliminate momentum equations from system.
+
+\begin{equation*}
+\begin{bmatrix} 
+\vec{J}^{*}_{c_1} & \vec{C}_{c_1,P_2} & \vec{0} \\
+\vec{C}_{c_2,P_1} & \vec{J}^{*}_{c_2} & \vec{C}_{c_2,P_3} \\
+\vec{0}           & \vec{C}_{c_3,P_2} & \vec{J}^{*}_{c_3}
+\end{bmatrix} \begin{bmatrix}
+\vec{\delta c}_{1} \\
+\vec{\delta c}_{2} \\
+\vec{\delta c}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+\vec{F}^{*}_{c_1} \\
+\vec{F}^{*}_{c_2} \\
+\vec{F}^{*}_{c_3}
+\end{bmatrix}
+\end{equation*}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Semi-Implicit Method Solution Algorithm}
+
+Multiply rows by the $\vec{L}^{-1}_{c_i}$ from LU decomposition of $\vec{J}^{*}_{c_i}$.
+
+\begin{equation*}
+\begin{bmatrix} 
+\vec{U}^{*}_{c_1} & \vec{L}^{-1}_{c_1}\vec{C}_{c_1,P_2} & \vec{0} \\
+\vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_1} & \vec{U}^{*}_{c_2} & \vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_3} \\
+\vec{0} & \vec{L}^{-1}_{c_3}\vec{C}_{c_3,P_2} & \vec{U}^{*}_{c_3}
+\end{bmatrix} \begin{bmatrix}
+\vec{\delta c}_{1} \\
+\vec{\delta c}_{2} \\
+\vec{\delta c}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+\vec{L}^{-1}_{c_1}\vec{F}^{*}_{c_1} \\
+\vec{L}^{-1}_{c_2}\vec{F}^{*}_{c_2} \\
+\vec{L}^{-1}_{c_3}\vec{F}^{*}_{c_3}
+\end{bmatrix}
+\end{equation*}
+
+Isolate last row from each continuity block.
+
+\begin{equation*}
+\begin{bmatrix} 
+ 1 & \frac{\vec{L}^{-1}_{c_1}\vec{C}_{c_1,P_2}[6]}{\vec{U}^{*}_{c_1}[6]} & \vec{0} \\
+\frac{\vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_1}[6]}{\vec{U}^{*}_{c_2}[6]} & 1 & \frac{\vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_3}[6]}{\vec{U}^{*}_{c_2}[6]} \\
+\vec{0}           & \frac{\vec{L}^{-1}_{c_3}\vec{C}_{c_3,P_2}[6]}{\vec{U}^{*}_{c_3}[6]} & 1
+\end{bmatrix} \begin{bmatrix}
+\vec{\delta P}_{1} \\
+\vec{\delta P}_{2} \\
+\vec{\delta P}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+\frac{\vec{L}^{-1}_{c_1}\vec{F}^{*}_{c_1}[6]}{\vec{U}^{*}_{c_1}[6]} \\
+\frac{\vec{L}^{-1}_{c_2}\vec{F}^{*}_{c_2}[6]}{\vec{U}^{*}_{c_2}[6]} \\
+\frac{\vec{L}^{-1}_{c_3}\vec{F}^{*}_{c_3}[6]}{\vec{U}^{*}_{c_3}[6]}
+\end{bmatrix}
+\end{equation*}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Phase Transition}
+
+\begin{itemize}
+\item{Does not switch to single-phase flow conservation equations.}
+\item{Minimum volume fraction for each water phase is enforced: $\alpha_{k,\text{MIN}}$ = 1.0E-9.}
+\item{The two liquid water fields split the minimum presence equally.}
+\item{Velocity equilibrium of fields during psuedo single-phase flow is enforced through an artificial interfacial drag.}
+\item{The \ncg{} field, through its partial pressure $P_n$, is allowed to go zero.}
+\end{itemize}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Timestep Failure Mitigation and Size Selection}
+
+\begin{itemize}
+\item{Change of phasic enthalpy cannot be greater than 45 [$\frac{\text{BTU}}{\lbm{}}$].}
+\item{Change in pressure cannot be greater than 20 [psia].}
+\item{Change in partial pressure of the \ncg{} field cannot be greater than 20 [psia].}
+\item{Thermodynamic variables would fall outside of the range of validity of the equations of state.}
+\end{itemize}
+
+\begin{equation*}
+\label{eqn:time_step}
+\Delta t^{n} = \max\left[ \Delta t_{\text{MIN}}, \min\left[1.2 \Delta t^{n-1}, 0.85 \Delta t_{\text{CRNT}}, \Delta t_{\text{MAX}} \right]\right]
+\end{equation*}
 
 \end{frame}
 %------------------------------------------------
