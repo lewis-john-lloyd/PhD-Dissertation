@@ -61,9 +61,9 @@ Thermal-Hydraulic Safety Analysis Codes}
 \item{Emergency core cooling during loss-of-coolant accidents}
 \end{itemize}
 
-\textbf{Tool}:
+\textbf{Context}:
 \begin{itemize}
-\item{Subchannel analysis software: detailed in-core physics}
+\item{COBRA subchannel analysis software: detailed in-core physics}
 \end{itemize}
 
 \end{frame}
@@ -76,8 +76,8 @@ Thermal-Hydraulic Safety Analysis Codes}
 \begin{itemize}
 \item{\textbf{Background}
 \begin{itemize}
-\item{Computational Geometry}
 \item{Two-Phase Flow}
+\item{Computational Geometry}
 \item{Numeric Approximations}
 \item{Solution Methods}
 \item{Algorithmic Concerns}
@@ -109,6 +109,29 @@ Thermal-Hydraulic Safety Analysis Codes}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \section[Background]{Background}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Two-Phase Flow]{Two-Phase Flow}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Two-Phase Flow}
+
+\begin{itemize}
+\item{Three water fields: vapor, continuous liquid, and dispersed liquid.}
+\item{\Ncg{} field.}
+\item{Assumptions}
+\item{One-dimensional flow: nine partial differential equations.
+\begin{itemize}
+\item{Four conservation of mass equations.}
+\item{Three conservation of momentum equations.}
+\item{Two conservation of energy equations.}
+\end{itemize}
+\item{$\displaystyle \frac{\partial \vec{y}}{\partial t} = \vec{e}(\vec{y})$}
+}
+\end{itemize}
+
+\end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \subsection[Computational Geometry]{Computational Geometry}
@@ -172,29 +195,6 @@ Thermal-Hydraulic Safety Analysis Codes}
 \end{figure}
 
 \end{columns}
-
-\end{frame}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
-\subsection[Two-Phase Flow]{Two-Phase Flow}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Two-Phase Flow}
-
-\begin{itemize}
-\item{Three water fields: vapor, continuous liquid, and dispersed liquid.}
-\item{\Ncg{} field.}
-\item{Assumptions}
-\item{One-dimensional flow: nine partial differential equations.
-\begin{itemize}
-\item{Four conservation of mass equations.}
-\item{Three conservation of momentum equations.}
-\item{Two conservation of energy equations.}
-\end{itemize}
-\item{$\displaystyle \frac{\partial \vec{y}}{\partial t} = \vec{e}(\vec{y})$}
-}
-\end{itemize}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -417,6 +417,32 @@ Conservation of continuous liquid momentum:
  & + & \dt{} V_m\left[ (\alpha_l \rho_l)^{n} g  - \alpha^{n}_l \nabla P^{n+1} - K^{n}_{w,l}(\dot{m}_l^{n+1})^2 \right. \nonumber \\
  & + & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2\right] - \dt{}\left[((1 - \eta)\Gamma u^{'})^{n} - (S u^{'})^{n}\right] \nonumber
 \end{IEEEeqnarray}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Semi-Implicit Equation Ordering}
+
+\begin{itemize}
+\item{Continuity Volumes
+\begin{enumerate}
+\item{Conservation of the \ncg{} field mass.}
+\item{Conservation of the vapor field mass.}
+\item{Conservation of the gaseous phase energy.}
+\item{Conservation of the liquid phase energy.}
+\item{Conservation of the entrained liquid field mass.}
+\item{Conservation of the continuous liquid field mass.}
+\end{enumerate}
+}
+\item{Momentum Volumes
+\begin{enumerate}
+\item{Conservation of the continuous liquid field momentum.}
+\item{Conservation of the gaseous phase momentum.}
+\item{Conservation of the entrained liquid field momentum.}
+\end{enumerate}
+}
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------
@@ -714,6 +740,29 @@ S_{m,l} & = & V_c \abs{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho
 
 
 \end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Operator-Based Scaling}
+
+\begin{itemize}
+\item{$(S_{i}^{k})^{-1} F^{k}_i \approx 1$ when $\vec{x}^{k}$ is a "poor" solution.}
+\item{$(S_{i}^{k})^{-1} F^{k}_i \rightarrow 0$ when phase $i$ disappears.}
+\item{$0 \leq \abs{(S_{i}^{k})^{-1} F^{k}_{i}} \leq 1 $ for all values of $\vec{x}^{k}_i$.}
+\end{itemize}
+
+At low volume fractions:
+\begin{equation*}
+S_{m,l} = \max[1.0, \left(\frac{100 \alpha_{k,\text{MIN}}}{\alpha_k}\right)^{6} ] S_{m,l}
+\end{equation*}
+
+Scaled residual:
+\begin{equation*}
+\tilde{\vec{F}}(t) = \frac{\vec{F}(t)}{\vec{S}(t)}
+\end{equation*}
+
+
+\end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \subsection[Convergence]{Temporal Convergence}
@@ -726,12 +775,13 @@ S_{m,l} & = & V_c \abs{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho
 \item{Timestep size insensitivity: solution is insensitive to reduction of \dtmax{}.}
 \item{Temporal convergence: error due to numerical approximation of temporal integral below engineering scales of interest.}
 \end{itemize}
+
 Metrics for nonlinear convergence testing:
 \begin{equation*}
-\tilde{R} = \frac{\int_{t^{0}}^{t^{N}} ||\vec{F}(\tau)||_2 \,\mathrm{d} \tau}{t^{N} - t^{0}}
+\tilde{R} = \frac{\int_{t^{0}}^{t^{N}} ||\tilde{\vec{F}}(\tau)||_2 \,\mathrm{d} \tau}{t^{N} - t^{0}}
 \end{equation*}
 \begin{equation*}
-\tilde{R}_{\text{M}} = \frac{\int_{t^{0}}^{t^{N}} \,\tau\,||\vec{F}(\tau)||_2 \,\mathrm{d} \tau}{\int_{t^{0}}^{t^{N}} \,\tau \,\mathrm{d} \tau}
+\tilde{R}_{\text{M}} = \frac{\int_{t^{0}}^{t^{N}} \,\tau\,||\tilde{\vec{F}}(\tau)||_2 \,\mathrm{d} \tau}{\int_{t^{0}}^{t^{N}} \,\tau \,\mathrm{d} \tau}
 \end{equation*}
 
 \end{frame}
