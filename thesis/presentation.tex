@@ -166,19 +166,19 @@ Thermal-Hydraulic Safety Analysis Codes}
 \begin{itemize}
 \item{Sections
 \begin{itemize}
-\item{Contain channels}
-\item{Defines spatial discretization of channels within section.}
-\item{Splitting and merging of channels occur at section boundaries.}
+\item{Contain pipes}
+\item{Defines spatial discretization of pipes within section.}
+\item{Splitting and merging of pipes occur at section boundaries.}
 \end{itemize}
 }
-\item{Channels
+\item{Pipes
 \begin{itemize}
 \item{Defines cross-sectional areas.}
 \end{itemize}
 }
 \item{Gaps
 \begin{itemize}
-\item{Connect channels within a section.}
+\item{Connect pipes within a section.}
 \item{Defines transverse length.}
 \end{itemize}
 }
@@ -445,32 +445,6 @@ Conservation of continuous liquid momentum:
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Semi-Implicit Equation Ordering}
-
-\begin{itemize}
-\item{Continuity Volumes
-\begin{enumerate}
-\item{Conservation of the \ncg{} field mass.}
-\item{Conservation of the vapor field mass.}
-\item{Conservation of the gaseous phase energy.}
-\item{Conservation of the liquid phase energy.}
-\item{Conservation of the entrained liquid field mass.}
-\item{Conservation of the continuous liquid field mass.}
-\end{enumerate}
-}
-\item{Momentum Volumes
-\begin{enumerate}
-\item{Conservation of the continuous liquid field momentum.}
-\item{Conservation of the gaseous phase momentum.}
-\item{Conservation of the entrained liquid field momentum.}
-\end{enumerate}
-}
-\end{itemize}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
 \frametitle{Semi-Implicit Method Solution Algorithm}
 
 Example: Single Newton step for channel with 3 continuity volumes and 3 momentum volumes.
@@ -541,26 +515,13 @@ f_{3}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{RELAP5-3D Semi-Implicit Coupling}
+\frametitle{Pressure Based Domain Coupling}
 
-\begin{IEEEeqnarray}{rcl}
-\label{eqn:si_relap}
-\delta P^{n+1}_{k} = a_k & + & 
-\sum_{j = 1}^{N_c} \left[ b_{k,j}n_{g,j}^{n+1} + c_{k,j}u_{g,j}^{n+1} + d_{k,j}u_{f,j}^{n+1} + e_{k,j}m_{g,j}^{n+1} \right. \nonumber \\
-& + & \left. f_{k,j}m_{f,j}^{n+1} + g_{k,j}w_{g,j}^{n+1} +h_{k,j}w_{f,j}^{n+1} \right] \nonumber
-\end{IEEEeqnarray}
-
-\begin{IEEEeqnarray}{rcl}
-\label{eqn:pressure_coupled}
-\delta P^{n+1}_{\text{cbv}} = a_{\text{cbv}} & + & 
-\sum_{j = 1}^{N_c} A_j \left[ b_{\text{cbv},j}<\alpha^n_g \rho^n_n>^{n}_{d} v_{g,j}^{n+1} \right. \nonumber \\
-& + & c_{\text{cbv},j}<\alpha_g^n \rho_g^n u^n_g>_d^n v_{g,j}^{n+1} +
-d_{\text{cbv},j} <\alpha_f^n \rho_f^n u_f^n>_d^n v_{f,j}^{n+1}  \nonumber \\
-& + & e_{\text{cbv},j} <\alpha_g^n \rho_g^n>_d^n v_{g,j}^{n+1} +
-f_{\text{cbv},j} < \alpha_f^n \rho_f^n>_d^n v_{f,j}^{n+1} \nonumber \\
-& + & \left. g_{\text{cbv},j} <\alpha^n_g>_d^n v_{g,j}^{n+1} +
-h_{\text{cbv},j} <\alpha_f^n>_d^n v_{f,j}^{n+1} \right] \nonumber
-\end{IEEEeqnarray}
+\begin{itemize}
+\item{Master domain obtains pressure updates in terms of continuity variable flow rates at boundary of slave domains.}
+\item{Slave domain contains information about master domain pressures in terms of momentum volume velocities.}
+\item{Allows for consistent semi-implicit treatment of entire domain.}
+\end{itemize}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -752,7 +713,7 @@ Metrics for nonlinear convergence testing:
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Numerical Experiments: Initial Conditions}
+\frametitle{Numerical Experiments: Initial Conditions and Outlet Boundary Conditions}
 
 \begin{table}[ht]
 \centering
@@ -762,24 +723,6 @@ Metrics for nonlinear convergence testing:
 Single-Phase & 200&0  &  355&5 & 0&0 & 1&0 & 0&0 \\
 Flashing     & 200&0  & 1198&3 & 1&0 & 0&0 & 0&0 \\ \bottomrule  
 \end{tabular}
-\label{tab:ic}
-\end{table}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Numerical Experiments: Outlet Boundary Conditions}
-
-\begin{table}[ht]
-\centering
-\begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
-\multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
-                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{BTU}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
-Single-Phase & 200&0 &  355&5 & 0&0 & 1&0 & 0&0 \\
-Flashing     & 200&0 & 1198&3 & 1&0 & 0&0 & 0&0 \\ \bottomrule  
-\end{tabular}
-\label{tab:bc_pe}
 \end{table}
 
 \end{frame}
@@ -794,7 +737,7 @@ Flashing     & 200&0 & 1198&3 & 1&0 & 0&0 & 0&0 \\ \bottomrule
 \multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
                          & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{BTU}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
 Single-Phase &  200&0 & 355&5 & 0&0 & 1&0 & 0&0 \\
-Flashing     & 1000&0 & 542&6 & 1&0 & 0&0 & 0&0 \\ \bottomrule  
+Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule  
 \end{tabular}
 \label{tab:bc_fe}
 \end{table}
@@ -965,39 +908,6 @@ Flashing     & 1000&0 & 542&6 & 1&0 & 0&0 & 0&0 \\ \bottomrule
 \begin{figure}[h!t]
 \centering
 \includegraphics[width=0.94\textwidth]{images/nl_single_res_v_dt.eps}
-\end{figure}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Zoomed nonlinear solver single-phase residuals}
-
-\begin{figure}[h!t]
-\centering
-\includegraphics[width=0.94\textwidth]{images/nl_res_single_zoom.eps}
-\end{figure}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Single-phase solution with \dtmax{} = 1.0E-3 {[s]}}
-
-\begin{figure}[h!t]
-\centering
-\includegraphics[width=0.94\textwidth]{images/single_1em3.eps}
-\end{figure}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Zoomed single-phase solution with \dtmax{} = 1.0E-3 {[s]}}
-
-\begin{figure}[h!t]
-\centering
-\includegraphics[width=0.94\textwidth]{images/single_1em3_zoom.eps}
 \end{figure}
 
 \end{frame}
@@ -1448,6 +1358,32 @@ Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
+\frametitle{Semi-Implicit Equation Ordering}
+
+\begin{itemize}
+\item{Continuity Volumes
+\begin{enumerate}
+\item{Conservation of the \ncg{} field mass.}
+\item{Conservation of the vapor field mass.}
+\item{Conservation of the gaseous phase energy.}
+\item{Conservation of the liquid phase energy.}
+\item{Conservation of the entrained liquid field mass.}
+\item{Conservation of the continuous liquid field mass.}
+\end{enumerate}
+}
+\item{Momentum Volumes
+\begin{enumerate}
+\item{Conservation of the continuous liquid field momentum.}
+\item{Conservation of the gaseous phase momentum.}
+\item{Conservation of the entrained liquid field momentum.}
+\end{enumerate}
+}
+\end{itemize}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
 \frametitle{Semi-Implicit Method Solution Algorithm}
 
 Example: 3 continuity volumes and 3 momentum volumes.
@@ -1627,6 +1563,64 @@ Isolate last row from each continuity block.
 \label{eqn:time_step}
 \Delta t^{n} = \max\left[ \Delta t_{\text{MIN}}, \min\left[1.2 \Delta t^{n-1}, 0.85 \Delta t_{\text{CRNT}}, \Delta t_{\text{MAX}} \right]\right]
 \end{equation*}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{RELAP5-3D Semi-Implicit Coupling}
+
+\begin{IEEEeqnarray}{rcl}
+\label{eqn:si_relap}
+\delta P^{n+1}_{k} = a_k & + & 
+\sum_{j = 1}^{N_c} \left[ b_{k,j}n_{g,j}^{n+1} + c_{k,j}u_{g,j}^{n+1} + d_{k,j}u_{f,j}^{n+1} + e_{k,j}m_{g,j}^{n+1} \right. \nonumber \\
+& + & \left. f_{k,j}m_{f,j}^{n+1} + g_{k,j}w_{g,j}^{n+1} +h_{k,j}w_{f,j}^{n+1} \right] \nonumber
+\end{IEEEeqnarray}
+
+\begin{IEEEeqnarray}{rcl}
+\label{eqn:pressure_coupled}
+\delta P^{n+1}_{\text{cbv}} = a_{\text{cbv}} & + & 
+\sum_{j = 1}^{N_c} A_j \left[ b_{\text{cbv},j}<\alpha^n_g \rho^n_n>^{n}_{d} v_{g,j}^{n+1} \right. \nonumber \\
+& + & c_{\text{cbv},j}<\alpha_g^n \rho_g^n u^n_g>_d^n v_{g,j}^{n+1} +
+d_{\text{cbv},j} <\alpha_f^n \rho_f^n u_f^n>_d^n v_{f,j}^{n+1}  \nonumber \\
+& + & e_{\text{cbv},j} <\alpha_g^n \rho_g^n>_d^n v_{g,j}^{n+1} +
+f_{\text{cbv},j} < \alpha_f^n \rho_f^n>_d^n v_{f,j}^{n+1} \nonumber \\
+& + & \left. g_{\text{cbv},j} <\alpha^n_g>_d^n v_{g,j}^{n+1} +
+h_{\text{cbv},j} <\alpha_f^n>_d^n v_{f,j}^{n+1} \right] \nonumber
+\end{IEEEeqnarray}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Zoomed nonlinear solver single-phase residuals}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/nl_res_single_zoom.eps}
+\end{figure}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Single-phase solution with \dtmax{} = 1.0E-3 {[s]}}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/single_1em3.eps}
+\end{figure}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Zoomed single-phase solution with \dtmax{} = 1.0E-3 {[s]}}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{images/single_1em3_zoom.eps}
+\end{figure}
 
 \end{frame}
 %------------------------------------------------
