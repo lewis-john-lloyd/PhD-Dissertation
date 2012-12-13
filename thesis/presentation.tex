@@ -335,18 +335,33 @@ P                  \\
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
+\frametitle{Methods for Nuclear Thermal Hydraulic Safety Analysis}
+
+\begin{itemize}
+\item{Fully Explicit Method }
+\item{Fully Implicit Method (Barre and Bernard, 1990)}
+\item{Semi-Implicit Method (Liles and Reed, 1978) }
+\item{Stability-Enhancing Two-Step Method (SETS) (Mahaffy, 1982) }
+\item{Nearly Implicit Method (Trapp and Riemke, 1986) }
+\end{itemize}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
 \frametitle{Single Newton Step vs. Iterative Newton Method}
 
 \begin{itemize}
-\item{Single Newton Step: Linearized Approximation
+\item{Single Newton Step
 \begin{itemize}
+\item{Linearized Approximation.}
 \item{Timestep acceptance based upon error mitigation and prevention.}
 \item{Limits placed upon changes in independent parameters.}
 \end{itemize}
 }
-\item{Iterative Newton Step: Nonlinearly Convergent
+\item{Iterative Newton Step
 \begin{itemize}
-\item{Timestep acceptance based upon residuals.}
+\item{Nonlinearly Convergent.}
 \end{itemize}
 }
 \end{itemize}
@@ -868,22 +883,22 @@ Flashing     & 1000&0 & 542&6 & 1&0 & 0&0 & 0&0 \\ \bottomrule
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Nonlinear solver timestep size insensitive flashing solution}
+\frametitle{Legacy solver timestep size insensitive flashing solution}
 
 \begin{figure}[h!t]
 \centering
-\includegraphics[width=.94\textwidth]{images/nl_flashing_1em0_1em1.eps}
+\includegraphics[width=.94\textwidth]{images/cobra_flashing_1em1_1em4.eps}
 \end{figure}
 
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Legacy solver timestep size insensitive flashing solution}
+\frametitle{Nonlinear solver timestep size insensitive flashing solution}
 
 \begin{figure}[h!t]
 \centering
-\includegraphics[width=.94\textwidth]{images/cobra_flashing_1em1_1em4.eps}
+\includegraphics[width=.94\textwidth]{images/nl_flashing_1em0_1em1_2.eps}
 \end{figure}
 
 \end{frame}
@@ -1055,19 +1070,15 @@ $\dtmax{}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlinear} & \multi
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \section[Proposed Work]{Proposed Work}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
-\subsection[Scaling]{Scaling Work}
-%------------------------------------------------
-%------------------------------------------------
 \begin{frame}
-\frametitle{Proposed Scaling Work}
+\frametitle{Proposed Work}
 
-Issues that need to be addressed in scaling:
 \begin{itemize}
-\item{Nontrivial values of the residual during steady-state portion of transients.}
-\item{Nonconvergence of nonlinear solver.}
-\item{Inconsistent scaling of the update vector in the Newton loop and the linesearch algorithm.} 
+\item{Develop an original method that will allow for a nonlinearly converged solution to be obtained in only those regions where it is necessary.}
+\item{This method will utilize a novel domain coupling method that enables for a globally consistent solution.}
+\item{By only resolving nonlinearities where necessary, both the cost of a globally convergent Newton method and the potential inaccuracy of the linear approximation are avoided.}
+\item{Resolving nonlinearities may enable simulations to reach timestep size insensitive solutions at larger timesteps than previously possible.}
+\item{Obtaining timestep size insensitive solutions at larger timestep sizes reduces computational cost and engineering time.}
 \end{itemize}
 
 \end{frame}
@@ -1086,6 +1097,22 @@ Milestones required for implementation of domain decomposition:
 \item{Implementation of decomposition logic into COBRA software.}
 \item{Development of problems with geometric complexity.}
 \item{Test legacy solver using domain decomposition logic.} 
+\end{itemize}
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Scaling]{Scaling Work}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Proposed Scaling Work}
+
+Issues that need to be addressed in scaling:
+\begin{itemize}
+\item{Nontrivial values of the residual during steady-state portion of transients.}
+\item{Nonconvergence of nonlinear solver.}
+\item{Inconsistent scaling of the update vector in the Newton loop and the linesearch algorithm.} 
 \end{itemize}
 
 \end{frame}
@@ -1161,10 +1188,10 @@ Task & \multicolumn{1}{r}{Month} & Jan & Feb & Mar & Apr & May & Jun & Jul & Aug
 \frametitle{Conclusion}
 
 \begin{itemize}
-\item{Demonstrated that there are problems where the traditional linear approximation fails to provide an accurate answer.}
-\item{Demonstrated that resolving nonlinearities for these problems allows for timestep size insensitive solutions to be reached with larger timesteps.}
+\item{Demonstrated that there are problems where the traditional linear approximation may fail to provide an accurate solution.}
+\item{Demonstrated that resolving nonlinearities for these problems allows for solutions that are less sensitive to timestep size at larger timestep sizes.}
 \item{Demonstrated that for certain problems the linear approximation provides as accurate a solution as a nonlinear solver.}
-\item{Proposed an original method that will allow for a nonlinearly converged solution to be obtained in only those regions where it is necessary.}
+\item{Proposed an original method that would allow for nonlinearly converged solutions to be obtained in only those regions where it is necessary.}
 \item{By only resolving nonlinearities where necessary, both the cost of a globally convergent Newton method and the potential inaccuracy of the linear approximation are avoided.}
 \end{itemize}
 
