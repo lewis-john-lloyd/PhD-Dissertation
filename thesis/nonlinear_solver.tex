@@ -1,0 +1,212 @@
+\chapter{Nonlinear Solver}
+\label{chap:nln_solver}
+As preliminary work, several steps were taken to evaluate the validity of the proposed research.
+In order to determine the effects of nonlinear convergence upon the timestep size insensitivity of a solution, the \cobra{} software was modified to enable an iterative global Newton's method.
+A metric was developed for the evaluation of the nonlinear convergence of a timestep.
+To aid in the development of the nonlinear convergence metric and the nonlinear solver, a novel operator-based scaling has been developed to obtain meaningful convergence thresholds.
+The scaling of the nonlinear residual is typically done in an arbitrary fashion; a scaling factor that is intrinsically linked to the physics of interest was developed.
+This scaling produces a non-dimensionalized residual whose magnitude is relative to the physical sources and sinks on a per equation basis. 
+Two temporal convergence test problems were developed to show that the nonlinear convergence metric can identify situations where a timestep size insensitive simulation may not satisfy the discrete nonlinear equations.
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Nonlinear \cobra{} Implementation}
+\label{sect:nln_solver:cobra}  
+The first stage of the preliminary work was to modify the \cobra{} software.
+As obtained, the \cobra{} software used a single-shot linearization  of the semi-implicit method.
+In order to evaluate the subdomain nonlinear refinement algorithm, \cobra{} was converted to include a fully iterative Newton solver based upon a linesearch globalization strategy.
+When it is necessary to distinguish between the single-shot linearization algorithmic implementation of \cobra{} and the iterative nonlinear \cobra{} implementation, the former shall be referred to as the legacy solver and the latter as the nonlinear solver.
+As such, the \cobra{} software needed to be modified to be able do the following:
+
+\begin{itemize}
+\item{Create a data framework for constructing vector quantities such as $\vec{x}^{k}$ and $\vec{F}$.}
+\item{Correctly evaluate $\vec{F}(\vec{x}^{k})$ and $\vec{J}(x^{k})$.}
+\item{Implement a globalization strategy for Newton's method.}
+\end{itemize}
+
+\cobra{} utilized a single-shot linearization for its solution technique.
+As a result of that design decision, certain memory saving techniques were employed in the construction of the software that precluded the idea of more than one Newton step.
+In particular, there was the implicit assumption within the software that the current Newton iterate, $\vec{x}^{n+1, 0}$, was the old-time variable $\vec{x}^{n}$.
+This design decision required the vetting of all subroutines involved with the evaluation of the components of both the nonlinear residual and the Jacobian.
+In addition, the assumption that $\vec{x}^{n+1, k} = \vec{x}^{n}$ produced source code that was inconsistent with an iterative Newton method.
+The source code was modified to reflect the intended discretization of the governing conservation laws.
+To do this, areas had to be identified where: there were implicit cancellation of terms, the new-time variables were used in place of old-time variables, and the old-time variables were used in place of new-time variables.
+Where appropriate, the software was changed to reflect the distinction between old-time and iterate variables and to introduce terms that had been assumed to be equal to zero.
+
+Once the appropriate variables were used for the evaluation of the nonlinear residuals and the Jacobian, a Newton loop was introduced to allow multiple Newton steps.
+\alg{alg:nl_cobra} contains the current algorithmic implementation of the nonlinear semi-implicit method.
+
+\begin{algo}[H]
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \State $t^{n+1} : = t^{n} + \Delta t$
+    \State $k = 0$
+    \Define $\vec{x}^{n+1,0}$
+	\Calculate $\vec{F}(\vec{x}^{n+1,0})$ and $\vec{J}(\vec{x}^{n+1,0})$
+    \Loop \; Newton Loop
+		\Calculate $\vec{\delta x} = - \vec{J}^{-1}\cdot\vec{F}$
+		$j = 0$		
+		\Calculate $\vec{x}^{n+1,k+1,j}$
+		\Calculate $\vec{F}(\vec{x}^{n+1,k+1,j})$
+		\Loop \; Globalization Loop
+			\If{ Globalization loop termination criteria not met}
+				\Calculate $\lambda_j$
+				\Calculate $\vec{x}^{n+1,k+1,j+1} = \vec{x}^{n+1,k} + \lambda \vec{\delta x}$
+				\Calculate $\vec{F}(\vec{x}^{n+1,k+1,j+1})$
+				\State $j = j + 1$			
+			\Else
+				\Calculate $\vec{J}(\vec{x}^{n+1,k+1,j})$
+				\Exit Globalization Loop
+			\EndIf
+		\EndLoop			
+		\If{ Newton loop termination criteria met}
+			\Exit Newton Loop
+		\EndIf
+	\EndLoop
+	\State $n = n + 1$
+\EndLoop
+\end{algorithmic}
+\caption{Nonlinear \cobra{} algorithm.}
+\label{alg:nl_cobra}
+\end{algo}
+
+In \alg{alg:nl_cobra}, there are three steps that require discussion.
+First is the Newton Loop termination criteria.
+There are three Newton loop termination mechanisms, listed below.
+
+\begin{enumerate}
+\item{$k > k_{\,\text{MAX}}$}
+\item{$||(\vec{S}^{k+1})^{-1}\vec{F}^{k+1}||_{\infty} \leq F_{\text{ABS}}$}
+\item{$||(\vec{D}^{k+1})^{-1}\vec{\delta x}^{k}||_{\infty} \leq \delta_{\text{ABS}}$}
+\end{enumerate}
+
+Current values for $k_{\,\text{MAX}}$, $F_{\text{ABS}}$ and $\delta_{\text{ABS}}$ are $35$, $1.0$E$-05$, and $1.0$E$-10$, respectively.
+The scaling vectors, $\vec{S}$ and $\vec{D}$, will be addressed later.
+
+The second is the globalization loop termination criteria.
+The globalization strategy implemented in \cobra{} is a linesearch algorithm \cite{Dennis1996}.
+The two globalization loop termination criteria are:
+
+\begin{enumerate}
+\item{$\frac{1}{2}||\vec{F}^{k+1, j}||^{2}_{2} < \frac{1}{2}||\vec{F}^{k}||^{2}_{2} - \alpha ||\vec{F}^{k}||^{2}_{2}$ }
+\item{$||\lambda_{j+1} \vec{\delta x}^{k}||_{\infty} < \delta_{\text{abs}}$}
+\end{enumerate}
+
+The third point requiring discussion is the calculation of the Newton update vector.
+If neither of the loop termination criteria are met, then a step-length parameter, $\lambda_j$, is calculated.
+On the first pass through the globalization loop within a given Newton step, a quadratic backtracking model is adopted.
+On subsequent passes, a cubic-backtracking model is used.
+ 
+Since vector forms of the nonlinear residual and the independent parameters are used in determining nonlinear convergence and in the globalization algorithm, they needed to be easily manipulated.
+A subroutine was written to gather the discrete variables of the independent parameters into a single vector.
+Additional source code modifications were necessary to construct and gather the components of the nonlinear residual.
+
+The development of the nonlinear solver within \cobra{} took place under strict quality assurance guidelines.
+At every step of the development, the legacy solver was required to maintain the same solution.
+This verification was dependent upon a larger number of verification and assessment problems.
+The output of the unmodified \cobra{} and the modified \cobra{} software was compared to machine precision.
+It was required that either the results of the two simulations be identical or that the reason for the difference be identified and understood.
+The \cobra{} software has the ability to repeat a time-step.
+As such, it was required that the backup capabilities continued to work while nonlinear solver was being implemented.
+Additionally, testing was done to ensure that the ability to restart the software mid-simulation was unaffected.
+While adding time to the development cycle, the overhead of the quality assurance procedures ensured that the legacy solver could continue to be used for design purposes.
+
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Operator-Based Scaling}
+\label{sect:nln_solver:os}
+In order to determine the degree to which a state vector, $\vec{x}$, satisfies \eqref{eqn:conservation_equations}, the use of the nonlinear residual is required.
+However, due to the units of the residuals for the different conservation equations, their values can vary by orders of magnitude. 
+For a given continuity volume, the nonlinear residual will have six components: four for the conservation of mass and two for the conservation of energy.
+For each momentum volume, the three conservation of momentum equations will form the three components of the nonlinear residual.
+These residuals have the units of the conserved quantities for their corresponding PDEs; \tab{tab:scaling_units_scales} shows the units for the different conservation equations.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{@{}l c r @{}} \toprule
+Residual & Units \\
+\midrule
+Conservation of the \NCG{} Field Mass                  & [ lb$_m$ ] \\
+Conservation of the Continuous Liquid Water Field Mass & [ lb$_m$ ] \\
+Conservation of the Entrained Liquid Water Field Mass  & [ lb$_m$ ] \\
+Conservation of the Water Vapor Field Mass             & [ lb$_m$ ] \\
+Conservation of the Gaseous Phase Enthalpy             & [ BTU ]    \\
+Conservation of the Liquid Phase Enthalpy              & [ BTU ]    \\
+Conservation of the Continuous Liquid Field Momentum   & [ $\frac{\text{lb}_{\text{m}} \text{ft}}{\text{s}}$ ] \\
+Conservation of the Entrained Liquid Field Momentum & [ $\frac{\text{lb}_{\text{m}} \text{ft}}{\text{s}}$ ] \\
+Conservation of the Gaseous Phase Momentum & [ $\frac{\text{lb}_{\text{m}} \text{ft}}{\text{s}}$ ] \\
+\bottomrule  
+\end{tabular}
+\caption{Residuals and their units.}
+\label{tab:scaling_units_scales}
+\end{table}
+
+Due to the range of magnitudes of these residuals it is important to choose a proper scaling factor to ensure that the convergence of each equation is relative to their magnitude.
+A challenge that has been addressed in this work is the development of a method for scaling of these residuals that is based upon the physics of interest during a timestep.
+In constructing this scaling factor it was determined that the following characteristics were desirable:
+
+\begin{itemize}
+\item{$(S_{i}^{k})^{-1} F^{k}_i \approx 1$ when $\vec{x}^{k}$ is a "poor" solution.}
+\item{$(S_{i}^{k})^{-1} F^{k}_i \rightarrow 0$ when phase $i$ disappears.}
+\item{$0 \leq \abs{(S_{i}^{k})^{-1} F^{k}_{i}} \leq 1 $ for all values of $\vec{x}^{k}_i$.}
+\end{itemize}
+
+The scaling used in this work is an operator-based approach.
+The governing PDEs can be viewed as a collection of operators, both linear and nonlinear, acting upon the vector of independent parameters.
+The summation of these operators must balance to zero for the nonlinear equation to be satisfied.
+
+To illustrate the scaling procedure, we shall consider the discrete conservation of continuous liquid mass \eqref{eqn:si_mass_liq}.
+The residual for \eqref{eqn:si_mass_liq} would be \eqref{eqn:res_mass_liq}.
+
+\begin{equation}
+\label{eqn:res_mass_liq}
+F_{m,l} = \Delta t \left[ V_c \frac{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho_l \right)^{n}}{\Delta t} + \sum_{NK}\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right) + \left[(1-\eta)\Gamma + S \right]^{n+1}\right]
+\end{equation}
+
+In this equation there are five physically meaningful quantities: the temporal difference, the mass flowing into  the volume, the mass flowing out of the volume, the mass exchange with the gaseous phase, and the mass exchange with the entrained liquid field.
+
+The scaling chosen for this residual is shown by \eqref{eqn:scaling_factor}.
+\begin{equation}
+\label{eqn:scaling_factor}
+S_{m,l} = \Delta t \left[ V_c \abs{\frac{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho_l \right)^{n}}{\Delta t}} + \sum_{NK}\abs{\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right)} + \left[\abs{(1-\eta)\Gamma} + \abs{S} \right]^{n+1}\right]
+\end{equation}
+
+This scaling creates a relative measure of the nonlinear residual when compared to the magnitude of the physics involved in the process.
+The other mass, energy, and momentum equations each have similarly defined scaling factors for their respective residuals.
+For convergence testing in the nonlinear version of \cobra{} and residual evaluation during the legacy mode, the scaled nonlinear residual is used.
+
+The issue of phase transition was considered during this work.
+Since \cobra{} does not actually transition the governing equations to those for single-phase flow, there will always be a nonlinear residual for those phases that are approximately absent.
+It was determined that the effects of maintaining a depleted phase in the system of equations when solving the nonlinear problem created a unique issue.
+The unscaled residuals would be on the order of machine round-off.
+The operator based scaling factors for these residuals would also be within orders of magnitude of machine round-off.
+This created the situation where the scaled nonlinear residual for the depleted field would be of $\mathcal{O}$(1).
+These depleted residuals would dominate the determination of convergence.
+To overcome this deficiency it was determined that when a phase or field began to deplete, the scaling factor would be scaled up to create an artificial decrease in the residual to counter the artificial presence of the depleted field.
+This scaling is shown by \eqref{eqn:scaling_factor_small}.
+
+\begin{equation}
+\label{eqn:scaling_factor_small}
+S_k = \max[1.0, \left(C_1 \frac{\alpha_{k,\text{MIN}}}{\alpha_k}\right)^{C_2} ] S_k
+\end{equation}
+
+For this work, the constant $C_1$ was set equal to 100, and the exponent $C_2$ was set equal to 6.
+This particular phase transition scaling produced the regular operator scaling factor when the volume fraction of a phase is at least two orders of magnitude greater than the minimum volume fraction for that phase.
+This drove the scaled residuals for phases that were nominally not present to zero.
+The original coding of \cobra{} has a minimum volume fraction of $\alpha_{k,\text{MIN}}$ = 1.0E-6.
+For the work performed here, that value was reduced to $\alpha_{k,\text{MIN}}$ = 1.0E-9.
+
+\section{Performance}
+\label{sect:nln_solver:performance}

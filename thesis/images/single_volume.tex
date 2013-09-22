@@ -1,0 +1,19 @@
+\begin{center}
+\begin{tikzpicture}
+\draw [thick] (-2,-3) rectangle (2,3);
+\draw [<->] (3.5,-3) -- (3.5,3);
+\draw (3.25,-3) -- (3.75,-3);
+\draw (3.25,3) -- (3.75,3);
+\draw (4,0) node {$\Delta x_j$};
+\draw [<->] (-2,-3.75) -- (2,-3.75);
+\draw (-2,-3.5) -- (-2,-4);
+\draw (2,-3.5) -- (2,-4);
+\draw (0,-4.25) node {$A_{C,j}$};
+\draw [dashed] (-2,0) -- (2,0);
+\filldraw [black] (0,0) circle (2pt);
+\foreach \y/\ytext in {-3/$x_{j-\frac{1}{2}}$,0/$x_j$,3/$x_{j+\frac{1}{2}}$}
+	\draw (2,\y) node [anchor=west] {\ytext};
+\end{tikzpicture}
+\end{center}
+\caption{Single volume over which the conservation equations are integrated.}
+\label{fig:single_volume}

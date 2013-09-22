@@ -1,0 +1,22 @@
+\begin{center}
+\begin{tikzpicture}
+\draw[pattern=north west lines, pattern color=blue] [thick] (-3,0) rectangle (0,3);
+\draw (-1.5,3) node[anchor=south] {Single-Shot Linearization};
+\draw (-3,2) node[anchor=east] {RELAP5-3D};
+\draw (-3,1.5) node[anchor=east] {COBRA};
+\draw (-3,1) node[anchor=east] {MARS};
+\draw[pattern=north east lines, pattern color=red] [thick] (3,0) rectangle (6,3);
+\draw (4.5,3) node[anchor=south] {Iterative Convergence};
+\draw (6,2) node[anchor=west] {CATHARE};
+\draw (6,1.5) node[anchor=west] {TRACE};
+\draw (0,-4) rectangle +(3,3);
+\path[pattern=north west lines, pattern color=blue] (0,-4) rectangle +(0.75,3);
+\path[pattern=north west lines, pattern color=blue] (2.25,-4) rectangle +(0.75,3);
+\path[pattern=north west lines, pattern color=blue] (0.75,-1.75) rectangle +(1.5,0.75);
+\path[pattern=north east lines, pattern color=red] (0.75,-3.25) rectangle +(1.5,1.5);
+\path[pattern=north west lines, pattern color=blue] (0.75,-4) rectangle +(1.5,0.75);
+\draw (1.5,-1) node[anchor=south] {Proposed Method};
+\end{tikzpicture}
+\end{center}
+\caption{Current and proposed software paradigms for thermal-hydraulic safety analysis.}
+\label{fig:my_diagram}

@@ -40,23 +40,10 @@
 \usepackage{times}
 \renewcommand{\ttdefault}{cmtt}
 
-\usepackage{subfig}
-
 \usepackage{IEEEtrantools}
 \usepackage{algpseudocode}
 \usepackage{pdflscape}
 \usepackage[absolute]{textpos}
-
-\usepackage{fancyhdr}
-\setlength{\TPHorizModule}{1in}
-\setlength{\TPVertModule}{1in}
-\fancypagestyle{lscape}{% 
-\fancyhf{} % clear all header and footer fields 
-\fancyfoot[LO]{\begin{textblock}{1}(1,   1){\rotatebox{90}{\thepage}}\end{textblock}}
-\fancyfoot[LE]{\begin{textblock}{1}(1,10.5){\rotatebox{90}{\thepage}}\end{textblock}}
-}
-\renewcommand{\headrulewidth}{0pt} 
-\renewcommand{\footrulewidth}{0pt}
 
 \usepackage[numbers, sort&compress]{natbib}
 \renewcommand{\bibname}{List of References}
@@ -79,11 +66,11 @@
 \setcounter{errorcontextlines}{999}
 
 % Include custom math commands
-\input{commandsmath}
+\input{commands/commandsmath}
 % Include custom tikz commands
-\input{commandstikz}
+\input{commands/commandstikz}
 % Include custom variables based on ifthen commands
-\input{commandsgeneral}
+\input{commands/commandsgeneral}
 
 \numberwithin{figure}{chapter}
 %=======================================================================
@@ -94,16 +81,19 @@
 %=======================================================================
 % Chapters
 %=======================================================================
-\include{prelude}       % Frontmatter
-\include{context}       % Chapter: Context of the problem.
-\include{prelim_work}   % Chapter: Proof of worthiness. 
-\include{proposal}      % Chapter: Proposal of research.
+\include{prelude}              % Front matter
+\include{context}              % Chapter: Context
+\include{nonlinear_solver}     % Chapter: Nonlinear Solver
+\include{domain_decomposition} % Chapter: Domain Decomposition Algorithm
+\include{convergence_metric}   % Chapter: Temporal Convergence Metric
+\include{performance}          % Chapter: Performance of algorithm 
+\include{final_thoughts}       % Chapter: Conclusion and musings
 
 %=======================================================================
 % Bibliography
 %=======================================================================
 \bibliographystyle{plainnat}
-\bibliography{../references/references}
+\bibliography{files/references}
 
 %=======================================================================
 % Appendices
@@ -112,10 +102,6 @@
 \noappendixfigures
 \begin{appendices}
 \include{input_decks}         % Appendix: Input Decks
-%\include{semilog}
-%\include{residual_functions}  % Appendix: Nonlinear Math
-%\include{two_phase_flow}      % Appendix: Two Phase Flow
-%\include{newton}              % Appendix: Newton Formulation
 \end{appendices}
 
 %=======================================================================

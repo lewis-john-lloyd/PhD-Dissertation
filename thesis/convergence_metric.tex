@@ -1,0 +1,67 @@
+\chapter{Convergence Metric}
+\label{chap:convergence_metric}
+
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Convergence}
+\label{sect:temporal_convergence}
+
+An important factor in thermal-hydraulic safety analysis is the temporal convergence of the solution.
+A definition for a temporally converged solution is required.
+In theory, a temporally converged solution is one where the local truncation error due to the discrete approximation of the temporal integral is orders of magnitude below both the engineering scales of interest and precision of the physical models being used in the simulation.
+Unfortunately, the precise measurement of the error in a simulation requires that an analytic solution be available for comparison.
+During the simulation of physically realistic systems, there is rarely an analytic solution against which to compare.
+This situation requires a slightly different definition of a temporally converged solution --- a definition that does not depend upon accurately measuring the local truncation error.
+
+An alternative definition for temporal convergence could be ``as the timestep size is reduced, the change in the solution is small enough."
+While commonly used, this definition is subjective.
+Traditionally, ``change in solution" is addressed in a very qualitative manner.
+Engineering judgment of which parameters of the solution are of interest is required.
+These parameters may include items of regulatory concern such as peak clad temperature or peak system pressure.
+Examining only engineering parameters of interest is a weakness.
+This locality means that the entire solution domain is not being considered.
+Depending upon the context in which the work is being done, the degree of ``small enough" may be nothing more than looking at a graph of the parameter of interest and using engineering judgment to say that ``those two graphs look about the same."
+In some cases, a more quantifiable measure may be used.
+An example of a quantifiable metric would be if two simulations with different \dtmax{} are classified as dissimilar if the two solutions produce a ``calculated peak fuel cladding temperature different by more than $50\,^{\circ}\mathrm{F}$" \cite{CFR10}.
+
+While it may be that the change in the chosen parameters of interest does not exceed the limits placed upon it as the timestep size is refined, that behavior does not imply that the solution obtained is the solution to the discrete nonlinear problem.
+A metric that can quantify the degree to which the obtained solution satisfies the nonlinear system of equations would be of great value.
+The previously mentioned work into nonlinear convergence shows that a solution may be timestep size insensitive but not be the converged solution of the discretized problem \cite{Knoll2001}.
+If the nonlinearities of the discrete governing equations are not resolved, then the temporal convergence rate can be degraded.
+This degradation can produce results that qualitatively appear to be converged due to an almost zeroth order of temporal accuracy.
+In practice, the timestep size insensitivity of a solution is often interpreted as temporal convergence.
+This apparent temporal convergence, or timestep size insensitivity, of the solution may not be a result of reaching the solution to the discretized nonlinear equations, but instead could be indicative of the degraded order of accuracy due to the failure to resolve the nonlinearities at each timestep.
+To determine if the timestep size insensitive transient solution is both timestep size insensitive and an accurate solution to the nonlinear problem, it is necessary to examine the nonlinear convergence of the system as an issue separate from the temporal-convergence.
+
+The norm of the scaled residual from \sect{sect:nln_solver:os} provides a well-scaled metric for instantaneous nonlinear convergence at any given time in the simulation.
+The residual vector norm is divided by the number of equations in the residual to provide an average residual value per equation.
+This equation-averaged scaled residual provides a metric for determining the degree of nonlinear convergence at any timestep in the simulation.
+The natural extension of this metric to transient problems would be a temporal integral, \eqref{eqn:trans_res_simple}, of said norm.
+
+\begin{equation}
+\label{eqn:trans_res_simple}
+R = \int_{t^{0}}^{t^{N}} ||\vec{F}(\tau)||_2 \,\mathrm{d} \tau
+\end{equation}
+
+Given the bounds of the scaled residual it was considered desirable to have a similarly scaled transient residual.
+The transient residual in \eqref{eqn:trans_res_simple} possesses a dependence upon the number of timesteps taken.
+To remove this dependence, a temporal average was instead investigated, \eqref{eqn:trans_res_ave}.
+
+\begin{equation}
+\label{eqn:trans_res_ave}
+\tilde{R} = \frac{\int_{t^{0}}^{t^{N}} ||\vec{F}(\tau)||_2 \,\mathrm{d} \tau}{t^{N} - t^{0}}
+\end{equation}
+
+This metric possesses the desirable bounds $0 \leq R \leq 1$.
+Other weighted temporal integrals were considered, such as a simple moment about $t^{0}$, \eqref{eqn:trans_res_mom}.
+However, this moment has the disadvantage of weighting the latter portion of the transient greater than the early portion.
+
+\begin{equation}
+\label{eqn:trans_res_mom}
+\tilde{R}_{\text{M}} = \frac{\int_{t^{0}}^{t^{N}} \,\tau\,||\vec{F}(\tau)||_2 \,\mathrm{d} \tau}{\int_{t^{0}}^{t^{N}} \,\tau \,\mathrm{d} \tau}
+\end{equation}

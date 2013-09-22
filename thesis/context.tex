@@ -29,8 +29,8 @@ In the work that follows the governing physics and the computational framework o
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Geometry of Interest}
-\label{sect:topology}
+\section{Geometry}
+\label{sect:geometry}
 The first step in any simulation of the thermal-hydraulic behavior of the core of a nuclear reactor is to create a discrete computational representation of the domain.
 The computational grid used in \cobra{} to represent the physical model is a staggered mesh.
 With a staggered mesh the domain is divided into two overlapping meshes.
@@ -39,23 +39,7 @@ Thermodynamic variables are defined as constant over the continuity volumes, whi
 The boundaries of the continuity volumes align with the center of the momentum volumes.
 
 \begin{figure}[ht]
-\begin{center}
-\begin{tikzpicture}
-\draw (-3,0) rectangle +(1,5);
-\draw (3,0) rectangle +(1,5);
-\draw (0,0) rectangle +(1,1) (0,1) rectangle +(1,1) (0, 2) rectangle +(1,1) (0,3) rectangle +(1,1) (0,4) rectangle +(1,1);
-\draw[dashed] (3,-0.5) rectangle +(1,1) (3,0.5) rectangle +(1,1) (3,1.5) rectangle +(1,1) (3, 2.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3, 4.5) rectangle +(1,1) ;
-\draw[dashed] (-3,0) -- (4,0);
-\draw[dashed] (-3,5) -- (4,5);
-\draw (-2.5,-1) node {\verb!Channel!};
-\draw (0.5,-1) node {\verb!Continuity!};
-\draw (0.5,-1.5) node {\verb!Volumes!};
-\draw (3.5,-1) node {\verb!Momentum!};
-\draw (3.5,-1.5) node {\verb!Volumes!};
-\end{tikzpicture}
-\end{center}
-\caption{A staggered mesh.}
-\label{fig:staggered_mesh}
+\input{images/staggered_mesh}
 \end{figure}
 
 The computational modeling framework involves two primary components: sections and channels.
@@ -104,34 +88,7 @@ This flow splitting is only permitted at section boundaries.
 An example of a geometric model that includes these different abilities is given in \fig{fig:complex_geometry}.
 
 \begin{figure}[h!t]
-\begin{center}
-\begin{tikzpicture}
-\draw [thick] (-2,-2) rectangle (-1,2);
-\draw [thick] (1,-2) rectangle (2,2);
-\draw [thick] (-0.5,3) rectangle (0.5,7);
-\draw [thick] (-0.5,-7) rectangle (0.5,-3);
-\draw [dashed] (-1.5,2.5) -- (1.5,2.5);
-\draw [dashed](-1.5,-2.5) -- (1.5,-2.5);
-\draw [dashed,<-] (0,3) -- (0,2.5);
-\draw [dashed,->] (-1.5,2.5) -- (-1.5,2);
-\draw [dashed,->] (1.5,2.5) -- (1.5,2);
-\draw [dashed,->] (0,-2.5) -- (0,-3);
-\draw [dashed,<-] (-1.5,-2) -- (-1.5,-2.5);
-\draw [dashed,<-] (1.5,-2) -- (1.5,-2.5);
-\foreach \y in {-1.5, -0.5, 0.5, 1.5}
-	\draw [dashed, <->] (-1,\y) -- (1,\y);
-\foreach \y in {-6,-5,-4,4,5,6}
-	\draw (-0.5,\y) -- (0.5,\y);
-\foreach \y in {-1,0,1}
-	\draw (-2,\y) -- (-1,\y);
-\foreach \y in {-1,0,1}
-	\draw (1,\y) -- (2,\y);
-\foreach \y/\ytext in {-5/ 1,0/ 2,5/ 3}
-	\draw (2,\y) node [anchor=west] {Section $\ytext$};
-\end{tikzpicture}
-\end{center}
-\caption{A complex geometry example.}
-\label{fig:complex_geometry}
+\input{images/complex_geometry}
 \end{figure}
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -415,49 +372,15 @@ Variables are indexed by the mesh on which their conservation equations are defi
 For example, the velocity $u_j$ would be spatially located at center of the momentum volume $j$ and at the boundary between the continuity volumes $j$ and $j-1$.
 
 \begin{figure}[ht]
-\begin{center}
-\begin{tikzpicture}
-\draw (-2,-3) rectangle +(2,2);
-\node[anchor=center] at (-1,-2) {j-1};
-\draw (-2,-1) rectangle +(2,2);
-\node[anchor=center] at (-1, 0) {j};
-\draw (-2, 1) rectangle +(2,2);
-\node[anchor=center] at (-1, 2) {j+1};
-\draw[dashed] (-0,-2) rectangle +(2,2);
-\node[anchor=center] at (1, -1) {j};
-\draw[dashed] (-0, 0) rectangle +(2,2);
-\node[anchor=center] at (1, 1) {j+1};
-\node[anchor=north] at (-1, -3) {Continuity};
-\node[anchor=north] at (1, -2) {Momentum};
-\end{tikzpicture}
-\end{center}
-\caption{Illustration of indexing scheme.}
-\label{fig:vertical_pipe_with_cells}
+\input{images/vertical_pipe_with_cells}
 \end{figure}
 
-Recalling the staggered mesh from \sect{sect:topology}, the six scalar conservation laws, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:con_energy_liq}, are each integrated over the continuity volumes.
+Recalling the staggered mesh from \sect{sect:geometry}, the six scalar conservation laws, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:con_energy_liq}, are each integrated over the continuity volumes.
 The assumption in these integrals is that the value of the conserved quantities and all thermodynamically-related variables are constant within a given volume.
 \fig{fig:constant_value} shows a graphical representation of this idea for a generic function $f(x)$ over several spatial continuity volumes. 
 
 \begin{figure}[ht]
-\begin{center}
-\begin{tikzpicture}
-\draw [->, thick] (-5,0) -- (6,0);
-\draw [->, thick] (-5,0) -- (-5,4);
-\draw (-4,1) -- (-1,1);
-\draw (-1,2) -- (2,2);
-\draw (2,3) -- (5,3);
-\draw (-5.5,3) node {\verb!f(x)!};
-\draw [dashed] (-4,1) -- (-4,0);
-\draw [dashed] (-1,2) -- (-1,0);
-\draw [dashed] (2,3) -- (2,0);
-\draw [dashed] (5,3) -- (5,0);
-\foreach \x / \xtext in {-2.5/x_{j-1},-1/x_{j-\frac{1}{2}},0.5/x_j,2/x_{j+\frac{1}{2}},3.5/x_{j+1}}
-	\draw [thick] (\x,-2pt) -- (\x,0pt) node [anchor=north] {$\xtext$};
-\end{tikzpicture}
-\end{center}
-\caption{Constant variable values within computational volumes.}
-\label{fig:constant_value}
+\input{images/constant_value}
 \end{figure}
 
 Within a channel, a given continuity volume has a constant cross-sectional area, $A_{c_{j}}$, and a length of $\Delta x_{j}$.
@@ -466,25 +389,7 @@ The volume integrated equation is given by \eqref{eqn:spatially_discrete_liq_m_c
 For illustrative purposes, \eqref{eqn:conservation_of_liq} will be integrated over a given volume, $V_j$, as shown in \fig{fig:single_volume}.
 
 \begin{figure}[h!t]
-\begin{center}
-\begin{tikzpicture}
-\draw [thick] (-2,-3) rectangle (2,3);
-\draw [<->] (3.5,-3) -- (3.5,3);
-\draw (3.25,-3) -- (3.75,-3);
-\draw (3.25,3) -- (3.75,3);
-\draw (4,0) node {$\Delta x_j$};
-\draw [<->] (-2,-3.75) -- (2,-3.75);
-\draw (-2,-3.5) -- (-2,-4);
-\draw (2,-3.5) -- (2,-4);
-\draw (0,-4.25) node {$A_{C,j}$};
-\draw [dashed] (-2,0) -- (2,0);
-\filldraw [black] (0,0) circle (2pt);
-\foreach \y/\ytext in {-3/$x_{j-\frac{1}{2}}$,0/$x_j$,3/$x_{j+\frac{1}{2}}$}
-	\draw (2,\y) node [anchor=west] {\ytext};
-\end{tikzpicture}
-\end{center}
-\caption{Single volume over which the conservation equations are integrated.}
-\label{fig:single_volume}
+\input{images/single_volume}
 \end{figure}
 
 For the mass-flux terms evaluated on the continuity volume edge, the advected quantity is evaluated using a 1st order upwind method \cite{Tannehill1997}.
@@ -1376,28 +1281,7 @@ The methods used to simulate thermal-hydraulic behavior in NPPs are characterize
 Each of the methods outlined in \sect{sect:solution_techniques} has one thing in common: the nonlinear problem is solved globally, either through a single-shot linearization or through an iterative Newton procedure.
 
 \begin{figure}[h!t]
-\begin{center}
-\begin{tikzpicture}
-\draw[pattern=north west lines, pattern color=blue] [thick] (-3,0) rectangle (0,3);
-\draw (-1.5,3) node[anchor=south] {Single-Shot Linearization};
-\draw (-3,2) node[anchor=east] {RELAP5-3D};
-\draw (-3,1.5) node[anchor=east] {COBRA};
-\draw (-3,1) node[anchor=east] {MARS};
-\draw[pattern=north east lines, pattern color=red] [thick] (3,0) rectangle (6,3);
-\draw (4.5,3) node[anchor=south] {Iterative Convergence};
-\draw (6,2) node[anchor=west] {CATHARE};
-\draw (6,1.5) node[anchor=west] {TRACE};
-\draw (0,-4) rectangle +(3,3);
-\path[pattern=north west lines, pattern color=blue] (0,-4) rectangle +(0.75,3);
-\path[pattern=north west lines, pattern color=blue] (2.25,-4) rectangle +(0.75,3);
-\path[pattern=north west lines, pattern color=blue] (0.75,-1.75) rectangle +(1.5,0.75);
-\path[pattern=north east lines, pattern color=red] (0.75,-3.25) rectangle +(1.5,1.5);
-\path[pattern=north west lines, pattern color=blue] (0.75,-4) rectangle +(1.5,0.75);
-\draw (1.5,-1) node[anchor=south] {Proposed Method};
-\end{tikzpicture}
-\end{center}
-\caption{Current and proposed software paradigms for thermal-hydraulic safety analysis.}
-\label{fig:my_diagram}
+\input{images/my_diagram}
 \end{figure}
 
 The advantage of the single-shot linearization is the reduction in computational costs; however, the accuracy in regions of highly non-linear physics is suspect.

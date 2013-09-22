@@ -91,10 +91,10 @@
 % \labelitemiii, and \labelitemiv, which define the labels of the various
 % itemization levels.
 %=============================================================================
-\newcommand{\labelitemi}{   $\bullet$ }
-\newcommand{\labelitemii}{  \bface -- }
-\newcommand{\labelitemiii}{ $\ast$    }
-\newcommand{\labelitemiv}{  $\cdot$   }
+\newcommand{\labelitemi}{ $\bullet$ }
+\newcommand{\labelitemii}{ \bface -- }
+\newcommand{\labelitemiii}{ $\ast$ }
+\newcommand{\labelitemiv}{ $\cdot$ }
 
 %=============================================================================
 % VERSE
@@ -598,7 +598,7 @@
 \newcounter{algo}[chapter]
 \newcounter{loapage}
 \newcommand{\l@algo  }{\vskip 1.0em plus 1pt \@dottedtocline{0}{0em}{2.5em}}
-\newcommand{\listofalgorithm}{\@tableof{List of Algorithms}{Algorithm}{loapage}{loa}{\protect\addcontentsline{toc}{chapter}{List of Algorithms}}}
+\newcommand{\listofalgorithms}{\@tableof{List of Algorithms}{Algorithm}{loapage}{loa}{\protect\addcontentsline{toc}{chapter}{List of Algorithms}}}
 \renewcommand{\thealgo}{\thechapter.\@arabic\c@algo}
 \def\fps@algo{tbp}
 \def\ftype@algo{4}
