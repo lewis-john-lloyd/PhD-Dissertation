@@ -2,8 +2,8 @@
 \usepackage{graphicx}
 \usepackage{amssymb,amsmath}
 \usepackage{tikz}
-\usetikzlibrary{shapes,arrows}
-
+\usetikzlibrary{shapes,arrows,patterns}
+\usepackage{multirow}
 \usepackage{algpseudocode}
 \usepackage{pdflscape}
 
@@ -20,15 +20,12 @@
 
 \setcounter{errorcontextlines}{999}
 
-\input{../commandsgeneral}
-\input{../commandsmath}
-\input{../commandstikz}
+\input{../commands/commandsgeneral}
+\input{../commands/commandsmath}
+\input{../commands/commandstikz}
 
 \begin{document}
 
-\begin{figure}[ht]
-\input{constant_value}
-\end{figure}
-
+\input{dual_domain}
 
 \end{document}
