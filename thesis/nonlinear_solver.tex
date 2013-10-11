@@ -29,9 +29,9 @@ As such, the \cobra{} software needed to be modified to be able do the following
 \end{itemize}
 
 \cobra{} utilized a single-shot linearization for its solution technique.
-As a result of that design decision, certain memory saving techniques were employed in the construction of the software that precluded the idea of more than one Newton step.
-In particular, there was the implicit assumption within the software that the current Newton iterate, $\vec{x}^{n+1, 0}$, was the old-time variable $\vec{x}^{n}$.
-This design decision required the vetting of all subroutines involved with the evaluation of the components of both the nonlinear residual and the Jacobian.
+As a result of that design decision, memory saving techniques were employed in the construction of the software that precluded more than one Newton step.
+In particular, there was the implicit assumption within the software that the first Newton iterate, $\vec{x}^{n+1, 0}$, was the old-time variable $\vec{x}^{n}$.
+This design decision required the vetting of all subroutines involved with the evaluation of the components of both the nonlinear residual and its Jacobian.
 In addition, the assumption that $\vec{x}^{n+1, k} = \vec{x}^{n}$ produced source code that was inconsistent with an iterative Newton method.
 The source code was modified to reflect the intended discretization of the governing conservation laws.
 To do this, areas had to be identified where: there were implicit cancellation of terms, the new-time variables were used in place of old-time variables, and the old-time variables were used in place of new-time variables.
@@ -138,15 +138,15 @@ These residuals have the units of the conserved quantities for their correspondi
 \begin{tabular}{@{}l c r @{}} \toprule
 Residual & Units \\
 \midrule
-Conservation of the \NCG{} Field Mass                  & [ lb$_m$ ] \\
-Conservation of the Continuous Liquid Water Field Mass & [ lb$_m$ ] \\
-Conservation of the Entrained Liquid Water Field Mass  & [ lb$_m$ ] \\
-Conservation of the Water Vapor Field Mass             & [ lb$_m$ ] \\
+Conservation of the \NCG{} Field Mass                  & [ \lbm ] \\
+Conservation of the Continuous Liquid Water Field Mass & [ \lbm ] \\
+Conservation of the Entrained Liquid Water Field Mass  & [ \lbm ] \\
+Conservation of the Water Vapor Field Mass             & [ \lbm ] \\
 Conservation of the Gaseous Phase Enthalpy             & [ BTU ]    \\
 Conservation of the Liquid Phase Enthalpy              & [ BTU ]    \\
-Conservation of the Continuous Liquid Field Momentum   & [ $\frac{\text{lb}_{\text{m}} \text{ft}}{\text{s}}$ ] \\
-Conservation of the Entrained Liquid Field Momentum & [ $\frac{\text{lb}_{\text{m}} \text{ft}}{\text{s}}$ ] \\
-Conservation of the Gaseous Phase Momentum & [ $\frac{\text{lb}_{\text{m}} \text{ft}}{\text{s}}$ ] \\
+Conservation of the Continuous Liquid Field Momentum   & [ $\frac{ \lbm \text{ft} }{\text{s}}$ ] \\
+Conservation of the Entrained Liquid Field Momentum    & [ $\frac{ \lbm \text{ft} }{\text{s}}$ ] \\
+Conservation of the Gaseous Phase Momentum & [ $\frac{ \lbm \text{ft}}{\text{s}}$ ] \\
 \bottomrule  
 \end{tabular}
 \caption{Residuals and their units.}
@@ -202,7 +202,7 @@ This scaling is shown by \eqref{eqn:scaling_factor_small}.
 S_k = \max[1.0, \left(C_1 \frac{\alpha_{k,\text{MIN}}}{\alpha_k}\right)^{C_2} ] S_k
 \end{equation}
 
-For this work, the constant $C_1$ was set equal to 100, and the exponent $C_2$ was set equal to 6.
+For this work, the constant $C_1$ was set equal to 100, and the exponent $C_2$ was set equal to 10.
 This particular phase transition scaling produced the regular operator scaling factor when the volume fraction of a phase is at least two orders of magnitude greater than the minimum volume fraction for that phase.
 This drove the scaled residuals for phases that were nominally not present to zero.
 The original coding of \cobra{} has a minimum volume fraction of $\alpha_{k,\text{MIN}}$ = 1.0E-6.
