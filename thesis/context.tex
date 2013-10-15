@@ -254,7 +254,7 @@ $q^{'''}_{w,k}$:
 \item{
 $\alpha_k \frac{\partial P}{\partial t}$:
  pressure work done by a given phase $k$.
- The liquid volume fraction is the sum of the continuous and the entrained liquid fields's volume fractions.
+ The liquid volume fraction is the sum of the volume fractions of the continuous and the entrained liquid fields.
 }
 \item{
 $s_{e,k}$:
@@ -986,7 +986,7 @@ This step results in predicted $u^{*}_{k}$ phasic velocities.
 
 In stage two, the momentum and continuity equations are solved using a traditional semi-implicit scheme with two exceptions.
 The first is that the momentum flux terms are evaluated using the stage-one predicted velocities as the advecting velocities instead of explicitly evaluating them.
-The second is that the nonlinearities in the momementum equations, arising from interfacial and wall drag, are subject to a single-shot linearization.
+The second is that the nonlinearities in the momentum equations, arising from interfacial and wall drag, are subject to a single-shot linearization.
 The single-shot nature of the momentum equations allows for the reduction of the system into coupled continuity volumes as in the semi-implicit method.
 The nonlinear continuity equations are then solved via Newton's method.
 Stated another way, the Jacobians for the momentum equations are fixed at their first Newton iterate value, while the Jacobians for the mass and energy equations are updated at each iterate.
@@ -1093,7 +1093,7 @@ The methods outlined in \sect{sect:solution_techniques} have several algorithmic
 Among these issues are phase appearance and disappearance (hereafter referred to as phase transition), timestep solution acceptance criteria, and timestep size selection.
 
 Given that the governing conservation laws in thermal-hydraulic analyses are those of two-phase flow, phase transition is integral to accurate simulations.
-The methods for addressing phase transitions within two-phase analysis software are ad-hoc procedures that vary from software to software.
+The methods for addressing phase transitions within two-phase analysis software are ad hoc procedures that vary from software to software.
 While each algorithmic implementation of the various methods addresses this issue out of necessity, there is no systematic or optimal way of doing so.
 However, certain physical limits have been identified that need to be considered \cite{Bestion2000}.
 
@@ -1233,7 +1233,7 @@ Additionally, if the boundary values are explicitly evaluated, then the decompos
 In an additive Schwarz algorithm the boundary values for each subdomain are functions only of the old-time values in the other domains.
 From this view point, the sonic Courant limit observed at domain coupling boundaries follows naturally \cite{Aumiller2001}.
 
-The additive Schawrz method has seen extensive use as a nonlinear preconditioner for fully implicit CFD calculations \cite{Cai2009, Cai2002}.
+The additive Schwarz method has seen extensive use as a nonlinear preconditioner for fully implicit CFD calculations \cite{Cai2009, Cai2002}.
 In particular, a nonlinearly convergent solution within each subdomain is obtained at each timestep.
 It has been shown that the treatment of localized nonlinearities via domain decomposition allows for globalization strategies to be used in the global Newton step that would otherwise exhibit stalled convergence if the full domain was initially subjected to a globalization strategy \cite{Cai2011}.
 This work is based upon the concept of nonlinear domain decomposition and nonlinear elimination \cite{Lanzkron1996, Dryja1997}.

@@ -1,12 +1,69 @@
 \chapter{Domain Decomposition}
 \label{chap:domain_decomposition}
-The domain decomposition algorithm is detailed below.
+The governing partial differential equations described in [the section about nonlinear solver] contain nonlinearities that distributed in both space and time.
+In the absence of nonlinear physics a single Newton step is adequate to solve the governing set of discrete algebraic equations.
+However, for a given spatial mesh when nonlinearities are present if the number of Newton steps is limited to one, then the only way to resolve those nonlinearities is to refine the temporal discretization.
+If the number of Newton steps is not limited to one, then the nonlinearities will be resolved for a fixed temporal discretization.
+When the nonlinearities are isolated to a given nonlinear portion of the domain, the additional Newton steps do not improve the solution in the linear portion of the domain.
+The ability to resolve the nonlinear physics only where they occur could potentially provide a way to reduce the computational cost associated with resolving the nonlinear error for a given timestep.
+The following section contains three sections that describe the mathematical formulation of the domain decomposition, a description of its implementation, and several problems that were used to verify that the algorithm had been implemented properly.
 
 \section{Mathematical Formulation}
 \label{sec:dd:math}
-The mathematical formulation of the domain decompsition algorithm is worked out in the following pages.
 
-Here be massive amounts of math.
+The domain decomposition takes place within the context of a Newton step.
+The 
+The starting place for the formulation will be the continuity equations for a generic volume,  \fig{fig:single_volume}.
+The edges of the volume will be labeled $x_{j \pm \frac{1}{2}}$.
+Without loss of generality, the following formulation will only contain advection in one spatial dimension and the temporal derivatives.
+The normal vector for a given volume will be outwards directed.
+A positive flow corresponds to flow in the direction of increasing $x_{j}$.  
+The corresponding continuity equations for this particular volume are given in \eqref{eqn:advection_of_ncg_mass} -- \eqref{eqn:advection_of_vap_mass}.
+
+\begin{IEEEeqnarray}{rCl}
+\label{eqn:advection_of_ncg_mass}
+V_{j}\frac{(\alpha_{g} \rho_{n})^{n+1, k}_{j} - (\alpha_{g} \rho_{n})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{g, j + \frac{1}{2}}\frac{\langle \alpha^{n}_{g} \rho^{n}_{n} \rangle^{n+1,k}_{d, j+\frac{1}{2}}}{\langle\alpha^{n}_{g}\tilde{\rho}^{n}_{g}\rangle_{a, j + \frac{1}{2}}} - \dot{m}^{n+1, k}_{g, j - \frac{1}{2}}\frac{\langle \alpha^{n}_{g} \rho^{n}_{n} \rangle^{n+1,k}_{d, j-\frac{1}{2}}}{\langle\alpha^{n}_{g}\tilde{\rho}^{n}_{g}\rangle_{a, j - \frac{1}{2}}} & = & 0 \\
+%
+\label{eqn:advection_of_liq_mass}
+V_{j}\frac{(\alpha_{l} \rho_{l})^{n+1, k}_{j} - (\alpha_{l} \rho_{l})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{l, j + \frac{1}{2}}\frac{\langle \alpha^{n}_{l} \rho^{n}_{l} \rangle^{n+1,k}_{d, j+\frac{1}{2}}}{\langle\alpha^{n}_{l} \rho^{n}_{l}\rangle_{a, j + \frac{1}{2}}} - \dot{m}^{n+1, k}_{l, j - \frac{1}{2}}\frac{\langle \alpha^{n}_{l} \rho^{n}_{l} \rangle^{n+1,k}_{d, j-\frac{1}{2}}}{\langle\alpha^{n}_{l}\rho^{n}_{l}\rangle_{a, j - \frac{1}{2}}} & = & 0 \\
+%
+\label{eqn:advection_of_gas_energy}
+V_{j}\frac{(\alpha_{g} \widetilde{\rho h}_{g})^{n+1, k}_{j} - (\alpha_{g} \widetilde{\rho h}_{g})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{g, j + \frac{1}{2}}\frac{\langle \alpha^{n}_{g} \widetilde{\rho h}^{n}_{g} \rangle^{n+1,k}_{d, j+\frac{1}{2}}}{\langle\alpha^{n}_{g} \tilde{\rho}^{n}_{g}\rangle_{a, j + \frac{1}{2}}} - \dot{m}^{n+1, k}_{g, j - \frac{1}{2}}\frac{\langle \alpha^{n}_{g} \widetilde{\rho h}^{n}_{g} \rangle^{n+1,k}_{d, j-\frac{1}{2}}}{\langle\alpha^{n}_{g} \tilde{\rho}^{n}_{g}\rangle_{a, j - \frac{1}{2}}} & = & 0 \\
+%
+\label{eqn:advection_of_liq_energy}
+V_{j}\frac{(\alpha_{l} \rho_{l} h_{l})^{n+1, k}_{j} - (\alpha_{l} \rho_{l} h_{l} )^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{l, j + \frac{1}{2}}\frac{\langle \alpha^{n}_{l} \rho^{n}_{l} h^{n}_{l} \rangle^{n+1, k}_{d, j+\frac{1}{2}}}{\langle\alpha^{n}_{l} \rho^{n}_{l}\rangle_{a, j + \frac{1}{2}}} - \dot{m}^{n+1, k}_{l, j - \frac{1}{2}}\frac{\langle \alpha^{n}_{l} \rho^{n}_{l} h^{n}_{l} \rangle^{n+1, k}_{d, j-\frac{1}{2}}}{\langle\alpha^{n}_{l} \rho^{n}_{l}\rangle_{a, j - \frac{1}{2}}} &  &  \\
+%
+\nonumber
++ \dot{m}^{n+1, k}_{e, j + \frac{1}{2}}\frac{\langle \alpha^{n}_{e} \rho^{n}_{l} h^{n}_{l} \rangle^{n+1, k}_{d, j+\frac{1}{2}}}{\langle\alpha^{n}_{e} \rho^{n}_{l}\rangle_{a, j + \frac{1}{2}}} - \dot{m}^{n+1, k}_{e, j - \frac{1}{2}}\frac{\langle \alpha^{n}_{e} \rho^{n}_{l} h^{n}_{l} \rangle^{n+1, k}_{d, j-\frac{1}{2}}}{\langle\alpha^{n}_{e} \rho^{n}_{l}\rangle_{a, j - \frac{1}{2}}} & = & 0 \\
+%
+\label{eqn:advection_of_ent_mass}
+V_{j}\frac{(\alpha_{e} \rho_{l})^{n+1, k}_{j} - (\alpha_{e} \rho_{l})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{e, j + \frac{1}{2}}\frac{\langle \alpha^{n}_{e} \rho^{n}_{l} \rangle^{n+1,k}_{d, j+\frac{1}{2}}}{\langle\alpha^{n}_{e} \rho^{n}_{l}\rangle_{a, j + \frac{1}{2}}} - \dot{m}^{n+1, k}_{e, j - \frac{1}{2}}\frac{\langle \alpha^{n}_{e} \rho^{n}_{l} \rangle^{n+1,k}_{d, j-\frac{1}{2}}}{\langle\alpha^{n}_{e}\rho^{n}_{l}\rangle_{a, j - \frac{1}{2}}} & = & 0 \\
+%
+\label{eqn:advection_of_vap_mass}
+V_{j}\frac{(\alpha_{g} \rho_{v})^{n+1, k}_{j} - (\alpha_{g} \rho_{v})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{g, j + \frac{1}{2}}\frac{\langle \alpha^{n}_{g} \rho^{n}_{v} \rangle^{n+1,k}_{d, j+\frac{1}{2}}}{\langle\alpha^{n}_{g}\tilde{\rho}^{n}_{g}\rangle_{a, j + \frac{1}{2}}} - \dot{m}^{n+1, k}_{g, j - \frac{1}{2}}\frac{\langle \alpha^{n}_{g} \rho^{n}_{v} \rangle^{n+1,k}_{d, j-\frac{1}{2}}}{\langle\alpha^{n}_{g}\tilde{\rho}^{n}_{g}\rangle_{a, j - \frac{1}{2}}} & = & 0 \
+\end{IEEEeqnarray}
+
+For brevity, all physics except the advection terms 
+The symbol for the flux will be $\Xi$.
+The conversion Matrix is given by 
+
+\begin{equation}
+\label{eqn:flux_matrix}
+\Xi^{n+1, k}_{j \pm \frac{1}{2}} \equiv \begin{bmatrix}
+%
+ 0 & \frac{\langle \alpha^{n}_{gas} \rho^{n}_{ncg} \rangle^{n+1,k}_{d}}{\langle\alpha^{n}_{gas}\tilde{\rho}^{n}_{gas}\rangle_{a}} & 0 \\
+%
+\frac{\langle\alpha^{n}_{liq}\rho^{n}_{liq}\rangle^{n+1,k}_{d}}{\langle\alpha^{n}_{liq} \rho^{n}_{liq}\rangle_{a}} & 0 & 0 \\
+%
+0 & \frac{\langle \alpha^{n}_{gas} \widetilde{\rho h}^{n}_{gas} \rangle^{n+1,k}_{d}}{\langle \alpha^{n}_{liq} \tilde{\rho}^{n}_{gas} \rangle_{a}} & 0 \\
+%
+\frac{\langle\alpha^{n}_{liq}\rho^{n}_{liq} h^{n}_{liq}\rangle^{n+1,k}_{d}}{\langle\alpha^{n}_{liq} \rho^{n}_{liq} \rangle_{a}} & 0 & \frac{\langle \alpha^{n}_{ent} \rho^{n}_{liq} h^{n}_{liq} \rangle^{n+1, k}_{d}}{\langle \alpha^{n}_{ent} \rho^{n}_{liq} \rangle_{a}} \\
+%
+0 & 0 & \frac{ \langle \alpha^{n}_{ent} \rho^{n}_{liq} \rangle^{n+1, k}_{d}}{ \langle \alpha^{n}_{ent}\rho^{n}_{liq}\rangle_{a}} \\
+%
+0 & \frac{ \langle \alpha^{n}_{gas} \rho^{n}_{vap} \rangle^{n+1, k}_{d}}{ \langle \alpha^{n}_{gas}\tilde{\rho}^{n}_{gas}\rangle_{a}} & 0
+\end{bmatrix}_{j \pm \frac{1}{2}}
+\end{equation}
 
 \section{Algorithm in \cobra{}}
 \label{sec:dd:algo}
