@@ -5,7 +5,7 @@ In order to determine the effects of nonlinear convergence upon the timestep siz
 A metric was developed for the evaluation of the nonlinear convergence of a timestep.
 To aid in the development of the nonlinear convergence metric and the nonlinear solver, a novel operator-based scaling has been developed to obtain meaningful convergence thresholds.
 The scaling of the nonlinear residual is typically done in an arbitrary fashion; a scaling factor that is intrinsically linked to the physics of interest was developed.
-This scaling produces a non-dimensionalized residual whose magnitude is relative to the physical sources and sinks on a per equation basis. 
+This scaling produces a nondimensionalized residual whose magnitude is relative to the physical sources and sinks on a per equation basis. 
 Two temporal convergence test problems were developed to show that the nonlinear convergence metric can identify situations where a timestep size insensitive simulation may not satisfy the discrete nonlinear equations.
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -18,7 +18,7 @@ Two temporal convergence test problems were developed to show that the nonlinear
 \label{sect:nln_solver:cobra}  
 The first stage of the preliminary work was to modify the \cobra{} software.
 As obtained, the \cobra{} software used a single-shot linearization  of the semi-implicit method.
-In order to evaluate the subdomain nonlinear refinement algorithm, \cobra{} was converted to include a fully iterative Newton solver based upon a linesearch globalization strategy.
+In order to evaluate the subdomain nonlinear refinement algorithm, \cobra{} was converted to include a fully iterative Newton solver based upon a line search globalization strategy.
 When it is necessary to distinguish between the single-shot linearization algorithmic implementation of \cobra{} and the iterative nonlinear \cobra{} implementation, the former shall be referred to as the legacy solver and the latter as the nonlinear solver.
 As such, the \cobra{} software needed to be modified to be able do the following:
 
@@ -91,7 +91,7 @@ Current values for $k_{\,\text{MAX}}$, $F_{\text{ABS}}$ and $\delta_{\text{ABS}}
 The scaling vectors, $\vec{S}$ and $\vec{D}$, will be addressed later.
 
 The second is the globalization loop termination criteria.
-The globalization strategy implemented in \cobra{} is a linesearch algorithm \cite{Dennis1996}.
+The globalization strategy implemented in \cobra{} is a line search algorithm \cite{Dennis1996}.
 The two globalization loop termination criteria are:
 
 \begin{enumerate}

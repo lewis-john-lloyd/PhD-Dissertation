@@ -7297,6 +7297,7 @@ Payne/M
 Paypal/M
 Pb/M
 Pd/M
+PDE/MS
 Peabody/M
 Peace/M
 Peale
@@ -32693,6 +32694,8 @@ nondepreciating
 nondescript
 nondestructive
 nondetachable
+nondimensionalize/GBD
+nondimensionalization
 nondisciplinary
 nondisclosure/M
 nondiscrimination/M
@@ -39459,7 +39462,7 @@ scalar/S
 scalawag/MS
 scald/MDSG
 scale's
-scale/CGDS
+scale/CUGDS
 scaleless
 scalene
 scaliness/M

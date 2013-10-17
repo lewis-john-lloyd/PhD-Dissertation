@@ -18,7 +18,7 @@ The edges of the volume will be labeled $x_{j \pm \frac{1}{2}}$.
 Without loss of generality, the following formulation will only contain advection in one spatial dimension and the temporal derivatives.
 The normal vector for a given volume will be outwards directed.
 A positive flow corresponds to flow in the direction of increasing $x_{j}$.  
-The corresponding continuity equations for this particular volume are given in \eqref{eqn:advection_of_ncg_mass} -- \eqref{eqn:advection_of_vap_mass}.
+The corresponding continuity equations for a given volume are then given by \eqref{eqn:advection_of_ncg_mass} -- \eqref{eqn:advection_of_vap_mass}.
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:advection_of_ncg_mass}
@@ -43,13 +43,13 @@ V_{j}\frac{(\alpha_{e} \rho_{l})^{n+1, k}_{j} - (\alpha_{e} \rho_{l})^{n}_{j} }{
 V_{j}\frac{(\alpha_{g} \rho_{v})^{n+1, k}_{j} - (\alpha_{g} \rho_{v})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{g, j + \frac{1}{2}}\frac{\langle \alpha^{n}_{g} \rho^{n}_{v} \rangle^{n+1,k}_{d, j+\frac{1}{2}}}{\langle\alpha^{n}_{g}\tilde{\rho}^{n}_{g}\rangle_{a, j + \frac{1}{2}}} - \dot{m}^{n+1, k}_{g, j - \frac{1}{2}}\frac{\langle \alpha^{n}_{g} \rho^{n}_{v} \rangle^{n+1,k}_{d, j-\frac{1}{2}}}{\langle\alpha^{n}_{g}\tilde{\rho}^{n}_{g}\rangle_{a, j - \frac{1}{2}}} & = & 0 \
 \end{IEEEeqnarray}
 
-For brevity, all physics except the advection terms 
-The symbol for the flux will be $\Xi$.
-The conversion Matrix is given by 
+The domain decomposition method is based upon fluxes into and out of a domain.
+It will be advantageous to a matrix, $\vec{\Xi}$, that converts the momenta at a volume edge to fluxes of mass and energy.
+\eqref{eqn:flux_matrix} serves this purpose.
 
 \begin{equation}
 \label{eqn:flux_matrix}
-\Xi^{n+1, k}_{j \pm \frac{1}{2}} \equiv \begin{bmatrix}
+\vec{\Xi}^{n+1, k}_{j \pm \frac{1}{2}} = \begin{bmatrix}
 %
  0 & \frac{\langle \alpha^{n}_{gas} \rho^{n}_{ncg} \rangle^{n+1,k}_{d}}{\langle\alpha^{n}_{gas}\tilde{\rho}^{n}_{gas}\rangle_{a}} & 0 \\
 %
@@ -65,22 +65,50 @@ The conversion Matrix is given by
 \end{bmatrix}_{j \pm \frac{1}{2}}
 \end{equation}
 
+The momenta vector is given by \eqref{eqn:momenta_vector}.
+
+\begin{equation}
+\label{eqn:momenta_vector}
+\vec{\dot{m}} = \begin{bmatrix}
+\dot{m}_{l} \\
+\dot{m}_{g} \\
+\dot{m}_{e}
+\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+\label{eqn:flux_vector}
+\vec{\Psi} = \vec{\Xi} \cdot \vec{\dot{m}}
+\end{equation}
+
+
+With \eqref{eqn:flux_matrix} and \eqref{eqn:flux_vector}, \eqref{eqn:advection_of_ncg_mass} -- \eqref{eqn:advection_of_vap_mass} can be written as \eqref{eqn:short_hand_continuity}.
+
+\begin{equation}
+\label{eqn:short_hand_continuity}
+\frac{V_j}{\dt} \begin{bmatrix}
+(\alpha_{g} \rho_{n})^{n+1, k}_{j} - (\alpha_{g} \rho_{n})^{n}_{j} \\
+\alpha_{l} \rho_{l})^{n+1, k}_{j} - (\alpha_{l} \rho_{l})^{n}_{j} \\
+(\alpha_{g} \widetilde{\rho h}_{g})^{n+1, k}_{j} - (\alpha_{g} \widetilde{\rho h}_{g})^{n}_{j}  \\
+(\alpha_{l} \rho_{l} h_{l})^{n+1, k}_{j} - (\alpha_{l} \rho_{l} h_{l} )^{n}_{j} \\
+(\alpha_{e} \rho_{l})^{n+1, k}_{j} - (\alpha_{e} \rho_{l})^{n}_{j} \\
+(\alpha_{g} \rho_{v})^{n+1, k}_{j} - (\alpha_{g} \rho_{v})^{n}_{j} 
+\end{bmatrix} + \vec{\Psi}^{n+1, k}_{j + \frac{1}{2}} - \vec{\Psi}^{n+1, k}_{j - \frac{1}{2}}= 0
+\end{equation}
+
+The flu
+
 \section{Algorithm in \cobra{}}
 \label{sec:dd:algo}
 
 The algorithmic implementation of the domain decomposition algorithm is now detailed.
 
-\section{Verification Problems}
+\section{Verification Problem}
 \label{sec:dd:verify}
-To test the implementation of the domain decomposition algorithm, several problems of increasing complexity were developed.
+To test the implementation of the domain decomposition algorithm, a test problem was developed that had model of the nine rod bundle will be simulated. 
+This experiment was several problems of increasing complexity were developed.
 The problems were developed so that the domain boundary fluxes would be as general as possible.
 There are two primary problems, the up-down-up problem and the ge mixing 1b (<- What is that?) problem.
-
-\subsection{Test Problem 1}
-\label{ss:dd:ver:tp1}
-This problem was 
-The problem has six sections.
-Each section is 12 inches tall.
 
 \subsection{GE Mixing Problem}
 \label{ss:dd:ver:gem}
