@@ -76,13 +76,15 @@ The momenta vector is given by \eqref{eqn:momenta_vector}.
 \end{bmatrix}
 \end{equation}
 
+The fluxes into and out of a given volume will be denoted by $\Psi$, \eqref{eqn:flux_vector}.
+
 \begin{equation}
 \label{eqn:flux_vector}
 \vec{\Psi} = \vec{\Xi} \cdot \vec{\dot{m}}
 \end{equation}
 
 
-With \eqref{eqn:flux_matrix} and \eqref{eqn:flux_vector}, \eqref{eqn:advection_of_ncg_mass} -- \eqref{eqn:advection_of_vap_mass} can be written as \eqref{eqn:short_hand_continuity}.
+With \eqref{eqn:flux_matrix} through \eqref{eqn:flux_vector}, \eqref{eqn:advection_of_ncg_mass} -- \eqref{eqn:advection_of_vap_mass} can be written as \eqref{eqn:short_hand_continuity}.
 
 \begin{equation}
 \label{eqn:short_hand_continuity}
@@ -96,7 +98,7 @@ With \eqref{eqn:flux_matrix} and \eqref{eqn:flux_vector}, \eqref{eqn:advection_o
 \end{bmatrix} + \vec{\Psi}^{n+1, k}_{j + \frac{1}{2}} - \vec{\Psi}^{n+1, k}_{j - \frac{1}{2}}= 0
 \end{equation}
 
-The flu
+
 
 \section{Algorithm in \cobra{}}
 \label{sec:dd:algo}
