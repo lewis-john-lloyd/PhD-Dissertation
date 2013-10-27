@@ -1,0 +1,31 @@
+\pgfplotstabletypeset[sci zerofill]{
+a b
+5000 1.234e5
+6000 1.631e5
+7000 2.1013e5
+9000 1000000
+}
+\begin{table}[h!t]
+\centering
+\begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
+\multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
+                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{BTU}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
+Single-Phase             &  200&0                       &  355&5                                   & 0&0                            & 1&0                            & 0&0 \\
+Flashing                 &  200&0                       & 1198&3                                   & 1&0                            & 0&0                            & 0&0 \\ \bottomrule  
+\end{tabular}
+\caption{The pressure-enthalpy outlet boundary conditions for test problems.}
+\label{tab:bc_pe}
+\end{table}
+
+
+\pgfplotstableset{%
+	columns/dof/.style={   int detect, column type=r, column name=\textsc{Dof}},
+	columns/error1/.style={sci, sci zerofill,sci sep align, precision=1, sci superscript, column name=$e_1$},
+	columns/error2/.style={sci, sci zerofill,sci sep align, precision=2,sci 10e, column name=$e_2$},
+	columns/{grad(log(dof),log(error2))}/.style={string replace={0}{}, column name={$\nabla e_2$}, dec sep align},
+	columns/{quot(error1)}/.style={string replace={0}{}, column name={$\frac{e_1^{(n)}}{e_1^{(n-1)}}$}},
+	empty cells with={--},
+	every head row/.style={before row=\toprule, after row=\midrule},
+	every last row/.style={after row=\bottomrule}
+	}
+\pgfplotstabletypeset[1000 sep={\,}, columns/info/.style={fixed, fixed zerofill, precision=1, showpos, column type=r}]{pgfplotstable.example1.dat}
