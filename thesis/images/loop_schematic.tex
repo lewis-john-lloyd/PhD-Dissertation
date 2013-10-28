@@ -1,0 +1,25 @@
+\begin{center}
+\begin{tikzpicture}
+\draw [dotted] (2,0) arc (0:180:2 and 1);
+\draw (-2,0) arc (180:360:2 and 1);
+\draw [dashed] (0,4) circle (2 and 1);
+%\filldraw [black] (0,4) circle (2pt);
+\draw [pattern=dots] (0,8) circle (2 and 1);
+\draw (-2,0) -- (-2,8);
+\draw (2,0) -- (2,8);
+\draw [<->] (2.75,0) -- (2.75,8);
+\draw (2.5,0) -- (3,0);
+\draw (2.5,8) -- (3,8);
+\draw (3.25,4) node {$\Delta x_j$};
+\draw [<->] (-2,9.5) -- (2,9.5);
+\draw (-2,9.25) -- (-2,9.75);
+\draw (2,9.25) -- (2,9.75);
+\draw (0,10) node {$D_{H,j}$};
+\filldraw [gray!10] (0,8) circle (0.5);
+\draw (0,8) node {$A_{C,j}$};
+\foreach \y/\ytext in {0/$x_{j-\frac{1}{2}}$,4/$x_j$,8/$x_{j+\frac{1}{2}}$}
+	\draw (-2.25,\y) node [anchor=east] {\ytext};
+\end{tikzpicture}
+\end{center}
+\caption{Schematic of Loop Showing Sampling Circuit.}
+\label{fig:loop_schematic}
