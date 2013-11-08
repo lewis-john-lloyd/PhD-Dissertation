@@ -22,6 +22,27 @@
 }
 \DeclareRobustCommand{\vec}[1]{\Vec{#1}}
 
+\DeclareRobustCommand{\ave}[1]{%
+    \ifmmode
+        \langle #1 \rangle %
+    \else
+        $\displaystyle \langle #1 \rangle $%
+    \fi
+}
+\DeclareRobustCommand{\onehalf}{%
+    \ifmmode
+        \frac{1}{2} %
+    \else
+        $\displaystyle \frac{1}{2} $%
+    \fi
+}
+\DeclareRobustCommand{\don}[1]{%
+    \ifmmode
+        \langle #1 \rangle %
+    \else
+        $\displaystyle \langle #1 \rangle $%
+    \fi
+}
 \DeclareRobustCommand{\lbm}{%
     \ifmmode
         \text{lb}_{\text{m}}

@@ -30,7 +30,8 @@
 \usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
 \usepackage{epsfig}
 
-\usepackage{amssymb,amsmath}
+\usepackage{amssymb}
+\usepackage{amsmath}
 \usepackage{verbatim}
 
 \usepackage{tikz}
@@ -38,9 +39,10 @@
 \usetikzlibrary{arrows}
 \usetikzlibrary{patterns}
 \usepackage{pgfplots}
-\usepackage{pgfplotstable}
 \pgfplotsset{compat=newest}
 \pgfplotsset{plot coordinates/math parser=false}
+\usepackage{pgfplotstable}
+\pgfplotstableset{set thousands separator ={}}
 
 \usepackage{longtable}
 
@@ -61,6 +63,7 @@
 \renewcommand{\bibsection}{\oldbibsection\addcontentsline{toc}{chapter}{List of References}\singlespace\raggedright}
 
 \usepackage{booktabs}
+\usepackage{colortbl}
 \usepackage{multirow}
 
 \usepackage[bookmarks,
@@ -75,11 +78,8 @@
 \pagestyle{thesis}
 \setcounter{errorcontextlines}{999}
 
-% Include custom math commands
 \input{commands/commandsmath}
-% Include custom tikz commands
 \input{commands/commandstikz}
-% Include custom variables based on ifthen commands
 \input{commands/commandsgeneral}
 
 \numberwithin{figure}{chapter}
@@ -95,8 +95,7 @@
 \include{context}              % Chapter: Context
 \include{nonlinear_solver}     % Chapter: Nonlinear Solver
 \include{domain_decomposition} % Chapter: Domain Decomposition Algorithm
-\include{convergence_metric}   % Chapter: Temporal Convergence Metric
-\include{performance}          % Chapter: Performance of algorithm 
+\include{experiments}          % Chapter: Numerical Experiments
 \include{final_thoughts}       % Chapter: Conclusion and musings
 
 %=======================================================================

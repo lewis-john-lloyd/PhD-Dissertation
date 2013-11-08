@@ -1,0 +1,12 @@
+\pgfplotstabletypeset[fixed zerofill, col sep=comma,
+	columns/problem/.style={column name=,string type, column type=l},
+	columns/p/.style={ column name=Pressure,dec sep align, precision=1},
+	columns/h/.style={ column name=Enthalpy,dec sep align, precision=1},
+	columns/a_g/.style={ column name=$\alpha_g$, precision=1},
+	columns/a_l/.style={ column name=$\alpha_l$, precision=1},
+	columns/a_e/.style={ column name=$\alpha_e$, precision=1},
+	every head row/.style={
+		before row=\toprule,
+		after row={& \multicolumn{2}{c}{$[\text{psia}]$} &\multicolumn{2}{c}{$[\frac{\text{BTU}}{\lbm{}}]$} &$[\text{-}]$ & $[\text{-}]$ & $[\text{-}]$\\ \midrule}},
+	every last row/.style={
+after row=\bottomrule}]{tables/data_bc_inflow_nln.tex}

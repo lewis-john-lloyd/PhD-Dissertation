@@ -1,0 +1,15 @@
+\pgfplotstabletypeset[sci zerofill,sci E, col sep=comma,
+	columns/0/.style={ column name=\dtmax{}, precision=1},
+	columns/1/.style={ column name=Linear, precision=3},
+	columns/2/.style={ column name=Nonlinear, precision=3},
+	columns/3/.style={ column name=Linear, precision=3},
+	columns/4/.style={ column name=Nonlinear, precision=3},
+	every head row/.style={
+		before row={
+			\toprule
+			&\multicolumn{2}{c}{$\tilde{R}$} & \multicolumn{2}{c}{$\tilde{R}_{M}$}\\
+		},
+		after row=\midrule
+	},
+	every last row/.style={
+after row=\bottomrule}]{tables/data_single_metric.tex}

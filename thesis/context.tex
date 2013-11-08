@@ -39,7 +39,10 @@ Thermodynamic variables are defined as constant over the continuity volumes, whi
 The boundaries of the continuity volumes align with the center of the momentum volumes.
 
 \begin{figure}[ht]
+\centering
 \input{images/staggered_mesh}
+\caption{A staggered mesh.}
+\label{fig:staggered_mesh}
 \end{figure}
 
 The computational modeling framework involves two primary components: sections and channels.
@@ -88,7 +91,10 @@ This flow splitting is only permitted at section boundaries.
 An example of a geometric model that includes these different abilities is given in \fig{fig:complex_geometry}.
 
 \begin{figure}[h!t]
+\centering
 \input{images/complex_geometry}
+\caption{A complex geometry example.}
+\label{fig:complex_geometry}
 \end{figure}
 
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -174,7 +180,7 @@ The details of this system of partial differential equations are discussed below
 \subsubsection{Conservation of Mass Equations}
 \label{subsubsect:mass_equations}
 
-There are four equations representing the conservation of mass, one each for the \ncg{} field \eqref{eqn:conservation_of_ncg}, the vapor field \eqref{eqn:conservation_of_vap}, the continuous liquid field \eqref{eqn:conservation_of_liq}, and the entrained liquid field \eqref{eqn:conservation_of_ent}.
+There are four equations that represent the conservation of mass, one for each of the \ncg{} \eqref{eqn:conservation_of_ncg}, vapor \eqref{eqn:conservation_of_vap}, continuous liquid  \eqref{eqn:conservation_of_liq}, and entrained liquid \eqref{eqn:conservation_of_ent} fields.
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:conservation_of_ncg}
@@ -372,7 +378,10 @@ Variables are indexed by the mesh on which their conservation equations are defi
 For example, the velocity $u_j$ would be spatially located at center of the momentum volume $j$ and at the boundary between the continuity volumes $j$ and $j-1$.
 
 \begin{figure}[ht]
+\centering
 \input{images/vertical_pipe_with_cells}
+\caption{Illustration of indexing scheme.}
+\label{fig:vertical_pipe_with_cells}
 \end{figure}
 
 Recalling the staggered mesh from \sect{sect:geometry}, the six scalar conservation laws, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:con_energy_liq}, are each integrated over the continuity volumes.
@@ -380,7 +389,10 @@ The assumption in these integrals is that the value of the conserved quantities 
 \fig{fig:constant_value} shows a graphical representation of this idea for a generic function $f(x)$ over several spatial continuity volumes. 
 
 \begin{figure}[ht]
+\centering
 \input{images/constant_value}
+\caption{Constant variable values within computational volumes.}
+\label{fig:constant_value}
 \end{figure}
 
 Within a channel, a given continuity volume has a constant cross-sectional area, $A_{c_{j}}$, and a length of $\Delta x_{j}$.
@@ -389,27 +401,30 @@ The volume integrated equation is given by \eqref{eqn:spatially_discrete_liq_m_c
 For illustrative purposes, \eqref{eqn:conservation_of_liq} will be integrated over a given volume, $V_j$, as shown in \fig{fig:single_volume}.
 
 \begin{figure}[h!t]
+\centering
 \input{images/single_volume}
+\caption{Single volume over which the conservation equations are integrated.}
+\label{fig:single_volume}
 \end{figure}
 
 For the mass-flux terms evaluated on the continuity volume edge, the advected quantity is evaluated using a 1st order upwind method \cite{Tannehill1997}.
 The velocity and cross-sectional area utilized in the continuity flux terms, $u_j$ and $A_{m,j}$, have the values defined in the momentum volume that aligns with the boundary of continuity volumes.
-The sign of the velocity at the volume boundary determines the value of the donored quantity, $<a>_{d,j-\frac{1}{2}}$.
+The sign of the velocity at the volume boundary determines the value of the donored quantity, $\ave{a}_{d,j \pm \onehalf}$.
 A generic formulation for this scheme is given by \eqref{eqn:upwind_donoring}.
 The same general procedure is used for the other five scalar conservation equations.
 
 \begin{IEEEeqnarray}{lcl}
 \int_{V_j}\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } & + & \nabla \cdot \left( \alpha_l \rho_l u_l \right) \mathrm{d}V = \int_{V_j} \left(-(1-\eta)\Gamma^{'''} - S^{'''} + s_{m,l}\right) \mathrm{d}V \nonumber \\
 V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\int_{V_j}\nabla \cdot \left( \alpha_l \rho_l u_l \right) \mathrm{d}V -(1-\eta_j)\Gamma_j - S_j + s_{m,l,j}V_j \nonumber \\
-V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left[\alpha_l \rho_l u_l A_{m}\right]_{x_{j-\frac{1}{2}}}^{x_{j+\frac{1}{2}}} -(1-\eta_j)\Gamma_j - S_j + s_{m,l,j}V_j \nonumber \\
+V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left[\alpha_l \rho_l u_l A_{m}\right]_{x_{j-\onehalf}}^{x_{j+\onehalf}} -(1-\eta_j)\Gamma_j - S_j + s_{m,l,j}V_j \nonumber \\
 \label{eqn:spatially_discrete_liq_m_con}
-V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left( <\alpha_l \rho_l>_{d,j+\frac{1}{2}} u_{l,j+1} A_{m,j+1} - <\alpha_l \rho_l>_{d,j-\frac{1}{2}} u_{l,j} A_{m,j}\right) \nonumber \\
+V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left( \don{\alpha_l \rho_l}_{d,j+\onehalf} u_{l,j+1} A_{m,j+1} - \don{\alpha_l \rho_l}_{d,j-\onehalf} u_{l,j} A_{m,j}\right) \nonumber \\
 & & -(1-\eta)\Gamma_j - S_j + s_{m,l,j}V_j
 \end{IEEEeqnarray}
 
 \begin{equation}
 \label{eqn:upwind_donoring}
-<a>_{d, j-\frac{1}{2}} = \begin{cases} a_{j-1} &  u_j \geq 0 \\ a_{j} & u_j < 0 \end{cases}
+\ave{a}_{d, j - \onehalf} = \begin{cases} a_{j-1} &  u_j \geq 0 \\ a_{j} & u_j < 0 \end{cases}
 \end{equation}
 
 The three momentum conservation equations, \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent}, are integrated over their momentum volume.
@@ -418,7 +433,7 @@ The momentum flux terms, \eqref{eqn:momentum_flux_terms}, are treated similarly 
 
 \begin{equation}
 \label{eqn:momentum_flux_terms}
--\left[<\alpha_l \rho_l u_l>_{d} u_l \tilde{A}\right]_{x_{j-\frac{1}{2}}}^{x_{j+\frac{1}{2}}}
+-\left[<\alpha_l \rho_l u_l>_{d} u_l \tilde{A}\right]_{x_{j-\onehalf}}^{x_{j + \onehalf}}
 \end{equation}
 
 There are two primary differences.
@@ -479,14 +494,14 @@ The definition of $\dot{m}_k$ is given by \eqref{eqn:mom_dot}.
 
 \begin{equation}
 \label{eqn:mom_dot}
-\dot{m}_{k} = <\alpha_k \rho_k>_{a} u_{k} A_{m}
+\dot{m}_{k} = \ave{\alpha_k \rho_k}_{a} u_{k} A_{m}
 \end{equation}
 
-The averaging operator $<a>_{a}$ provides the average of a quantity from the two adjoining continuity volumes, \eqref{eqn:average_val}.
+The averaging operator $\ave{a}_{a}$ provides the average of a quantity from the two adjoining continuity volumes, \eqref{eqn:average_val}.
 
 \begin{equation}
 \label{eqn:average_val}
-<a>_{a,j} = \frac{a_{j} + a_{j+1}}{2}
+\ave{a}_{a,j} = \frac{a_{j} + a_{j+1}}{2}
 \end{equation}
 
 The choice of independent parameters used in \cobra{} is not the only option.
@@ -519,8 +534,6 @@ There are two subcategories for solving this one-step temporal-integration probl
 \alg{alg:single_stage_temporal} shows how a multi-stage temporal integration scheme would work.
 
 \begin{algo}[H]
-\caption{Multi-stage temporal integration scheme.}
-\label{alg:single_stage_temporal}
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Require $\vec{y}^{0}$ and $t^{0}$
@@ -533,6 +546,8 @@ There are two subcategories for solving this one-step temporal-integration probl
 	\State $n = n + 1$
 \EndLoop
 \end{algorithmic}
+\caption{Multi-stage temporal integration scheme.}
+\label{alg:single_stage_temporal}
 \end{algo}
 
 The final-stage conserved variables will be the new-time variables, $\vec{y}^{J} = \vec{y}^{n+1}$. 
@@ -772,33 +787,33 @@ The continuity equations used in this work, omitting external sources, are shown
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:si_mass_ncg}
-V_c (\alpha_g \rho_{n})^{n+1} & - & V_c (\alpha_g \rho_{n})^{n} = -\Delta t \sum_{NK}\left( <\alpha^{n}_g \rho^{n}_{n}>^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) \\
+V_c (\alpha_g \rho_{n})^{n+1} & - & V_c (\alpha_g \rho_{n})^{n} = -\Delta t \sum_{NK}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) \\
 \label{eqn:si_mass_vap}
-V_c \left(\alpha_g \rho_v \right)^{n+1} &-& V_c \left(\alpha_g \rho_v \right)^{n} = - \Delta t \sum_{NK} \left( <\alpha^{n}_g \rho^{n}_v>^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) + \Delta t \Gamma^{n+1} \\
+V_c \left(\alpha_g \rho_v \right)^{n+1} &-& V_c \left(\alpha_g \rho_v \right)^{n} = - \Delta t \sum_{NK} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) + \Delta t \Gamma^{n+1} \\
 \label{eqn:si_mass_liq}
-V_c \left(\alpha_l \rho_l \right)^{n+1} & - & V_c \left(\alpha_l \rho_l \right)^{n} =  -\Delta t \sum_{NK}\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right) \nonumber \\
+V_c \left(\alpha_l \rho_l \right)^{n+1} & - & V_c \left(\alpha_l \rho_l \right)^{n} =  -\Delta t \sum_{NK}\left( \don{\alpha^n_l \rho^n_l}^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right) \nonumber \\
 &- &\Delta t\left[(1-\eta)\Gamma + S \right]^{n+1} \\
 \label{eqn:si_mass_ent}
-V_c \left(\alpha_e \rho_l \right)^{n+1} & - & V_c \left(\alpha_e \rho_l \right)^{n} = -\Delta t \sum_{NK}\left( <\alpha^{n}_e \rho^{n}_l>^{n}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right)\nonumber \\ 
+V_c \left(\alpha_e \rho_l \right)^{n+1} & - & V_c \left(\alpha_e \rho_l \right)^{n} = -\Delta t \sum_{NK}\left( \don{\alpha^{n}_e \rho^{n}_l}^{n}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right)\nonumber \\ 
 &+& \Delta t\left[ S -\eta\Gamma \right]^{n+1} \\
 \label{eqn:si_nrg_gas}
-V_c \left( \alpha_g \{\rho_g h_g\} \right)^{n+1} & - & V_c \left( \alpha_g \{\rho_g h_g\} \right)^{n}  = -\Delta t \sum_{NK} \left(  <\alpha^{n}_g \{\rho_g h_g\}^{n}>^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) \nonumber \\
+V_c \left( \alpha_g \{\rho_g h_g\} \right)^{n+1} & - & V_c \left( \alpha_g \{\rho_g h_g\} \right)^{n}  = -\Delta t \sum_{NK} \left(  \don{\alpha^{n}_g \{\rho_g h_g\}^{n}}^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) \nonumber \\
 &+& \Delta t \left[\Gamma h^{'}_v + q_{i,v} + q_{gl} + q_{wg} \right]^{n+1} + V_c \alpha^{n}_g ( P^{n+1} - P^{n} ) \\
 \label{eqn:si_nrg_liq}
-V_c\left( \alpha_l \rho_l h_l \right)^{n+1} & - & V_c\left( \alpha_l \rho_l h_l \right)^{n} =  -\Delta t \sum_{NK} \left( <\alpha^{n}_l \rho^{n}_l h^{n}_l>^{n}_{d} u^{n+1}_l \cdot \vec{\bar{A}} + <\alpha^{n}_e \rho^{n}_l h^{n}_l>^{n}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right) \nonumber \\
+V_c\left( \alpha_l \rho_l h_l \right)^{n+1} & - & V_c\left( \alpha_l \rho_l h_l \right)^{n} =  -\Delta t \sum_{NK} \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n}_{d} u^{n+1}_l \cdot \vec{\bar{A}} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right) \nonumber \\
 & +& \Delta t \left[q_{wl} -\Gamma h^{'}_l +  q_{i,l} - q_{gl}\right]^{n+1} + V_c \alpha^{n}_l (P^{n+1} - P^{n})
 \end{IEEEeqnarray}
 
 The flux terms include new-time velocities, $u^{n+1}_k$.
 Since \cobra{} uses $\dot{m}_{k}$ as independent parameters, the velocities are derived quantities, whose functional form is given in \eqref{eqn:si_vel}.
-The $<\alpha_k \rho_k>^{n}_{a}$ represents the arithmetic average of macroscopic densities from adjoining continuity volumes.
+The $\ave{\alpha_k \rho_k}^{n}_{a}$ represents the arithmetic average of macroscopic densities from adjoining continuity volumes.
 
 \begin{equation}
 \label{eqn:si_vel}
-u^{n+1}_k = \frac{\dot{m}^{n+1}_k}{A_m <\alpha_k \rho_k>^{n}_{a}} 
+u^{n+1}_k = \frac{\dot{m}^{n+1}_k}{A_m \ave{\alpha_k \rho_k}^{n}_{a}} 
 \end{equation}
 
-The donoring operator $<a^n>^{n}_{d}$ is an extension of \eqref{eqn:upwind_donoring}.
+The donoring operator $\don{a^n}^{n}_{d}$ is an extension of \eqref{eqn:upwind_donoring}.
 The donored quantities and the velocities used to determine the direction of donoring are evaluated with their old-time values.
 
 By default, \cobra{} uses a single-shot linearization method to resolve the nonlinearities.
@@ -1208,13 +1223,13 @@ The pressure update for the continuity volumes at the boundary of the master dom
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:pressure_coupled}
 \delta P^{n+1}_{\text{cbv}} = a_{\text{cbv}} & + & 
-\sum_{j = 1}^{N_c} b_{\text{cbv},j}<\alpha^n_g \rho^n_n>^{n}_{d} A_j v_{g,j}^{n+1} +
-\sum_{j = 1}^{N_c} c_{\text{cbv},j}<\alpha_g^n \rho_g^n u^n_g>_d^n A_j v_{g,j}^{n+1} \nonumber \\
-& + & \sum_{j = 1}^{N_c} d_{\text{cbv},j} <\alpha_f^n \rho_f^n u_f^n>_d^n A_j v_{f,j}^{n+1} +
-\sum_{j = 1}^{N_c} e_{\text{cbv},j} <\alpha_g^n \rho_g^n>_d^n A_j v_{g,j}^{n+1} \nonumber \\
-& + & \sum_{j = 1}^{N_c} f_{\text{cbv},j} < \alpha_f^n \rho_f^n>_d^n A_j v_{f,j}^{n+1} +
-\sum_{j = 1}^{N_c} g_{\text{cbv},j} <\alpha^n_g>_d^n A_j v_{g,j}^{n+1} \nonumber \\
-&+ & \sum_{j = 1}^{N_c} h_{\text{cbv},j} <\alpha_f^n>_d^n A_j v_{f,j}^{n+1}
+\sum_{j = 1}^{N_c} b_{\text{cbv},j}\don{\alpha^n_g \rho^n_n}^{n}_{d} A_j v_{g,j}^{n+1} +
+\sum_{j = 1}^{N_c} c_{\text{cbv},j}\don{\alpha_g^n \rho_g^n u^n_g}_{d}^{n} A_j v_{g,j}^{n+1} \nonumber \\
+& + & \sum_{j = 1}^{N_c} d_{\text{cbv},j} \don{\alpha_f^n \rho_f^n u_f^n}_{d}^{n} A_j v_{f,j}^{n+1} +
+\sum_{j = 1}^{N_c} e_{\text{cbv},j} \don{\alpha_g^n \rho_g^n}_{d}^{n} A_j v_{g,j}^{n+1} \nonumber \\
+& + & \sum_{j = 1}^{N_c} f_{\text{cbv},j} \don{\alpha_f^n \rho_f^n}_{d}^{n} A_j v_{f,j}^{n+1} +
+\sum_{j = 1}^{N_c} g_{\text{cbv},j} \don{\alpha^n_g}_{d}^{n} A_j v_{g,j}^{n+1} \nonumber \\
+&+ & \sum_{j = 1}^{N_c} h_{\text{cbv},j} \don{\alpha_f^n}_{d}^{n} A_j v_{f,j}^{n+1}
 \end{IEEEeqnarray}
 
 This formulation allows for the updated pressure in the master domain to be calculated within the slave domain without inter-software communication.
@@ -1256,7 +1271,10 @@ The methods used to simulate thermal-hydraulic behavior in NPPs are characterize
 Each of the methods outlined in \sect{sect:solution_techniques} has one thing in common: the nonlinear problem is solved globally, either through a single-shot linearization or through an iterative Newton procedure.
 
 \begin{figure}[h!t]
+\centering
 \input{images/my_diagram}
+\caption{Current and proposed software paradigms for thermal-hydraulic safety analysis.}
+\label{fig:my_diagram}
 \end{figure}
 
 The advantage of the single-shot linearization is the reduction in computational costs; however, the accuracy in regions of highly non-linear physics is suspect.

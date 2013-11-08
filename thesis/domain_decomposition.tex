@@ -14,7 +14,7 @@ The following section contains three sections that describe the mathematical for
 The domain decomposition takes place within the context of a Newton step.
 The 
 The starting place for the formulation will be the continuity equations for a generic volume,  \fig{fig:single_volume}.
-The edges of the volume will be labeled $x_{j \pm \frac{1}{2}}$.
+The edges of the volume will be labeled $x_{j \pm \onehalf}$.
 Without loss of generality, the following formulation will only contain advection in one spatial dimension and the temporal derivatives.
 The normal vector for a given volume will be outwards directed.
 A positive flow corresponds to flow in the direction of increasing $x_{j}$.  
@@ -22,25 +22,25 @@ The corresponding continuity equations for a given volume are then given by \eqr
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:advection_of_ncg_mass}
-V_{j}\frac{(\alpha_{g} \rho_{n})^{n+1, k}_{j} - (\alpha_{g} \rho_{n})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{g, j + \frac{1}{2}}\frac{\langle \alpha^{n}_{g} \rho^{n}_{n} \rangle^{n+1,k}_{d, j+\frac{1}{2}}}{\langle\alpha^{n}_{g}\tilde{\rho}^{n}_{g}\rangle_{a, j + \frac{1}{2}}} - \dot{m}^{n+1, k}_{g, j - \frac{1}{2}}\frac{\langle \alpha^{n}_{g} \rho^{n}_{n} \rangle^{n+1,k}_{d, j-\frac{1}{2}}}{\langle\alpha^{n}_{g}\tilde{\rho}^{n}_{g}\rangle_{a, j - \frac{1}{2}}} & = & 0 \\
+V_{j}\frac{(\alpha_{g} \rho_{n})^{n+1, k}_{j} - (\alpha_{g} \rho_{n})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{g, j + \onehalf}\frac{\don{\alpha^{n}_{g} \rho^{n}_{n}}^{n+1,k}_{d, j+\onehalf}}{\ave{\alpha^{n}_{g}\tilde{\rho}^{n}_{g}}_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{g, j - \onehalf}\frac{\don{\alpha^{n}_{g} \rho^{n}_{n}}^{n+1,k}_{d, j-\onehalf}}{\ave{\alpha^{n}_{g}\tilde{\rho}^{n}_{g}}_{a, j - \onehalf}} & = & 0 \\
 %
 \label{eqn:advection_of_liq_mass}
-V_{j}\frac{(\alpha_{l} \rho_{l})^{n+1, k}_{j} - (\alpha_{l} \rho_{l})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{l, j + \frac{1}{2}}\frac{\langle \alpha^{n}_{l} \rho^{n}_{l} \rangle^{n+1,k}_{d, j+\frac{1}{2}}}{\langle\alpha^{n}_{l} \rho^{n}_{l}\rangle_{a, j + \frac{1}{2}}} - \dot{m}^{n+1, k}_{l, j - \frac{1}{2}}\frac{\langle \alpha^{n}_{l} \rho^{n}_{l} \rangle^{n+1,k}_{d, j-\frac{1}{2}}}{\langle\alpha^{n}_{l}\rho^{n}_{l}\rangle_{a, j - \frac{1}{2}}} & = & 0 \\
+V_{j}\frac{(\alpha_{l} \rho_{l})^{n+1, k}_{j} - (\alpha_{l} \rho_{l})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{l, j + \onehalf}\frac{\langle \alpha^{n}_{l} \rho^{n}_{l} \rangle^{n+1,k}_{d, j+\onehalf}}{\langle\alpha^{n}_{l} \rho^{n}_{l}\rangle_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{l, j - \onehalf}\frac{\langle \alpha^{n}_{l} \rho^{n}_{l} \rangle^{n+1,k}_{d, j-\onehalf}}{\langle\alpha^{n}_{l}\rho^{n}_{l}\rangle_{a, j - \onehalf}} & = & 0 \\
 %
 \label{eqn:advection_of_gas_energy}
-V_{j}\frac{(\alpha_{g} \widetilde{\rho h}_{g})^{n+1, k}_{j} - (\alpha_{g} \widetilde{\rho h}_{g})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{g, j + \frac{1}{2}}\frac{\langle \alpha^{n}_{g} \widetilde{\rho h}^{n}_{g} \rangle^{n+1,k}_{d, j+\frac{1}{2}}}{\langle\alpha^{n}_{g} \tilde{\rho}^{n}_{g}\rangle_{a, j + \frac{1}{2}}} - \dot{m}^{n+1, k}_{g, j - \frac{1}{2}}\frac{\langle \alpha^{n}_{g} \widetilde{\rho h}^{n}_{g} \rangle^{n+1,k}_{d, j-\frac{1}{2}}}{\langle\alpha^{n}_{g} \tilde{\rho}^{n}_{g}\rangle_{a, j - \frac{1}{2}}} & = & 0 \\
+V_{j}\frac{(\alpha_{g} \widetilde{\rho h}_{g})^{n+1, k}_{j} - (\alpha_{g} \widetilde{\rho h}_{g})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{g, j + \onehalf}\frac{\langle \alpha^{n}_{g} \widetilde{\rho h}^{n}_{g} \rangle^{n+1,k}_{d, j+\onehalf}}{\langle\alpha^{n}_{g} \tilde{\rho}^{n}_{g}\rangle_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{g, j - \onehalf}\frac{\langle \alpha^{n}_{g} \widetilde{\rho h}^{n}_{g} \rangle^{n+1,k}_{d, j-\onehalf}}{\langle\alpha^{n}_{g} \tilde{\rho}^{n}_{g}\rangle_{a, j - \onehalf}} & = & 0 \\
 %
 \label{eqn:advection_of_liq_energy}
-V_{j}\frac{(\alpha_{l} \rho_{l} h_{l})^{n+1, k}_{j} - (\alpha_{l} \rho_{l} h_{l} )^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{l, j + \frac{1}{2}}\frac{\langle \alpha^{n}_{l} \rho^{n}_{l} h^{n}_{l} \rangle^{n+1, k}_{d, j+\frac{1}{2}}}{\langle\alpha^{n}_{l} \rho^{n}_{l}\rangle_{a, j + \frac{1}{2}}} - \dot{m}^{n+1, k}_{l, j - \frac{1}{2}}\frac{\langle \alpha^{n}_{l} \rho^{n}_{l} h^{n}_{l} \rangle^{n+1, k}_{d, j-\frac{1}{2}}}{\langle\alpha^{n}_{l} \rho^{n}_{l}\rangle_{a, j - \frac{1}{2}}} &  &  \\
+V_{j}\frac{(\alpha_{l} \rho_{l} h_{l})^{n+1, k}_{j} - (\alpha_{l} \rho_{l} h_{l} )^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{l, j + \onehalf}\frac{\langle \alpha^{n}_{l} \rho^{n}_{l} h^{n}_{l} \rangle^{n+1, k}_{d, j+\onehalf}}{\langle\alpha^{n}_{l} \rho^{n}_{l}\rangle_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{l, j - \onehalf}\frac{\langle \alpha^{n}_{l} \rho^{n}_{l} h^{n}_{l} \rangle^{n+1, k}_{d, j-\onehalf}}{\langle\alpha^{n}_{l} \rho^{n}_{l}\rangle_{a, j - \onehalf}} &  &  \\
 %
 \nonumber
-+ \dot{m}^{n+1, k}_{e, j + \frac{1}{2}}\frac{\langle \alpha^{n}_{e} \rho^{n}_{l} h^{n}_{l} \rangle^{n+1, k}_{d, j+\frac{1}{2}}}{\langle\alpha^{n}_{e} \rho^{n}_{l}\rangle_{a, j + \frac{1}{2}}} - \dot{m}^{n+1, k}_{e, j - \frac{1}{2}}\frac{\langle \alpha^{n}_{e} \rho^{n}_{l} h^{n}_{l} \rangle^{n+1, k}_{d, j-\frac{1}{2}}}{\langle\alpha^{n}_{e} \rho^{n}_{l}\rangle_{a, j - \frac{1}{2}}} & = & 0 \\
++ \dot{m}^{n+1, k}_{e, j + \onehalf}\frac{\langle \alpha^{n}_{e} \rho^{n}_{l} h^{n}_{l} \rangle^{n+1, k}_{d, j+\onehalf}}{\langle\alpha^{n}_{e} \rho^{n}_{l}\rangle_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{e, j - \onehalf}\frac{\langle \alpha^{n}_{e} \rho^{n}_{l} h^{n}_{l} \rangle^{n+1, k}_{d, j-\onehalf}}{\langle\alpha^{n}_{e} \rho^{n}_{l}\rangle_{a, j - \onehalf}} & = & 0 \\
 %
 \label{eqn:advection_of_ent_mass}
-V_{j}\frac{(\alpha_{e} \rho_{l})^{n+1, k}_{j} - (\alpha_{e} \rho_{l})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{e, j + \frac{1}{2}}\frac{\langle \alpha^{n}_{e} \rho^{n}_{l} \rangle^{n+1,k}_{d, j+\frac{1}{2}}}{\langle\alpha^{n}_{e} \rho^{n}_{l}\rangle_{a, j + \frac{1}{2}}} - \dot{m}^{n+1, k}_{e, j - \frac{1}{2}}\frac{\langle \alpha^{n}_{e} \rho^{n}_{l} \rangle^{n+1,k}_{d, j-\frac{1}{2}}}{\langle\alpha^{n}_{e}\rho^{n}_{l}\rangle_{a, j - \frac{1}{2}}} & = & 0 \\
+V_{j}\frac{(\alpha_{e} \rho_{l})^{n+1, k}_{j} - (\alpha_{e} \rho_{l})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{e, j + \onehalf}\frac{\langle \alpha^{n}_{e} \rho^{n}_{l} \rangle^{n+1,k}_{d, j+\onehalf}}{\langle\alpha^{n}_{e} \rho^{n}_{l}\rangle_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{e, j - \onehalf}\frac{\langle \alpha^{n}_{e} \rho^{n}_{l} \rangle^{n+1,k}_{d, j-\onehalf}}{\langle\alpha^{n}_{e}\rho^{n}_{l}\rangle_{a, j - \onehalf}} & = & 0 \\
 %
 \label{eqn:advection_of_vap_mass}
-V_{j}\frac{(\alpha_{g} \rho_{v})^{n+1, k}_{j} - (\alpha_{g} \rho_{v})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{g, j + \frac{1}{2}}\frac{\langle \alpha^{n}_{g} \rho^{n}_{v} \rangle^{n+1,k}_{d, j+\frac{1}{2}}}{\langle\alpha^{n}_{g}\tilde{\rho}^{n}_{g}\rangle_{a, j + \frac{1}{2}}} - \dot{m}^{n+1, k}_{g, j - \frac{1}{2}}\frac{\langle \alpha^{n}_{g} \rho^{n}_{v} \rangle^{n+1,k}_{d, j-\frac{1}{2}}}{\langle\alpha^{n}_{g}\tilde{\rho}^{n}_{g}\rangle_{a, j - \frac{1}{2}}} & = & 0 \
+V_{j}\frac{(\alpha_{g} \rho_{v})^{n+1, k}_{j} - (\alpha_{g} \rho_{v})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{g, j + \onehalf}\frac{\langle \alpha^{n}_{g} \rho^{n}_{v} \rangle^{n+1,k}_{d, j+\onehalf}}{\langle\alpha^{n}_{g}\tilde{\rho}^{n}_{g}\rangle_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{g, j - \onehalf}\frac{\langle \alpha^{n}_{g} \rho^{n}_{v} \rangle^{n+1,k}_{d, j-\onehalf}}{\langle\alpha^{n}_{g}\tilde{\rho}^{n}_{g}\rangle_{a, j - \onehalf}} & = & 0 \
 \end{IEEEeqnarray}
 
 The domain decomposition method is based upon fluxes into and out of a domain.
@@ -49,20 +49,20 @@ It will be advantageous to a matrix, $\vec{\Xi}$, that converts the momenta at a
 
 \begin{equation}
 \label{eqn:flux_matrix}
-\vec{\Xi}^{n+1, k}_{j \pm \frac{1}{2}} = \begin{bmatrix}
+\vec{\Xi}^{n+1, k}_{j \pm \onehalf} = \begin{bmatrix}
 %
- 0 & \frac{\langle \alpha^{n}_{gas} \rho^{n}_{ncg} \rangle^{n+1,k}_{d}}{\langle\alpha^{n}_{gas}\tilde{\rho}^{n}_{gas}\rangle_{a}} & 0 \\
+ 0 & \frac{\don{\alpha^{n}_{g} \rho^{n}_{n}}^{n+1,k}_{d}}{\ave{\alpha^{n}_{g}\tilde{\rho}^{n}_{g}}_{a}} & 0 \\
 %
-\frac{\langle\alpha^{n}_{liq}\rho^{n}_{liq}\rangle^{n+1,k}_{d}}{\langle\alpha^{n}_{liq} \rho^{n}_{liq}\rangle_{a}} & 0 & 0 \\
+\frac{\don{\alpha^{n}_{l}\rho^{n}_{l}}^{n+1,k}_{d}}{\ave{\alpha^{n}_{l} \rho^{n}_{l}}_{a}} & 0 & 0 \\
 %
-0 & \frac{\langle \alpha^{n}_{gas} \widetilde{\rho h}^{n}_{gas} \rangle^{n+1,k}_{d}}{\langle \alpha^{n}_{liq} \tilde{\rho}^{n}_{gas} \rangle_{a}} & 0 \\
+0 & \frac{\don{\alpha^{n}_{g} \widetilde{\rho h}^{n}_{g}}^{n+1,k}_{d}}{\ave{\alpha^{n}_{g} \tilde{\rho}^{n}_{g}}_{a}} & 0 \\
 %
-\frac{\langle\alpha^{n}_{liq}\rho^{n}_{liq} h^{n}_{liq}\rangle^{n+1,k}_{d}}{\langle\alpha^{n}_{liq} \rho^{n}_{liq} \rangle_{a}} & 0 & \frac{\langle \alpha^{n}_{ent} \rho^{n}_{liq} h^{n}_{liq} \rangle^{n+1, k}_{d}}{\langle \alpha^{n}_{ent} \rho^{n}_{liq} \rangle_{a}} \\
+\frac{\don{\alpha^{n}_{l}\rho^{n}_{l} h^{n}_{l}}^{n+1,k}_{d}}{\ave{\alpha^{n}_{l} \rho^{n}_{l}}_{a}} & 0 & \frac{\don{\alpha^{n}_{e} \rho^{n}_{l} h^{n}_{l}}^{n+1, k}_{d}}{\ave{\alpha^{n}_{e} \rho^{n}_{l}}_{a}} \\
 %
-0 & 0 & \frac{ \langle \alpha^{n}_{ent} \rho^{n}_{liq} \rangle^{n+1, k}_{d}}{ \langle \alpha^{n}_{ent}\rho^{n}_{liq}\rangle_{a}} \\
+0 & 0 & \frac{ \don{\alpha^{n}_{e} \rho^{n}_{l}}^{n+1, k}_{d}}{ \ave{\alpha^{n}_{e}\rho^{n}_{l}}_{a}} \\
 %
-0 & \frac{ \langle \alpha^{n}_{gas} \rho^{n}_{vap} \rangle^{n+1, k}_{d}}{ \langle \alpha^{n}_{gas}\tilde{\rho}^{n}_{gas}\rangle_{a}} & 0
-\end{bmatrix}_{j \pm \frac{1}{2}}
+0 & \frac{ \don{\alpha^{n}_{g} \rho^{n}_{v}}^{n+1, k}_{d}}{ \ave{\alpha^{n}_{g}\tilde{\rho}^{n}_{g}}_{a}} & 0
+\end{bmatrix}_{j \pm \onehalf}
 \end{equation}
 
 The momenta vector is given by \eqref{eqn:momenta_vector}.
@@ -95,7 +95,7 @@ With \eqref{eqn:flux_matrix} through \eqref{eqn:flux_vector}, \eqref{eqn:advecti
 (\alpha_{l} \rho_{l} h_{l})^{n+1, k}_{j} - (\alpha_{l} \rho_{l} h_{l} )^{n}_{j} \\
 (\alpha_{e} \rho_{l})^{n+1, k}_{j} - (\alpha_{e} \rho_{l})^{n}_{j} \\
 (\alpha_{g} \rho_{v})^{n+1, k}_{j} - (\alpha_{g} \rho_{v})^{n}_{j} 
-\end{bmatrix} + \vec{\Psi}^{n+1, k}_{j + \frac{1}{2}} - \vec{\Psi}^{n+1, k}_{j - \frac{1}{2}}= 0
+\end{bmatrix} + \vec{\Psi}^{n+1, k}_{j + \onehalf} - \vec{\Psi}^{n+1, k}_{j - \onehalf}= 0
 \end{equation}
 
 
@@ -104,16 +104,6 @@ With \eqref{eqn:flux_matrix} through \eqref{eqn:flux_vector}, \eqref{eqn:advecti
 \label{sec:dd:algo}
 
 The algorithmic implementation of the domain decomposition algorithm is now detailed.
-
-\section{Verification Problem}
-\label{sec:dd:verify}
-To test the implementation of the domain decomposition algorithm, a test problem was developed that had model of the nine rod bundle will be simulated. 
-This experiment was several problems of increasing complexity were developed.
-The problems were developed so that the domain boundary fluxes would be as general as possible.
-There are two primary problems, the up-down-up problem and the ge mixing 1b (<- What is that?) problem.
-
-\subsection{GE Mixing Problem}
-\label{ss:dd:ver:gem}
 
 
 

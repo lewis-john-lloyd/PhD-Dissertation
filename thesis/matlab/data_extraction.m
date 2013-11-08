@@ -1,12 +1,12 @@
 clc; clear; close all;
-list_of_figures = { 'cobra_flashing_alpha_fem_2in.fig',... % (1)
-                    'cobra_single_flm_4in.fig',...         % (2)
-                    'nl_flashing_alpha_fem_2in.fig',...    % (3)
-                    'nl_single_flm_4in.fig',...            % (4)
-                    'cobra_flashing_res_v_dt.fig',...      % (5)
-                    'nl_flashing_res_v_dt.fig',...         % (6)
-                    'cobra_single_res_v_dt.fig',...        % (7)
-                    'nl_single_res_v_dt.fig'};             % (8)
+list_of_figures = { 'lin_flashing_cvs_alpha_flm_2in.fig',... % (1)
+                    'lin_single_cvs_flm_4in.fig',...         % (2)
+                    'nln_flashing_cvs_alpha_flm_2in.fig',...    % (3)
+                    'nln_single_cvs_flm_4in.fig',...            % (4)
+                    'lin_flashing_cvs_res_v_dt.fig',...      % (5)
+                    'nln_flashing_cvs_res_v_dt.fig',...         % (6)
+                    'lin_single_cvs_res_v_dt.fig',...        % (7)
+                    'nln_single_cvs_res_v_dt.fig'};             % (8)
 N = size(list_of_figures,2);
 
 for i = 1:N
@@ -24,26 +24,41 @@ for i = 1:N
 end
 %%
 close all;
+print_driver = 'psc2';
+orientation = 'portrait';
 %% flashing_1em1.eps
-figure(1);
+file_name = 'flashing_1em1.eps';
+fig_id = 1;
+figure(fig_id);
+
 plot(   f(1).grandkids(2).data(5).time,f(1).grandkids(2).data(5).var,'- k',...
         f(3).grandkids(2).data(5).time,f(3).grandkids(2).data(5).var,'.-k'...
         )
 axis([0 5 0.5 1])
 ylabel('$\alpha_g$ [-] @ 2 [in] from Inlet','Interpreter','latex','FontSize',16)
 xlabel('Time [s]','Interpreter','latex','FontSize',16)
-legend('Legacy Mode','Nonlinear Mode',0)
+legend('Linear Mode','Nonlinear Mode','best')
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
 %% flashing_1em5.eps
-figure(2)
+file_name = 'flashing_1em5.eps';
+fig_id = 2;
+figure(fig_id)
 plot(   f(1).grandkids(2).data(1).time,f(1).grandkids(2).data(1).var,'- k',...
         f(3).grandkids(2).data(1).time,f(3).grandkids(2).data(1).var,'.-k'...
         )
 axis([0 5 0.5 1])
 ylabel('$\alpha_g$ [-] @ 2 [in] from Inlet','Interpreter','latex','FontSize',16)
 xlabel('Time [s]','Interpreter','latex','FontSize',16)
-legend('Legacy Mode','Nonlinear Mode',0)
-%% cobra_flashing_al_2in.eps
-figure(3)
+legend('Linear Mode','Nonlinear Mode','best')
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
+%% lin_flashing_al_2in.eps
+file_name = 'lin_flashing_al_2in.eps';
+fig_id = 3;
+figure(fig_id)
 plot(...%   f(1).grandkids(2).data(6).time, f(1).grandkids(2).data(6).var,'-ok',...
         f(1).grandkids(2).data(5).time, f(1).grandkids(2).data(5).var,'-+k',...
         f(1).grandkids(2).data(4).time, f(1).grandkids(2).data(4).var,'-.k',...
@@ -59,8 +74,11 @@ fleg = legend(...% char(f(1).grandkids(2).data(6).legend_entry),...
                 char(f(1).grandkids(2).data(3).legend_entry),...
                 char(f(1).grandkids(2).data(2).legend_entry),...
                 char(f(1).grandkids(2).data(1).legend_entry),...
-                0);
+                'best');
 set(fleg,'Interpreter','latex','FontSize',16)
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
 %% cobra_flashing_al_2in.eps
 % figure(33)
 % plot(   f(1).grandkids(2).data(6).time, f(1).grandkids(2).data(6).var,...
@@ -98,8 +116,10 @@ set(fleg,'Interpreter','latex','FontSize',16)
 %                 char(f(3).grandkids(2).data(2).legend_entry),...
 %                 char(f(3).grandkids(2).data(1).legend_entry),0);
 % set(fleg,'Interpreter','latex','FontSize',16)
-%% nl_flashing_al_2in.eps
-figure(4)
+%% nln_flashing_al_2in.eps
+file_name = 'nln_flashing_al_2in.eps';
+fig_id = 4;
+figure(fig_id)
 plot(   f(3).grandkids(2).data(6).time, f(3).grandkids(2).data(6).var,'-ok',...
         f(3).grandkids(2).data(5).time, f(3).grandkids(2).data(5).var,'-+k',...
         f(3).grandkids(2).data(4).time, f(3).grandkids(2).data(4).var,'-.k',...
@@ -114,10 +134,17 @@ fleg = legend( char(f(3).grandkids(2).data(6).legend_entry),...
                 char(f(3).grandkids(2).data(4).legend_entry),...
                 char(f(3).grandkids(2).data(3).legend_entry),...
                 char(f(3).grandkids(2).data(2).legend_entry),...
-                char(f(3).grandkids(2).data(1).legend_entry),0);
+                char(f(3).grandkids(2).data(1).legend_entry),...
+                'best');
 set(fleg,'Interpreter','latex','FontSize',16)
-%% nl_flashing_1em0_1em1.eps
-figure(5)
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
+%% nlm_flashing_1em0_1em1.eps
+file_name = 'nln_flashing_1em0_1em1.eps';
+fig_id = 5;
+figure(fig_id)
+
 plot(   f(3).grandkids(2).data(6).time, f(3).grandkids(2).data(6).var,': ',...
         f(3).grandkids(2).data(5).time, f(3).grandkids(2).data(5).var,'--',...
         f(3).grandkids(2).data(4).time, f(3).grandkids(2).data(4).var,'-.',...
@@ -132,10 +159,16 @@ fleg = legend(  char(f(3).grandkids(2).data(6).legend_entry),...
                 char(f(3).grandkids(2).data(4).legend_entry),...
                 char(f(3).grandkids(2).data(3).legend_entry),...
                 char(f(3).grandkids(2).data(2).legend_entry),...
-                0);
+                'best');
 set(fleg,'Interpreter','latex','FontSize',16)
-%% cobra_flashing_1em1_1em4.eps
-figure(6)
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
+%% lin_flashing_1em1_1em4.eps
+file_name = 'lin_flashing_1em1_1em4.eps';
+fig_id = 6;
+figure(fig_id)
+
 plot(   f(1).grandkids(2).data(5).time, f(1).grandkids(2).data(5).var,': k',...
         f(1).grandkids(2).data(4).time, f(1).grandkids(2).data(4).var,'-.k',...
         f(1).grandkids(2).data(3).time, f(1).grandkids(2).data(3).var,'--k',...
@@ -148,10 +181,16 @@ fleg = legend(  char(f(1).grandkids(2).data(5).legend_entry),...
                 char(f(1).grandkids(2).data(4).legend_entry),...
                 char(f(1).grandkids(2).data(3).legend_entry),...
                 char(f(1).grandkids(2).data(2).legend_entry),...
-                0);
+                'best');
 set(fleg,'Interpreter','latex','FontSize',16)
-%% cobra_flashing_res_compare.eps
-figure(7)
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
+%% lin_flashing_res_compare.eps
+file_name = 'lin_flashing_res_compare.eps';
+fig_id = 7;
+
+figure(fig_id)
 plot(   f(5).grandkids(1).data(5).time, f(5).grandkids(1).data(5).var,'- k',...
         f(5).grandkids(1).data(1).time, f(5).grandkids(1).data(1).var,'--k'...
         )
@@ -160,10 +199,16 @@ ylabel('$\frac{||\mathbf{F}(\mathbf{x}^{1})||_2}{N}$ [-]','Interpreter','latex',
 xlabel('Time [s]','Interpreter','latex','FontSize',16)
 fleg = legend(  char(f(5).grandkids(1).data(5).legend_entry),...
                 char(f(5).grandkids(1).data(1).legend_entry),...
-                0);
+                'best');
 set(fleg,'Interpreter','latex','FontSize',16)
-%% nl_flashing_res_compare.eps
-figure(8)
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
+%% nln_flashing_res_compare.eps
+file_name = 'nln_flashing_res_compare.eps';
+fig_id = 8;
+figure(fig_id)
+
 plot(   f(6).grandkids(1).data(5).time, f(6).grandkids(1).data(5).var,'- k',...
         f(6).grandkids(1).data(1).time, f(6).grandkids(1).data(1).var,'--k'...
         )
@@ -172,46 +217,72 @@ ylabel('$\frac{||\mathbf{F}(\mathbf{x}^{k})||_2}{N}$ [-]','Interpreter','latex',
 xlabel('Time [s]','Interpreter','latex','FontSize',16)
 fleg = legend(  char(f(6).grandkids(1).data(5).legend_entry),...
                 char(f(6).grandkids(1).data(1).legend_entry),...
-                0);
+                'best');
 set(fleg,'Interpreter','latex','FontSize',16)
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
 %% single_1em0.eps
-figure(9)
+file_name = 'single_1em0.eps';
+fig_id = 9;
+figure(fig_id)
+
 plot(   f(2).grandkids(1).data(6).time,f(2).grandkids(1).data(6).var,'- k',...
         f(4).grandkids(1).data(6).time,f(4).grandkids(1).data(6).var,'-*k'...
         )
 axis([0 5 0 1])
 ylabel('$\dot{\mathrm{m}}_{\, l}$ [$\frac{\mathrm{lb}_{\mathrm{m}}}{\mathrm{s}}$] @ 4 [in] from Inlet','Interpreter','latex','FontSize',16)
 xlabel('Time [s]','Interpreter','latex','FontSize',16)
-legend('Legacy Mode','Nonlinear Mode',0)
+legend('Linear Mode','Nonlinear Mode','best')
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
 %% single_1em5.eps
-figure(10)
+file_name = 'single_1em5.eps';
+fig_id = 10;
+figure(fig_id)
 plot(   f(2).grandkids(1).data(1).time,f(2).grandkids(1).data(1).var,'- k',...
         f(4).grandkids(1).data(1).time,f(4).grandkids(1).data(1).var,'-*k' ...
         )
 axis([0 5 0 1])
 ylabel('$\dot{\mathrm{m}}_{\, l}$ [$\frac{\mathrm{lb}_{\mathrm{m}}}{\mathrm{s}}$] @ 4 [in] from Inlet','Interpreter','latex','FontSize',16)
 xlabel('Time [s]','Interpreter','latex','FontSize',16)
-legend('Legacy Mode','Nonlinear Mode',0)
+legend('Linear Mode','Nonlinear Mode','best')
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
 %% single_1em3_zoom.eps
-figure(11)
+file_name = 'single_1em3_zoom.eps';
+fig_id = 11;
+figure(fig_id)
 plot(   f(2).grandkids(1).data(3).time,f(2).grandkids(1).data(3).var,'- k',...
         f(4).grandkids(1).data(3).time,f(4).grandkids(1).data(3).var,'-*k'...
         )
 axis([0.8 1.2 0 0.1])
 ylabel('$\dot{\mathrm{m}}_{\, l}$ [$\frac{\mathrm{lb}_{\mathrm{m}}}{\mathrm{s}}$] @ 4 [in] from Inlet','Interpreter','latex','FontSize',16)
 xlabel('Time [s]','Interpreter','latex','FontSize',16)
-legend('Legacy Mode','Nonlinear Mode',0)
+legend('Linear Mode','Nonlinear Mode','best')
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
 %% single_1em3.eps
-figure(12)
+file_name = 'single_1em3.eps';
+fig_id = 12;
+figure(fig_id)
 plot(   f(2).grandkids(1).data(3).time,f(2).grandkids(1).data(3).var,'- k',...
         f(4).grandkids(1).data(3).time,f(4).grandkids(1).data(3).var,'-*k'...
         )
 axis([0 5 0 1])
 ylabel('$\dot{\mathrm{m}}_{\, l}$ [$\frac{\mathrm{lb}_{\mathrm{m}}}{\mathrm{s}}$] @ 4 [in] from Inlet','Interpreter','latex','FontSize',16)
 xlabel('Time [s]','Interpreter','latex','FontSize',16)
-legend('Legacy Mode','Nonlinear Mode',0)
-%% cobra_single_res_v_dt.eps
-figure(13)
+legend('Linear Mode','Nonlinear Mode','best')
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
+%% lin_single_res_v_dt.eps
+file_name = 'lin_single_res_v_dt.eps';
+fig_id = 13;
+figure(fig_id)
 plot(   f(7).grandkids(1).data(6).time,f(7).grandkids(1).data(6).var,'-ok',...
         f(7).grandkids(1).data(5).time,f(7).grandkids(1).data(5).var,'-+k',...
         f(7).grandkids(1).data(4).time,f(7).grandkids(1).data(4).var,': k', ...
@@ -227,10 +298,16 @@ fleg = legend(  char(f(7).grandkids(1).data(6).legend_entry),...
                 char(f(7).grandkids(1).data(4).legend_entry),...
                 char(f(7).grandkids(1).data(3).legend_entry),...
                 char(f(7).grandkids(1).data(2).legend_entry),...
-                char(f(7).grandkids(1).data(1).legend_entry),0);
+                char(f(7).grandkids(1).data(1).legend_entry),...
+                'best');
 set(fleg,'Interpreter','latex','FontSize',16)
-%% nl_single_res_v_dt.eps
-figure(14)
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
+%% nln_single_res_v_dt.eps
+file_name = 'nln_single_res_v_dt.eps';
+fig_id = 14;
+figure(fig_id)
 plot(   f(8).grandkids(1).data(6).time,f(8).grandkids(1).data(6).var,'-+k',...
         f(8).grandkids(1).data(5).time,f(8).grandkids(1).data(5).var,'-*k',...
         f(8).grandkids(1).data(4).time,f(8).grandkids(1).data(4).var,': k', ...
@@ -246,10 +323,16 @@ fleg = legend(  char(f(8).grandkids(1).data(6).legend_entry),...
                 char(f(8).grandkids(1).data(4).legend_entry),...
                 char(f(8).grandkids(1).data(3).legend_entry),...
                 char(f(8).grandkids(1).data(2).legend_entry),...
-                char(f(8).grandkids(1).data(1).legend_entry),0);
+                char(f(8).grandkids(1).data(1).legend_entry),...
+                'best');
 set(fleg,'Interpreter','latex','FontSize',16)
-%% nl_res_single_zoom.eps
-figure(15)
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
+%% nln_res_single_zoom.eps
+file_name = 'nln_res_single_zoom.eps';
+fig_id = 15;
+figure(fig_id)
 plot(   f(8).grandkids(1).data(6).time,f(8).grandkids(1).data(6).var,'-+k',...
         f(8).grandkids(1).data(5).time,f(8).grandkids(1).data(5).var,'-*k',...
         f(8).grandkids(1).data(4).time,f(8).grandkids(1).data(4).var,': k', ...
@@ -265,34 +348,50 @@ fleg = legend(  char(f(8).grandkids(1).data(6).legend_entry),...
                 char(f(8).grandkids(1).data(4).legend_entry),...
                 char(f(8).grandkids(1).data(3).legend_entry),...
                 char(f(8).grandkids(1).data(2).legend_entry),...
-                char(f(8).grandkids(1).data(1).legend_entry),0);
+                char(f(8).grandkids(1).data(1).legend_entry),...
+                'best');
 set(fleg,'Interpreter','latex','FontSize',16)
-%% flashing_semilogy_res_compare_nl.eps
-figure(16)
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
+%% nln_flashing_semilogy_res_compare.eps
+file_name = 'nln_flashing_semilogy_res_compare.eps';
+fig_id = 16;
+figure(fig_id)
 semilogy(   f(6).grandkids(1).data(5).time, f(6).grandkids(1).data(5).var,'- k',...
             f(6).grandkids(1).data(1).time, f(6).grandkids(1).data(1).var,': k'...
         )
-axis([0 5 1e-8 1])
+axis([0 5 1e-12 1])
 ylabel('$\frac{||\mathbf{F}(\mathbf{x}^{k})||_2}{N}$ [-]','Interpreter','latex','FontSize',16)
 xlabel('Time [s]','Interpreter','latex','FontSize',16)
 fleg = legend(  char(f(6).grandkids(1).data(5).legend_entry),...
                 char(f(6).grandkids(1).data(1).legend_entry),...
-                0);
+                'best');
 set(fleg,'Interpreter','latex','FontSize',16)
-%% flashing_semilogy_res_compare_lin.eps
-figure(17)
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
+%% lin_flashing_semilogy_res_compare.eps
+file_name = 'lin_flashing_semilogy_res_compare.eps';
+fig_id = 17;
+figure(fig_id)
 semilogy(   f(5).grandkids(1).data(5).time, f(5).grandkids(1).data(5).var,'-k',...
             f(5).grandkids(1).data(1).time, f(5).grandkids(1).data(1).var,':k'...
         )
-axis([0 5 1e-8 1])
+axis([0 5 1e-12 1])
 ylabel('$\frac{||\mathbf{F}(\mathbf{x}^{1})||_2}{N}$ [-]','Interpreter','latex','FontSize',16)
 xlabel('Time [s]','Interpreter','latex','FontSize',16)
 fleg = legend(  char(f(5).grandkids(1).data(5).legend_entry),...
                 char(f(5).grandkids(1).data(1).legend_entry),...
-                0);
+                'best');
 set(fleg,'Interpreter','latex','FontSize',16)
-%% single_semilogy_res_v_dt_nl.eps
-figure(18)
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
+%% nln_single_semilogy_res_v_dt.eps
+file_name = 'nln_single_semilogy_res_v_dt.eps';
+fig_id = 18;
+figure(fig_id)
 semilogy(   f(8).grandkids(1).data(6).time,f(8).grandkids(1).data(6).var,'-ok',...
             f(8).grandkids(1).data(5).time,f(8).grandkids(1).data(5).var,'-*k',...
             f(8).grandkids(1).data(4).time,f(8).grandkids(1).data(4).var,': k', ...
@@ -300,7 +399,7 @@ semilogy(   f(8).grandkids(1).data(6).time,f(8).grandkids(1).data(6).var,'-ok',.
             f(8).grandkids(1).data(2).time,f(8).grandkids(1).data(2).var,'--k',...
             f(8).grandkids(1).data(1).time,f(8).grandkids(1).data(1).var,'- k' ...
             )
-axis([0 5 1e-8 1])
+axis([0 5 1e-12 1])
 ylabel('$\frac{||\mathbf{F}(\mathbf{x}^{k})||_2}{N}$ [-]','Interpreter','latex','FontSize',16)
 xlabel('Time [s]','Interpreter','latex','FontSize',16)
 fleg = legend(  char(f(8).grandkids(1).data(6).legend_entry),...
@@ -308,10 +407,16 @@ fleg = legend(  char(f(8).grandkids(1).data(6).legend_entry),...
                 char(f(8).grandkids(1).data(4).legend_entry),...
                 char(f(8).grandkids(1).data(3).legend_entry),...
                 char(f(8).grandkids(1).data(2).legend_entry),...
-                char(f(8).grandkids(1).data(1).legend_entry),0);
+                char(f(8).grandkids(1).data(1).legend_entry),...
+                'best');
 set(fleg,'Interpreter','latex','FontSize',16)
-%% single_semilogy_res_v_dt_lin.eps
-figure(19)
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
+%% lin_single_semilogy_res_v_dt.eps
+file_name = 'lin_single_semilogy_res_v_dt.eps';
+fig_id = 19;
+figure(fig_id)
 semilogy(   f(7).grandkids(1).data(6).time,f(7).grandkids(1).data(6).var,'-ok',...
             f(7).grandkids(1).data(5).time,f(7).grandkids(1).data(5).var,'-*k',...
             f(7).grandkids(1).data(4).time,f(7).grandkids(1).data(4).var,': k', ...
@@ -319,7 +424,7 @@ semilogy(   f(7).grandkids(1).data(6).time,f(7).grandkids(1).data(6).var,'-ok',.
             f(7).grandkids(1).data(2).time,f(7).grandkids(1).data(2).var,'--k',...
             f(7).grandkids(1).data(1).time,f(7).grandkids(1).data(1).var,'- k'  ...
             )
-axis([0 5 1e-8 1])
+axis([0 5 1e-12 1])
 ylabel('$\frac{||\mathbf{F}(\mathbf{x}^{1})||_2}{N}$ [-]','Interpreter','latex','FontSize',16)
 xlabel('Time [s]','Interpreter','latex','FontSize',16)
 fleg = legend(  char(f(7).grandkids(1).data(6).legend_entry),...
@@ -327,5 +432,10 @@ fleg = legend(  char(f(7).grandkids(1).data(6).legend_entry),...
                 char(f(7).grandkids(1).data(4).legend_entry),...
                 char(f(7).grandkids(1).data(3).legend_entry),...
                 char(f(7).grandkids(1).data(2).legend_entry),...
-                char(f(7).grandkids(1).data(1).legend_entry),0);
+                char(f(7).grandkids(1).data(1).legend_entry),...
+                'best');
 set(fleg,'Interpreter','latex','FontSize',16)
+
+orient(fig_id, orientation)
+saveas(fig_id, file_name, print_driver)
+%%
