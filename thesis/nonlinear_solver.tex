@@ -1,32 +1,28 @@
 \chapter{Nonlinear Solver}
 \label{chap:nln_solver}
-As preliminary work, several steps were taken to evaluate the validity of the proposed research.
 In order to determine the effects of nonlinear convergence upon the timestep size insensitivity of a solution, the \cobra{} software was modified to enable an iterative global Newton's method.
-A metric was developed for the evaluation of the nonlinear convergence of a timestep.
-To aid in the development of the nonlinear convergence metric and the nonlinear solver, a novel operator-based scaling has been developed to obtain meaningful convergence thresholds.
-The scaling of the nonlinear residual is typically done in an arbitrary fashion; a scaling factor that is intrinsically linked to the physics of interest was developed.
-This scaling produces a nondimensionalized residual whose magnitude is relative to the physical sources and sinks on a per equation basis. 
-Two temporal convergence test 	problems were developed to show that the nonlinear convergence metric can identify situations where a timestep size insensitive simulation may not satisfy the discrete nonlinear equations.
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Nonlinear \cobra{} Implementation}
-\label{sect:nln_solver:cobra}  
-The first stage of the preliminary work was to modify the \cobra{} software.
-As obtained, the \cobra{} software used a single-shot linearization  of the semi-implicit method.
-In order to evaluate the subdomain nonlinear refinement algorithm, \cobra{} was converted to include a fully iterative Newton solver based upon a line search globalization strategy.
+As part of the \cobra{} modification a novel operator-based scaling has been developed to obtain meaningful convergence thresholds.
+The first stage of work was to modify the \cobra{} software.
+As obtained, the \cobra{} software used a single-shot linearization of the semi-implicit method.
+In order to evaluate the subdomain nonlinear refinement algorithm, \cobra{} ndeeded to be modified to include a fully iterative Newton solver based upon a line search globalization strategy.
 When it is necessary to distinguish between the single-shot linearization algorithmic implementation of \cobra{} and the iterative nonlinear \cobra{} implementation, the former shall be referred to as the linear solver and the latter as the nonlinear solver.
 As such, the \cobra{} software needed to be modified to be able do the following:
 
 \begin{itemize}
 \item{Create a data framework for constructing vector quantities such as $\vec{x}^{k}$ and $\vec{F}$.}
 \item{Correctly evaluate $\vec{F}(\vec{x}^{k})$ and $\vec{J}(x^{k})$.}
+\item{Develop proper scaling of $\vec{F}(\vec{x}^{k})$.}
 \item{Implement a globalization strategy for Newton's method.}
 \end{itemize}
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Data Conversion}
+\label{subsect:nln_conversion}
 
 \cobra{} utilized a single-shot linearization for its solution technique.
 As a result of that design decision, memory saving techniques were employed in the construction of the software that precluded more than one Newton step.
@@ -127,7 +123,7 @@ While adding time to the development cycle, the overhead of the quality assuranc
 %--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Operator-Based Scaling}
 \label{sect:nln_solver:os}
-In order to determine the degree to which a state vector, $\vec{x}$, satisfies the governing PDEs, \eqref{eqn:conservation_equations}, the use of the nonlinear residual is required.
+In order to determine the degree to which a state vector, $\vec{x}$, satisfies the governing PDEs, \eqref{eqn:conservation_equations}, the use of the nonlinear residual, $\vec{F})(\vec{x})$, is required.
 Due to the units of the residuals for the different conservation equations, the values of the residuals can vary by orders of magnitude.
 For a given continuity volume, the nonlinear residual will have six components: four for the conservation of mass and two for the conservation of energy.
 For each momentum volume, the three conservation of momentum equations will form the three components of the nonlinear residual.
