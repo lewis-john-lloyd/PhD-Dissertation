@@ -1,10 +1,217 @@
-\chapter{Nonlinear Solver}
+\chapter{Nonlinear \cobra{}}
 \label{chap:nln_solver}
-In order to determine the effects of nonlinear convergence upon the timestep size insensitivity of a solution, the \cobra{} software was modified to enable an iterative global Newton's method.
-As part of the \cobra{} modification a novel operator-based scaling has been developed to obtain meaningful convergence thresholds.
-The first stage of work was to modify the \cobra{} software.
+The basic \cobra{} software utilized the traditional single Newton step of the semi-implicit method.
+In order to investigate the effects of nonlinear convergence upon the determination of the temporal convergence for a given solution, \cobra{} was modified to enable an iterative global Newton's method.
+Several algorithmic problems were identified and resolved during this work.
+For effective use of the nonlinear solver, a meaningful convergence metric was required for termination of the Newton solver.
+A physics based scaling method was developed to provide a physically meaningful convergence metric.
+To aid in the identification of temporally converged converged solutions, a metric was developed.
+
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+\section{Linear Solution Algorithm}
+\label{sect:lin_cobra_alg}
+
+\cobra{} utilizes the semi-implicit method as outlined in \sect{subsect:semi_implicit}.
+A detailed description of the solution algorithm as implemented will be presented in the following section.
+First, the exact discrete algebraic equations will be laid out in pedantic detail because this seems to be standard practice.
+The momentum equations, neglecting spatial discretization notation and external sources, are given in \eqref{eqn:si_mom_liq} -- \eqref{eqn:si_mom_ent}.
+
+\begin{IEEEeqnarray}{rCl}
+\label{eqn:si_mom_liq}
+\dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{NK} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)^{n}
+ -\alpha^{n}_l \nabla P^{n+1} + (\alpha_l \rho_l)^{n} g - K^{n}_{wl}(\dot{m}_l^{n+1})^2 \right. \nonumber \\
+ & + & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2 - ((1 - \eta)\Gamma u^{'})^{n} - (S u^{'})^{n}\vphantom{\sum_{NK}}\right) \\
+\label{eqn:si_mom_gas}
+\dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{NK} \left( (\alpha_g \rho_g u_g) u_g  \cdot \vec{\bar{A}}\right)^{n}  -\alpha^{n}_g \nabla P^{n+1} + (\alpha_g \rho_g)^{n} g - K^{n}_{wg}(\dot{m}_g^{n+1})^2 \right.\nonumber \\
+& - & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2 -K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 + (\Gamma u^{'})^{n}\vphantom{\sum_{NK}}\right) \\
+\label{eqn:si_mom_ent}
+\dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{NK} \left( (\alpha_e \rho_l u_e) u_e  \cdot \vec{\bar{A}}\right)^n -\alpha^{n}_e \nabla P^{n+1} + (\alpha_e \rho_l)^{n} g - K^{n}_{we}(\dot{m}_e^{n+1})^2\right. \nonumber \\
+&+& \left. K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 - (\eta \Gamma u^{'})^{n} + (S u^{'})^n\vphantom{\sum_{NK}}\right)
+\end{IEEEeqnarray}
+
+In the above equations the flux terms are summed over $NK$, which indicates the number of continuity volumes connected to a given momentum volume.
+The coefficients $K$ represent effective friction factors calculated using parameters only from time n.
+The interfacial transfer terms are explicitly evaluated.
+The only new-time parameters used in \eqref{eqn:si_mom_liq} -- \eqref{eqn:si_mom_ent} are momenta and pressures.
+The continuity equations used in this work, omitting external sources, are shown in \eqref{eqn:si_mass_ncg} -- \eqref{eqn:si_nrg_liq}.
+
+\begin{IEEEeqnarray}{rCl}
+\label{eqn:si_mass_ncg}
+V_c (\alpha_g \rho_{n})^{n+1} & - & V_c (\alpha_g \rho_{n})^{n} = -\Delta t \sum_{NK}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) \\
+\label{eqn:si_mass_vap}
+V_c \left(\alpha_g \rho_v \right)^{n+1} &-& V_c \left(\alpha_g \rho_v \right)^{n} = - \Delta t \sum_{NK} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) + \Delta t \Gamma^{n+1} \\
+\label{eqn:si_mass_liq}
+V_c \left(\alpha_l \rho_l \right)^{n+1} & - & V_c \left(\alpha_l \rho_l \right)^{n} =  -\Delta t \sum_{NK}\left( \don{\alpha^n_l \rho^n_l}^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right) \nonumber \\
+&- &\Delta t\left[(1-\eta)\Gamma + S \right]^{n+1} \\
+\label{eqn:si_mass_ent}
+V_c \left(\alpha_e \rho_l \right)^{n+1} & - & V_c \left(\alpha_e \rho_l \right)^{n} = -\Delta t \sum_{NK}\left( \don{\alpha^{n}_e \rho^{n}_l}^{n}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right)\nonumber \\ 
+&+& \Delta t\left[ S -\eta\Gamma \right]^{n+1} \\
+\label{eqn:si_nrg_gas}
+V_c \left( \alpha_g \{\rho_g h_g\} \right)^{n+1} & - & V_c \left( \alpha_g \{\rho_g h_g\} \right)^{n}  = -\Delta t \sum_{NK} \left(  \don{\alpha^{n}_g \{\rho_g h_g\}^{n}}^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) \nonumber \\
+&+& \Delta t \left[\Gamma h^{'}_v + q_{i,v} + q_{gl} + q_{wg} \right]^{n+1} + V_c \alpha^{n}_g ( P^{n+1} - P^{n} ) \\
+\label{eqn:si_nrg_liq}
+V_c\left( \alpha_l \rho_l h_l \right)^{n+1} & - & V_c\left( \alpha_l \rho_l h_l \right)^{n} =  -\Delta t \sum_{NK} \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n}_{d} u^{n+1}_l \cdot \vec{\bar{A}} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right) \nonumber \\
+& +& \Delta t \left[q_{wl} -\Gamma h^{'}_l +  q_{i,l} - q_{gl}\right]^{n+1} + V_c \alpha^{n}_l (P^{n+1} - P^{n})
+\end{IEEEeqnarray}
+
+\alg{alg:si_legacy} shows the traditional algorithm.
+Due to the nature of the semi-implicit method, step 5 of \alg{alg:si_legacy} requires additional details.
+The linear algebra problem to be solved during step 5 is presented in \eqref{eqn:si_solve} for a simply connected problem with three continuity volumes and three momentum volumes.
+
+ \begin{equation}
+ \label{eqn:si_solve}
+ \begin{bmatrix} 
+ \vec{J}_{m_1} & \vec{J}_{m_1,c_1} & \vec{0} & \vec{0} & \vec{0} & \vec{0}\\
+ \vec{J}_{c_1,m_1} & \vec{J}_{c_1} & \vec{J}_{c_1,m_2} & \vec{0} & \vec{0} & \vec{0} \\
+ \vec{0} & \vec{J}_{m_2,c_1} & \vec{J}_{m_2} & \vec{J}_{m_2,c_2} & \vec{0} & \vec{0} \\
+ \vec{0} & \vec{0} & \vec{J}_{c_2,m_2} & \vec{J}_{c_2} & \vec{J}_{c_2,m_3} & \vec{0} \\
+ \vec{0} & \vec{0} & \vec{0} & \vec{J}_{m_3,c_2} & \vec{J}_{m_3} & \vec{J}_{m_3,c_3} \\ 
+ \vec{0} & \vec{0} & \vec{0} & \vec{0} & \vec{J}_{c_3,m_3} & \vec{J}_{c_3}  
+ \end{bmatrix} \begin{bmatrix}
+ \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
+ \vec{\delta m}_{2} \\ \vec{\delta c}_{2} \\
+ \vec{\delta m}_{3} \\ \vec{\delta c}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+ \vec{F}_{m_1} \\ \vec{F}_{c_1} \\
+ \vec{F}_{m_2} \\ \vec{F}_{c_2} \\
+ \vec{F}_{m_3} \\ \vec{F}_{c_3} \end{bmatrix}
+ \end{equation}
+ 
+ The semi-implicit solution framework is composed of five steps.
+ First, the momentum volume equations, rows one, three, and five of the linear system \eqref{eqn:si_solve}, are multiplied by their inverse diagonal Jacobian entries, $\vec{J}_{m_k}$.
+ The off-diagonal entries for the momentum equations are now $\vec{J}^{-1}_{m_k}\vec{J}_{m_k,c_j}$ where $j$ is the index of the connected continuity volumes.
+ Since the $J_{m_k,c_j}$ terms only contain derivatives with respect to the pressure for the adjoining continuity volumes, the [3 x 6] matrix product $\vec{J}^{-1}_{m_k}\vec{J}_{m_k,c_j}$ will be referred to as $\frac{\partial \vec{m}_k}{\partial P_j}$.
+ This product matrix only contains entries in the sixth column.
+ Using the above notation, the resulting system is given in \eqref{eqn:si_solve_1}.
+ 
+  \begin{equation}
+ \label{eqn:si_solve_1}
+ \begin{bmatrix} 
+ \vec{I} & \frac{\partial \vec{m}_1}{\partial P_1} & \vec{0} & \vec{0} & \vec{0} & \vec{0}\\
+ \vec{J}_{c_1,m_1} & \vec{J}_{c_1} & \vec{J}_{c_1,m_2} & \vec{0} & \vec{0} & \vec{0} \\
+ \vec{0} & \frac{\partial \vec{m}_2}{\partial P_1} & \vec{I} & \frac{\partial \vec{m}_2}{\partial P_2} & \vec{0} & \vec{0} \\
+ \vec{0} & \vec{0} & \vec{J}_{c_2,m_2} & \vec{J}_{c_2} & \vec{J}_{c_2,m_3} & \vec{0} \\
+ \vec{0} & \vec{0} & \vec{0} & \frac{\partial \vec{m}_{3}}{\partial P_2} & \vec{I} & \frac{\partial \vec{m}_{3}}{\partial P_3} \\ 
+ \vec{0} & \vec{0} & \vec{0} & \vec{0} & \vec{J}_{c_3,m_3} & \vec{J}_{c_3}  
+ \end{bmatrix} \begin{bmatrix}
+ \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
+ \vec{\delta m}_{2} \\ \vec{\delta c}_{2} \\
+ \vec{\delta m}_{3} \\ \vec{\delta c}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+ \vec{J}^{-1}_{m_1}\vec{F}_{m_1} \\ \vec{F}_{c_1} \\
+ \vec{J}^{-1}_{m_2}\vec{F}_{m_2} \\ \vec{F}_{c_2} \\
+ \vec{J}^{-1}_{m_3}\vec{F}_{m_3} \\ \vec{F}_{c_3} \end{bmatrix}
+ \end{equation}
+
+Second, the momentum equations are used to eliminate the $\vec{J}_{c_k,m_k}$ entries from the continuity volumes.
+The resulting equation set, \eqref{eqn:si_solve_2}, no longer has equations for the momentum volumes.
+
+\begin{IEEEeqnarray}{rl}
+\label{eqn:si_solve_2}
+\begin{bmatrix} 
+\vec{J}_{c_1} - \vec{J}_{c_1,m_1}\frac{\partial \vec{m}_1}{\partial P_1} - \vec{J}_{c_1,m_2}\frac{\partial \vec{m}_2}{\partial P_1} &
+-\vec{J}_{c_1,m_2}\frac{\partial \vec{m}_2}{\partial P_2} &
+\vec{0} \\
+-\vec{J}_{c_2,m_2}\frac{\partial \vec{m}_2}{\partial P_1} & 
+\vec{J}_{c_2} - \vec{J}_{c_2,m_2}\frac{\partial \vec{m}_2}{\partial P_2}-\vec{J}_{c_2,m_3}\frac{\partial \vec{m}_3}{\partial P_2} &
+-\vec{J}_{c_2,m_3}\frac{\partial \vec{m}_3}{\partial P_3} \\
+ \vec{0} &
+-\vec{J}_{c_3,m_3}\frac{\partial \vec{m}_3}{\partial P_2} &
+\vec{J}_{c_3} -\vec{J}_{c_3,m_3}\frac{\partial \vec{m}_3}{\partial P_3} 
+\end{bmatrix} &\begin{bmatrix}
+\vec{\delta c}_{1} \\
+\vec{\delta c}_{2} \\
+\vec{\delta c}_{3}
+\end{bmatrix} \nonumber \\
+ = -\begin{bmatrix}
+\vec{F}_{c_1} -
+\vec{J}_{c_1,m_1}\vec{J}^{-1}_{m_1}\vec{F}_{m_1}-\vec{J}_{c_1,m_2}\vec{J}^{-1}_{m_2}\vec{F}_{m_2} \\
+\vec{F}_{c_2} - 
+\vec{J}_{c_2,m_2}\vec{J}^{-1}_{m_2}\vec{F}_{m_2}-\vec{J}_{c_2,m_3}\vec{J}^{-1}_{m_3}\vec{F}_{m_3} \\
+\vec{F}_{c_3} - 
+\vec{J}_{c_3,m_3}\vec{J}^{-1}_{m_3}\vec{F}_{m_3}
+\end{bmatrix} &
+ \end{IEEEeqnarray}
+
+The off-diagonal entries of the reduced Jacobian matrix in \eqref{eqn:si_solve_2}, $\vec{J}_{c_i,m_j}\frac{\partial \vec{m}_j}{\partial P_k}$ will be denoted by $\vec{C}_{c_i,P_j}$ as they represent the change in the continuity variables in volume $i$ due to the change in the pressure of continuity volume $j$.
+The [6 x 6] matrix, $\vec{C}_{c_i,P_j}$, contains only entries in the last column, which correspond to the inter-continuity pressure coupling terms.
+The diagonal entries of the reduced Jacobian and the right-hand side entries will be referred to as $\vec{J}^{*}_{c_i}$ and $\vec{F}^{*}_{c_i}$.
+With this new nomenclature, \eqref{eqn:si_solve_2} can be restated as \eqref{eqn:si_solve_3}.
+
+  \begin{equation}
+ \label{eqn:si_solve_3}
+ \begin{bmatrix} 
+ \vec{J}^{*}_{c_1} & \vec{C}_{c_1,P_2} & \vec{0} \\
+ \vec{C}_{c_2,P_1} & \vec{J}^{*}_{c_2} & \vec{C}_{c_2,P_3} \\
+ \vec{0}           & \vec{C}_{c_3,P_2} & \vec{J}^{*}_{c_3}
+ \end{bmatrix} \begin{bmatrix}
+ \vec{\delta c}_{1} \\
+ \vec{\delta c}_{2} \\
+ \vec{\delta c}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+ \vec{F}^{*}_{c_1} \\
+ \vec{F}^{*}_{c_2} \\
+ \vec{F}^{*}_{c_3}
+\end{bmatrix}
+ \end{equation}
+
+Step three is to multiply each row by the $\vec{L}^{-1}_{c_i}$ portion of the LU decomposition without pivoting of $\vec{J}^{*}_{c_i}$, \eqref{eqn:si_solve_4}
+
+  \begin{equation}
+ \label{eqn:si_solve_4}
+ \begin{bmatrix} 
+ \vec{U}^{*}_{c_1} & \vec{L}^{-1}_{c_1}\vec{C}_{c_1,P_2} & \vec{0} \\
+ \vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_1} & \vec{U}^{*}_{c_2} & \vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_3} \\
+ \vec{0}           & \vec{L}^{-1}_{c_3}\vec{C}_{c_3,P_2} & \vec{U}^{*}_{c_3}
+ \end{bmatrix} \begin{bmatrix}
+ \vec{\delta c}_{1} \\
+ \vec{\delta c}_{2} \\
+ \vec{\delta c}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+ \vec{L}^{-1}_{c_1}\vec{F}^{*}_{c_1} \\
+ \vec{L}^{-1}_{c_2}\vec{F}^{*}_{c_2} \\
+ \vec{L}^{-1}_{c_3}\vec{F}^{*}_{c_3}
+\end{bmatrix}
+ \end{equation}
+ 
+By isolating the last row from each continuity block and dividing that row by its diagonal entry, a resulting matrix for the pressure update in every continuity volume is obtained, \eqref{eqn:si_pressure_matrix}. 
+For a problem with $N$ continuity volumes, the resulting pressure matrix, \eqref{eqn:si_pressure_matrix}, will be $N$ x $N$.
+For the simple geometry considered in this example, the resultant pressure matrix is a tridiagonal matrix.
+However, this is not the case for more complex geometries.
+
+  \begin{equation}
+ \label{eqn:si_pressure_matrix}
+ \begin{bmatrix} 
+ 1 & \frac{\vec{L}^{-1}_{c_1}\vec{C}_{c_1,P_2}[6]}{\vec{U}^{*}_{c_1}[6]} & \vec{0} \\
+ \frac{\vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_1}[6]}{\vec{U}^{*}_{c_2}[6]} & 1 & \frac{\vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_3}[6]}{\vec{U}^{*}_{c_2}[6]} \\
+ \vec{0}           & \frac{\vec{L}^{-1}_{c_3}\vec{C}_{c_3,P_2}[6]}{\vec{U}^{*}_{c_3}[6]} & 1
+ \end{bmatrix} \begin{bmatrix}
+ \vec{\delta P}_{1} \\
+ \vec{\delta P}_{2} \\
+ \vec{\delta P}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+ \frac{\vec{L}^{-1}_{c_1}\vec{F}^{*}_{c_1}[6]}{\vec{U}^{*}_{c_1}[6]} \\
+ \frac{\vec{L}^{-1}_{c_2}\vec{F}^{*}_{c_2}[6]}{\vec{U}^{*}_{c_2}[6]} \\
+ \frac{\vec{L}^{-1}_{c_3}\vec{F}^{*}_{c_3}[6]}{\vec{U}^{*}_{c_3}[6]}
+\end{bmatrix}
+ \end{equation}
+
+In step four, the pressure matrix is then solved for the pressure updates in every continuity volume.
+This step is performed using either the sparse-matrix solver, SuperLU \cite{Li1999} or direct Gaussian elimination. 
+
+Step five is to use the vector of pressure updates to obtain the continuity updates in every volume from \eqref{eqn:si_solve_4} and to obtain the updates for the momentum variables from the momentum rows of \eqref{eqn:si_solve_1}.
+
+This five-step process provides an overview of the solution technique of the semi-implicit method used in \cobra{}.
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+\section{Nonlinear Solution Algorithm}
+\label{sect:nln_cobra_alg}
 As obtained, the \cobra{} software used a single-shot linearization of the semi-implicit method.
-In order to evaluate the subdomain nonlinear refinement algorithm, \cobra{} ndeeded to be modified to include a fully iterative Newton solver based upon a line search globalization strategy.
+In order to evaluate the subdomain nonlinear refinement algorithm, \cobra{} needed to be modified to include a fully iterative Newton solver based upon a line search globalization strategy.
+As part of the \cobra{} modification a novel operator-based scaling has been developed to obtain meaningful convergence thresholds.
 When it is necessary to distinguish between the single-shot linearization algorithmic implementation of \cobra{} and the iterative nonlinear \cobra{} implementation, the former shall be referred to as the linear solver and the latter as the nonlinear solver.
 As such, the \cobra{} software needed to be modified to be able do the following:
 
@@ -14,15 +221,70 @@ As such, the \cobra{} software needed to be modified to be able do the following
 \item{Develop proper scaling of $\vec{F}(\vec{x}^{k})$.}
 \item{Implement a globalization strategy for Newton's method.}
 \end{itemize}
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Data Conversion}
-\label{subsect:nln_conversion}
+
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+\section{Algorithmic Considerations}
+\label{sect:nln_algo_con}
+
+The methods outlined in \sect{sect:solution_techniques} have several algorithmic issues that need to be addressed.
+Among these issues are phase appearance and disappearance (hereafter referred to as phase transition), timestep solution acceptance criteria, and timestep size selection.
+
+Given that the governing conservation laws in thermal-hydraulic analyses are those of two-phase flow, phase transition is integral to accurate simulations.
+The methods for addressing phase transitions within two-phase analysis software are ad hoc procedures that vary from software to software.
+While each algorithmic implementation of the various methods addresses this issue out of necessity, there is no systematic or optimal way of doing so.
+However, certain physical limits have been identified that need to be considered \cite{Bestion2000}.
+
+When the two-phase flow within \cobra{} approaches that of single-phase flow, there is a lower limit imposed upon the volume fraction of the phase that is disappearing.
+This means that \cobra{} does not transition between the two-phase flow governing equations and the governing equations for single-phase flow.
+Even during simulated single-phase flow, the non-dominant phase is still present, but it is at a very small volume fraction.
+However, since the \ncgs{} and the vapor fields share a common volume fraction, the partial pressure of the \ncgs{} is allowed to go to zero. 
+Since \cobra{} incorporates two liquid fields, the lower limit for the aggregate liquid volume fraction, $\alpha_e + \alpha_l$, is equally divided between the two liquid fields.
+As a phase approaches depletion, $\alpha_k \rightarrow \alpha_{k,\text{MIN}}$, the velocity of the depleting phase is required to approach that of the remaining phase.
+This velocity equilibrium is imposed by artificially increasing the interfacial drag between the two phases.
+
+Upon completion of a timestep within \cobra{}, there are certain constraints that are imposed upon the independent parameters.
+These constraints are designed to deal with the possibility that the obtained solution may not be an accurate one.
+After the single Newton step, the updated parameters are evaluated to determine their validity.
+There are two ways of resolving potentially invalid solutions: parameter limiting and timestep failure.
+The limiting procedure can either truncate the updated parameter so that it falls within a valid range, or the timestep can be considered a failure.
+When a predicted volume fraction falls outside of its valid range, it is truncated to obey the constraint of equation \eqref{eqn:volume_fraction}.
+
+\begin{equation}
+\label{eqn:volume_fraction}
+\alpha_{k,\text{min}} \leq \alpha_k \leq \alpha_{k,\text{max}} 
+\end{equation}
+
+There are also limits placed upon the changes of the thermodynamic parameters within a timestep in \cobra{}.
+The constrained thermodynamic parameters and the limits imposed upon their per-timestep changes are listed below.
+
+\begin{itemize}
+\item{Change of phasic enthalpy cannot be greater than 45 [$\frac{\text{BTU}}{\lbm{}}$].}
+\item{Change in pressure cannot be greater than 20 [psia].}
+\item{Change in partial pressure of the \ncg{} field cannot be greater than 20 [psia].}
+\item{Thermodynamic variables would fall outside of the range of validity of the equations of state.}
+\end{itemize}
+
+The first three limits are an attempt to mitigate an initial guess that may be outside of the Newton step's radius of convergence.
+If any of the above limits are exceeded, the timestep is considered a failure and is repeated with a smaller timestep size.
+
+Another algorithmic concern is how to identify a potentially poor linearization point in the presence of phase transitions. 
+This can be considered a predictive error correction technique.
+It uses information from the explicit portion of the nonlinear residual to identify situations where the linearization point may be poor.
+In \cobra{} this method is used only for the prediction of \ncg{} appearance.
+
+To determine the \dt{} at each timestep \cobra{} uses an adaptive timestep selection algorithm.
+This algorithm is based upon a maximum permissible timestep based upon the material Courant limit.
+The \dt{} for any timestep is given by \eqref{eqn:time_step}.
+
+\begin{equation}
+\label{eqn:time_step}
+\Delta t^{n \rightarrow n+1} = \max\left[ \Delta t_{\text{MIN}}, \min\left[1.2 \Delta t^{n-1 \rightarrow n}, 0.85 \Delta t_{\text{CRNT}}, \Delta t_{\text{MAX}} \right]\right]
+\end{equation}
+
+$\Delta t_{\text{CRNT}}$ is the most restrictive Courant number calculated for both axial and transverse flow, and a \dt{} that is based upon the time calculated to empty a given volume of the mass of a given field.
+The most restrictive of the Courant timestep is used as $\Delta t^{n \rightarrow n+1}$.
 
 \cobra{} utilized a single-shot linearization for its solution technique.
 As a result of that design decision, memory saving techniques were employed in the construction of the software that precluded more than one Newton step.
@@ -114,15 +376,11 @@ As such, it was required that the backup capabilities continued to work while no
 Additionally, testing was done to ensure that the ability to restart the software mid-simulation was unaffected.
 While adding time to the development cycle, the overhead of the quality assurance procedures ensured that the linear solver could continue to be used for design purposes.
 
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 \section{Operator-Based Scaling}
-\label{sect:nln_solver:os}
+\label{sect:nln_scaling}
 In order to determine the degree to which a state vector, $\vec{x}$, satisfies the governing PDEs, \eqref{eqn:conservation_equations}, the use of the nonlinear residual, $\vec{F})(\vec{x})$, is required.
 Due to the units of the residuals for the different conservation equations, the values of the residuals can vary by orders of magnitude.
 For a given continuity volume, the nonlinear residual will have six components: four for the conservation of mass and two for the conservation of energy.
@@ -191,6 +449,9 @@ This drove the scaled residuals for phases that were nominally not present to ze
 The original coding of \cobra{} has a minimum volume fraction of $\alpha_{k,\text{MIN}}$ = 1.0E-6.
 For the work performed here, that value was reduced to $\alpha_{k,\text{MIN}}$ = 1.0E-9.
 
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 \section{Convergence Metric}
 \label{sect:temporal_convergence}
 
@@ -221,7 +482,7 @@ In practice, the timestep size insensitivity of a solution is often interpreted 
 This apparent temporal convergence, or timestep size insensitivity, of the solution may not be a result of reaching the solution to the discretized nonlinear equations, but instead could be indicative of the degraded order of accuracy due to the failure to resolve the nonlinearities at each timestep.
 To determine if the timestep size insensitive transient solution is both timestep size insensitive and an accurate solution to the nonlinear problem, it is necessary to examine the nonlinear convergence of the system as an issue separate from the temporal-convergence.
 
-The norm of the scaled residual from \sect{sect:nln_solver:os} provides a well-scaled metric for instantaneous nonlinear convergence at any given time in the simulation.
+The norm of the scaled residual from \sect{sect:nln_scaling} provides a well-scaled metric for instantaneous nonlinear convergence at any given time in the simulation.
 The residual vector norm is divided by the number of equations in the residual to provide an average residual value per equation.
 This equation-averaged scaled residual provides a metric for determining the degree of nonlinear convergence at any timestep in the simulation.
 The natural extension of this metric to transient problems would be a temporal integral, \eqref{eqn:trans_res_simple}, of said norm.
@@ -248,240 +509,3 @@ However, this moment has the disadvantage of weighting the latter portion of the
 \label{eqn:trans_res_mom}
 \tilde{R}_{\text{M}} = \frac{\int_{t^{0}}^{t^{N}} \,\tau\,||\vec{F}(\tau)||_2 \,\mathrm{d} \tau}{\int_{t^{0}}^{t^{N}} \,\tau \,\mathrm{d} \tau}
 \end{equation}
-
-\section{Illustrative Problems}
-\label{sect:nln_solver:illustrative}
-
-Two test problems were developed to illustrate the effectiveness of the nonlinear solver and the operator based scaling.
-
-\subsection{Geometry}
-\label{subsect:experimental_geometry}
-For both of the test problems, the same computational geometry was used;  \fig{fig:exp_geometry} represents the experimental geometry.
-Each block represents a single continuity cell with a height of 4 [in].
-The total height of the channel is 48 [in].
-Each continuity cell has a cross-sectional area of 4 [in$^2$].
-The red block at the top of the channel represents a boundary cell where the pressure and enthalpy are specified.
-It represents an infinite reservoir filled with a fluid at a specified thermodynamic state.
-The red triangle represents a specified flow at the bottom edge of the first continuity cell. 
-
-\begin{figure}[h!t]
-\centering
-\input{images/scaling_test_problem_geometry}
-\caption{Geometry for test problems.}
-\label{fig:exp_geometry}
-\end{figure}
-
-\subsection{Initial and Boundary Conditions}
-\label{subsect:ic_bc}
-
-The two problems, while having the same geometry, are different in their dominant physics.
-One problem was designed to simulate single-phase, single-field continuous liquid flow in a standpipe.
-This problem will be referred to as the single-phase problem.
-The second problem was designed such that high-pressure liquid flashes into steam as it enters a standpipe initially filled with saturated vapor at a much lower pressure, known hereafter as the flashing problem.
-
-Table \ref{tab:ic} provides the initial conditions for the two problems.
-The pressure, enthalpy, and volume-fractions for the different fields allow for a complete description of the continuity variables.
-The initial velocities are set to zero.
-
-\begin{table}[ht]
-\centering
-\input{tables/nln_ic}
-\caption{Initial conditions for test problems.}
-\label{tab:ic}
-\end{table}
-
-Each of the problems has a specified pressure-enthalpy boundary condition at the top of the stand pipe and a flow-enthalpy boundary condition at the inlet of the domain.
-Table \ref{tab:bc_pe} contains the pressure, enthalpy, and composition of the pressure-enthalpy reservoir. 
-
-\begin{table}[h!t]
-\centering
-\input{tables/nln_bc_outflow}
-\caption{The pressure-enthalpy outlet boundary conditions for test problems.}
-\label{tab:bc_pe}
-\end{table}
-
-The flow-enthalpy boundary condition describes the thermodynamic state of the inflowing fluid and its flow rate.
-Table \ref{tab:bc_fe} describes the inlet boundary condition for the two problems.
-
-\begin{table}[ht]
-\centering
-\input{tables/nln_bc_inflow}
-\caption{The flow-enthalpy inlet boundary conditions for test problems.}
-\label{tab:bc_fe}
-\end{table}
-
-The specified mass flow, $\dot{m}(t)$, at the bottom of the channels is the same for both problems. 
-This time-dependent function is given by \eqref{eqn:bc_time_func_single}.
-
-\begin{equation}
-\label{eqn:bc_time_func_single}
-\dot{m}(t) = \left\{
-\begin{array}{cclrcll}
- 0.0           & [\frac{ \lbm{} }{\text{s}}] & , &                & t & \leq 1 & [\text{s}] \\
- 0.5 ( t - 1)  & [\frac{ \lbm{} }{\text{s}}] & , & 1\; [\text{s}] < & t & \leq 2 & [\text{s}] \\
- 0.5           & [\frac{ \lbm{} }{\text{s}}] & , &                & t & > 2    & [\text{s}]
-\end{array}\right.
-\end{equation}
-
-Both problems adjust their initial pressure distribution to account for hydrostatic head, which is not specified in the input files.
-The \cobra{} input files for both problems can be found in \app{app:input_decks}.
-
-\subsection{Procedure}
-\label{subsect:procedures}
-
-The two problems were set up so that the maximum allowable timestep was varied.
-Each problem was run with the following maximum allowable timesteps: 1 [s], 0.1 [s], 0.01 [s], 0.001 [s], 0.0001 [s], and 0.00001 [s]. 
-For the linear runs, the scaled residuals were evaluated after a single Newton step, $\vec{F}(\vec{x}^{1})$.
-For the nonlinear runs, the scaled nonlinear residuals were evaluated at the end of the Newton-loop.
-The nonlinear convergence criteria used in the nonlinear solver are described in \sect{sect:nln_solver:cobra}.
-The temporal convergence metric was evaluated during post-processing.
-In total, there were twenty-four simulations run.
-The two different problems were each run at six different maximum timestep sizes on each of the two versions of \cobra{}.
-
-\subsection{Results}
-\label{subsect:results}
-
-The results from the simulation runs will now be analyzed to determine the impact of nonlinear convergence upon time-step size sensitivity.
-The solutions produced by both solvers will be compared to determine the efficacy of the residual metric in determining the validity of the nonlinear solution.  
-
-Of the twenty-four simulations run, the linear solver solution of the flashing problem with a \dtmax{} of 1 [s] failed to run to completion.
-The timestep limiting procedure outlined in  \sect{sect:algorithmic_concerns} was unable to prevent too large a change in the independent parameters by reducing the timestep.
-This caused the problem to try to run below the minimum allowable timestep size, which resulted in the software aborting.
-However, the nonlinearly convergent \cobra{} was able to run at a \dtmax{} of 1 [s].
-Both versions of \cobra{} are subject to the same limits on change of independent variables.
-
-For the flashing problem, the parameter of interest for temporal convergence testing is $\alpha_g$ at 2 [in] from the inlet of the stand pipe.
-\fig{fig:flashing_1em1} shows the gaseous volume fraction 2 [in] from the inlet of the stand pipe as a function of time for a \dtmax{} of 1.0E-1 [s] for both the linear and the nonlinear solvers.
-
-\begin{figure}[h!tb]
-\centering
-\includegraphics[width=0.6\textwidth]{plots/flashing_1em1.eps}
-\caption{Flashing solution at \dtmax{} = 1.0E-1 {[s]}}
-\label{fig:flashing_1em1}
-\end{figure}
-
-\begin{figure}[h!tb]
-\centering
-\includegraphics[width=.6\textwidth]{plots/flashing_1em5.eps}
-\caption{Flashing solution at \dtmax{} = 1.0E-5 {[s]}.}
-\label{fig:flashing_1em5}
-\end{figure}
-
-Note that the nonlinearly resolved solution is qualitatively different than the linear single-shot solution, \fig{fig:flashing_1em1}.
-Even as the \dtmax{} is reduced, this discrepancy does not disappear, \fig{fig:flashing_1em5}.
-The two solutions do not converge to the same solution as the timestep size was reduced.
-However, the solution to the flashing problem produced by the nonlinear solver, \fig{fig:nl_mode_flashing}, qualitatively varies less as the timestep size is reduced than that produced by the linear solver, \fig{fig:cobra_mode_flashing}.
-However, both \fig{fig:cobra_mode_flashing} and \fig{fig:nl_mode_flashing} show that as the timestep size is reduced the two different solutions become more timestep size insensitive.
-
-\begin{figure}[h!tb]
-\centering
-\includegraphics[width=.6\textwidth]{plots/lin_flashing_al_2in.eps}
-\caption{Linear solver flashing solution.}
-\label{fig:cobra_mode_flashing}
-\end{figure}
-
-\begin{figure}[h!bt]
-\centering
-\includegraphics[width=.6\textwidth]{plots/nln_flashing_al_2in.eps}
-\caption{Nonlinear solver flashing solution.}
-\label{fig:nl_mode_flashing}
-\end{figure}
-
-The two solvers, when applied to the same problem that contains highly nonlinear physics, produce two different timestep size invariant solutions.
-These two solutions achieve qualitative timestep size invariance at different timestep sizes.
-The parameter of interest in the solution produced by the nonlinear solver with a 1 [s] \dtmax{} is qualitatively close to that produced with a 0.1 [s] \dtmax{}, \fig{fig:nl_flashing_compare}.
-The same level of qualitative timestep size invariance is achieved in the linear solver solutions between a \dtmax{} of 1.0E-3 [s] and 1.0E-4 [s], \fig{fig:cobra_flashing_compare}.
-
-\begin{figure}[h!bt]
-\centering
-\includegraphics[width=.6\textwidth]{plots/nln_flashing_1em0_1em1.eps}
-\caption{Nonlinear solver timestep size insensitive flashing solution.}
-\label{fig:nl_flashing_compare}
-\end{figure}
-
-\begin{figure}[h!tb]
-\centering
-\includegraphics[width=.6\textwidth]{plots/lin_flashing_1em1_1em4.eps}
-\caption{Linear solver timestep size insensitive flashing solution.}
-\label{fig:cobra_flashing_compare}
-\end{figure}
-
-The timestep size insensitive solution produced by the nonlinear solver occurs at a maximum timestep size three orders of magnitude greater than that achieved by the linear solver in \cobra{}.
-An examination of the nonlinear residual over the course of the transient provides insight into why this behavior is observed.
-The scaled residual for the linear flashing problem indicates that, even for small timestep sizes, the solution obtained still does not satisfy the discrete nonlinear equations, \fig{fig:linear_flashing_residual}.
-This is in contrast to the nonlinear flashing problem, which shows a lower residual over the course of the simulation, \fig{fig:nonlinear_flashing_residual}.
-
-\begin{figure}[h!tb]
-\centering
-\includegraphics[width=0.6\textwidth]{plots/lin_flashing_res_compare.eps}
-\caption{Residual of the flashing solution for the linear solver.}
-\label{fig:linear_flashing_residual}
-\end{figure}
-
-\begin{figure}[h!tb]
-\centering
-\includegraphics[width=0.6\textwidth]{plots/nln_flashing_res_compare.eps}
-\caption{Residual of the flashing solution for the nonlinear solver.}
-\label{fig:nonlinear_flashing_residual}
-\end{figure}
-
-The reduction in the residual exhibited by the solution produced by the linear solver, \fig{fig:linear_flashing_residual}, shows that the reduction of the maximum allowable timestep size now serves two purposes.
-The first is that as \dtmax{} is reduced the nonlinear physics are being better resolved; however, even for small \dtmax{}, the residuals are still large compared to those of the nonlinear solution, \fig{fig:nonlinear_flashing_residual}.
-The second purpose in reducing \dtmax{} is to decrease the error due to the discrete approximation of the temporal integral of the governing equations.
-While the reduction of the maximum timestep size in the linear solver serves the purpose of reducing the residual, the nonlinear solver performs this task naturally.
-Therefore, in the nonlinear solver the reduction of the maximum timestep size primarily serves to reduce the error from the approximate discrete temporal integral.
-
-\begin{figure}[h!tb]
-\centering
-\includegraphics[width=0.6\textwidth]{plots/single_1em0.eps}
-\caption{Single-phase solution with \dtmax{} = 1.0 {[s]}.}
-\label{fig:single_1em1}
-\end{figure}
-
-\begin{figure}[h!tb]
-\centering
-\includegraphics[width=0.6\textwidth]{plots/single_1em5.eps}
-\caption{Single-phase solution with \dtmax{} = 1.0E-5 {[s]}.}
-\label{fig:single_1em5}
-\end{figure}
-
-The single-phase case was designed to test if the linear solver produced a simulation result that was equivalent to that produced by the nonlinear solver.
-More specifically, it was designed to show that for problems where the physics of interest have relatively low nonlinearities, the linear solver provides as accurate a solution as the nonlinear solver.
-\fig{fig:single_1em1} and \fig{fig:single_1em5} show the solution produced by both the nonlinear and linear solvers of \cobra{}.
-Unlike the flashing problem, both solvers were able to solve the problem for all of the \dtmax{} specified.
-The solutions produced by both solvers are qualitatively equivalent at \dtmax{} = 1.0 [s] and \dtmax{} = 1.0E-5 [s].
-This indicates that the linear solver is adequate in regions where the solution is not highly nonlinear.
-
-One way to quantify the difference between the solutions is by measuring the residual convergence metrics outlined in \sect{sect:temporal_convergence}.
-These metrics provide a measure of how poorly the discrete nonlinear equations are being solved at every timestep in the transient.
-The resolution of the residual allows for a solution that is less sensitive to timestep size selection than for a solution that does not resolve the residual.
-The convergence metrics will be used to determine if a qualitative temporal-convergence determination can lead to the acceptance of a solution that is not nonlinearly converged.
-
-For each of the test cases, the two different metrics were compared at the different \dtmax{}.
-To examine efficacy of the the temporal convergence criteria, both the average and moment based temporal convergence criteria were evaluated for each of the twenty-three successful simulations.
-The values of these metrics will be compared between different solvers for the same test problem. 
-
-The two different nonlinear convergence metrics will now be examined for the flashing problem.
-\tab{tab:flashing_criteria} shows both the average metric, $\tilde{R}$, and the moment based metric, $\tilde{R}_{\text{M}}$.
-The entry for the linear mode solution at 1 [s] is empty, reflecting its inability to solve the problem.
-For the nonlinear solver, both metrics are decreasing as the \dtmax{} is decreased.
-While the linear solver also shows a decreasing residual metric, it does not decrease in order-of-magnitude, indicating that as the \dtmax{} is reduced the nonlinearities in the problem are not being sufficiently resolved.
-
-\begin{table}[h!t]
-\centering
-\input{tables/flashing_convergence_metric}
-\caption{Nonlinear convergence metrics for flashing problem.}
-\label{tab:flashing_criteria}
-\end{table}
-
-\begin{table}[h!t]
-\centering
-\input{tables/single_phase_convergence_metric}
-\caption{Nonlinear convergence metrics for the single-phase problem.}
-\label{tab:single_criteria}
-\end{table}
-
-\tab{tab:single_criteria} shows the two metrics for the single-phase problem.
-Since the single-phase problem is relatively linear, the linear solver produces metrics that are on the same order as those for the nonlinear solver.
-Due to the non-convergence of the nonlinear solver at \dtmax{} = 1.0E-3, the moment based metric for the nonlinear solver is greater than the equivalent linear solver metric.
-

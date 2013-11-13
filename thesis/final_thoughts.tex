@@ -1,19 +1,27 @@
 \chapter{Concluding Remarks}
 \label{chap:end}
-I am a conclusion.
-
-\section{Summary of Findings}
-\label{sect:end:summary}
-
-
-\section{Topics for Future Study}
-\label{sect:end:future}
-
 In review, the single-shot semi-implicit \cobra{} software was converted to a nonlinearly convergent, semi-implicit algorithm.
-An operator-based scaling was introduced and implemented into both the legacy and the nonlinear \cobra{} solvers.
+An operator-based scaling that provided a physically meaningful convergence measure was developed and implemented.
 The nonlinear solver produced results that were qualitatively different than those obtained from the legacy solver for the problem with high nonlinearities.
 Tests indicated that a timestep size insensitive solution may not be nonlinearly converged.
 It was shown that the nonlinear solver produces results that are indistinguishable from those produced by the legacy solver for the single-phase problem, which has relatively mild nonlinearities.
 A metric to quantify the nonlinear convergence of a timestep size insensitive simulation was developed and implemented.
 This non-convergence of the discrete nonlinear system in the legacy solver mode produced a qualitatively different solution from the nonlinear solver.
 
+\section{Summary of Findings}
+\label{sect:end:summary}
+Resolving the nonlinearities at every timestep provides more consistent solutions during temporal convergence studies than obtained by the only taking a single Newton step at each timestep.
+By selecting areas of the domain where the nonlinearities are expected to be high and subjecting only those areas to multiple nonlinear iterations, the consistency of the nonlinear solver may be obtained at a lower computational cost than the full nonlinear solver.
+
+\section{Topics for Future Study}
+\label{sect:end:future}
+This work has highlighted several opportunities for further research.
+The research conducted here developed, tested, and implemented a novel domain decomposition algorithm for semi-implicit thermal-hydraulic safety software.
+This domain decomposition as currently implemented utilizes engineering judgment to determine portions of the domain where nonlinear convergence may require multiple Newton steps.
+A possible extension of this work would be the development of a method to identify 
+areas where additional Newton steps would would be advantageous.
+Once a viable determination of when and where additional nonlinear iterates might be advantageous, an efficient method of decomposing the domain would need to be developed.
+Additionally, there would need to be an investigation into the computational costs of solving the dual-domain problem as opposed to solving the entire domain using the nonlinear solver.
+There is computational overhead in setting up the infrastructure for the dual-domains.
+There is additional costs associated with the additional flux terms.
+There would need to be a detailed study of the computational costs.

@@ -1,21 +1,269 @@
 \chapter{Numerical Results}
 \label{chap:results}
 
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-%--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Five test problems have been developed for evaluating the nonlinear solver, the operator based scaling, the convergence metric, the domain decomposition algorithm, and the selective nonlinear refinement.
+Two geometrically simple problems were developed to evaluate the nonlinear solver, the operator based scale factor, and the temporal convergence metric.
+One problem with extensive geometric complexity was used to evaluate the domain decomposition algorithm.
+Two problems were developed to test the selective nonlinear refinement.
+The goal of the tests, the methods used, and the models will be discussed in each section.
 
-\section{Verification Problem}
-\label{sec:dd:verify}
-To test the implementation of the domain decomposition algorithm, a test problem was developed that had model of the nine rod bundle will be simulated. 
-This experiment was several problems of increasing complexity were developed.
-The problems were developed so that the domain boundary fluxes would be as general as possible.
-There are two primary problems, the up-down-up problem and the ge mixing 1b (<- What is that?) problem.
+\section{Single Phase Flow and Flashing Problems}
+\label{sect:single_phase_and_flashing}
 
-\subsection{GE Mixing Problem}
-\label{ss:dd:ver:gem}
+Two test problems were developed to illustrate the effectiveness of the nonlinear solver and the operator based scaling.
+The two problems were set up so that the maximum allowable timestep was varied.
+Each problem was run with the following maximum allowable timesteps: 1 [s], 0.1 [s], 0.01 [s], 0.001 [s], 0.0001 [s], and 0.00001 [s]. 
+For the linear runs, the scaled residuals were evaluated after a single Newton step, $\vec{F}(\vec{x}^{1})$.
+For the nonlinear runs, the scaled nonlinear residuals were evaluated at the end of the Newton-loop.
+The nonlinear convergence criteria used in the nonlinear solver are described in \sect{sect:nln_cobra_alg}.
+The temporal convergence metric was evaluated during post-processing.
+In total, there were twenty-four simulations run.
+The two different problems were each run at six different maximum timestep sizes on each of the two versions of \cobra{}.
+
+
+\subsection{Model}
+\label{subsect:single_model}
+For both of the test problems, the same computational geometry was used;  \fig{fig:exp_geometry} represents the experimental geometry.
+Each block represents a single continuity cell with a height of 4 [in].
+The total height of the channel is 48 [in].
+Each continuity cell has a cross-sectional area of 4 [in$^2$].
+The red block at the top of the channel represents a boundary cell where the pressure and enthalpy are specified.
+It represents an infinite reservoir filled with a fluid at a specified thermodynamic state.
+The red triangle represents a specified flow at the bottom edge of the first continuity cell. 
+
+\begin{figure}[h!t]
+\centering
+\input{images/scaling_test_problem_geometry}
+\caption{Geometry for test problems.}
+\label{fig:exp_geometry}
+\end{figure}
+
+\subsection{Initial and Boundary Conditions}
+\label{subsect:single_ibc}
+
+The two problems, while having the same geometry, are different in their dominant physics.
+One problem was designed to simulate single-phase, single-field continuous liquid flow in a standpipe.
+This problem will be referred to as the single-phase problem.
+The second problem was designed such that high-pressure liquid flashes into steam as it enters a standpipe initially filled with saturated vapor at a much lower pressure, known hereafter as the flashing problem.
+
+Table \ref{tab:ic} provides the initial conditions for the two problems.
+The pressure, enthalpy, and volume-fractions for the different fields allow for a complete description of the continuity variables.
+The initial velocities are set to zero.
+
+\begin{table}[ht]
+\centering
+\input{tables/nln_ic}
+\caption{Initial conditions for test problems.}
+\label{tab:ic}
+\end{table}
+
+Each of the problems has a specified pressure-enthalpy boundary condition at the top of the stand pipe and a flow-enthalpy boundary condition at the inlet of the domain.
+Table \ref{tab:bc_pe} contains the pressure, enthalpy, and composition of the pressure-enthalpy reservoir. 
+
+\begin{table}[h!t]
+\centering
+\input{tables/nln_bc_outflow}
+\caption{The pressure-enthalpy outlet boundary conditions for test problems.}
+\label{tab:bc_pe}
+\end{table}
+
+The flow-enthalpy boundary condition describes the thermodynamic state of the inflowing fluid and its flow rate.
+Table \ref{tab:bc_fe} describes the inlet boundary condition for the two problems.
+
+\begin{table}[ht]
+\centering
+\input{tables/nln_bc_inflow}
+\caption{The flow-enthalpy inlet boundary conditions for test problems.}
+\label{tab:bc_fe}
+\end{table}
+
+The specified mass flow, $\dot{m}(t)$, at the bottom of the channels is the same for both problems. 
+This time-dependent function is given by \eqref{eqn:bc_time_func_single}.
+
+\begin{equation}
+\label{eqn:bc_time_func_single}
+\dot{m}(t) = \left\{
+\begin{array}{cclrcll}
+ 0.0           & [\frac{ \lbm{} }{\text{s}}] & , &                & t & \leq 1 & [\text{s}] \\
+ 0.5 ( t - 1)  & [\frac{ \lbm{} }{\text{s}}] & , & 1\; [\text{s}] < & t & \leq 2 & [\text{s}] \\
+ 0.5           & [\frac{ \lbm{} }{\text{s}}] & , &                & t & > 2    & [\text{s}]
+\end{array}\right.
+\end{equation}
+
+Both problems adjust their initial pressure distribution to account for hydrostatic head, which is not specified in the input files.
+The \cobra{} input files for both problems can be found in \app{app:input_decks}.
+
+\subsection{Results}
+\label{subsect:single_results}
+
+The results from the simulation runs will now be analyzed to determine the impact of nonlinear convergence upon time-step size sensitivity.
+The solutions produced by both solvers will be compared to determine the efficacy of the residual metric in determining the validity of the nonlinear solution.  
+
+For the flashing problem, the parameter of interest for temporal convergence testing is $\alpha_g$ at 2 [in] from the inlet of the stand pipe.
+\fig{fig:flashing_1em1} shows the gaseous volume fraction 2 [in] from the inlet of the stand pipe as a function of time for a \dtmax{} of 1.0E-1 [s] for both the linear and the nonlinear solvers.
+
+\begin{figure}[h!tb]
+\centering
+\includegraphics[width=0.6\textwidth]{plots/flashing_1em1.eps}
+\caption{Flashing solution at \dtmax{} = 1.0E-1 {[s]}}
+\label{fig:flashing_1em1}
+\end{figure}
+
+\begin{figure}[h!tb]
+\centering
+\includegraphics[width=.6\textwidth]{plots/flashing_1em5.eps}
+\caption{Flashing solution at \dtmax{} = 1.0E-5 {[s]}.}
+\label{fig:flashing_1em5}
+\end{figure}
+
+Note that the nonlinearly resolved solution is qualitatively different than the linear single-shot solution, \fig{fig:flashing_1em1}.
+Even as the \dtmax{} is reduced, this discrepancy does not disappear, \fig{fig:flashing_1em5}.
+The two solutions do not converge to the same solution as the timestep size was reduced.
+However, the solution to the flashing problem produced by the nonlinear solver, \fig{fig:nl_mode_flashing}, qualitatively varies less as the timestep size is reduced than that produced by the linear solver, \fig{fig:cobra_mode_flashing}.
+However, both \fig{fig:cobra_mode_flashing} and \fig{fig:nl_mode_flashing} show that as the timestep size is reduced the two different solutions become more timestep size insensitive.
+
+\begin{figure}[h!tb]
+\centering
+\includegraphics[width=.6\textwidth]{plots/lin_flashing_al_2in.eps}
+\caption{Linear solver flashing solution.}
+\label{fig:cobra_mode_flashing}
+\end{figure}
+
+\begin{figure}[h!bt]
+\centering
+\includegraphics[width=.6\textwidth]{plots/nln_flashing_al_2in.eps}
+\caption{Nonlinear solver flashing solution.}
+\label{fig:nl_mode_flashing}
+\end{figure}
+
+The two solvers, when applied to the same problem that contains highly nonlinear physics, produce two different timestep size invariant solutions.
+These two solutions achieve qualitative timestep size invariance at different timestep sizes.
+The parameter of interest in the solution produced by the nonlinear solver with a 1 [s] \dtmax{} is qualitatively close to that produced with a 0.1 [s] \dtmax{}, \fig{fig:nl_flashing_compare}.
+The same level of qualitative timestep size invariance is achieved in the linear solver solutions between a \dtmax{} of 1.0E-3 [s] and 1.0E-4 [s], \fig{fig:cobra_flashing_compare}.
+
+\begin{figure}[h!bt]
+\centering
+\includegraphics[width=.6\textwidth]{plots/nln_flashing_1em0_1em1.eps}
+\caption{Nonlinear solver timestep size insensitive flashing solution.}
+\label{fig:nl_flashing_compare}
+\end{figure}
+
+\begin{figure}[h!tb]
+\centering
+\includegraphics[width=.6\textwidth]{plots/lin_flashing_1em1_1em4.eps}
+\caption{Linear solver timestep size insensitive flashing solution.}
+\label{fig:cobra_flashing_compare}
+\end{figure}
+
+The timestep size insensitive solution produced by the nonlinear solver occurs at a maximum timestep size three orders of magnitude greater than that achieved by the linear solver in \cobra{}.
+An examination of the nonlinear residual over the course of the transient provides insight into why this behavior is observed.
+The scaled residual for the linear flashing problem indicates that, even for small timestep sizes, the solution obtained still does not satisfy the discrete nonlinear equations, \fig{fig:linear_flashing_residual}.
+This is in contrast to the nonlinear flashing problem, which shows a lower residual over the course of the simulation, \fig{fig:nonlinear_flashing_residual}.
+
+\begin{figure}[h!tb]
+\centering
+\includegraphics[width=0.6\textwidth]{plots/lin_flashing_res_compare.eps}
+\caption{Residual of the flashing solution for the linear solver.}
+\label{fig:linear_flashing_residual}
+\end{figure}
+
+\begin{figure}[h!tb]
+\centering
+\includegraphics[width=0.6\textwidth]{plots/nln_flashing_res_compare.eps}
+\caption{Residual of the flashing solution for the nonlinear solver.}
+\label{fig:nonlinear_flashing_residual}
+\end{figure}
+
+The reduction in the residual exhibited by the solution produced by the linear solver, \fig{fig:linear_flashing_residual}, shows that the reduction of the maximum allowable timestep size now serves two purposes.
+The first is that as \dtmax{} is reduced the nonlinear physics are being better resolved; however, even for small \dtmax{}, the residuals are still large compared to those of the nonlinear solution, \fig{fig:nonlinear_flashing_residual}.
+The second purpose in reducing \dtmax{} is to decrease the error due to the discrete approximation of the temporal integral of the governing equations.
+While the reduction of the maximum timestep size in the linear solver serves the purpose of reducing the residual, the nonlinear solver performs this task naturally.
+Therefore, in the nonlinear solver the reduction of the maximum timestep size primarily serves to reduce the error from the approximate discrete temporal integral.
+
+\begin{figure}[h!tb]
+\centering
+\includegraphics[width=0.6\textwidth]{plots/single_1em0.eps}
+\caption{Single-phase solution with \dtmax{} = 1.0 {[s]}.}
+\label{fig:single_1em1}
+\end{figure}
+
+s\begin{figure}[h!tb]
+\centering
+\includegraphics[width=0.6\textwidth]{plots/single_1em5.eps}
+\caption{Single-phase solution with \dtmax{} = 1.0E-5 {[s]}.}
+\label{fig:single_1em5}
+\end{figure}
+
+The single-phase case was designed to test if the linear solver produced a simulation result that was equivalent to that produced by the nonlinear solver.
+More specifically, it was designed to show that for problems where the physics of interest have relatively low nonlinearities, the linear solver provides as accurate a solution as the nonlinear solver.
+\fig{fig:single_1em1} and \fig{fig:single_1em5} show the solution produced by both the nonlinear and linear solvers of \cobra{}.
+Unlike the flashing problem, both solvers were able to solve the problem for all of the \dtmax{} specified.
+The solutions produced by both solvers are qualitatively equivalent at \dtmax{} = 1.0 [s] and \dtmax{} = 1.0E-5 [s].
+This indicates that the linear solver is adequate in regions where the solution is not highly nonlinear.
+
+One way to quantify the difference between the solutions is by measuring the residual convergence metrics outlined in \sect{sect:temporal_convergence}.
+These metrics provide a measure of how poorly the discrete nonlinear equations are being solved at every timestep in the transient.
+The resolution of the residual allows for a solution that is less sensitive to timestep size selection than for a solution that does not resolve the residual.
+The convergence metrics will be used to determine if a qualitative temporal-convergence determination can lead to the acceptance of a solution that is not nonlinearly converged.
+
+For each of the test cases, the two different metrics were compared at the different \dtmax{}.
+To examine efficacy of the the temporal convergence criteria, both the average and moment based temporal convergence criteria were evaluated for each of the twenty-three successful simulations.
+The values of these metrics will be compared between different solvers for the same test problem. 
+
+The two different nonlinear convergence metrics will now be examined for the flashing problem.
+\tab{tab:flashing_criteria} shows both the average metric, $\tilde{R}$, and the moment based metric, $\tilde{R}_{\text{M}}$.
+
+\begin{table}[h!t]
+\centering
+\input{tables/flashing_convergence_metric}
+\caption{Nonlinear convergence metrics for flashing problem.}
+\label{tab:flashing_criteria}
+\end{table}
+
+\begin{table}[h!t]
+\centering
+\input{tables/single_phase_convergence_metric}
+\caption{Nonlinear convergence metrics for the single-phase problem.}
+\label{tab:single_criteria}
+\end{table}
+
+\tab{tab:single_criteria} shows the two metrics for the single-phase problem.
+
+\section{GE Mixing Problem}
+\label{sect:ge_mixing}
+For verification of the domain decomposition algorithm, an experimental run from the General Electric nine-rod subchannel experiments \cite{Lahey1970}.
+This 
+
+\subsection{Model}
+\label{subsect:ge_model}
+
+Here is the model:
+H
+
+\subsection{Initial and Boundary Conditions}
+\label{subsect:ge_ibc}
+
+\subsection{Results}
+\label{subsect:ge_results}
+
+\section{Simple LWR Quenching Reflood Model}
+\label{sect:quench_problem}
+This test problem is intended to represent a simplified model of an LWR during the reflood portion of a LOCA.
+It was
+
+\subsection{Model}
+\label{subsect:quench_model}
+The model is as follows:
+Here is the geometry:
+
+
+
+\subsection{Initial and Boundary Conditions}
+\label{subsect:quench_ibc}
+
+
+
+\subsection{Results}
+\label{subsect:quench_results}
+
 
