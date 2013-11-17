@@ -38,9 +38,6 @@ The red triangle represents a specified flow at the bottom edge of the first con
 \label{fig:exp_geometry}
 \end{figure}
 
-\subsection{Initial and Boundary Conditions}
-\label{subsect:single_ibc}
-
 The two problems, while having the same geometry, are different in their dominant physics.
 One problem was designed to simulate single-phase, single-field continuous liquid flow in a standpipe.
 This problem will be referred to as the single-phase problem.
@@ -229,22 +226,42 @@ The two different nonlinear convergence metrics will now be examined for the fla
 
 \tab{tab:single_criteria} shows the two metrics for the single-phase problem.
 
-\section{GE Mixing Problem}
+\section{General Electric Nine-Rod Bundle Problem}
 \label{sect:ge_mixing}
 For verification of the domain decomposition algorithm, an experimental run from the General Electric nine-rod subchannel experiments \cite{Lahey1970}.
-This 
+This is a nine-rod bundle representative of a BWR channel.
+There are eighteen channels in this model.
+There are $2^{18}$ possible ways to decompose this problem with the domain decomposition algorithm.
+To test if the domain decomposition algorithm was implemented correctly, two-hundred and fifty-six different permutations were selected at random and run.
+While the general electric experiments spanned many test runs, a particular one was chosen for this test.
+The result of each decomposed problem was compared to both experimental results and the compational results from having the entire domain in the linear domain and the entire domain in the nonlinear domain.
+Appendix \ref{} contains the files used to run the tests.
+
 
 \subsection{Model}
 \label{subsect:ge_model}
 
-Here is the model:
-H
+There are three sections in this model.
+The first section is composed of the inlet plenum modeled by a single channel.
+The third section is composed of the outlet plenum which is modeled by a single channel.
+The second section has sixteen channels which represent the sixteen possible sections as identified in \fig{fig:channel_layout}.
 
-\subsection{Initial and Boundary Conditions}
-\label{subsect:ge_ibc}
+\begin{figure}[ht]
+\centering
+\input{images/position_of_pressure_taps}
+\caption{Position of Pressure Taps for Setting Isokinetic Conditions \cite{Lahey1970}.}
+\label{fig:channel_layout}
+\end{figure}
+
+There are nine rods.
+There are twenty-four gaps.
+It has a high degree of connectivity.
 
 \subsection{Results}
 \label{subsect:ge_results}
+
+Here is where I show how the results in great agreement with each other.
+Also I will point out the under prediction of the pressure differentials as predicted by \cobra{}.
 
 \section{Simple LWR Quenching Reflood Model}
 \label{sect:quench_problem}
@@ -255,12 +272,6 @@ It was
 \label{subsect:quench_model}
 The model is as follows:
 Here is the geometry:
-
-
-
-\subsection{Initial and Boundary Conditions}
-\label{subsect:quench_ibc}
-
 
 
 \subsection{Results}

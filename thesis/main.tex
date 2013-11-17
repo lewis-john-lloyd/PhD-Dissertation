@@ -43,8 +43,10 @@
 \pgfplotsset{plot coordinates/math parser=false}
 \usepackage{pgfplotstable}
 \pgfplotstableset{set thousands separator ={}}
-
 \usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{multirow}
 
 \usepackage{times}
 \renewcommand{\ttdefault}{cmtt}
@@ -62,9 +64,6 @@
 \let\oldbibsection\bibsection
 \renewcommand{\bibsection}{\oldbibsection\addcontentsline{toc}{chapter}{List of References}\singlespace\raggedright}
 
-\usepackage{booktabs}
-\usepackage{colortbl}
-\usepackage{multirow}
 
 \usepackage[bookmarks,
 	bookmarksdepth=2,

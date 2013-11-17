@@ -15,27 +15,68 @@ To aid in the identification of temporally converged converged solutions, a metr
 
 \cobra{} utilizes the semi-implicit method as outlined in \sect{subsect:semi_implicit}.
 A detailed description of the solution algorithm as implemented will be presented in the following section.
-First, the exact discrete algebraic equations will be laid out in pedantic detail because this seems to be standard practice.
-The momentum equations, neglecting spatial discretization notation and external sources, are given in \eqref{eqn:si_mom_liq} -- \eqref{eqn:si_mom_ent}.
+The linearized semi-implicit method is not traditionally casts as a system of nonlinear equations.
+The governing equations are not viewed through the lense of a Newton step.
+The view that the linearization is from $\vec{x}^{n}$ to $\vec{x}^{n+1}$ is endemic in the literature of linearized system analysis software.
+For that reason, the following discussion will present the algorithm from the point of view of a single-shot linearization.
+The following discussion will parallel the algorithmic flow within the \cobra{} software.
+The first step in \cobra{} is a loop over all momentum equations in the domain.
+The nonlinear momentum equations, neglecting spatial discretization notation and external sources, are given in \eqref{eqn:si_nln_mom_liq} -- \eqref{eqn:si_nln_mom_ent}.
 
 \begin{IEEEeqnarray}{rCl}
-\label{eqn:si_mom_liq}
+\label{eqn:si_nln_mom_liq}
 \dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{NK} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)^{n}
  -\alpha^{n}_l \nabla P^{n+1} + (\alpha_l \rho_l)^{n} g - K^{n}_{wl}(\dot{m}_l^{n+1})^2 \right. \nonumber \\
  & + & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2 - ((1 - \eta)\Gamma u^{'})^{n} - (S u^{'})^{n}\vphantom{\sum_{NK}}\right) \\
-\label{eqn:si_mom_gas}
+\label{eqn:si_nln_mom_gas}
 \dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{NK} \left( (\alpha_g \rho_g u_g) u_g  \cdot \vec{\bar{A}}\right)^{n}  -\alpha^{n}_g \nabla P^{n+1} + (\alpha_g \rho_g)^{n} g - K^{n}_{wg}(\dot{m}_g^{n+1})^2 \right.\nonumber \\
 & - & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2 -K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 + (\Gamma u^{'})^{n}\vphantom{\sum_{NK}}\right) \\
-\label{eqn:si_mom_ent}
+\label{eqn:si_nln_mom_ent}
 \dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{NK} \left( (\alpha_e \rho_l u_e) u_e  \cdot \vec{\bar{A}}\right)^n -\alpha^{n}_e \nabla P^{n+1} + (\alpha_e \rho_l)^{n} g - K^{n}_{we}(\dot{m}_e^{n+1})^2\right. \nonumber \\
 &+& \left. K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 - (\eta \Gamma u^{'})^{n} + (S u^{'})^n\vphantom{\sum_{NK}}\right)
 \end{IEEEeqnarray}
 
-In the above equations the flux terms are summed over $NK$, which indicates the number of continuity volumes connected to a given momentum volume.
+In the above equations the flux terms are summed over $NK$, which indicates the number of continuity volumes to which a given momentum volume connects.
 The coefficients $K$ represent effective friction factors calculated using parameters only from time n.
-The interfacial transfer terms are explicitly evaluated.
-The only new-time parameters used in \eqref{eqn:si_mom_liq} -- \eqref{eqn:si_mom_ent} are momenta and pressures.
-The continuity equations used in this work, omitting external sources, are shown in \eqref{eqn:si_mass_ncg} -- \eqref{eqn:si_nrg_liq}.
+The interfacial transfer terms are also explicitly evaluated.
+The momentum equations are then linearized around the current time value, $\dot{\vec{m}}^{n}$, giving \eqref{eqn:si_lin_mom_liq} - \eqref{eqn:si_lin_mom_ent}.
+
+\begin{IEEEeqnarray}{rCl}
+\label{eqn:si_lin_mom_liq}
+\dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{NK} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)^{n}
+ -\alpha^{n}_l \nabla P^{n} -\alpha^{n}_l \nabla \delta P + (\alpha_l \rho_l)^{n} g - K^{n}_{wl}(\dot{m}_l^{n})^{2} \right. \nonumber \\
+  & - & 2 K^{n}_{wl}(\dot{m}_l^{n})(\dot{m}_l^{n+1}-\dot{m}_l^{n})  + K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})^2 + 2 K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})(\dot{m}^{n}_g - \dot{m}_l^{n}) \nonumber \\
+ & + & \left. 2 K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})(\dot{m}^{n+1}_l - \dot{m}_g^{n+1}) - ((1 - \eta)\Gamma u^{'})^{n} - (S u^{'})^{n}\vphantom{\sum_{NK}}\right) \\
+\label{eqn:si_lin_mom_gas}
+\dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{NK} \left( (\alpha_g \rho_g u_g) u_g \cdot \vec{\bar{A}}\right)^{n}
+ -\alpha^{n}_g \nabla P^{n} -\alpha^{n}_g \nabla \delta P + (\alpha_g \rho_g)^{n} g - K^{n}_{wg}(\dot{m}_g^{n})^{2} \right. \nonumber \\
+  & - & 2 K^{n}_{wg}(\dot{m}_g^{n})(\dot{m}_g^{n+1}-\dot{m}_g^{n})  - K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})^2 - 2 K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})(\dot{m}^{n}_g - \dot{m}_l^{n}) \nonumber \\
+ & - & 2 K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})(\dot{m}^{n+1}_l - \dot{m}_g^{n+1}) - K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})^2 \nonumber \\
+ & - & 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n}_g - \dot{m}_e^{n}) - 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n+1}_e - \dot{m}_g^{n+1}) \nonumber \\
+ & + & \left.  (\Gamma u^{'})^{n}\vphantom{\sum_{NK}}\right) \\
+\label{eqn:si_lin_mom_ent}
+\dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{NK} \left( (\alpha_e \rho_e u_e) u_e \cdot \vec{\bar{A}}\right)^{n}
+ -\alpha^{n}_e \nabla P^{n} - \alpha^{n}_e \nabla \delta P + (\alpha_e \rho_e)^{n} g - K^{n}_{we}(\dot{m}_e^{n})^{2} \right. \nonumber \\
+  & - & 2 K^{n}_{we}(\dot{m}_e^{n})(\dot{m}_e^{n+1}-\dot{m}_e^{n})  + K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})^2 + 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n}_g - \dot{m}_e^{n}) \nonumber \\
+ & + & \left. 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n+1}_e - \dot{m}_g^{n+1}) - (\eta \Gamma u^{'})^{n} + (S u^{'})^{n}\vphantom{\sum_{NK}}\right)
+\end{IEEEeqnarray}
+
+The momenta euqations, \eqref{eqn:si_lin_mom_liq} - \eqref{eqn:si_lin_mom_ent}, are now linear in the unknown variables $\dot{\vec{m}}^{n+1}$.
+These equations are now solved for the unknown new time momenta.
+The $\delta P$ is left as an unknown.
+This creates a system of the form $\vec{A} \dot{\vec{m}}^{n+1} = \vec{a} + \sum_{NK} \vec{b} \delta P$.
+The solution of this linear system is expressed in \eqref{eqn:star:momenta}.
+
+\begin{equation}
+\label{eqn:star:momenta}
+\dot{\vec{m}}^{n+1} = \dot{\vec{m}}^{*} + \sum_{NK} \frac{\partial \dot{\vec{m}}}{\partial P} \delta P
+\end{equation}
+
+The definition of the new time momenta still involves unknown changes in pressure.
+The portion of the right hand side of \eqref{eqn:star:momenta} that is know, $\dot{\vec{m}}^{*}$, is considered to be the tentative new time momenta.
+Once all of the momenta equations has been solved in the above manner, the domain's continuity volumes are looped over.
+The continuity equations used in this work, omitting external sources, are shown in \eqref{eqn:si_mass_ncg} -- \eqref{eqn:si_nrg_liq}. 
+The new time velocities used for advection in the continuity equations is defined with the new time momenta, \eqref{eqn:star:momenta}, in conjunction with \eqref{eqn:si_vel}.
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:si_mass_ncg}
@@ -56,154 +97,10 @@ V_c\left( \alpha_l \rho_l h_l \right)^{n+1} & - & V_c\left( \alpha_l \rho_l h_l 
 & +& \Delta t \left[q_{wl} -\Gamma h^{'}_l +  q_{i,l} - q_{gl}\right]^{n+1} + V_c \alpha^{n}_l (P^{n+1} - P^{n})
 \end{IEEEeqnarray}
 
-\alg{alg:si_legacy} shows the traditional algorithm.
-Due to the nature of the semi-implicit method, step 5 of \alg{alg:si_legacy} requires additional details.
-The linear algebra problem to be solved during step 5 is presented in \eqref{eqn:si_solve} for a simply connected problem with three continuity volumes and three momentum volumes.
+The above equations are then linearized in an analogous manner to the momenta equations.
+Each continuity volume will be connected to other continuity volumes via \eqref{eqn:star:momenta}.
 
- \begin{equation}
- \label{eqn:si_solve}
- \begin{bmatrix} 
- \vec{J}_{m_1} & \vec{J}_{m_1,c_1} & \vec{0} & \vec{0} & \vec{0} & \vec{0}\\
- \vec{J}_{c_1,m_1} & \vec{J}_{c_1} & \vec{J}_{c_1,m_2} & \vec{0} & \vec{0} & \vec{0} \\
- \vec{0} & \vec{J}_{m_2,c_1} & \vec{J}_{m_2} & \vec{J}_{m_2,c_2} & \vec{0} & \vec{0} \\
- \vec{0} & \vec{0} & \vec{J}_{c_2,m_2} & \vec{J}_{c_2} & \vec{J}_{c_2,m_3} & \vec{0} \\
- \vec{0} & \vec{0} & \vec{0} & \vec{J}_{m_3,c_2} & \vec{J}_{m_3} & \vec{J}_{m_3,c_3} \\ 
- \vec{0} & \vec{0} & \vec{0} & \vec{0} & \vec{J}_{c_3,m_3} & \vec{J}_{c_3}  
- \end{bmatrix} \begin{bmatrix}
- \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
- \vec{\delta m}_{2} \\ \vec{\delta c}_{2} \\
- \vec{\delta m}_{3} \\ \vec{\delta c}_{3}
-\end{bmatrix}  = -\begin{bmatrix}
- \vec{F}_{m_1} \\ \vec{F}_{c_1} \\
- \vec{F}_{m_2} \\ \vec{F}_{c_2} \\
- \vec{F}_{m_3} \\ \vec{F}_{c_3} \end{bmatrix}
- \end{equation}
- 
- The semi-implicit solution framework is composed of five steps.
- First, the momentum volume equations, rows one, three, and five of the linear system \eqref{eqn:si_solve}, are multiplied by their inverse diagonal Jacobian entries, $\vec{J}_{m_k}$.
- The off-diagonal entries for the momentum equations are now $\vec{J}^{-1}_{m_k}\vec{J}_{m_k,c_j}$ where $j$ is the index of the connected continuity volumes.
- Since the $J_{m_k,c_j}$ terms only contain derivatives with respect to the pressure for the adjoining continuity volumes, the [3 x 6] matrix product $\vec{J}^{-1}_{m_k}\vec{J}_{m_k,c_j}$ will be referred to as $\frac{\partial \vec{m}_k}{\partial P_j}$.
- This product matrix only contains entries in the sixth column.
- Using the above notation, the resulting system is given in \eqref{eqn:si_solve_1}.
- 
-  \begin{equation}
- \label{eqn:si_solve_1}
- \begin{bmatrix} 
- \vec{I} & \frac{\partial \vec{m}_1}{\partial P_1} & \vec{0} & \vec{0} & \vec{0} & \vec{0}\\
- \vec{J}_{c_1,m_1} & \vec{J}_{c_1} & \vec{J}_{c_1,m_2} & \vec{0} & \vec{0} & \vec{0} \\
- \vec{0} & \frac{\partial \vec{m}_2}{\partial P_1} & \vec{I} & \frac{\partial \vec{m}_2}{\partial P_2} & \vec{0} & \vec{0} \\
- \vec{0} & \vec{0} & \vec{J}_{c_2,m_2} & \vec{J}_{c_2} & \vec{J}_{c_2,m_3} & \vec{0} \\
- \vec{0} & \vec{0} & \vec{0} & \frac{\partial \vec{m}_{3}}{\partial P_2} & \vec{I} & \frac{\partial \vec{m}_{3}}{\partial P_3} \\ 
- \vec{0} & \vec{0} & \vec{0} & \vec{0} & \vec{J}_{c_3,m_3} & \vec{J}_{c_3}  
- \end{bmatrix} \begin{bmatrix}
- \vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
- \vec{\delta m}_{2} \\ \vec{\delta c}_{2} \\
- \vec{\delta m}_{3} \\ \vec{\delta c}_{3}
-\end{bmatrix}  = -\begin{bmatrix}
- \vec{J}^{-1}_{m_1}\vec{F}_{m_1} \\ \vec{F}_{c_1} \\
- \vec{J}^{-1}_{m_2}\vec{F}_{m_2} \\ \vec{F}_{c_2} \\
- \vec{J}^{-1}_{m_3}\vec{F}_{m_3} \\ \vec{F}_{c_3} \end{bmatrix}
- \end{equation}
 
-Second, the momentum equations are used to eliminate the $\vec{J}_{c_k,m_k}$ entries from the continuity volumes.
-The resulting equation set, \eqref{eqn:si_solve_2}, no longer has equations for the momentum volumes.
-
-\begin{IEEEeqnarray}{rl}
-\label{eqn:si_solve_2}
-\begin{bmatrix} 
-\vec{J}_{c_1} - \vec{J}_{c_1,m_1}\frac{\partial \vec{m}_1}{\partial P_1} - \vec{J}_{c_1,m_2}\frac{\partial \vec{m}_2}{\partial P_1} &
--\vec{J}_{c_1,m_2}\frac{\partial \vec{m}_2}{\partial P_2} &
-\vec{0} \\
--\vec{J}_{c_2,m_2}\frac{\partial \vec{m}_2}{\partial P_1} & 
-\vec{J}_{c_2} - \vec{J}_{c_2,m_2}\frac{\partial \vec{m}_2}{\partial P_2}-\vec{J}_{c_2,m_3}\frac{\partial \vec{m}_3}{\partial P_2} &
--\vec{J}_{c_2,m_3}\frac{\partial \vec{m}_3}{\partial P_3} \\
- \vec{0} &
--\vec{J}_{c_3,m_3}\frac{\partial \vec{m}_3}{\partial P_2} &
-\vec{J}_{c_3} -\vec{J}_{c_3,m_3}\frac{\partial \vec{m}_3}{\partial P_3} 
-\end{bmatrix} &\begin{bmatrix}
-\vec{\delta c}_{1} \\
-\vec{\delta c}_{2} \\
-\vec{\delta c}_{3}
-\end{bmatrix} \nonumber \\
- = -\begin{bmatrix}
-\vec{F}_{c_1} -
-\vec{J}_{c_1,m_1}\vec{J}^{-1}_{m_1}\vec{F}_{m_1}-\vec{J}_{c_1,m_2}\vec{J}^{-1}_{m_2}\vec{F}_{m_2} \\
-\vec{F}_{c_2} - 
-\vec{J}_{c_2,m_2}\vec{J}^{-1}_{m_2}\vec{F}_{m_2}-\vec{J}_{c_2,m_3}\vec{J}^{-1}_{m_3}\vec{F}_{m_3} \\
-\vec{F}_{c_3} - 
-\vec{J}_{c_3,m_3}\vec{J}^{-1}_{m_3}\vec{F}_{m_3}
-\end{bmatrix} &
- \end{IEEEeqnarray}
-
-The off-diagonal entries of the reduced Jacobian matrix in \eqref{eqn:si_solve_2}, $\vec{J}_{c_i,m_j}\frac{\partial \vec{m}_j}{\partial P_k}$ will be denoted by $\vec{C}_{c_i,P_j}$ as they represent the change in the continuity variables in volume $i$ due to the change in the pressure of continuity volume $j$.
-The [6 x 6] matrix, $\vec{C}_{c_i,P_j}$, contains only entries in the last column, which correspond to the inter-continuity pressure coupling terms.
-The diagonal entries of the reduced Jacobian and the right-hand side entries will be referred to as $\vec{J}^{*}_{c_i}$ and $\vec{F}^{*}_{c_i}$.
-With this new nomenclature, \eqref{eqn:si_solve_2} can be restated as \eqref{eqn:si_solve_3}.
-
-  \begin{equation}
- \label{eqn:si_solve_3}
- \begin{bmatrix} 
- \vec{J}^{*}_{c_1} & \vec{C}_{c_1,P_2} & \vec{0} \\
- \vec{C}_{c_2,P_1} & \vec{J}^{*}_{c_2} & \vec{C}_{c_2,P_3} \\
- \vec{0}           & \vec{C}_{c_3,P_2} & \vec{J}^{*}_{c_3}
- \end{bmatrix} \begin{bmatrix}
- \vec{\delta c}_{1} \\
- \vec{\delta c}_{2} \\
- \vec{\delta c}_{3}
-\end{bmatrix}  = -\begin{bmatrix}
- \vec{F}^{*}_{c_1} \\
- \vec{F}^{*}_{c_2} \\
- \vec{F}^{*}_{c_3}
-\end{bmatrix}
- \end{equation}
-
-Step three is to multiply each row by the $\vec{L}^{-1}_{c_i}$ portion of the LU decomposition without pivoting of $\vec{J}^{*}_{c_i}$, \eqref{eqn:si_solve_4}
-
-  \begin{equation}
- \label{eqn:si_solve_4}
- \begin{bmatrix} 
- \vec{U}^{*}_{c_1} & \vec{L}^{-1}_{c_1}\vec{C}_{c_1,P_2} & \vec{0} \\
- \vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_1} & \vec{U}^{*}_{c_2} & \vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_3} \\
- \vec{0}           & \vec{L}^{-1}_{c_3}\vec{C}_{c_3,P_2} & \vec{U}^{*}_{c_3}
- \end{bmatrix} \begin{bmatrix}
- \vec{\delta c}_{1} \\
- \vec{\delta c}_{2} \\
- \vec{\delta c}_{3}
-\end{bmatrix}  = -\begin{bmatrix}
- \vec{L}^{-1}_{c_1}\vec{F}^{*}_{c_1} \\
- \vec{L}^{-1}_{c_2}\vec{F}^{*}_{c_2} \\
- \vec{L}^{-1}_{c_3}\vec{F}^{*}_{c_3}
-\end{bmatrix}
- \end{equation}
- 
-By isolating the last row from each continuity block and dividing that row by its diagonal entry, a resulting matrix for the pressure update in every continuity volume is obtained, \eqref{eqn:si_pressure_matrix}. 
-For a problem with $N$ continuity volumes, the resulting pressure matrix, \eqref{eqn:si_pressure_matrix}, will be $N$ x $N$.
-For the simple geometry considered in this example, the resultant pressure matrix is a tridiagonal matrix.
-However, this is not the case for more complex geometries.
-
-  \begin{equation}
- \label{eqn:si_pressure_matrix}
- \begin{bmatrix} 
- 1 & \frac{\vec{L}^{-1}_{c_1}\vec{C}_{c_1,P_2}[6]}{\vec{U}^{*}_{c_1}[6]} & \vec{0} \\
- \frac{\vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_1}[6]}{\vec{U}^{*}_{c_2}[6]} & 1 & \frac{\vec{L}^{-1}_{c_2}\vec{C}_{c_2,P_3}[6]}{\vec{U}^{*}_{c_2}[6]} \\
- \vec{0}           & \frac{\vec{L}^{-1}_{c_3}\vec{C}_{c_3,P_2}[6]}{\vec{U}^{*}_{c_3}[6]} & 1
- \end{bmatrix} \begin{bmatrix}
- \vec{\delta P}_{1} \\
- \vec{\delta P}_{2} \\
- \vec{\delta P}_{3}
-\end{bmatrix}  = -\begin{bmatrix}
- \frac{\vec{L}^{-1}_{c_1}\vec{F}^{*}_{c_1}[6]}{\vec{U}^{*}_{c_1}[6]} \\
- \frac{\vec{L}^{-1}_{c_2}\vec{F}^{*}_{c_2}[6]}{\vec{U}^{*}_{c_2}[6]} \\
- \frac{\vec{L}^{-1}_{c_3}\vec{F}^{*}_{c_3}[6]}{\vec{U}^{*}_{c_3}[6]}
-\end{bmatrix}
- \end{equation}
-
-In step four, the pressure matrix is then solved for the pressure updates in every continuity volume.
-This step is performed using either the sparse-matrix solver, SuperLU \cite{Li1999} or direct Gaussian elimination. 
-
-Step five is to use the vector of pressure updates to obtain the continuity updates in every volume from \eqref{eqn:si_solve_4} and to obtain the updates for the momentum variables from the momentum rows of \eqref{eqn:si_solve_1}.
-
-This five-step process provides an overview of the solution technique of the semi-implicit method used in \cobra{}.
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -222,6 +119,41 @@ As such, the \cobra{} software needed to be modified to be able do the following
 \item{Implement a globalization strategy for Newton's method.}
 \end{itemize}
 
+Given the formation of the governing equations from \sect{sect:lin_cobra_alg}, several modification were required to implement a nonlinear solver.
+The correct linearization about a newtime guess value as opposed to the old time.
+Each Newton step is an incremental change in the newtime variable, not a change in the independent parameters over at timestep.
+This required that each of the Fortran procedures involved with the evaluation of the various physical parameters and operators needed to be evaluated to determine if the variables being used were correct.
+After the software variables were straightened out, the next mountain that needed to be surmounted was the issue of active vs. inactive volumes.
+
+In \cobra{} the smallest geometric component that can be input is the channel.
+As mentioned in \ref{sect:geometry} the channels inherit their geometric properties from the section in which they reside.
+To create geometrically complicated problems, it is possible to set no flow boundary conditions.
+These boundary conditions decoupled adjacent continuity volumes by eliminating the flow-paths that connect them.
+After evaluating several prototypical models, it was determined that a large proportion of a domain could actually be thermodynamically isolated.
+These areas of the domain do not impact the actual solution in the portion of the domain that has boundary values.
+To determine which areas of the domain were active and which ones were inactive, a geometry traversing routine was written.
+This routine parsed the input file and proceeded to create an adjacency list data structure to represent the active portion of the domain.
+This data structure allowed the active volumes to be treated independently from the memory structure of the software.
+
+Once the active volumes were identified, the way in which the solver was stored in memory was changed.
+Previously, there had been a hard coded solver.
+Now the solvers are objects.
+These objects are awesome.
+I made them.
+The data structures involves matrices.
+There are two types of matrix data structures.
+Sparse and Full.
+Each solver has a matrix.
+The matrix is sized based upon the active domain.
+A picture of the active vs. inactive would be nice.
+
+The nonlinear solver has a $F_{tol}$, a $d_{tol}$, and a $k_{max}$.
+There is a quadratic backtracking linesearch algorithm, but it is not used for this work.
+It was turned off because there had not been enough testing for robustness.
+
+The nonlinear solver had to add the ability to undo a trip through the momentum and continuity loops.
+
+The CCFL equations need some attention here.
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -243,6 +175,15 @@ However, since the \ncgs{} and the vapor fields share a common volume fraction, 
 Since \cobra{} incorporates two liquid fields, the lower limit for the aggregate liquid volume fraction, $\alpha_e + \alpha_l$, is equally divided between the two liquid fields.
 As a phase approaches depletion, $\alpha_k \rightarrow \alpha_{k,\text{MIN}}$, the velocity of the depleting phase is required to approach that of the remaining phase.
 This velocity equilibrium is imposed by artificially increasing the interfacial drag between the two phases.
+
+However, there is a subtle issue created by artificially increasing the interfacial drag between the two phases.
+The increased interfacial drag will dominate the residual for the momentum equation of the phase that is not disappearing.
+It was determined that the two coefficients should be kept the same.
+Since the new-time velocity is what is forced to be equal by the interfacial drag, at the beginning of the next timestep, the old time velocity is not equal to the new-time velocity at the end of the previous timestep.
+This meant that at the begining of every timestep where the simulation was effecitvely single phase, there was slip between the two phases even though there was no slip at the end of the previous timestep.
+To assist in removing this problem, the velocity of the depleted phase is relinearized every timestep to be equal to within round off of the dominant phase.
+The linearization point is determined by the ratio of the macroscopic densities.
+ 
 
 Upon completion of a timestep within \cobra{}, there are certain constraints that are imposed upon the independent parameters.
 These constraints are designed to deal with the possibility that the obtained solution may not be an accurate one.
@@ -381,8 +322,18 @@ While adding time to the development cycle, the overhead of the quality assuranc
 %-------------------------------------------------------------------------------
 \section{Operator-Based Scaling}
 \label{sect:nln_scaling}
-In order to determine the degree to which a state vector, $\vec{x}$, satisfies the governing PDEs, \eqref{eqn:conservation_equations}, the use of the nonlinear residual, $\vec{F})(\vec{x})$, is required.
-Due to the units of the residuals for the different conservation equations, the values of the residuals can vary by orders of magnitude.
+An important aspect of the nonlinear solver outlined above is the convergence criteria.
+The iterative solver depends upon the scaled residual to determine when convergence has been achieved.
+In particular, various norms of the residual are evaluated to measure the degree to which the nonlinear system of algebraic equations are being satisfied.
+The evaluation of residual norms encourages the use of a scaling matrix for the residual vector.
+Without scaling the residual has several negative characteristics.
+The different equations will have different scales at a given point in time because of the physical quantities that they represent.
+Over the course of the transient the magnitude of any given equation can vary dramatically.
+Summing equations with different units is not good.
+When the summation occurs those equations whose terms are the largest may have an unscaled residual that is orders of magnitude greater than others.
+This will mean that any norm taken of the residuals will be subject to a bias towards those equations with the largest numerical value by virtue of their units.
+
+Here is a list of the residuals and their units.
 For a given continuity volume, the nonlinear residual will have six components: four for the conservation of mass and two for the conservation of energy.
 For each momentum volume, the three conservation of momentum equations will form the three components of the nonlinear residual.
 These residuals have the units of the conserved quantities for their corresponding PDEs; \tab{tab:scaling_units_scales} shows the units for the different conservation equations.
@@ -394,8 +345,8 @@ These residuals have the units of the conserved quantities for their correspondi
 \label{tab:scaling_units_scales}
 \end{table}
 
-Due to the range of magnitudes of these residuals it is important to choose a proper scaling factor to ensure that the convergence of each equation is relative to their magnitude.
-A challenge that has been addressed in this work is the development of a method for scaling of these residuals that is based upon the physics of interest during a timestep.
+For the aforementioned reasons, it is desirable to scale the residuals.
+A challenge that has been addressed in this work is the development of a method for scaling of these residuals that is based upon the local physics of interest at any given point in the transient.
 In constructing this scaling factor it was determined that the following characteristics were desirable:
 
 \begin{itemize}
@@ -404,19 +355,22 @@ In constructing this scaling factor it was determined that the following charact
 \item{$0 \leq \abs{(S_{i}^{k})^{-1} F^{k}_{i}} \leq 1 $ for all values of $\vec{x}^{k}_i$.}
 \end{itemize}
 
-The scaling used in this work is an operator-based approach.
+This dynamic behavior of the residual necessitates a method for scaling that adapts to relevant physical situations.
+The scaling method developed during this work is an operator-based approach.
 The governing PDEs can be viewed as a collection of operators, both linear and nonlinear, acting upon the vector of independent parameters.
 The summation of these operators must balance to zero for the nonlinear equation to be satisfied.
+The scaling factor developed uses the magnitudes of these operators to determine an absolute measure of the physics processes occurring in a given volume.
+This is accomplished by summing the absolute value of the different discrete operators in the governing equations. 
 
-To illustrate the scaling procedure, we shall consider the discrete conservation of continuous liquid mass \eqref{eqn:si_mass_liq}.
-The residual for \eqref{eqn:si_mass_liq} would be \eqref{eqn:res_mass_liq}.
+To illustrate this scaling procedure, consider the discrete conservation of continuous liquid mass \eqref{eqn:si_mass_liq}.
+The residual for \eqref{eqn:si_mass_liq} is given by \eqref{eqn:res_mass_liq}.
 
 \begin{equation}
 \label{eqn:res_mass_liq}
 F_{m,l} = \Delta t \left[ V_c \frac{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho_l \right)^{n}}{\Delta t} + \sum_{NK}\left( \don{\alpha^n_l \rho^n_l}^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right) + \left[(1-\eta)\Gamma + S \right]^{n+1}\right]
 \end{equation}
 
-In this equation there are five physically meaningful quantities: the temporal difference, the mass flowing into  the volume, the mass flowing out of the volume, the mass exchange with the gaseous phase, and the mass exchange with the entrained liquid field.
+In this equation there are five physically meaningful quantities: the temporal difference, the mass flowing into the volume, the mass flowing out of the volume, the mass exchange with the gaseous phase, and the mass exchange with the entrained liquid field.
 
 The scaling chosen for this residual is shown by \eqref{eqn:scaling_factor}.
 \begin{equation}
@@ -428,13 +382,13 @@ This scaling creates a relative measure of the nonlinear residual when compared 
 The other mass, energy, and momentum equations each have similarly defined scaling factors for their respective residuals.
 For convergence testing in the nonlinear version of \cobra{} and residual evaluation during the linear mode, the scaled nonlinear residual is used.
 
-The issue of phase transition was considered during this work.
+The issue of phase transition also needed to be considered during this work.
 Since \cobra{} does not actually transition the governing equations to those for single-phase flow, there will always be a nonlinear residual for those phases that are approximately absent.
-It was determined that the effects of maintaining a depleted phase in the system of equations when solving the nonlinear problem created a unique issue.
+It was determined that the effects of maintaining a depleted phase in the system of equations when solving the nonlinear problem created unique issues.
 The unscaled residuals would be on the order of machine round-off.
 The operator based scaling factors for these residuals would also be within orders of magnitude of machine round-off.
 This created the situation where the scaled nonlinear residual for the depleted field would be of $\mathcal{O}$(1).
-These depleted residuals would dominate the determination of convergence.
+These depleted residuals would dominate the norms used to determine convergence.
 To overcome this deficiency it was determined that when a phase or field began to deplete, the scaling factor would be scaled up to create an artificial decrease in the residual to counter the artificial presence of the depleted field.
 This scaling is shown by \eqref{eqn:scaling_factor_small}.
 
@@ -445,9 +399,22 @@ S_k = \max[1.0, \left(C_1 \frac{\alpha_{k,\text{MIN}}}{\alpha_k}\right)^{C_2} ] 
 
 For this work, the constant $C_1$ was set equal to 100, and the exponent $C_2$ was set equal to 10.
 This particular phase transition scaling produced the regular operator scaling factor when the volume fraction of a phase is at least two orders of magnitude greater than the minimum volume fraction for that phase.
-This drove the scaled residuals for phases that were nominally not present to zero.
-The original coding of \cobra{} has a minimum volume fraction of $\alpha_{k,\text{MIN}}$ = 1.0E-6.
-For the work performed here, that value was reduced to $\alpha_{k,\text{MIN}}$ = 1.0E-9.
+This drove the scaled residuals for phases that were nominally not present to well below those residuals for equations that were active.
+
+Another phase depletion limit was floor placed upon the scale factor.
+For each equation, the scale factor was limited to the minimum possible value of the conserved quantity based upon the volume fraction limits.
+For the mass equations it would be the minimum macroscopic density of the given field based upon the minimum volume fraction for that field.
+
+
+\begin{table}[ht]
+\centering
+\input{tables/minimum_conserved_values}
+\caption{Minimum conserved quantities for conservation equations.}
+\label{tab:minimumConservedValues}
+\end{table}
+
+\tab{tab:minimumConservedValues} shows the floors for the various residuals.
+These floors are based update during the iterative process.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------

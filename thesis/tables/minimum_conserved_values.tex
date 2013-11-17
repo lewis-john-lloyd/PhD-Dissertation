@@ -1,0 +1,20 @@
+\pgfplotstabletypeset[col sep=&,row sep=\\,
+	columns/Residual/.style={column name = Equation, string type, column type=l},
+	columns/Min/.style={column name = Minimum  , string type},
+	every head row/.style={
+		before row=\toprule,
+		after row=\midrule
+	},
+	every last row/.style={
+		after row=\bottomrule}]{
+Residual & Min \\
+Conservation of the \NCG{} Field Mass                  &  $\alpha_{g, \text{min}} \rho_n $ \\
+Conservation of the Continuous Liquid Water Field Mass &  $\alpha_{l, \text{min}} \rho_l $ \\
+Conservation of the Entrained Liquid Water Field Mass  &  $\alpha_{e, \text{min}} \rho_l $ \\
+Conservation of the Water Vapor Field Mass             &  $\alpha_{g, \text{min}} \rho_v $ \\
+Conservation of the Gaseous Phase Enthalpy             &  $\alpha_{g, \text{min}} \rho_g h_g$   \\
+Conservation of the Liquid Phase Enthalpy              &  $( 1.0 - \alpha_{g, \text{min}}) \rho_l h_l$   \\
+Conservation of the Continuous Liquid Field Momentum   &  $ u_l \frac{\alpha_{l, \text{min}} \ave{\rho_l} }{\ave{\alpha_l \rho_l}} A_{mom}$  \\
+Conservation of the Entrained Liquid Field Momentum    &  $ u_e \frac{\alpha_{e, \text{min}} \ave{\rho_l} }{\ave{\alpha_e \rho_l}} A_{mom}$  \\
+Conservation of the Gaseous Phase Momentum             &  $ u_g \frac{\alpha_{g, \text{min}} \ave{\rho_g} }{\ave{\alpha_g \rho_g}} A_{mom}$ \\
+}
