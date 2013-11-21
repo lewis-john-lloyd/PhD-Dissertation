@@ -497,7 +497,7 @@ The choice of the nine variables that will be solved for is another distinguishi
 
 \begin{equation}
 \label{eqn:independent_variables}
-\vec{x} = [\alpha_{g}P_{n}, \alpha_g, P, \alpha_e, \alpha_g h_v, (1 - \alpha_g) h_l, \dot{m}_g, \dot{m}_l, \dot{m}_e]^{T}
+\vec{x} = [\alpha_{g}P_{n}, \alpha_g, \alpha_g h_v, (1 - \alpha_g) h_l, \alpha_e, P, \dot{m}_g, \dot{m}_l, \dot{m}_e]^{T}
 \end{equation}
 
 The definition of $\dot{m}_k$ is given by \eqref{eqn:mom_dot}.
@@ -787,10 +787,10 @@ The $\ave{\alpha_k \rho_k}^{n}_{a}$ represents the arithmetic average of macrosc
 
 \begin{equation}
 \label{eqn:si_vel}
-u^{n+1}_{k, j \pm \onehalf} = \frac{\dot{m}^{n+1}_{k, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha^{n}_{k} \rho^{n}_{k}}^{n}_{a, j \pm \onehalf}} 
+u^{n+1}_{k, j \pm \onehalf} = \frac{\dot{m}^{n+1}_{k, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha_{k} \rho_{k}}^{n}_{a, j \pm \onehalf}} 
 \end{equation}
 
-The donoring operator $\don{a^n}^{n}_{d}$ is an extension of \eqref{eqn:upwind_donoring}.
+The donoring operator $\don{a}^{n}_{d}$ is an extension of \eqref{eqn:upwind_donoring}.
 The donored quantities and the velocities used to determine the direction of donoring are evaluated with their old-time values.
 
 \alg{alg:si_legacy} shows the algorithm for solving the semi-implicit method.
@@ -1046,5 +1046,5 @@ Isolation of a specified subdomain where nonlinearities are high was achieved by
 For this work, the subdomains to be isolated were geometric components predetermined by the user.
 Upon isolation, the coupled subdomain were subjected to a globally convergent Newton method to resolve the nonlinearities at every timestep.
 This converged solution was then communicated via the coupling coefficients to the linear portion of the domain for use in calculating its single-shot Newton step.
-This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling may provide a route to nonlinearly converged timestep size insensitive solutions for traditional two-phase flow methods.
+This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling may provide a route to obtaining nonlinearly-converged timestep-size insensitive solutions for traditional two-phase flow methods with a lower computational cost than traditional fully iterative Newton methods.
 The convergence of the nonlinearities within a given subdomain may allow for temporal convergence to be determined at timestep sizes larger than those required by the current single-shot linearization methods.
