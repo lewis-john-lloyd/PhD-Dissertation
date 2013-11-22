@@ -1,26 +1,27 @@
 \chapter{Nonlinear \cobra{}}
 \label{chap:nln_solver}
-The basic \cobra{} software utilized the traditional single Newton step of the semi-implicit method.
+The original \cobra{} software utilized the single Newton step of the traditional semi-implicit method.
 In order to investigate the effects of nonlinear convergence upon the determination of the temporal convergence for a given solution, \cobra{} was modified to enable an iterative global Newton's method.
 Several algorithmic problems were identified and resolved during this work.
-For effective use of the nonlinear solver, a meaningful convergence metric was required for termination of the Newton solver.
+For effective use of the nonlinear solver, a meaningful convergence metric was required for the determination of nonlinear convergence.
 A physics based scaling method was developed to provide a physically meaningful convergence metric.
-To aid in the identification of temporally converged converged solutions, a metric was developed.
+A metric was developed and tested to aid in the identification of solutions that may not be temporally converged.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 \section{Linear Solution Algorithm}
-\label{sect:lin_cobra_alg}
+\label{sect:linCobraAlg}
 
 \cobra{} utilizes the semi-implicit method as outlined in \sect{subsect:semi_implicit}.
 A detailed description of the solution algorithm as implemented will be presented in the following section.
 The linearized semi-implicit method is not traditionally casts as a system of nonlinear equations.
-The governing equations are not viewed through the lense of a Newton step.
-The view that the linearization is from $\vec{x}^{n}$ to $\vec{x}^{n+1}$ is endemic in the literature of linearized system analysis software.
+The governing equations in the traditional semi-implicit method are not viewed through the lens of a single Newton step for a system of nonlinear equations.
+Instead, the view that the linearization is from $\vec{x}^{n}$ to $\vec{x}^{n+1}$, as opposed to $\vec{x}^{n+1, k}$ to $\vec{x}^{n+1, k+1}$, is standard in the literature of linearized system analysis software.
 For that reason, the following discussion will present the algorithm from the point of view of a single-shot linearization.
 The following discussion will parallel the algorithmic flow within the \cobra{} software.
-The first step in \cobra{} is a loop over all momentum equations in the domain.
+
+Assuming that all data has been initialized properly, the first step in \cobra{} is a loop over all momentum equations in the domain.
 The nonlinear momentum equations, neglecting spatial discretization notation and external sources, are given in \eqref{eqn:si_nln_mom_liq} -- \eqref{eqn:si_nln_mom_ent}.
 
 \begin{IEEEeqnarray}{rCl}
@@ -62,19 +63,19 @@ The momentum equations are then linearized around the current time value, $\dot{
 \end{IEEEeqnarray}
 
 The momenta euqations, \eqref{eqn:si_lin_mom_liq} - \eqref{eqn:si_lin_mom_ent}, are now linear in the unknown variables $\dot{\vec{m}}^{n+1}$.
-These equations are now solved for the unknown new time momenta.
-The $\delta P$ is left as an unknown.
-This creates a system of the form $\vec{A} \dot{\vec{m}}^{n+1} = \vec{a} + \sum_{NK} \vec{b} \delta P$.
+These equations are now solved for the unknown new time momenta, $\dot{\vec{m}}^{n+1}$.
+The $\delta P$ is left as an unknown, creating an additional uknown on the right hand side of the linear system.
+The resulting system is of the form $\vec{A} \dot{\vec{m}}^{n+1} = \vec{a} + \sum_{NK} \vec{b} \delta P$.
 The solution of this linear system is expressed in \eqref{eqn:star:momenta}.
 
 \begin{equation}
 \label{eqn:star:momenta}
-\dot{\vec{m}}^{n+1} = \dot{\vec{m}}^{*} + \sum_{NK} \frac{\partial \dot{\vec{m}}}{\partial P} \delta P
+\dot{\vec{m}}^{n+1} = \vec{A}^{-1} \vec{a} + \sum^{NK}_{i = 1} \vec{A}^{-1} \vec{b} \delta P_{i} = \dot{\vec{m}}^{*} + \sum^{NK}_{i = 1} \frac{\partial \dot{\vec{m}}}{\partial P} \delta P_{i}
 \end{equation}
 
-The definition of the new time momenta still involves unknown changes in pressure.
-The portion of the right hand side of \eqref{eqn:star:momenta} that is know, $\dot{\vec{m}}^{*}$, is considered to be the tentative new time momenta.
-Once all of the momenta equations has been solved in the above manner, the domain's continuity volumes are looped over.
+The definition for the new-time momenta is a function of the as of yet unknown changes in pressures that occur in the continuity volumes connected by the momentum volume.
+The portion of the right hand side of \eqref{eqn:star:momenta} that is known, $\dot{\vec{m}}^{*}$, is considered to be the tentative new time momenta.
+Once all of the momenta equations has been solved in the above manner, providing an estimated new-time momenta for each momentum volume, the domain's continuity volumes are then looped over.
 The continuity equations used in this work, omitting external sources, are shown in \eqref{eqn:si_mass_ncg} -- \eqref{eqn:si_nrg_liq}. 
 The new time velocities used for advection in the continuity equations is defined with the new time momenta, \eqref{eqn:star:momenta}, in conjunction with \eqref{eqn:si_vel}.
 
@@ -82,34 +83,70 @@ The new time velocities used for advection in the continuity equations is define
 \label{eqn:si_mass_ncg}
 V_c (\alpha_g \rho_{n})^{n+1} & - & V_c (\alpha_g \rho_{n})^{n} = -\Delta t \sum_{NK}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) \\
 \label{eqn:si_mass_vap}
-V_c \left(\alpha_g \rho_v \right)^{n+1} &-& V_c \left(\alpha_g \rho_v \right)^{n} = - \Delta t \sum_{NK} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) + \Delta t \Gamma^{n+1} \\
-\label{eqn:si_mass_liq}
-V_c \left(\alpha_l \rho_l \right)^{n+1} & - & V_c \left(\alpha_l \rho_l \right)^{n} =  -\Delta t \sum_{NK}\left( \don{\alpha^n_l \rho^n_l}^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right) \nonumber \\
-&- &\Delta t\left[(1-\eta)\Gamma + S \right]^{n+1} \\
-\label{eqn:si_mass_ent}
-V_c \left(\alpha_e \rho_l \right)^{n+1} & - & V_c \left(\alpha_e \rho_l \right)^{n} = -\Delta t \sum_{NK}\left( \don{\alpha^{n}_e \rho^{n}_l}^{n}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right)\nonumber \\ 
-&+& \Delta t\left[ S -\eta\Gamma \right]^{n+1} \\
+V_c \left(\alpha_g \rho_v \right)^{n+1} &-& V_c \left(\alpha_g \rho_v \right)^{n} = - \Delta t \sum_{NK} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) + 
+\Delta t \Gamma^{n+1} \\
 \label{eqn:si_nrg_gas}
 V_c \left( \alpha_g \{\rho_g h_g\} \right)^{n+1} & - & V_c \left( \alpha_g \{\rho_g h_g\} \right)^{n}  = -\Delta t \sum_{NK} \left(  \don{\alpha^{n}_g \{\rho_g h_g\}^{n}}^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) \nonumber \\
 &+& \Delta t \left[\Gamma h^{'}_v + q_{i,v} + q_{gl} + q_{wg} \right]^{n+1} + V_c \alpha^{n}_g ( P^{n+1} - P^{n} ) \\
 \label{eqn:si_nrg_liq}
-V_c\left( \alpha_l \rho_l h_l \right)^{n+1} & - & V_c\left( \alpha_l \rho_l h_l \right)^{n} =  -\Delta t \sum_{NK} \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n}_{d} u^{n+1}_l \cdot \vec{\bar{A}} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right) \nonumber \\
-& +& \Delta t \left[q_{wl} -\Gamma h^{'}_l +  q_{i,l} - q_{gl}\right]^{n+1} + V_c \alpha^{n}_l (P^{n+1} - P^{n})
+V_c\left( \alpha_l \rho_l h_l \right)^{n+1} & - & V_c\left( \alpha_l \rho_l h_l \right)^{n} = \Delta t \left[q_{wl} -\Gamma h^{'}_l +  q_{i,l} - q_{gl}\right]^{n+1} + V_c \alpha^{n}_l (P^{\,n+1} - P^{\,n})   \nonumber \\
+& -& \Delta t \sum_{NK} \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n}_{d} u^{n+1}_l \cdot \vec{\bar{A}} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right) \\
+\label{eqn:si_mass_ent}
+V_c \left(\alpha_e \rho_l \right)^{n+1} & - & V_c \left(\alpha_e \rho_l \right)^{n} = -\Delta t \sum_{NK}\left( \don{\alpha^{n}_e \rho^{n}_l}^{n}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right)\nonumber \\ 
+&+& \Delta t\left[ S -\eta\Gamma \right]^{n+1} \\
+\label{eqn:si_mass_liq}
+V_c \left(\alpha_l \rho_l \right)^{n+1} & - & V_c \left(\alpha_l \rho_l \right)^{n} =  -\Delta t \sum_{NK}\left( \don{\alpha^n_l \rho^n_l}^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right) \nonumber \\
+&- &\Delta t\left[(1-\eta)\Gamma + S \right]^{n+1}
 \end{IEEEeqnarray}
 
-The above equations are then linearized in an analogous manner to the momenta equations.
-Each continuity volume will be connected to other continuity volumes via \eqref{eqn:star:momenta}.
+Unlike the momentum equations, the continuity equations are linearized with variables other their conserved quantities, \eqref{eqn:independentVariables}.
+This creates a more complicated linearization procedure than that used for the momenta equations.
+The newtime variables in \eqref{eqn:si_mass_ncg} -- \eqref{eqn:si_nrg_liq}  are linearized about the oldtime variables with respect to the continuity variables in \eqref{eqn:independentVariables}.
+The use of the \eqref{eqn:star:momenta} in defining the new-time velocities introduces inter-continuity volume coupling through the momentum equations dependency upon changes in pressure, $\delta P$.
+With the addition of the unknown pressure updates via the momenta, the six linearized continuity equations now form a [ 6 x 6 + NK ] linear system.
+\comment{I need to straighten out the nomenclature for connections. NK has previously been used to indicate the number of volumes to which a flowpath is connected. That doesn't make sense though since each flowpath can connect to only two volumes. Anyways... That needs to be fixed.}
+Additionally, while the momentum equations were fully expanded to solve for the new-time conserved quantities directly, the continuity equations instead solve for their associated updates, \eqref{eqn:linearUpdate}.
 
+\begin{equation}
+\label{eqn:linearUpdate}
+\begin{bmatrix}
+\delta ( \alpha_{g} P_{n} ) \\
+\delta \alpha_{g} \\
+\delta ( \alpha_{g} h_v ) \\
+\delta ( (1 - \alpha_{g} ) h_l ) \\
+\delta \alpha_e \\
+\delta P 
+\end{bmatrix}
+=
+\begin{bmatrix}
+( \alpha_{g} P_{n})^{n+1} - (\alpha_{g} P_{g} )^{n} \\
+\alpha^{n+1}_{g} - \alpha^{n}_{g} \\
+( \alpha_{g} h_{v} )^{n+1} - ( \alpha_{g} h_{v} )^{n} \\
+( ( 1 - \alpha_{g} ) h_{l} )^{n+1} - ( ( 1 - \alpha_{g} ) h_{l} )^{n} \\
+\alpha^{n+1}_{e} - \alpha^{n}_{e} \\
+ P^{n+1} - P^{n}
+\end{bmatrix}
+\end{equation}
+
+Each continuity volume's linearized system of equations is subjected to an LU decomposition without pivoting, leaving an upper triangular matrix for each continuity volume.
+Since the pressure update corresponds to the last row in the system of equations, this allows for the isolation of the pressure updates.
+The last row of each continuity volume's linear system are then formed into a global pressure matrix.
+This will be a [ N x N ] system, where N is the number of continuity volumes in the domain.
+\comment{Once again, I need to get some basic nomenclature nailed down.}
+This matrix is then solved to determine the pressure updates for the whole domain.
+Each continuity volume is then traversed so that the pressure update can be used in solving its associated upper triangular system for the updates to the other five continuity variables in \eqref{eqn:linearUpdate}.
+Once all the continuity volumes are updated, \eqref{eqn:star:momenta} is then utilized, along with the now known pressure updates, to obtain the new-time momenta in each flowpath.
+Upon completion of this process, a single timestep is considered to have been taken.
+The solution obtained via this process is subjected to several physical and computational limits discussed in \eqref{sect:algoConcerns}.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 \section{Nonlinear Solution Algorithm}
-\label{sect:nln_cobra_alg}
-As obtained, the \cobra{} software used a single-shot linearization of the semi-implicit method.
-In order to evaluate the subdomain nonlinear refinement algorithm, \cobra{} needed to be modified to include a fully iterative Newton solver based upon a line search globalization strategy.
-As part of the \cobra{} modification a novel operator-based scaling has been developed to obtain meaningful convergence thresholds.
-When it is necessary to distinguish between the single-shot linearization algorithmic implementation of \cobra{} and the iterative nonlinear \cobra{} implementation, the former shall be referred to as the linear solver and the latter as the nonlinear solver.
+\label{sect:nlnCobraAlg}
+As obtained, the \cobra{} software used the single Newton step of the semi-implicit method as outlined in \sect{sect:linCobraAlg} for a timestep.
+In order to evaluate the subdomain nonlinear refinement algorithm, \cobra{} needed to be modified to be able to take multiple Newton steps within a given step.
+Additionally, a linesearch globalization strategy was added to the software.
 As such, the \cobra{} software needed to be modified to be able do the following:
 
 \begin{itemize}
@@ -119,17 +156,16 @@ As such, the \cobra{} software needed to be modified to be able do the following
 \item{Implement a globalization strategy for Newton's method.}
 \end{itemize}
 
-Given the formation of the governing equations from \sect{sect:lin_cobra_alg}, several modification were required to implement a nonlinear solver.
-The correct linearization about a newtime guess value as opposed to the old time.
-Each Newton step is an incremental change in the newtime variable, not a change in the independent parameters over at timestep.
-This required that each of the Fortran procedures involved with the evaluation of the various physical parameters and operators needed to be evaluated to determine if the variables being used were correct.
-After the software variables were straightened out, the next mountain that needed to be surmounted was the issue of active vs. inactive volumes.
+Given the formation of the governing equations from \sect{sect:linCobraAlg}, several modification were required to implement a nonlinear solver.
+The correct linearization about a new-time guess value as opposed to the old time.
+Each Newton step is an incremental change in the new-time variable, not a change in the independent parameters over at timestep.
+This required that each of the Fortran procedures involved with the calculation of the various physical parameters and operators needed to be evaluated to determine if the variables being used were correct.
 
 In \cobra{} the smallest geometric component that can be input is the channel.
 As mentioned in \ref{sect:geometry} the channels inherit their geometric properties from the section in which they reside.
 To create geometrically complicated problems, it is possible to set no flow boundary conditions.
 These boundary conditions decoupled adjacent continuity volumes by eliminating the flow-paths that connect them.
-After evaluating several prototypical models, it was determined that a large proportion of a domain could actually be thermodynamically isolated.
+After evaluating several prototypical models, it was determined that a large portion of a domain could actually be thermodynamically isolated.
 These areas of the domain do not impact the actual solution in the portion of the domain that has boundary values.
 To determine which areas of the domain were active and which ones were inactive, a geometry traversing routine was written.
 This routine parsed the input file and proceeded to create an adjacency list data structure to represent the active portion of the domain.
@@ -152,13 +188,13 @@ There is a quadratic backtracking linesearch algorithm, but it is not used for t
 It was turned off because there had not been enough testing for robustness.
 
 The nonlinear solver had to add the ability to undo a trip through the momentum and continuity loops.
-
-The CCFL equations need some attention here.
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 \section{Algorithmic Considerations}
-\label{sect:nln_algo_con}
+\label{sect:algoConcerns}
+
+As part of the \cobra{} modification a novel operator based scaling has been developed to obtain meaningful convergence thresholds.
 
 The methods outlined in \sect{sect:solution_techniques} have several algorithmic issues that need to be addressed.
 Among these issues are phase appearance and disappearance (hereafter referred to as phase transition), timestep solution acceptance criteria, and timestep size selection.
@@ -173,18 +209,17 @@ This means that \cobra{} does not transition between the two-phase flow governin
 Even during simulated single-phase flow, the non-dominant phase is still present, but it is at a very small volume fraction.
 However, since the \ncgs{} and the vapor fields share a common volume fraction, the partial pressure of the \ncgs{} is allowed to go to zero. 
 Since \cobra{} incorporates two liquid fields, the lower limit for the aggregate liquid volume fraction, $\alpha_e + \alpha_l$, is equally divided between the two liquid fields.
-As a phase approaches depletion, $\alpha_k \rightarrow \alpha_{k,\text{MIN}}$, the velocity of the depleting phase is required to approach that of the remaining phase.
+As a phase approaches depletion, $\alpha_k \rightarrow \alpha_{k,\text{min}}$, the velocity of the depleting phase is required to approach that of the remaining phase.
 This velocity equilibrium is imposed by artificially increasing the interfacial drag between the two phases.
 
 However, there is a subtle issue created by artificially increasing the interfacial drag between the two phases.
 The increased interfacial drag will dominate the residual for the momentum equation of the phase that is not disappearing.
 It was determined that the two coefficients should be kept the same.
 Since the new-time velocity is what is forced to be equal by the interfacial drag, at the beginning of the next timestep, the old time velocity is not equal to the new-time velocity at the end of the previous timestep.
-This meant that at the begining of every timestep where the simulation was effecitvely single phase, there was slip between the two phases even though there was no slip at the end of the previous timestep.
+This meant that at the beginning of every timestep where the simulation was effectively single phase, there was slip between the two phases even though there was no slip at the end of the previous timestep.
 To assist in removing this problem, the velocity of the depleted phase is relinearized every timestep to be equal to within round off of the dominant phase.
 The linearization point is determined by the ratio of the macroscopic densities.
  
-
 Upon completion of a timestep within \cobra{}, there are certain constraints that are imposed upon the independent parameters.
 These constraints are designed to deal with the possibility that the obtained solution may not be an accurate one.
 After the single Newton step, the updated parameters are evaluated to determine their validity.

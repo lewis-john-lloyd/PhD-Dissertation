@@ -80,7 +80,7 @@ The momenta vector is given by \eqref{eqn:momenta_vector}.
 \end{bmatrix}
 \end{equation}
 
-The fluxes into and out of a given volume will be denoted by $\vec{\Psi}$, \eqref{eqn:flux_vector}.
+The fluxes into or out of a given volume will be denoted by $\vec{\Psi}$, \eqref{eqn:flux_vector}.
 
 \begin{equation}
 \label{eqn:flux_vector}
@@ -95,17 +95,19 @@ With \eqref{eqn:flux_matrix} through \eqref{eqn:flux_vector}, \eqref{eqn:advecti
 (\alpha_{g} \rho_{n})^{n+1, k}_{j} - (\alpha_{g} \rho_{n})^{n}_{j} \\
 \alpha_{l} \rho_{l})^{n+1, k}_{j} - (\alpha_{l} \rho_{l})^{n}_{j} \\
 (\alpha_{g} \rho_{g} h_{g})^{n+1, k}_{j} - (\alpha_{g} \rho_g h_{g})^{n}_{j} - \alpha^{n}_{g} ( P^{\, n+1, k}_{j} - P^{\,n}_{j} )  \\
-(\alpha_{l} \rho_{l} h_{l})^{n+1, k}_{j} - (\alpha_{l} \rho_{l} h_{l} )^{n}_{j} \\
+(\alpha_{l} \rho_{l} h_{l})^{n+1, k}_{j} - (\alpha_{l} \rho_{l} h_{l} )^{n}_{j} - (1 - \alpha^{n}_{g}) ( P^{\, n+1, k}_{j} - P^{\,n}_{j} )\\
 (\alpha_{e} \rho_{l})^{n+1, k}_{j} - (\alpha_{e} \rho_{l})^{n}_{j} \\
 (\alpha_{g} \rho_{v})^{n+1, k}_{j} - (\alpha_{g} \rho_{v})^{n}_{j} 
 \end{bmatrix} + \vec{\Psi}^{n+1, k}_{j + \onehalf} - \vec{\Psi}^{n+1, k}_{j - \onehalf}= 0
 \end{equation}
 
+The residuals of the continuity equations at a given point, \eqref{eqn:short_hand_continuity}, will be known as $\vec{F}_{c, j}$.
+Let the Jacobian of \eqref{eqn:short_hand_continuity} with respect to the associated nonlinear parameters as defined in \eqref{eqn:independentVariables} be defined as $J^{k}_{c, j}$.
+The Jacobian of \eqref{eqn:short_hand_continuity} with respect to adjacent momenta, \eqref{eqn:momenta_vector}, is given by $\vec{\Xi}^{k}_{c, j \pm \onehalf}$.
+The domain decomposition method is based upon fluxes into and out of a domain.
+
 Up to this point, the discussion of the linear and nonlinear algorithms have avoided the use of full nonlinear system.
 However, it is now time to venture into unknown territories.
-
-Let the Jacobian of \eqref{eqn:short_hand_continuity} with respect to the associated nonlinear parameters as defined in \eqref{eqn:independent_variables} be defined as $J_{c}$.
-
 For this example, imagine the following model:
 
 HERE THERE IS A PICTURE OF TWO VOLUMES VERTICALLY CONNECTED.
@@ -130,7 +132,7 @@ The following procedure will show the development of the domain decomposition al
  \end{equation}
  
  \begin{equation}
-\label{eqn:domainMatrix}
+\label{eqn:domainMatrix2}
  \begin{bmatrix} 
 \vec{J}_{c_1} & \vec{\Xi}_{c_1,m_1} & \vec{0} \\
 \vec{J}_{m_1,c_1} & \vec{J}_{m_1} & \vec{J}_{m_1,c_2}  \\

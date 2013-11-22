@@ -15,11 +15,10 @@ The two problems were set up so that the maximum allowable timestep was varied.
 Each problem was run with the following maximum allowable timesteps: 1 [s], 0.1 [s], 0.01 [s], 0.001 [s], 0.0001 [s], and 0.00001 [s]. 
 For the linear runs, the scaled residuals were evaluated after a single Newton step, $\vec{F}(\vec{x}^{1})$.
 For the nonlinear runs, the scaled nonlinear residuals were evaluated at the end of the Newton-loop.
-The nonlinear convergence criteria used in the nonlinear solver are described in \sect{sect:nln_cobra_alg}.
+The nonlinear convergence criteria used in the nonlinear solver are described in \sect{sect:nlnCobraAlg}.
 The temporal convergence metric was evaluated during post-processing.
 In total, there were twenty-four simulations run.
 The two different problems were each run at six different maximum timestep sizes on each of the two versions of \cobra{}.
-
 
 \subsection{Model}
 \label{subsect:single_model}
@@ -64,7 +63,7 @@ Table \ref{tab:bc_pe} contains the pressure, enthalpy, and composition of the pr
 \label{tab:bc_pe}
 \end{table}
 
-The flow-enthalpy boundary condition describes the thermodynamic state of the inflowing fluid and its flow rate.
+The flow-enthalpy boundary condition describes the thermodynamic state of the in-flowing fluid and its flow rate.
 Table \ref{tab:bc_fe} describes the inlet boundary condition for the two problems.
 
 \begin{table}[ht]
@@ -234,8 +233,8 @@ There are eighteen channels in this model.
 There are $2^{18}$ possible ways to decompose this problem with the domain decomposition algorithm.
 To test if the domain decomposition algorithm was implemented correctly, two-hundred and fifty-six different permutations were selected at random and run.
 While the general electric experiments spanned many test runs, a particular one was chosen for this test.
-The result of each decomposed problem was compared to both experimental results and the compational results from having the entire domain in the linear domain and the entire domain in the nonlinear domain.
-Appendix \ref{} contains the files used to run the tests.
+The result of each decomposed problem was compared to both experimental results and the computational results from having the entire domain in the linear domain and the entire domain in the nonlinear domain.
+Appendix \ref{app:domTesting} contains the files used to run the tests.
 
 
 \subsection{Model}

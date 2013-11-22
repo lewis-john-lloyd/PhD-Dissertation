@@ -803,6 +803,7 @@ BSA
 BSD/S
 BTU
 BTW
+BWR/MS
 BYOB
 Ba/M
 Baal/SM
@@ -3330,6 +3331,7 @@ Forbes
 Ford/M
 Foreman/M
 Forest/MR
+Fortran/MS
 Formica/MS
 Formosa/M
 Formosan/M
@@ -5230,6 +5232,7 @@ LPN/SM
 LSAT
 LSD/M
 LVN
+LWR/MS
 La/M
 Lab
 Laban
@@ -23016,7 +23019,7 @@ flog/S
 flogged
 flogger/SM
 flogging/MS
-flood/SMDRG
+flood/ASMDRG
 floodgate/MS
 floodlight/MDGS
 floodlit
@@ -26603,6 +26606,7 @@ hydroponic/S
 hydroponically
 hydroponics/M
 hydrosphere/M
+hydrostatic/Y
 hydrotherapy/M
 hydrous
 hydroxide/SM
@@ -29476,7 +29480,7 @@ lineal/Y
 lineament/SM
 linear/Y
 linearity/M
-linearize/GDS
+linearize/AGDS
 linearization/SM
 linebacker/SM
 lined/U
@@ -42869,6 +42873,7 @@ subbed
 subbing
 subbranch/MS
 subcategory/SM
+subchannel/SM
 subclass
 subcommittee/SM
 subcompact/SM
@@ -44284,6 +44289,7 @@ therm/SM
 thermal/MYS
 thermionic
 thermodynamic/S
+thermodynamically
 thermodynamics/M
 thermometer/SM
 thermometric

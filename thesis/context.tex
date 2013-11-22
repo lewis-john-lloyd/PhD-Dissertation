@@ -19,7 +19,7 @@ Several codes are widely available for simulating the thermal-hydraulic response
 These safety codes can be divided into two large categories: system analysis codes and sub-channel analysis codes.
 While there is considerable overlap between the capabilities of these two categories, each has its own particular strengths and weaknesses.
 The system analysis codes often have extensive models available for large components such as accumulators, pumps, valves, and compressors.
-Three well-known system-level safety analysis software are RELAP5-3D \cite{RELAP}, TRACE \cite{TRACE}, and MELCOR \cite{Summers1994}.
+Three well-known system-level safety analysis software are \relap53d{} \cite{RELAP}, TRACE \cite{TRACE}, and MELCOR \cite{Summers1994}.
 The sub-channel analysis software have extensive modeling capabilities for in-core heat transfer and fluid mechanics; COBRA \cite{Thurgood1983c} and VIPRE are two examples.
 In the work that follows the governing physics and the computational framework of interest will be taken from a variant of the aforementioned COBRA sub-channel analysis code, which shall be referred to generically as \cobra{}.
 
@@ -493,10 +493,10 @@ The continuous conservation equations, \eqref{eqn:conservation_equations}, are n
 
 Given that there are nine conservation equations, nine independent parameters need to be chosen.
 The choice of the nine variables that will be solved for is another distinguishing characteristic of safety analysis software.
-\cobra{} uses the following set of nine independent variables \eqref{eqn:independent_variables}.
+\cobra{} uses the following set of nine independent variables \eqref{eqn:independentVariables}.
 
 \begin{equation}
-\label{eqn:independent_variables}
+\label{eqn:independentVariables}
 \vec{x} = [\alpha_{g}P_{n}, \alpha_g, \alpha_g h_v, (1 - \alpha_g) h_l, \alpha_e, P, \dot{m}_g, \dot{m}_l, \dot{m}_e]^{T}
 \end{equation}
 
@@ -515,7 +515,7 @@ The averaging operator $\ave{a}_{a}$ provides the average of a quantity from the
 \end{equation}
 
 The choice of independent parameters used in \cobra{} is not the only option.
-Other software, such as TRACE and RELAP5-3D, use variants of these parameters.
+Other software, such as TRACE and \relap53d{}, use variants of these parameters.
 These variations include the use of velocities instead of momenta and temperatures or internal energies instead of enthalpies \cite{RELAP, TRACE}.
 
 A distinguishing feature of the numerical method in \cobra{} is its treatment of the temporal derivative for the conservation of momentum.
@@ -875,7 +875,7 @@ The TRACE code uses an $L_{\infty}$ norm of the unscaled Newton updates for the 
 \subsection{Nearly-Implicit Method}
 \label{subsect:numerics_nearly_implicit}
 Another possible method used to overcome the material Courant limit without incurring the same computational cost as the fully implicit method is the Nearly-Implicit method \cite{Trapp1986, RELAP}.
-The Nearly-Implicit method is a multi-stage temporal integration scheme.
+The Nearly-Implicit method is a multistage temporal integration scheme.
 In the first stage the approximation  of $\vec{E}^{*}$ is one in which the mass and energy terms are implicit except for the donored values in the flux terms. 
 In addition, the the chain rule is applied to the continuous temporal derivatives, resulting in mass equations similar to \eqref{eqn:ni_dt}.
 The energy temporal derivatives are similarly expanded.
@@ -951,11 +951,11 @@ The program used for the software coupling in the papers of interest is the Para
 PVM allows the data exchange to occur between the coupled software.
 As originally formulated, the software coupling technique involves decomposing the coupled problem into two pieces, the master and the slave domains.
 In this respect, the problem can be thought of as being decomposed into a subdomain controlled by a master program and a slave domain being controlled by a slave program.
-The presentation of the method is in terms of the RELAP5-3D conservation equations, which are different from those in \cobra{}.
-The coupling method first developed presented RELAP5-3D as both the master and slave software \cite{Weaver2002}.
-Later work showed how this base method could be extended to allow coupling between RELAP5-3D and the \cobra{} subchannel analysis software \cite{Aumiller2002}.
+The presentation of the method is in terms of the \relap53d{} conservation equations, which are different from those in \cobra{}.
+The coupling method first developed presented \relap53d{} as both the master and slave software \cite{Weaver2002}.
+Later work showed how this base method could be extended to allow coupling between \relap53d{} and the \cobra{} subchannel analysis software \cite{Aumiller2002}.
 This reformulation was designed to allow for a consistent transition between a two-phase, two-field based solver and and a two-phase, three-field based solver. 
-A short outline of the method as formulated for RELAP5-3D coupling is presented below.
+A short outline of the method as formulated for \relap53d{} coupling is presented below.
 
 The semi-implicit domain decomposition is accomplished via the staggered mesh formulation.
 The master domain is truncated on a continuity volume.
@@ -997,7 +997,7 @@ This formulation allows for the updated pressure in the master domain to be calc
 The intent of this formulation was to enable the semi-implicit method to be used for software coupling.
 
 The coupling of system analysis codes and sub-channel codes can also be viewed through the following lens.
-The global problem, the balance-of-plant (e.g., RELAP5-3D) and the in-core region (e.g., \cobra{}), can be considered as part of a global domain, $\Omega$.
+The global problem, the balance-of-plant (e.g., \relap53d{}) and the in-core region (e.g., \cobra{}), can be considered as part of a global domain, $\Omega$.
 Each piece of software can then be viewed as solving a smaller portion, $\Omega_i$, of the global domain.
 The use of more detailed physics for the in-core thermal-hydraulic behavior is a particular application of model reduction \cite{Paraschivoiu1999}.
 
