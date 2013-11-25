@@ -137,6 +137,9 @@ This matrix is then solved to determine the pressure updates for the whole domai
 Each continuity volume is then traversed so that the pressure update can be used in solving its associated upper triangular system for the updates to the other five continuity variables in \eqref{eqn:linearUpdate}.
 Once all the continuity volumes are updated, \eqref{eqn:star:momenta} is then utilized, along with the now known pressure updates, to obtain the new-time momenta in each flowpath.
 Upon completion of this process, a single timestep is considered to have been taken.
+
+\comment{Add an algorithm here?}
+
 The solution obtained via this process is subjected to several physical and computational limits discussed in \eqref{sect:algoConcerns}.
 
 %-------------------------------------------------------------------------------
@@ -163,13 +166,26 @@ This required that each of the Fortran procedures involved with the calculation 
 
 In \cobra{} the smallest geometric component that can be input is the channel.
 As mentioned in \ref{sect:geometry} the channels inherit their geometric properties from the section in which they reside.
-To create geometrically complicated problems, it is possible to set no flow boundary conditions.
+To create geometrically complicated problems, it is possible to enforce zero momentum in a given momentum volume.
+This constraint is known as a no-flow boundary condition.
 These boundary conditions decoupled adjacent continuity volumes by eliminating the flow-paths that connect them.
-After evaluating several prototypical models, it was determined that a large portion of a domain could actually be thermodynamically isolated.
+This boundary condition allows designers to create more complicated models by isolating portions of the domain.
 These areas of the domain do not impact the actual solution in the portion of the domain that has boundary values.
+After evaluating several prototypical models, it was determined that a large portion of the domain of these problems were thermodynamically isolable.
+During development of the infrastructure to create the vectorized residuals, scale factors, and updates, it was determined that those volumes which were thermodynamically isolated would not be included in the simulated domain.
+
+\comment{A picture of the active vs. inactive would be nice.}
+
+Originally, \cobra{} would solve the momentum and continuity equations at every defined location in the problem.
 To determine which areas of the domain were active and which ones were inactive, a geometry traversing routine was written.
 This routine parsed the input file and proceeded to create an adjacency list data structure to represent the active portion of the domain.
 This data structure allowed the active volumes to be treated independently from the memory structure of the software.
+
+\comment{How much detail should I add regarding the active vs inactive?}
+
+\cobra{} was originally written from a procedural programming point of view.
+The [ N x N ] pressure matrix was sized based upon the number of volumes in the domain, not the number of active volumes.
+There was a precise ordering of l
 
 Once the active volumes were identified, the way in which the solver was stored in memory was changed.
 Previously, there had been a hard coded solver.
@@ -177,17 +193,23 @@ Now the solvers are objects.
 These objects are awesome.
 I made them.
 The data structures involves matrices.
-There are two types of matrix data structures.
-Sparse and Full.
+There are two types of matrix data structures: sparse and full.
 Each solver has a matrix.
 The matrix is sized based upon the active domain.
-A picture of the active vs. inactive would be nice.
 
+\comment{Diagram of the object relationship?}
+
+\comment{Discussion of input?}
 The nonlinear solver has a $F_{tol}$, a $d_{tol}$, and a $k_{max}$.
+
+\comment{Linesearch algorithm?}
 There is a quadratic backtracking linesearch algorithm, but it is not used for this work.
 It was turned off because there had not been enough testing for robustness.
 
+\comment{Here an algorithm for the nonlinear solver would be nice.}
+
 The nonlinear solver had to add the ability to undo a trip through the momentum and continuity loops.
+
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
