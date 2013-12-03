@@ -138,7 +138,27 @@ Each continuity volume is then traversed so that the pressure update can be used
 Once all the continuity volumes are updated, \eqref{eqn:star:momenta} is then utilized, along with the now known pressure updates, to obtain the new-time momenta in each flowpath.
 Upon completion of this process, a single timestep is considered to have been taken.
 
-\comment{Add an algorithm here?}
+\begin{algo}[H]
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \State $t^{n+1} : = t^{n} + \Delta t$
+   	\Loop \; Linear Momentum Loop
+   		\Calculate $\dot{\vec{m}}^{*}$ and $\frac{\partial}{2}$   		
+   	\EndLoop
+   	\Loop \; Linear Mass \& Energy Loop
+   		\Calculate $J$
+   	\EndLoop
+	\Calculate $\vec{F}(\vec{x}^{n+1,0})$ and $\vec{J}(\vec{x}^{n+1,0})$
+	\State $n = n + 1$
+\EndLoop
+\end{algorithmic}
+\caption{Linear \cobra{} algorithm.}
+\label{alg:linCobraAlgorithm}
+\end{algo}
+
 
 The solution obtained via this process is subjected to several physical and computational limits discussed in \eqref{sect:algoConcerns}.
 
