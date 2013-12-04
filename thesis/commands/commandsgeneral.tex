@@ -1,10 +1,12 @@
 \DeclareRobustCommand{\BlackBox}{\State \textbf{Black Box: }}
-\DeclareRobustCommand{\Test}{\State \textbf{Test: }}
-\DeclareRobustCommand{\Define}{\State \textbf{Define: }}
-\DeclareRobustCommand{\Update}{\State \textbf{Update: }}
-\DeclareRobustCommand{\Set}{\State \textbf{Set: }}
-\DeclareRobustCommand{\Calculate}{\State \textbf{Calculate: }}
-\DeclareRobustCommand{\Exit}{\State \textbf{Exit: }}
+\DeclareRobustCommand{\Test}{\State \textbf{test: }}
+\DeclareRobustCommand{\Define}{\State \textbf{define: }}
+\DeclareRobustCommand{\Update}{\State \textbf{update: }}
+\DeclareRobustCommand{\Set}{\State \textbf{set: }}
+\DeclareRobustCommand{\Algorithm}{\State \textbf{algorithm: }}
+\DeclareRobustCommand{\Solve}{\State \textbf{solve: }}
+\DeclareRobustCommand{\Calculate}{\State \textbf{calculate: }}
+\DeclareRobustCommand{\Exit}{\State \textbf{exit: }}
 \DeclareRobustCommand{\chap}[1]{Chapter~\ref{#1}}
 \DeclareRobustCommand{\fig}[1]{Figure~\ref{#1}}
 \DeclareRobustCommand{\sect}[1]{Section~\ref{#1}}
@@ -20,8 +22,9 @@
 \DeclareRobustCommand{\NCGs}{Non-Condensable Gases}
 \DeclareRobustCommand{\cobra}{COBRA}
 \DeclareRobustCommand{\relap53d}{RELAP5-3D}
-\DeclareRobustCommand{\comment}[1]{\textcolor{red}{\textbf{#1}}}
+\DeclareRobustCommand{\comment}[1]{\uline{#1}}
 \hyphenation{COBRA}
+\newcommand{\classname}[1]{\texttt{#1}}
 %\newcommand{\algorithmicset}{\textbf{Set:}}
 %\algnewcommand\Solve{\item[\algorithmicset]}
 

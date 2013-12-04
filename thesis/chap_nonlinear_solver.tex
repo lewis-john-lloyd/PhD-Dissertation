@@ -10,7 +10,7 @@ A metric was developed and tested to aid in the identification of solutions that
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
-\section{Linear Solution Algorithm}
+\section{Linear Solver}
 \label{sect:linCobraAlg}
 
 \cobra{} utilizes the semi-implicit method as outlined in \sect{subsect:semi_implicit}.
@@ -26,51 +26,51 @@ The nonlinear momentum equations, neglecting spatial discretization notation and
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:si_nln_mom_liq}
-\dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{NK} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)^{n}
+\dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{N_{k}} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)^{n}
  -\alpha^{n}_l \nabla P^{n+1} + (\alpha_l \rho_l)^{n} g - K^{n}_{wl}(\dot{m}_l^{n+1})^2 \right. \nonumber \\
- & + & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2 - ((1 - \eta)\Gamma u^{'})^{n} - (S u^{'})^{n}\vphantom{\sum_{NK}}\right) \\
+ & + & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2 - ((1 - \eta)\Gamma u^{'})^{n} - (S u^{'})^{n}\vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:si_nln_mom_gas}
-\dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{NK} \left( (\alpha_g \rho_g u_g) u_g  \cdot \vec{\bar{A}}\right)^{n}  -\alpha^{n}_g \nabla P^{n+1} + (\alpha_g \rho_g)^{n} g - K^{n}_{wg}(\dot{m}_g^{n+1})^2 \right.\nonumber \\
-& - & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2 -K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 + (\Gamma u^{'})^{n}\vphantom{\sum_{NK}}\right) \\
+\dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{N_{k}} \left( (\alpha_g \rho_g u_g) u_g  \cdot \vec{\bar{A}}\right)^{n}  -\alpha^{n}_g \nabla P^{n+1} + (\alpha_g \rho_g)^{n} g - K^{n}_{wg}(\dot{m}_g^{n+1})^2 \right.\nonumber \\
+& - & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2 -K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 + (\Gamma u^{'})^{n}\vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:si_nln_mom_ent}
-\dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{NK} \left( (\alpha_e \rho_l u_e) u_e  \cdot \vec{\bar{A}}\right)^n -\alpha^{n}_e \nabla P^{n+1} + (\alpha_e \rho_l)^{n} g - K^{n}_{we}(\dot{m}_e^{n+1})^2\right. \nonumber \\
-&+& \left. K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 - (\eta \Gamma u^{'})^{n} + (S u^{'})^n\vphantom{\sum_{NK}}\right)
+\dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{N_{k}} \left( (\alpha_e \rho_l u_e) u_e  \cdot \vec{\bar{A}}\right)^n -\alpha^{n}_e \nabla P^{n+1} + (\alpha_e \rho_l)^{n} g - K^{n}_{we}(\dot{m}_e^{n+1})^2\right. \nonumber \\
+&+& \left. K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 - (\eta \Gamma u^{'})^{n} + (S u^{'})^n\vphantom{\sum_{N_{k}}}\right)
 \end{IEEEeqnarray}
 
-In the above equations the flux terms are summed over $NK$, which indicates the number of continuity volumes to which a given momentum volume connects.
+In the above equations the flux terms are summed over $N_{k}$, which indicates the number of continuity volumes to which a given momentum volume connects.
 The coefficients $K$ represent effective friction factors calculated using parameters only from time n.
 The interfacial transfer terms are also explicitly evaluated.
 The momentum equations are then linearized around the current time value, $\dot{\vec{m}}^{n}$, giving \eqref{eqn:si_lin_mom_liq} - \eqref{eqn:si_lin_mom_ent}.
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:si_lin_mom_liq}
-\dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{NK} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)^{n}
+\dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{N_{k}} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)^{n}
  -\alpha^{n}_l \nabla P^{n} -\alpha^{n}_l \nabla \delta P + (\alpha_l \rho_l)^{n} g - K^{n}_{wl}(\dot{m}_l^{n})^{2} \right. \nonumber \\
   & - & 2 K^{n}_{wl}(\dot{m}_l^{n})(\dot{m}_l^{n+1}-\dot{m}_l^{n})  + K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})^2 + 2 K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})(\dot{m}^{n}_g - \dot{m}_l^{n}) \nonumber \\
- & + & \left. 2 K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})(\dot{m}^{n+1}_l - \dot{m}_g^{n+1}) - ((1 - \eta)\Gamma u^{'})^{n} - (S u^{'})^{n}\vphantom{\sum_{NK}}\right) \\
+ & + & \left. 2 K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})(\dot{m}^{n+1}_l - \dot{m}_g^{n+1}) - ((1 - \eta)\Gamma u^{'})^{n} - (S u^{'})^{n}\vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:si_lin_mom_gas}
-\dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{NK} \left( (\alpha_g \rho_g u_g) u_g \cdot \vec{\bar{A}}\right)^{n}
+\dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{N_{k}} \left( (\alpha_g \rho_g u_g) u_g \cdot \vec{\bar{A}}\right)^{n}
  -\alpha^{n}_g \nabla P^{n} -\alpha^{n}_g \nabla \delta P + (\alpha_g \rho_g)^{n} g - K^{n}_{wg}(\dot{m}_g^{n})^{2} \right. \nonumber \\
   & - & 2 K^{n}_{wg}(\dot{m}_g^{n})(\dot{m}_g^{n+1}-\dot{m}_g^{n})  - K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})^2 - 2 K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})(\dot{m}^{n}_g - \dot{m}_l^{n}) \nonumber \\
  & - & 2 K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})(\dot{m}^{n+1}_l - \dot{m}_g^{n+1}) - K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})^2 \nonumber \\
  & - & 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n}_g - \dot{m}_e^{n}) - 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n+1}_e - \dot{m}_g^{n+1}) \nonumber \\
- & + & \left.  (\Gamma u^{'})^{n}\vphantom{\sum_{NK}}\right) \\
+ & + & \left.  (\Gamma u^{'})^{n}\vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:si_lin_mom_ent}
-\dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{NK} \left( (\alpha_e \rho_e u_e) u_e \cdot \vec{\bar{A}}\right)^{n}
+\dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum_{N_{k}} \left( (\alpha_e \rho_e u_e) u_e \cdot \vec{\bar{A}}\right)^{n}
  -\alpha^{n}_e \nabla P^{n} - \alpha^{n}_e \nabla \delta P + (\alpha_e \rho_e)^{n} g - K^{n}_{we}(\dot{m}_e^{n})^{2} \right. \nonumber \\
   & - & 2 K^{n}_{we}(\dot{m}_e^{n})(\dot{m}_e^{n+1}-\dot{m}_e^{n})  + K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})^2 + 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n}_g - \dot{m}_e^{n}) \nonumber \\
- & + & \left. 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n+1}_e - \dot{m}_g^{n+1}) - (\eta \Gamma u^{'})^{n} + (S u^{'})^{n}\vphantom{\sum_{NK}}\right)
+ & + & \left. 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n+1}_e - \dot{m}_g^{n+1}) - (\eta \Gamma u^{'})^{n} + (S u^{'})^{n}\vphantom{\sum_{N_{k}}}\right)
 \end{IEEEeqnarray}
 
 The momenta euqations, \eqref{eqn:si_lin_mom_liq} - \eqref{eqn:si_lin_mom_ent}, are now linear in the unknown variables $\dot{\vec{m}}^{n+1}$.
 These equations are now solved for the unknown new time momenta, $\dot{\vec{m}}^{n+1}$.
 The $\delta P$ is left as an unknown, creating an additional uknown on the right hand side of the linear system.
-The resulting system is of the form $\vec{A} \dot{\vec{m}}^{n+1} = \vec{a} + \sum_{NK} \vec{b} \delta P$.
+The resulting system is of the form $\vec{J}_{m, j} \dot{\vec{m}}_{j}^{n+1} = \vec{a}_{j} + \sum_{N_{k,j}} \vec{b}_{j} \delta P$.
 The solution of this linear system is expressed in \eqref{eqn:star:momenta}.
 
 \begin{equation}
 \label{eqn:star:momenta}
-\dot{\vec{m}}^{n+1} = \vec{A}^{-1} \vec{a} + \sum^{NK}_{i = 1} \vec{A}^{-1} \vec{b} \delta P_{i} = \dot{\vec{m}}^{*} + \sum^{NK}_{i = 1} \frac{\partial \dot{\vec{m}}}{\partial P} \delta P_{i}
+\dot{\vec{m}}^{n+1} = \vec{J}_{m,j}^{-1} \vec{a} + \sum^{N_{k}}_{i = 1} \vec{J}_{m,j}^{-1} \vec{b} \delta P_{i} = \dot{\vec{m}}^{*} + \sum^{N_{k}}_{i = 1} \frac{\partial \dot{\vec{m}}}{\partial P} \delta P_{i}
 \end{equation}
 
 The definition for the new-time momenta is a function of the as of yet unknown changes in pressures that occur in the continuity volumes connected by the momentum volume.
@@ -81,62 +81,122 @@ The new time velocities used for advection in the continuity equations is define
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:si_mass_ncg}
-V_c (\alpha_g \rho_{n})^{n+1} & - & V_c (\alpha_g \rho_{n})^{n} = -\Delta t \sum_{NK}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) \\
+V_c (\alpha_g \rho_{n})^{n+1} & - & V_c (\alpha_g \rho_{n})^{n} = -\Delta t \sum_{N_{k}}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) \\
 \label{eqn:si_mass_vap}
-V_c \left(\alpha_g \rho_v \right)^{n+1} &-& V_c \left(\alpha_g \rho_v \right)^{n} = - \Delta t \sum_{NK} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) + 
+V_c \left(\alpha_g \rho_v \right)^{n+1} &-& V_c \left(\alpha_g \rho_v \right)^{n} = - \Delta t \sum_{N_{k}} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) + 
 \Delta t \Gamma^{n+1} \\
 \label{eqn:si_nrg_gas}
-V_c \left( \alpha_g \{\rho_g h_g\} \right)^{n+1} & - & V_c \left( \alpha_g \{\rho_g h_g\} \right)^{n}  = -\Delta t \sum_{NK} \left(  \don{\alpha^{n}_g \{\rho_g h_g\}^{n}}^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) \nonumber \\
+V_c \left( \alpha_g \{\rho_g h_g\} \right)^{n+1} & - & V_c \left( \alpha_g \{\rho_g h_g\} \right)^{n}  = -\Delta t \sum_{N_{k}} \left(  \don{\alpha^{n}_g \{\rho_g h_g\}^{n}}^{n}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right) \nonumber \\
 &+& \Delta t \left[\Gamma h^{'}_v + q_{i,v} + q_{gl} + q_{wg} \right]^{n+1} + V_c \alpha^{n}_g ( P^{n+1} - P^{n} ) \\
 \label{eqn:si_nrg_liq}
 V_c\left( \alpha_l \rho_l h_l \right)^{n+1} & - & V_c\left( \alpha_l \rho_l h_l \right)^{n} = \Delta t \left[q_{wl} -\Gamma h^{'}_l +  q_{i,l} - q_{gl}\right]^{n+1} + V_c \alpha^{n}_l (P^{\,n+1} - P^{\,n})   \nonumber \\
-& -& \Delta t \sum_{NK} \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n}_{d} u^{n+1}_l \cdot \vec{\bar{A}} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right) \\
+& -& \Delta t \sum_{N_{k}} \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n}_{d} u^{n+1}_l \cdot \vec{\bar{A}} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right) \\
 \label{eqn:si_mass_ent}
-V_c \left(\alpha_e \rho_l \right)^{n+1} & - & V_c \left(\alpha_e \rho_l \right)^{n} = -\Delta t \sum_{NK}\left( \don{\alpha^{n}_e \rho^{n}_l}^{n}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right)\nonumber \\ 
+V_c \left(\alpha_e \rho_l \right)^{n+1} & - & V_c \left(\alpha_e \rho_l \right)^{n} = -\Delta t \sum_{N_{k}}\left( \don{\alpha^{n}_e \rho^{n}_l}^{n}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right)\nonumber \\ 
 &+& \Delta t\left[ S -\eta\Gamma \right]^{n+1} \\
 \label{eqn:si_mass_liq}
-V_c \left(\alpha_l \rho_l \right)^{n+1} & - & V_c \left(\alpha_l \rho_l \right)^{n} =  -\Delta t \sum_{NK}\left( \don{\alpha^n_l \rho^n_l}^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right) \nonumber \\
+V_c \left(\alpha_l \rho_l \right)^{n+1} & - & V_c \left(\alpha_l \rho_l \right)^{n} =  -\Delta t \sum_{N_{k}}\left( \don{\alpha^n_l \rho^n_l}^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right) \nonumber \\
 &- &\Delta t\left[(1-\eta)\Gamma + S \right]^{n+1}
 \end{IEEEeqnarray}
 
-Unlike the momentum equations, the continuity equations are linearized with variables other their conserved quantities, \eqref{eqn:independentVariables}.
+Unlike the momentum equations, the continuity equations are linearized with variables other than their conserved quantities, \eqref{eqn:independentVariables}.
 This creates a more complicated linearization procedure than that used for the momenta equations.
-The newtime variables in \eqref{eqn:si_mass_ncg} -- \eqref{eqn:si_nrg_liq}  are linearized about the oldtime variables with respect to the continuity variables in \eqref{eqn:independentVariables}.
+The new-time variables in \eqref{eqn:si_mass_ncg} -- \eqref{eqn:si_nrg_liq} are linearized about the old-time variables with respect to the continuity variables in \eqref{eqn:independentVariables}.
 The use of the \eqref{eqn:star:momenta} in defining the new-time velocities introduces inter-continuity volume coupling through the momentum equations dependency upon changes in pressure, $\delta P$.
-With the addition of the unknown pressure updates via the momenta, the six linearized continuity equations now form a [ 6 x 6 + NK ] linear system.
-\comment{I need to straighten out the nomenclature for connections. NK has previously been used to indicate the number of volumes to which a flowpath is connected. That doesn't make sense though since each flowpath can connect to only two volumes. Anyways... That needs to be fixed.}
+
+\begin{equation}
+\label{eqn:linSystem}
+\underbrace{\left[\vec{Z}_{c, j}\right]}_{6\, \text{x}\, 6 + N_{k}} \delta \vec{C}_{j} = \underbrace{\left[\vec{J}_{c, j}\right.}_{6\, \text{x}\, 6}|{\underbrace{\left.\vec{k}_{c, j}\right]}_{6\, \text{x}\, N_{k}}}\delta \vec{C}_{j} = \vec{r}_{c,j}
+\end{equation}
+
+With the addition of the unknown pressure updates via the momenta, the six linearized continuity equations now form the linear system \eqref{eqn:linSystem}.
 Additionally, while the momentum equations were fully expanded to solve for the new-time conserved quantities directly, the continuity equations instead solve for their associated updates, \eqref{eqn:linearUpdate}.
+\comment{I need to straighten out the nomenclature for connections. $N_{k}$ has previously been used to indicate the number of volumes to which a flowpath is connected. That doesn't make sense though since each flowpath can connect to only two volumes. Anyways... That needs to be fixed.}
 
 \begin{equation}
 \label{eqn:linearUpdate}
+\delta \vec{C}_{j} \equiv 
 \begin{bmatrix}
-\delta ( \alpha_{g} P_{n} ) \\
-\delta \alpha_{g} \\
-\delta ( \alpha_{g} h_v ) \\
-\delta ( (1 - \alpha_{g} ) h_l ) \\
-\delta \alpha_e \\
-\delta P 
+\delta ( \alpha_{g} P_{n} )_j \\
+\delta \alpha_{g, j} \\
+\delta ( \alpha_{g} h_v )_j \\
+\delta ( (1 - \alpha_{g} ) h_l )_j \\
+\delta \alpha_{e,j} \\
+\delta P_j \\ 
+\delta P_i \\
+\vdots \\
+\delta P_{N_{k}}
 \end{bmatrix}
 =
 \begin{bmatrix}
-( \alpha_{g} P_{n})^{n+1} - (\alpha_{g} P_{g} )^{n} \\
-\alpha^{n+1}_{g} - \alpha^{n}_{g} \\
-( \alpha_{g} h_{v} )^{n+1} - ( \alpha_{g} h_{v} )^{n} \\
-( ( 1 - \alpha_{g} ) h_{l} )^{n+1} - ( ( 1 - \alpha_{g} ) h_{l} )^{n} \\
-\alpha^{n+1}_{e} - \alpha^{n}_{e} \\
- P^{n+1} - P^{n}
+( \alpha_{g} P_{n})_{j}^{n+1} - (\alpha_{g} P_{g} )_{j}^{n} \\
+\alpha^{n+1}_{g,j} - \alpha^{n}_{g,j} \\
+( \alpha_{g} h_{v} )_{j}^{n+1} - ( \alpha_{g} h_{v} )_{j}^{n} \\
+( ( 1 - \alpha_{g} ) h_{l} )_{j}^{n+1} - ( ( 1 - \alpha_{g} ) h_{l} )_{j}^{n} \\
+\alpha^{n+1}_{e,j} - \alpha^{n}_{e,j} \\
+ P_{j}^{n+1} - P_{j}^{n} \\
+ P_{i}^{n+1} - P_{i}^{n} \\
+ \vdots \\
+ P_{N_{k}}^{n+1} - P_{N_{k}}^{n}
 \end{bmatrix}
 \end{equation}
 
-Each continuity volume's linearized system of equations is subjected to an LU decomposition without pivoting, leaving an upper triangular matrix for each continuity volume.
+Each continuity volume's linearized system of equations, \eqref{eqn:linSystem}, is subjected to partial LU decomposition without pivoting.
+The upper triangular rectangular system for each continuity is then stored for later back substitution.
+The sixth equation in \eqref{eqn:linSystem} is then scaled by its diagonal.
 Since the pressure update corresponds to the last row in the system of equations, this allows for the isolation of the pressure updates.
-The last row of each continuity volume's linear system are then formed into a global pressure matrix.
-This will be a [ N x N ] system, where N is the number of continuity volumes in the domain.
-\comment{Once again, I need to get some basic nomenclature nailed down.}
-This matrix is then solved to determine the pressure updates for the whole domain.
-Each continuity volume is then traversed so that the pressure update can be used in solving its associated upper triangular system for the updates to the other five continuity variables in \eqref{eqn:linearUpdate}.
-Once all the continuity volumes are updated, \eqref{eqn:star:momenta} is then utilized, along with the now known pressure updates, to obtain the new-time momenta in each flowpath.
+The last row of each continuity volume's \eqref{eqn:linSystem} is then formed into a global pressure matrix, $\vec{A}_{N,N}$, and its associated right hand side, $\vec{r}$.
+
+The two loops, one over the momentum volumes and one over the continuity volumes, form a single group of operations that act upon a given domain.
+This grouping will be known hereafter as assembling the pressure matrix for a given domain.
+\alg{alg:xschem} shows the two loops and their associated actions.
+
+\begin{algo}[H]
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Loop \; Momentum Volumes
+	\Calculate $\vec{J}_{m, j}$, $\vec{a}_{j}$, and $\vec{b}_{j}$
+	\Calculate $\dot{\vec{m}}^{*}$ and $\frac{\partial \dot{\vec{m}}}{\partial P}$   		
+\EndLoop
+\Loop \; Continuity Volumes
+   	\Calculate $\vec{Z}_{c,j}$ and $\vec{r}_{c, j}$
+   	\Calculate $\vec{U}_{c, j} = \vec{L}_{c, j}^{-1} \vec{Z}_{c, j}$
+   	\Calculate $\vec{r}^{*}_{c, j} = \vec{L}_{c, j}^{-1} \vec{r}_{c, j}$
+   	\Set Scale $\vec{U}[6, :]_{c, j}$ and $\vec{r}[6]^{*}_{c, j}$ by $\vec{U}[6,6]_{c, j}$
+   	\Set $\vec{A}_{i, :} = \vec{U}[6,:]_{c, j}$
+   	\Set $\vec{res}_{i} = \vec{r}[6]^{*}_{c, j}$
+\EndLoop
+\end{algorithmic}
+\caption{Assembling Pressure Matrix}
+\label{alg:xschem}
+\end{algo}
+
+\begin{equation}
+\label{eqn:pressureUpdateSystem}
+\vec{A} \vec{\delta P} = \vec{res}
+\end{equation}
+
+The system, \eqref{eqn:pressureUpdateSystem}, is then solved to determine the pressure updates for the whole domain.
+A loop over each continuity volume is then performed so that the pressure update can be used in solving its associated upper triangular system for the updates to the other five continuity variables in \eqref{eqn:linearUpdate}.
+As the loop over the continuity volume is progressing, any momentum volume connected to the given continuity volume will have its momenta updated, \eqref{eqn:star:momenta} to include the contribution from that continuity volumes change in pressure. 
+This update loop is shown in \alg{alg:updateVariables}.
+
+\begin{algo}[H]
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Loop \; Continuity Volumes
+	\Solve $\vec{U}_{c, j} \delta \vec{C}_{c, j} = \vec{r}^{*}_{c, j}$ using $\vec{\delta P}$		
+	\Loop \; Connected Flowpaths
+		\Set $\dot{\vec{m}}^{*}_{j} \pluseq sig \cdot \frac{\partial \dot{\vec{m}}}{\partial P} \delta P_{j}$
+	\EndLoop
+\EndLoop
+\end{algorithmic}
+\caption{Updating Continuity and Momentum Variables}
+\label{alg:updateVariables}
+\end{algo}
+
 Upon completion of this process, a single timestep is considered to have been taken.
+The complete linear process is outlined in \alg{alg:linCobraAlgorithm}.
 
 \begin{algo}[H]
 \setlength{\baselineskip}{0.625\baselineskip}
@@ -144,33 +204,28 @@ Upon completion of this process, a single timestep is considered to have been ta
 \Require $\vec{x}^{0}$ and $t^{0}$
 \Set $n = 0$
 \Loop \; Transient Loop
-    \State $t^{n+1} : = t^{n} + \Delta t$
-   	\Loop \; Linear Momentum Loop
-   		\Calculate $\dot{\vec{m}}^{*}$ and $\frac{\partial}{2}$   		
-   	\EndLoop
-   	\Loop \; Linear Mass \& Energy Loop
-   		\Calculate $J$
-   	\EndLoop
-	\Calculate $\vec{F}(\vec{x}^{n+1,0})$ and $\vec{J}(\vec{x}^{n+1,0})$
-	\State $n = n + 1$
+    \Set $t^{n+1} : = t^{n} + \Delta t$
+	\Algorithm Assemble Linear Pressure Matrix \Comment{\alg{alg:xschem}}
+   	\Solve $\vec{A} \vec{\delta P} = \vec{res}$
+	\Algorithm Update Linear Variables \Comment{\alg{alg:updateVariables}}
+	\Set $n = n + 1$
 \EndLoop
 \end{algorithmic}
 \caption{Linear \cobra{} algorithm.}
 \label{alg:linCobraAlgorithm}
 \end{algo}
 
-
 The solution obtained via this process is subjected to several physical and computational limits discussed in \eqref{sect:algoConcerns}.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
-\section{Nonlinear Solution Algorithm}
-\label{sect:nlnCobraAlg}
+\section{Nonlinear Solver}
+\label{sect:nlnCobraSolver}
 As obtained, the \cobra{} software used the single Newton step of the semi-implicit method as outlined in \sect{sect:linCobraAlg} for a timestep.
 In order to evaluate the subdomain nonlinear refinement algorithm, \cobra{} needed to be modified to be able to take multiple Newton steps within a given step.
 Additionally, a linesearch globalization strategy was added to the software.
-As such, the \cobra{} software needed to be modified to be able do the following:
+The \cobra{} software needed to be modified to be able do the following:
 
 \begin{itemize}
 \item{Create a data framework for constructing vector quantities such as $\vec{x}^{k}$ and $\vec{F}$.}
@@ -180,63 +235,246 @@ As such, the \cobra{} software needed to be modified to be able do the following
 \end{itemize}
 
 Given the formation of the governing equations from \sect{sect:linCobraAlg}, several modification were required to implement a nonlinear solver.
-The correct linearization about a new-time guess value as opposed to the old time.
+The correct linearization about a new-time guess value as opposed to the old time needed to be evaluated.
 Each Newton step is an incremental change in the new-time variable, not a change in the independent parameters over at timestep.
+Memory saving techniques had been employed in the construction of the linear solver that precluded more than one Newton step.
+In particular, there had been the implicit assumption within the software that the first Newton iterate, $\vec{x}^{n+1, 0}$, was the old-time variable $\vec{x}^{n}$.
+This design decision required that all subroutines involved with the evaluation of the components of both the nonlinear residual and its Jacobian be vetted for accurate usage of variables.
+In addition, the assumption that $\vec{x}^{n+1, k} = \vec{x}^{n}$ produced source code that was inconsistent with an iterative Newton method.
+The source code was modified to reflect the intended discretization of the governing conservation laws.
+To do this, areas had to be identified where: there were implicit cancellation of terms, the new-time variables were used in place of old-time variables, and the old-time variables were used in place of new-time variables.
 This required that each of the Fortran procedures involved with the calculation of the various physical parameters and operators needed to be evaluated to determine if the variables being used were correct.
+Where appropriate, the software was changed to reflect the distinction between old-time and iterate variables and to introduce terms that had been assumed to be equal to zero.
+Upon completion of the software audit, several architectural changes were made to expedite the implementation of the nonlinear solver.
 
+\subsection{Active Domain Determination}
+\label{subsect:activeDomainDetermination}
 In \cobra{} the smallest geometric component that can be input is the channel.
-As mentioned in \ref{sect:geometry} the channels inherit their geometric properties from the section in which they reside.
+As mentioned in \ref{sect:geometry} channels inherit their geometric properties from the section in which they reside.
 To create geometrically complicated problems, it is possible to enforce zero momentum in a given momentum volume.
 This constraint is known as a no-flow boundary condition.
 These boundary conditions decoupled adjacent continuity volumes by eliminating the flow-paths that connect them.
-This boundary condition allows designers to create more complicated models by isolating portions of the domain.
-These areas of the domain do not impact the actual solution in the portion of the domain that has boundary values.
+This boundary condition allows users to create more complicated models by isolating portions of the domain.
+If an area that is isolated and is not connected to a different boundary condition, then it is known as an inactive region.
+The inactive regions are thermodynamically isolated and form a closed system.
+These areas of the domain do not impact the solution in the portion of the domain that has boundary values, known as the active region.
 After evaluating several prototypical models, it was determined that a large portion of the domain of these problems were thermodynamically isolable.
-During development of the infrastructure to create the vectorized residuals, scale factors, and updates, it was determined that those volumes which were thermodynamically isolated would not be included in the simulated domain.
 
-\comment{A picture of the active vs. inactive would be nice.}
+\comment{A picture of the active vs. inactive would be nice here.}
 
 Originally, \cobra{} would solve the momentum and continuity equations at every defined location in the problem.
+The pressure matrix, $\vec{A}_{N\,x\,N}$, was sized based upon the number of volumes in the domain, $N$, not the number of active volumes, $N_{a}$.
+During development it was determined that those continuity and momentum volumes which were in the inactive region would be pruned from the the simulation.
+While the additional costs of including these volumes in the simulation have historically been acceptable, the use of an iterative solver would amplify the computational time spent in those regions to an unacceptable degree.
+Removing these inactive volumes saved computational time by precluding the evaluation of the residuals at those locations and by modifying the size of the pressure system \eqref{eqn:pressureUpdateSystem}.
+Additionally, since the inactive regions of the problem are interpreted as not being part of the system being modeled, including their equations in the residual would not provide accurate measures of convergence.
+
 To determine which areas of the domain were active and which ones were inactive, a geometry traversing routine was written.
-This routine parsed the input file and proceeded to create an adjacency list data structure to represent the active portion of the domain.
-This data structure allowed the active volumes to be treated independently from the memory structure of the software.
+This routine parses the input file and proceeds to create an adjacency list data structure to represent the active portion of the domain.
+The data structure allowed the active volumes to be treated independently from the memory structure of the software.
+Once the active volumes were identified, the way in which the domain information was stored in memory was changed.
 
-\comment{How much detail should I add regarding the active vs inactive?}
+\subsection{Dynamic Pressure Matrices}
+\label{subsect:dynamicPressureMatrices}
 
-\cobra{} was originally written from a procedural programming point of view.
-The [ N x N ] pressure matrix was sized based upon the number of volumes in the domain, not the number of active volumes.
-There was a precise ordering of l
+During this work, the architecture of \cobra{} was significantly modified.
+\cobra{} provides the user with three options for the linear algebra method to be used for solving for the pressure update.
+These are the Gauss elimination routine from Intel's MKL, the SuperLU solver, and the Pardiso solver.
+The SuperLU and the Pardiso solvers utilize sparse matrix storage and the Gauss elimination routine utilizes a full matrix.
+The sparsity of the matrices typically encountered are such that use of the direct solver is discouraged.
+Based upon input, one of these three solvers are used for finding the pressure update.
+Given that the original software was written in a mixture FORTRAN 77 and Fortran 90, and as such was based upon procedural programming practices.
+This meant that the memory structures for each type of solver was defined in a module.
+Depending upon the input the correct arrays and initialization was performed through branching logic in the software.
+Wherever interaction with the pressure matrix was required, branching code was required to access the appropriate matrix entries.
+This was the default method for having multiple options for the solvers.
 
-Once the active volumes were identified, the way in which the solver was stored in memory was changed.
-Previously, there had been a hard coded solver.
-Now the solvers are objects.
-These objects are awesome.
-I made them.
-The data structures involves matrices.
-There are two types of matrix data structures: sparse and full.
-Each solver has a matrix.
-The matrix is sized based upon the active domain.
+\begin{figure}[h!]
+\singlespace\centering
+\input{images/matrixClassDiagram}
+\caption{Matrix Class Diagram}
+\label{fig:matrixClassDiagram}
+\end{figure}
 
-\comment{Diagram of the object relationship?}
+This architecture was deemed to be inappropriate for the work being done.
+The object oriented features in Fortran 2003/2008 standards provided an alternative method of handling the pressure matrix.
+The matrix storage structure was first abstracted into an abstract \classname{matrix} class.
+Each \classname{matrix} contains the number of right hand sides anticipated and the total number pressure updates, $N$.
+Additionally, this class would provide the interfaces for the following procedures:
 
-\comment{Discussion of input?}
-The nonlinear solver has a $F_{tol}$, a $d_{tol}$, and a $k_{max}$.
+\begin{itemize}
+\item{put : a procedure that sets $\vec{A}_{i,j}$ to a given value.}
+\item{get : a procedure that returns $\vec{A}_{i,j}$.}
+\item{scale : a procedure for scaling $\vec{A}_{i, :}$ by a given value.}
+\item{reset : a procedure for setting $\vec{A} = \vec{0}$.}
+\item{invert : a procedure that returns $\vec{x}$ from $\vec{A}\vec{x} = \vec{b}$.}
+\end{itemize}
 
-\comment{Linesearch algorithm?}
-There is a quadratic backtracking linesearch algorithm, but it is not used for this work.
-It was turned off because there had not been enough testing for robustness.
+Given that the SuperLU and the Pardiso solvers utilize sparse matrices and the Gauss elimination routine uses a full matrix, there are two further abstract classes that inherit from \classname{matrix}; they are \classname{fullMatrix} and \classname{sparseMatrix}.
+The \classname{fullMatrix} class contains an array representing $\vec{A}$.
+The \classname{sparseMatrix} class contains the information required to construct a sparse matrix; however, the exact storage format is not specified in \classname{sparseMatrix}.
+Both \classname{fullMatrix} and \classname{sparseMatrix} contain procedural implementations of the interfaces defined in \classname{matrix}.
+There are three concrete classes that correspond to the three supported solvers: \classname{dsolveMatrix}, \classname{superluMatrix}, and \classname{pardisoMatrix}; all three implement their own linear system solving routines under the invert interface.
+\classname{dsolveMatrix} is a concrete class inheriting from \classname{fullMatrix} that includes pivoting information.
+\classname{superluMatrix} and \classname{pardisoMatrix} are concrete classes inheriting from \classname{sparseMatrix} that implement the matrix storage schemes for their respective solvers.
+\fig{fig:matrixClassDiagram} shows the class diagram for the \classname{matrix} ecosystem.
 
-\comment{Here an algorithm for the nonlinear solver would be nice.}
+\begin{figure}[h!]
+\singlespace\centering
+\input{images/solverClassDiagram}
+\caption{Solver Class Diagram}
+\label{fig:solverClassDiagram}
+\end{figure}
 
-The nonlinear solver had to add the ability to undo a trip through the momentum and continuity loops.
+Once the matrix ecosystem was developed, an abstract solver class was designed.
+The \classname{solver} class contains the size $N_{a}$ of the system, a pointer to a \classname{matrix}, $\vec{A}$, and the right hand side of the linear system.
+\classname{solver} specifies the interface for an initialization routine, init.
+In addition \classname{solver} specifies the following procedures for manipulating the linear system:
+
+\begin{itemize}
+\item{ insert : a procedure for inserting a continuity volume's pressure equation into $\vec{A}_{i, :}$.}
+\item{ solve : an interface to call the solver associated with the matrix.}
+\item{ scale : a procedure for scaling $\vec{A}_{i, :}$ and $\vec{res}_{i}$.}
+\item{ reset : a procedure for setting $\vec{A} = \vec{0}$ and $\vec{res} = \vec{0}$.}
+\end{itemize}
+
+There are three concrete classes that inherit from the abstract solver class: \classname{dsolveSolver}, \classname{superluSolver}, and \classname{pardisoSolver}.
+Each of these concrete classes specifies an initialization routine that takes an adjacency list data structure, instantiates the \classname{matrix} pointer to the appropriate concrete subtype, and sets the appropriate matrix parameters.
+By abstracting the matrices and solvers in this way, a consistent interface is provided to the rest of the software.
+\fig{fig:solverClassDiagram} shows the class diagram for the \classname{solver} ecosystem.
+
+\subsection{Nonlinear Solver Algorithm}
+\label{subsect:nlnCobraAlgo}
+
+
+
+\alg{alg:nl_cobra} contains the current algorithmic implementation of the nonlinear semi-implicit method.
+
+\begin{algo}[H]
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \State $t^{n+1} : = t^{n} + \Delta t$
+    \State $k = 0$
+    \Define $\vec{x}^{n+1,0}$
+	\Calculate $\vec{F}(\vec{x}^{n+1,0})$ and $\vec{J}(\vec{x}^{n+1,0})$
+    \Loop \; Newton Loop
+		\Calculate $\vec{\delta x} = - \vec{J}^{-1}\cdot\vec{F}$
+		$j = 0$		
+		\Calculate $\vec{x}^{n+1,k+1,j}$
+		\Calculate $\vec{F}(\vec{x}^{n+1,k+1,j})$
+		\Loop \; Globalization Loop
+			\If{ Globalization loop termination criteria not met}
+				\Calculate $\lambda_j$
+				\Calculate $\vec{x}^{n+1,k+1,j+1} = \vec{x}^{n+1,k} + \lambda \vec{\delta x}$
+				\Calculate $\vec{F}(\vec{x}^{n+1,k+1,j+1})$
+				\State $j = j + 1$			
+			\Else
+				\Calculate $\vec{J}(\vec{x}^{n+1,k+1,j})$
+				\Exit Globalization Loop
+			\EndIf
+		\EndLoop			
+		\If{ Newton loop termination criteria met}
+			\Exit Newton Loop
+		\EndIf
+	\EndLoop
+	\State $n = n + 1$
+\EndLoop
+\end{algorithmic}
+\caption{Nonlinear \cobra{} algorithm.}
+\label{alg:nl_cobra}
+\end{algo}
+
+In \alg{alg:nl_cobra}, there are three steps that require discussion.
+First is the Newton Loop termination criteria.
+There are three Newton loop termination mechanisms, listed below.
+
+\begin{enumerate}
+\item{$k > \kmax{}$}
+\item{$||(\vec{S}^{k+1})^{-1}\vec{F}^{k+1}||_{\infty} \leq F_{\text{ABS}}$}
+\item{$||(\vec{D}^{k+1})^{-1}\vec{\delta x}^{k}||_{\infty} \leq \delta_{\text{ABS}}$}
+\end{enumerate}
+
+Current values for \kmax{}, $F_{\text{ABS}}$ and $\delta_{\text{ABS}}$ are $35$, $1.0$E$-05$, and $1.0$E$-10$, respectively.
+The scaling vectors, $\vec{S}$ and $\vec{D}$, will be addressed later.
+
+The second is the globalization loop termination criteria.
+The globalization strategy implemented in \cobra{} is a line search algorithm \cite{Dennis1996}.
+The two globalization loop termination criteria are:
+
+\begin{enumerate}
+\item{$\frac{1}{2}||\vec{F}^{k+1, j}||^{2}_{2} < \frac{1}{2}||\vec{F}^{k}||^{2}_{2} - \alpha ||\vec{F}^{k}||^{2}_{2}$ }
+\item{$||\lambda_{j+1} \vec{\delta x}^{k}||_{\infty} < \delta_{\text{abs}}$}
+\end{enumerate}
+
+The third point requiring discussion is the calculation of the Newton update vector.
+If neither of the loop termination criteria are met, then a step-length parameter, $\lambda_j$, is calculated.
+On the first pass through the globalization loop within a given Newton step, a quadratic backtracking model is adopted.
+On subsequent passes, a cubic-backtracking model is used.
+ 
+Since vector forms of the nonlinear residual and the independent parameters are used in determining nonlinear convergence and in the globalization algorithm, they needed to be easily manipulated.
+A subroutine was written to gather the discrete variables of the independent parameters into a single vector.
+Additional source code modifications were necessary to construct and gather the components of the nonlinear residual.
+
+The development of the nonlinear solver within \cobra{} took place under strict quality assurance guidelines.
+At every step of the development, the linear solver was required to maintain the same solution.
+This verification was dependent upon a larger number of verification and assessment problems.
+The output of the unmodified \cobra{} and the modified \cobra{} software was compared to machine precision.
+It was required that either the results of the two simulations be identical or that the reason for the difference be identified and understood.
+The \cobra{} software has the ability to repeat a time-step.
+As such, it was required that the backup capabilities continued to work while nonlinear solver was being implemented.
+Additionally, testing was done to ensure that the ability to restart the software mid-simulation was unaffected.
+While adding time to the development cycle, the overhead of the quality assurance procedures ensured that the linear solver could continue to be used for design purposes.
+
+
+\begin{algo}[h!]
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \State $t^{n+1} : = t^{n} + \Delta t$
+    \State \; $k = 0$
+    \Loop \; Newton Loop
+	   	\Loop \; Nonlinear Momentum Loop
+   			\Calculate $\dot{\vec{m}}^{*}$ and $\frac{\partial \dot{\vec{m}}}{\partial P}$   		
+	   	\EndLoop
+	   	\Loop \; Noninear Mass \& Energy Loop
+   			\Calculate $\vec{J}$
+   			\State Assemble $\vec{A}$ and $\vec{b}$
+	   	\EndLoop   	
+   		\State Solve $\vec{A} \delta P = \vec{b}$
+		\Loop \; Update Mass \& Energy Loop
+			\State Apply $\vec{U}^{-1}_{j}$ to obtain $\delta \vec{C}_{j}$
+		\EndLoop
+	\EndLoop
+	\State $n = n + 1$
+\EndLoop
+\end{algorithmic}
+\caption{Nonlinear \cobra{} algorithm.}
+\label{alg:nlnCobraAlgorithm}
+\end{algo}
+
+
+\subsection{Nonlinear Input File}
+\label{subsect:nlnCobraInputFile}
+The primary input file for \cobra{} is fixed format, so it was decided that a  file for the nonlinear solver would provide the most flexibility when running simulations.
+This decision allowed for existing models to be run in nonlinear mode without modification of the actual input file.
+The presence of the file nwt.cob triggers the input processing routine for the nonlinear solver.
+There are three parameters that need to be present in the input file; in order they are \kmax{}, $F_{tol}$, and $d_{tol}$, each on a separate line. 
+
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 \section{Algorithmic Considerations}
 \label{sect:algoConcerns}
+There is a quadratic backtracking linesearch algorithm, but it is not used for this work.
+It was turned off because there had not been enough testing for robustness.
 
-As part of the \cobra{} modification a novel operator based scaling has been developed to obtain meaningful convergence thresholds.
+The nonlinear solver had to add the ability to undo a trip through the momentum and continuity loops.
 
 The methods outlined in \sect{sect:solution_techniques} have several algorithmic issues that need to be addressed.
 Among these issues are phase appearance and disappearance (hereafter referred to as phase transition), timestep solution acceptance criteria, and timestep size selection.
@@ -304,101 +542,14 @@ The \dt{} for any timestep is given by \eqref{eqn:time_step}.
 $\Delta t_{\text{CRNT}}$ is the most restrictive Courant number calculated for both axial and transverse flow, and a \dt{} that is based upon the time calculated to empty a given volume of the mass of a given field.
 The most restrictive of the Courant timestep is used as $\Delta t^{n \rightarrow n+1}$.
 
-\cobra{} utilized a single-shot linearization for its solution technique.
-As a result of that design decision, memory saving techniques were employed in the construction of the software that precluded more than one Newton step.
-In particular, there was the implicit assumption within the software that the first Newton iterate, $\vec{x}^{n+1, 0}$, was the old-time variable $\vec{x}^{n}$.
-This design decision required the vetting of all subroutines involved with the evaluation of the components of both the nonlinear residual and its Jacobian.
-In addition, the assumption that $\vec{x}^{n+1, k} = \vec{x}^{n}$ produced source code that was inconsistent with an iterative Newton method.
-The source code was modified to reflect the intended discretization of the governing conservation laws.
-To do this, areas had to be identified where: there were implicit cancellation of terms, the new-time variables were used in place of old-time variables, and the old-time variables were used in place of new-time variables.
-Where appropriate, the software was changed to reflect the distinction between old-time and iterate variables and to introduce terms that had been assumed to be equal to zero.
-
-Once the appropriate variables were used for the evaluation of the nonlinear residuals and the Jacobian, a Newton loop was introduced to allow multiple Newton steps.
-\alg{alg:nl_cobra} contains the current algorithmic implementation of the nonlinear semi-implicit method.
-
-\begin{algo}[H]
-\setlength{\baselineskip}{0.625\baselineskip}
-\begin{algorithmic}[1]
-\Require $\vec{x}^{0}$ and $t^{0}$
-\Set $n = 0$
-\Loop \; Transient Loop
-    \State $t^{n+1} : = t^{n} + \Delta t$
-    \State $k = 0$
-    \Define $\vec{x}^{n+1,0}$
-	\Calculate $\vec{F}(\vec{x}^{n+1,0})$ and $\vec{J}(\vec{x}^{n+1,0})$
-    \Loop \; Newton Loop
-		\Calculate $\vec{\delta x} = - \vec{J}^{-1}\cdot\vec{F}$
-		$j = 0$		
-		\Calculate $\vec{x}^{n+1,k+1,j}$
-		\Calculate $\vec{F}(\vec{x}^{n+1,k+1,j})$
-		\Loop \; Globalization Loop
-			\If{ Globalization loop termination criteria not met}
-				\Calculate $\lambda_j$
-				\Calculate $\vec{x}^{n+1,k+1,j+1} = \vec{x}^{n+1,k} + \lambda \vec{\delta x}$
-				\Calculate $\vec{F}(\vec{x}^{n+1,k+1,j+1})$
-				\State $j = j + 1$			
-			\Else
-				\Calculate $\vec{J}(\vec{x}^{n+1,k+1,j})$
-				\Exit Globalization Loop
-			\EndIf
-		\EndLoop			
-		\If{ Newton loop termination criteria met}
-			\Exit Newton Loop
-		\EndIf
-	\EndLoop
-	\State $n = n + 1$
-\EndLoop
-\end{algorithmic}
-\caption{Nonlinear \cobra{} algorithm.}
-\label{alg:nl_cobra}
-\end{algo}
-
-In \alg{alg:nl_cobra}, there are three steps that require discussion.
-First is the Newton Loop termination criteria.
-There are three Newton loop termination mechanisms, listed below.
-
-\begin{enumerate}
-\item{$k > k_{\,\text{MAX}}$}
-\item{$||(\vec{S}^{k+1})^{-1}\vec{F}^{k+1}||_{\infty} \leq F_{\text{ABS}}$}
-\item{$||(\vec{D}^{k+1})^{-1}\vec{\delta x}^{k}||_{\infty} \leq \delta_{\text{ABS}}$}
-\end{enumerate}
-
-Current values for $k_{\,\text{MAX}}$, $F_{\text{ABS}}$ and $\delta_{\text{ABS}}$ are $35$, $1.0$E$-05$, and $1.0$E$-10$, respectively.
-The scaling vectors, $\vec{S}$ and $\vec{D}$, will be addressed later.
-
-The second is the globalization loop termination criteria.
-The globalization strategy implemented in \cobra{} is a line search algorithm \cite{Dennis1996}.
-The two globalization loop termination criteria are:
-
-\begin{enumerate}
-\item{$\frac{1}{2}||\vec{F}^{k+1, j}||^{2}_{2} < \frac{1}{2}||\vec{F}^{k}||^{2}_{2} - \alpha ||\vec{F}^{k}||^{2}_{2}$ }
-\item{$||\lambda_{j+1} \vec{\delta x}^{k}||_{\infty} < \delta_{\text{abs}}$}
-\end{enumerate}
-
-The third point requiring discussion is the calculation of the Newton update vector.
-If neither of the loop termination criteria are met, then a step-length parameter, $\lambda_j$, is calculated.
-On the first pass through the globalization loop within a given Newton step, a quadratic backtracking model is adopted.
-On subsequent passes, a cubic-backtracking model is used.
- 
-Since vector forms of the nonlinear residual and the independent parameters are used in determining nonlinear convergence and in the globalization algorithm, they needed to be easily manipulated.
-A subroutine was written to gather the discrete variables of the independent parameters into a single vector.
-Additional source code modifications were necessary to construct and gather the components of the nonlinear residual.
-
-The development of the nonlinear solver within \cobra{} took place under strict quality assurance guidelines.
-At every step of the development, the linear solver was required to maintain the same solution.
-This verification was dependent upon a larger number of verification and assessment problems.
-The output of the unmodified \cobra{} and the modified \cobra{} software was compared to machine precision.
-It was required that either the results of the two simulations be identical or that the reason for the difference be identified and understood.
-The \cobra{} software has the ability to repeat a time-step.
-As such, it was required that the backup capabilities continued to work while nonlinear solver was being implemented.
-Additionally, testing was done to ensure that the ability to restart the software mid-simulation was unaffected.
-While adding time to the development cycle, the overhead of the quality assurance procedures ensured that the linear solver could continue to be used for design purposes.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 \section{Operator-Based Scaling}
 \label{sect:nln_scaling}
+
+As part of the \cobra{} modification a novel operator based scaling has been developed to obtain meaningful convergence thresholds.
 An important aspect of the nonlinear solver outlined above is the convergence criteria.
 The iterative solver depends upon the scaled residual to determine when convergence has been achieved.
 In particular, various norms of the residual are evaluated to measure the degree to which the nonlinear system of algebraic equations are being satisfied.
@@ -444,7 +595,7 @@ The residual for \eqref{eqn:si_mass_liq} is given by \eqref{eqn:res_mass_liq}.
 
 \begin{equation}
 \label{eqn:res_mass_liq}
-F_{m,l} = \Delta t \left[ V_c \frac{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho_l \right)^{n}}{\Delta t} + \sum_{NK}\left( \don{\alpha^n_l \rho^n_l}^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right) + \left[(1-\eta)\Gamma + S \right]^{n+1}\right]
+F_{m,l} = \Delta t \left[ V_c \frac{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho_l \right)^{n}}{\Delta t} + \sum_{N_{k}}\left( \don{\alpha^n_l \rho^n_l}^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right) + \left[(1-\eta)\Gamma + S \right]^{n+1}\right]
 \end{equation}
 
 In this equation there are five physically meaningful quantities: the temporal difference, the mass flowing into the volume, the mass flowing out of the volume, the mass exchange with the gaseous phase, and the mass exchange with the entrained liquid field.
@@ -452,7 +603,7 @@ In this equation there are five physically meaningful quantities: the temporal d
 The scaling chosen for this residual is shown by \eqref{eqn:scaling_factor}.
 \begin{equation}
 \label{eqn:scaling_factor}
-S_{m,l} = \Delta t \left[ V_c \abs{\frac{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho_l \right)^{n}}{\Delta t}} + \sum_{NK}\abs{\left( \don{\alpha^n_l \rho^n_l}^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right)} + \left[\abs{(1-\eta)\Gamma} + \abs{S} \right]^{n+1}\right]
+S_{m,l} = \Delta t \left[ V_c \abs{\frac{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho_l \right)^{n}}{\Delta t}} + \sum_{N_{k}}\abs{\left( \don{\alpha^n_l \rho^n_l}^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right)} + \left[\abs{(1-\eta)\Gamma} + \abs{S} \right]^{n+1}\right]
 \end{equation}
 
 This scaling creates a relative measure of the nonlinear residual when compared to the magnitude of the physics involved in the process.

@@ -1,0 +1,58 @@
+\begin{tikzpicture}
+\begin{abstractclass}[text width=6cm]{matrix}{0,0}
+	\attribute{+ n : int}
+	\attribute{+ nrhs : int}
+	\operation[0]{+ put(i : int, j : int, val : real ) }
+	\operation[0]{+ get(i : int, j : int ) : real }
+	\operation[0]{+ rescale(i : int, j : int )}
+	\operation[0]{+ reset()}
+	\operation[0]{+ invert(b : real(:,:))}
+\end{abstractclass}
+
+\begin{abstractclass}[text width=6cm]{fullMatrix}{0,-6}
+	\inherit{matrix}
+	\attribute{- A : real(:,:) }
+	\operation{+ put(i : int, j : int, val : real ) }
+	\operation{+ get(i : int, j : int ) : real }
+	\operation{+ rescale(i : int, j : int )}
+	\operation{+ reset()}
+\end{abstractclass}
+
+\begin{class}[text width=4cm]{dsolveMatrix}{0,-11}
+	\inherit{fullMatrix}
+	\attribute{- ipiv : int(:) }
+	\operation{+ invert(b : real(:,:))}
+\end{class}
+
+\begin{abstractclass}[text width=6cm]{sparseMatrix}{8,0}
+	\inherit{matrix}
+	\attribute{- num\_coeff: int }
+	\attribute{- acoeff: real(:) }
+	\attribute{- ij\_element: int(:,:) }
+	\operation{+ put(i : int, j : int, val : real ) }
+	\operation{+ get(i : int, j : int ) : real }
+	\operation{+ rescale(i : int, j : int )}
+	\operation{+ reset()}
+\end{abstractclass}
+
+\begin{class}[text width=4cm]{superluMatrix}{6,-6}
+	\inherit{sparseMatrix}
+	\attribute{- asub : int(:) }
+	\attribute{- col\_beg : int(:) }
+	\attribute{- ncpu : int }
+	\operation{+ invert(b : real(:,:))}
+\end{class}
+
+\begin{class}[text width=4cm]{pardisoMatrix}{11,-6}
+	\inherit{sparseMatrix}
+	\attribute{- ia : int(:) }
+	\attribute{- ja : int(:) }
+	\attribute{- pt : int(:) }
+	\attribute{- perm : int }
+	\attribute{- mnum : int }
+	\attribute{- mtype : int }
+	\attribute{- maxfct : int }
+	\operation{+ invert(b : real(:,:))}
+\end{class}
+
+\end{tikzpicture}

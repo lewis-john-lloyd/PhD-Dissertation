@@ -64,6 +64,13 @@
 		$\Delta t$
 	\fi
 }
+\DeclareRobustCommand{\kmax}{
+	\ifmmode
+		k_{\,\text{max}}
+	\else
+		$k_{\,\text{max}}$
+	\fi
+}
 \DeclareRobustCommand{\dtmax}{%
 	\ifmmode
 		\Delta t_{\text{MAX}}
@@ -78,6 +85,7 @@
 		$\Delta x$
 	\fi
 }
+\newcommand{\pluseq}{\mathrel{+}=}
 
 \delimitershortfall-1sp
 \newcommand\abs[1]{\left|#1\right|}

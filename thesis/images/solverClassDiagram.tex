@@ -1,0 +1,31 @@
+\begin{tikzpicture}
+\begin{abstractclass}[text width=6cm]{solver}{0,0}
+	\attribute{+ size : int}
+	\attribute{+ A : matrix, ptr }
+	\attribute{+ res : real(:,:)}
+	\operation{+ insert(i : int, j : int) }
+	\operation{+ solve() }
+	\operation{+ rescale(i : int, j : int) }
+	\operation{+ reset()}
+	\operation[0]{+ init()}
+\end{abstractclass}
+
+\begin{class}[text width = 4cm]{dsolveSolver}{-5,-7}
+	\inherit{solver}
+	\attribute{+ A $=>$ dsolveMatrix }
+	\operation{+ init()}
+\end{class}
+
+\begin{class}[text width = 4cm]{superluSolver}{0,-7}
+	\inherit{solver}
+	\attribute{+ A $=>$ superluMatrix }
+	\operation{+ init()}
+\end{class}
+
+\begin{class}[text width = 4cm]{pardisoSolver}{5,-7}
+	\inherit{solver}
+	\attribute{+ A $=>$ pardisoMatrix }
+	\operation{+ init()}
+\end{class}
+
+\end{tikzpicture}

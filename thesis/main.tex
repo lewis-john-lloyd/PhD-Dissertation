@@ -30,6 +30,8 @@
 \usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
 \usepackage{epsfig}
 
+\usepackage[normalem]{ulem}
+
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{verbatim}
@@ -47,6 +49,7 @@
 \usepackage{booktabs}
 \usepackage{colortbl}
 \usepackage{multirow}
+\usepackage[simplified,nocolor]{pgf-umlcd}
 
 \usepackage{times}
 \renewcommand{\ttdefault}{cmtt}
@@ -90,18 +93,18 @@
 % Preface
 %=======================================================================
 % Make the page numbers Roman (i, ii, etc)
-\clearpage\pagenumbering{roman}  
+%\clearpage\pagenumbering{roman}  
 
 % ============================================================================
 % Title Page
 % ============================================================================
-\title{Investigation of a Spatially Selective Nonlinear Solver for Thermal-Hydraulic Safety Analysis Codes}
-\author{Lewis John Lloyd}
-\date{2012}
-\department{Nuclear Engineering and Engineering Physics}
-\advisorname{Michael Corradini}
-\advisortitle{Professor}
-\maketitle
+%\title{Investigation of a Spatially Selective Nonlinear Solver for Thermal-Hydraulic Safety Analysis Codes}
+%\author{Lewis John Lloyd}
+%\date{2012}
+%\department{Nuclear Engineering and Engineering Physics}
+%\advisorname{Michael Corradini}
+%\advisortitle{Professor}
+%\maketitle
 
 %============================================================================
 % Copyright Page
@@ -112,30 +115,30 @@
 % Abstract
 %============================================================================
 %		Options: abstract, umiabstract
-\newcommand{\abstractType}{abstract}
-\begin{\abstractType}
-	\input{abstract}
-\end{\abstractType}
+%\newcommand{\abstractType}{abstract}
+%\begin{\abstractType}
+%	\input{abstract}
+%\end{\abstractType}
 
 %============================================================================
 % Acknowledgement Page
 %============================================================================
-\begin{acknowledgments}
-  \input{acknowledgements}
-\end{acknowledgments}
+%\begin{acknowledgments}
+%  \input{acknowledgements}
+%\end{acknowledgments}
 
 %============================================================================
 % Auto-generated Tables
 %============================================================================
-\tableofcontents  % Table of contents
-\listoftables     % List of tables
-\listoffigures    % List of figures
-\listofalgorithms % List of algorithms
+%\tableofcontents  % Table of contents
+%\listoftables     % List of tables
+%\listoffigures    % List of figures
+%\listofalgorithms % List of algorithms
 
 % ============================================================================
 % Nomenclature Page
 %============================================================================
-\input{nomenclature}
+%\input{nomenclature}
 
 %=======================================================================
 % Chapters
@@ -143,27 +146,27 @@
 % Make the page numbers Arabic (1, 2, etc)
 \clearpage\pagenumbering{arabic}
 
-\include{chap_introduction}     % Chapter: Introduction
+%\include{chap_introduction}     % Chapter: Introduction
 \include{chap_nonlinear_solver} % Chapter: Nonlinear Solver
-\include{chap_dom_decomp}       % Chapter: Domain Decomposition Algorithm
-\include{chap_experiments}      % Chapter: Numerical Experiments
-\include{chap_final_thoughts}   % Chapter: Conclusion and musings
+%\include{chap_dom_decomp}       % Chapter: Domain Decomposition Algorithm
+%\include{chap_experiments}      % Chapter: Numerical Experiments
+%\include{chap_final_thoughts}   % Chapter: Conclusion and musings
 
 %=======================================================================
 % Bibliography
 %=======================================================================
-\bibliographystyle{plainnat}
-\bibliography{bibliography/references}
+%\bibliographystyle{plainnat}
+%\bibliography{bibliography/references}
 
 %=======================================================================
 % Appendices
 %=======================================================================
-\noappendixtables
-\noappendixfigures
-\begin{appendices}
-\include{app_input_decks}         % Appendix: Input Decks
-\include{app_dom_testing}         % Appendix: Domain Decomposition Testing Procedure
-\end{appendices}
+%\noappendixtables
+%\noappendixfigures
+%\begin{appendices}
+%\include{app_input_decks}         % Appendix: Input Decks
+%\include{app_dom_testing}         % Appendix: Domain Decomposition Testing Procedure
+%\end{appendices}
 
 %=======================================================================
 % End Document
