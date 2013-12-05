@@ -156,10 +156,12 @@ This grouping will be known hereafter as assembling the pressure matrix for a gi
 \begin{algorithmic}[1]
 \Loop \; Momentum Volumes
 	\Calculate $\vec{J}_{m, j}$, $\vec{a}_{j}$, and $\vec{b}_{j}$
-	\Calculate $\dot{\vec{m}}^{*}$ and $\frac{\partial \dot{\vec{m}}}{\partial P}$   		
+	\Calculate $\dot{\vec{m}}^{*}$ and $\frac{\partial \dot{\vec{m}}}{\partial P}$
+	\Calculate $\vec{F}_{m, j}$	
 \EndLoop
 \Loop \; Continuity Volumes
    	\Calculate $\vec{Z}_{c,j}$ and $\vec{r}_{c, j}$
+ 	\Calculate $\vec{F}_{c, j}$	
    	\Calculate $\vec{U}_{c, j} = \vec{L}_{c, j}^{-1} \vec{Z}_{c, j}$
    	\Calculate $\vec{r}^{*}_{c, j} = \vec{L}_{c, j}^{-1} \vec{r}_{c, j}$
    	\Set Scale $\vec{U}[6, :]_{c, j}$ and $\vec{r}[6]^{*}_{c, j}$ by $\vec{U}[6,6]_{c, j}$
@@ -346,9 +348,98 @@ By abstracting the matrices and solvers in this way, a consistent interface is p
 \subsection{Nonlinear Solver Algorithm}
 \label{subsect:nlnCobraAlgo}
 
+\comment{Here is where I will layout the actual nonlinear approach.
+I don't know if it is worth rehashing the same equations.
+But, I think that I need to show them and talk about their time levels.
+This caused a headache for me programming.
+Once the equations are laid out, I will talk about how the same loop is applied.
+I will then talk about the scale factor briefly as in "look later``.
+Then I will layout the algorithm for checking if the solution is converged.
+After the talk about convergence and its algorithm, then I will talk about undoing a Newton step and what that means.
+The final algorithm will be after that.
+}
 
-
+To iteratively solve the nonlinear system of equations, 
 \alg{alg:nl_cobra} contains the current algorithmic implementation of the nonlinear semi-implicit method.
+
+In \alg{alg:nl_cobra}, there are three steps that require discussion.
+First is the Newton Loop termination criteria.
+There are three Newton loop termination mechanisms, listed below.
+
+\begin{enumerate}
+\item{$k > \kmax{}$}
+\item{$||(\vec{S}^{k+1})^{-1}\vec{F}^{k+1}||_{\infty} \leq F_{\text{ABS}}$}
+\item{$||(\vec{D}^{k+1})^{-1}\vec{\delta x}^{k}||_{\infty} \leq \delta_{\text{ABS}}$}
+\end{enumerate}
+
+Current values for \kmax{}, $F_{\text{ABS}}$ and $\delta_{\text{ABS}}$ are $35$, $1.0$E$-05$, and $1.0$E$-10$, respectively.
+
+The scaling vectors, $\vec{S}$ and $\vec{D}$, will be addressed later.
+
+
+\begin{algo}[h!]
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \Set $t^{n+1} : = t^{n} + \Delta t$
+    \Set $k = 0$
+	\Algorithm Assemble Nonlinear Pressure Matrix	 \Comment{\alg{alg:xschem}}
+	\Solve $\vec{A} \vec{\delta P} = \vec{res}$
+	\Algorithm Update Nonlinear Variables \Comment{\alg{alg:updateVariables}} 
+    \Loop \; Newton Loop
+		\Algorithm Assemble Nonlinear Pressure Matrix \Comment{\alg{alg:xschem}}
+		\Algorithm Convergence Determination \Comment{\alg{alg:nlnConvergence}}
+		\If{ \textbf{end} Newton loop}
+			\Algorithm Undo Partial Newton Step \Comment{\alg{alg:undoNewtonStep}}
+			\State \textbf{break} Newton Loop 
+		\EndIf		
+		\Solve $\vec{A} \vec{\delta P} = \vec{res}$
+		\Algorithm Update Nonlinear Variables \Comment{\alg{alg:updateVariables}}
+	\EndLoop
+	\Set $n = n + 1$
+\EndLoop
+\end{algorithmic}
+\caption{Nonlinear \cobra{} algorithm.}
+\label{alg:nlnCobraAlgorithm}
+\end{algo}
+
+\subsection{Globalization Strategy}
+\label{subsect:nlnGlobalStrategy}
+
+\comment{ Here will be another algorithm that has the globalization loop.}
+
+The second is the globalization loop termination criteria.
+The globalization strategy implemented in \cobra{} is a line search algorithm \cite{Dennis1996}.
+The two globalization loop termination criteria are:
+
+\begin{enumerate}
+\item{$\frac{1}{2}||\vec{F}^{k+1, j}||^{2}_{2} < \frac{1}{2}||\vec{F}^{k}||^{2}_{2} - \alpha ||\vec{F}^{k}||^{2}_{2}$ }
+\item{$||\lambda_{j+1} \vec{\delta x}^{k}||_{\infty} < \delta_{\text{abs}}$}
+\end{enumerate}
+
+
+The third point requiring discussion is the calculation of the Newton update vector.
+If neither of the loop termination criteria are met, then a step-length parameter, $\lambda_j$, is calculated.
+On the first pass through the globalization loop within a given Newton step, a quadratic backtracking model is adopted.
+On subsequent passes, a cubic-backtracking model is used.
+ 
+Since vector forms of the nonlinear residual and the independent parameters are used in determining nonlinear convergence and in the globalization algorithm, they needed to be easily manipulated.
+A subroutine was written to gather the discrete variables of the independent parameters into a single vector.
+Additional source code modifications were necessary to construct and gather the components of the nonlinear residual.
+
+\subsection{Quality Control}
+\label{subsect:nlnDevelopment}
+The development of the nonlinear solver within \cobra{} took place under strict quality assurance guidelines.
+At every step of the development, the linear solver was required to maintain the same solution.
+This verification was dependent upon a larger number of verification and assessment problems.
+The output of the unmodified \cobra{} and the modified \cobra{} software was compared to machine precision.
+It was required that either the results of the two simulations be identical or that the reason for the difference be identified and understood.
+The \cobra{} software has the ability to repeat a time-step.
+As such, it was required that the backup capabilities continued to work while nonlinear solver was being implemented.
+Additionally, testing was done to ensure that the ability to restart the software mid-simulation was unaffected.
+While adding time to the development cycle, the overhead of the quality assurance procedures ensured that the linear solver could continue to be used for design purposes.
 
 \begin{algo}[H]
 \setlength{\baselineskip}{0.625\baselineskip}
@@ -385,76 +476,6 @@ By abstracting the matrices and solvers in this way, a consistent interface is p
 \end{algorithmic}
 \caption{Nonlinear \cobra{} algorithm.}
 \label{alg:nl_cobra}
-\end{algo}
-
-In \alg{alg:nl_cobra}, there are three steps that require discussion.
-First is the Newton Loop termination criteria.
-There are three Newton loop termination mechanisms, listed below.
-
-\begin{enumerate}
-\item{$k > \kmax{}$}
-\item{$||(\vec{S}^{k+1})^{-1}\vec{F}^{k+1}||_{\infty} \leq F_{\text{ABS}}$}
-\item{$||(\vec{D}^{k+1})^{-1}\vec{\delta x}^{k}||_{\infty} \leq \delta_{\text{ABS}}$}
-\end{enumerate}
-
-Current values for \kmax{}, $F_{\text{ABS}}$ and $\delta_{\text{ABS}}$ are $35$, $1.0$E$-05$, and $1.0$E$-10$, respectively.
-The scaling vectors, $\vec{S}$ and $\vec{D}$, will be addressed later.
-
-The second is the globalization loop termination criteria.
-The globalization strategy implemented in \cobra{} is a line search algorithm \cite{Dennis1996}.
-The two globalization loop termination criteria are:
-
-\begin{enumerate}
-\item{$\frac{1}{2}||\vec{F}^{k+1, j}||^{2}_{2} < \frac{1}{2}||\vec{F}^{k}||^{2}_{2} - \alpha ||\vec{F}^{k}||^{2}_{2}$ }
-\item{$||\lambda_{j+1} \vec{\delta x}^{k}||_{\infty} < \delta_{\text{abs}}$}
-\end{enumerate}
-
-The third point requiring discussion is the calculation of the Newton update vector.
-If neither of the loop termination criteria are met, then a step-length parameter, $\lambda_j$, is calculated.
-On the first pass through the globalization loop within a given Newton step, a quadratic backtracking model is adopted.
-On subsequent passes, a cubic-backtracking model is used.
- 
-Since vector forms of the nonlinear residual and the independent parameters are used in determining nonlinear convergence and in the globalization algorithm, they needed to be easily manipulated.
-A subroutine was written to gather the discrete variables of the independent parameters into a single vector.
-Additional source code modifications were necessary to construct and gather the components of the nonlinear residual.
-
-The development of the nonlinear solver within \cobra{} took place under strict quality assurance guidelines.
-At every step of the development, the linear solver was required to maintain the same solution.
-This verification was dependent upon a larger number of verification and assessment problems.
-The output of the unmodified \cobra{} and the modified \cobra{} software was compared to machine precision.
-It was required that either the results of the two simulations be identical or that the reason for the difference be identified and understood.
-The \cobra{} software has the ability to repeat a time-step.
-As such, it was required that the backup capabilities continued to work while nonlinear solver was being implemented.
-Additionally, testing was done to ensure that the ability to restart the software mid-simulation was unaffected.
-While adding time to the development cycle, the overhead of the quality assurance procedures ensured that the linear solver could continue to be used for design purposes.
-
-
-\begin{algo}[h!]
-\setlength{\baselineskip}{0.625\baselineskip}
-\begin{algorithmic}[1]
-\Require $\vec{x}^{0}$ and $t^{0}$
-\Set $n = 0$
-\Loop \; Transient Loop
-    \State $t^{n+1} : = t^{n} + \Delta t$
-    \State \; $k = 0$
-    \Loop \; Newton Loop
-	   	\Loop \; Nonlinear Momentum Loop
-   			\Calculate $\dot{\vec{m}}^{*}$ and $\frac{\partial \dot{\vec{m}}}{\partial P}$   		
-	   	\EndLoop
-	   	\Loop \; Noninear Mass \& Energy Loop
-   			\Calculate $\vec{J}$
-   			\State Assemble $\vec{A}$ and $\vec{b}$
-	   	\EndLoop   	
-   		\State Solve $\vec{A} \delta P = \vec{b}$
-		\Loop \; Update Mass \& Energy Loop
-			\State Apply $\vec{U}^{-1}_{j}$ to obtain $\delta \vec{C}_{j}$
-		\EndLoop
-	\EndLoop
-	\State $n = n + 1$
-\EndLoop
-\end{algorithmic}
-\caption{Nonlinear \cobra{} algorithm.}
-\label{alg:nlnCobraAlgorithm}
 \end{algo}
 
 
