@@ -1,9 +1,9 @@
 \chapter{Domain Decomposition}
 \label{chap:domain_decomposition}
-The governing partial differential equations described in \sect{subsect:governing_equations} contain nonlinearities that distributed in both space and time.
+The governing partial differential equations described in \sect{subsect:governing_equations} contain nonlinearities that are distributed in both space and time.
 In the absence of nonlinear physics a single Newton step is adequate to solve the governing set of discrete algebraic equations.
 However, for a given spatial mesh when nonlinearities are present if the number of Newton steps is limited to one, then the only way to resolve those nonlinearities is to refine the temporal discretization.
-If the number of Newton steps is not limited to one, then the nonlinearities will be resolved for a fixed temporal discretization.
+If the number of Newton steps is not limited to one, then the nonlinearities may be resolved for a fixed temporal discretization.
 When the nonlinearities are isolated to a given nonlinear portion of the domain, the additional Newton steps do not improve the solution in the linear portion of the domain.
 The ability to resolve the nonlinear physics only where they occur could potentially provide a way to reduce the computational cost associated with resolving the nonlinear error for a given timestep.
 The following section contains three sections that describe the mathematical formulation of the domain decomposition, a description of its implementation, and several problems that were used to verify that the algorithm had been implemented properly.
@@ -26,7 +26,7 @@ The corresponding continuity equations for a given volume are then given by \eqr
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:advection_of_ncg_mass}
-V_{c,j}\frac{(\alpha_{g} \rho_{n})^{n+1, k}_{j} - (\alpha_{g} \rho_{n})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{g, j + \onehalf}\frac{\don{\alpha^{n}_{g} \rho^{n}_{n}}^{n+1,k}_{d, j+\onehalf}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{g, j - \onehalf}\frac{\don{\alpha^{n}_{g} \rho^{n}_{n}}^{n+1,k}_{d, j-\onehalf}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a, j - \onehalf}} & = & 0 \\
+V_{c,j}\frac{(\alpha_{g} \rho_{n})^{n+1, k}_{j} - (\alpha_{g} \rho_{n})^{n}_{j} }{ \dt{} } + \dot{m}^{n+1, k}_{g, j + \onehalf}\frac{\don{\alpha^{n}_{g} \rho^{n}_{n}}^{n+1,k}_{d, j+\onehalf}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{g, j - \onehalf}\frac{\don{\alpha^{n}_{g} \rho^{n}_{n}}^{n+1,k}_{d, j-\onehalf}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a, j - \onehalf}} & = & 0 \\
 %
 \label{eqn:advection_of_liq_mass}
 V_{c,j}\frac{(\alpha_{l} \rho_{l})^{n+1, k}_{j} - (\alpha_{l} \rho_{l})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{l, j + \onehalf}\frac{\don{ \alpha^{n}_{l} \rho^{n}_{l} }^{n+1,k}_{d, j+\onehalf}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{l, j - \onehalf}\frac{\don{\alpha^{n}_{l} \rho^{n}_{l}}^{n+1,k}_{d, j-\onehalf}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a, j - \onehalf}} & = & 0 \\
@@ -307,6 +307,41 @@ c_{2,1} & 1 \\
  f_2 \\
 \end{bmatrix}
  \end{equation}
+ 
+\comment{
+This is annoying as crap to describe.
+I will give it a shot in words.
+}
+
+First, the input file is specified in the following way 
+'begin-nln-channels'
+01
+'end-nln-channels'
+
+
+The procedures that were written to determine which continuity volumes were active and which were inactive was modified to 
+
+When formulating the governing equations, the fluxes between the linear and nonlinear domains are treated as additional nonlinear variables.
+When the linear domain is formulated, these flux terms are treated as variational parameters within the continuity volumes in the linear domain that lie on the boundary of the nonlinear domain.
+Take for example a continuity volume with only two flowpaths connected to it.
+One flow path is connected to another continuity volume within the linear domain.
+The other flow path is connected to a continuity volume that resides within the nonlinear domain.
+When the Jacobian for these continuity volumes are taken, derivatives with respect to the flux terms are included.
+
+\begin{equation}
+\label{eqn:jacobianWithFluxTerms}
+\begin{bmatrix}
+\frac{\partial F_{m,n}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,n}}{\partial \alpha_g } & \frac{\partial F_{m,n}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,n}}{\partial ((1.0 - \alpha_g) h_l) } & \frac{\partial F_{m,n}}{\partial \alpha_e } & \frac{\partial F_{m,n}}{\partial P } \\
+\frac{\partial F_{m,l}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,l}}{\partial \alpha_g } & \frac{\partial F_{m,l}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,l}}{\partial ((1.0 - \alpha_g) h_l)} &\frac{\partial F_{m,l}}{\partial \alpha_e } & \frac{\partial F_{m,l}}{\partial P } \\
+\frac{\partial F_{e,g}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{e,g}}{\partial \alpha_g } & \frac{\partial F_{e,g}}{\partial (\alpha_g h_v)} & \frac{\partial F_{e,g}}{\partial ((1.0 - \alpha_g) h_l)} &\frac{\partial F_{e,g}}{\partial \alpha_e } & \frac{\partial F_{e,l}}{\partial P } \\
+\frac{\partial F_{e,l}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{e,l}}{\partial \alpha_g } & \frac{\partial F_{e,l}}{\partial (\alpha_g h_v)} & \frac{\partial F_{e,l}}{\partial ((1.0 - \alpha_g) h_l)} &\frac{\partial F_{e,l}}{\partial \alpha_e } & \frac{\partial F_{e,g}}{\partial P } \\
+\frac{\partial F_{m,e}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,e}}{\partial \alpha_g } & \frac{\partial F_{m,e}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,e}}{\partial ((1.0 - \alpha_g) h_l)} &\frac{\partial F_{m,e}}{\partial \alpha_e } & \frac{\partial F_{m,e}}{\partial P } \\
+\frac{\partial F_{m,v}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,v}}{\partial \alpha_g } & \frac{\partial F_{m,v}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,v}}{\partial ((1.0 - \alpha_g) h_l)} & \frac{\partial F_{m,v}}{\partial \alpha_e } & \frac{\partial F_{m,v}}{\partial P }
+\end{bmatrix}
+= 2
+\end{equation}
+ 
+ 
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
