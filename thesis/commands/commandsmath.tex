@@ -100,5 +100,19 @@
 		$\delta_{\text{tol}}$
 	\fi
 }
+\DeclareRobustCommand{\expneg}[2]{
+	\ifmmode
+		#1\mbox{\textsc{e}-}#2
+	\else
+		$#1\mbox{\textsc{e}-}#2$
+	\fi
+}
+\DeclareRobustCommand{\exppos}[2]{
+	\ifmmode
+		#1\mbox{\textsc{e}+}#2
+	\else
+		$#1\mbox{\textsc{e}+}#2$
+	\fi
+}
 \delimitershortfall-1sp
 \newcommand\abs[1]{\left|#1\right|}

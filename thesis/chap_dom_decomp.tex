@@ -26,27 +26,27 @@ The corresponding continuity equations for a given volume are then given by \eqr
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:advection_of_ncg_mass}
-V_{j}\frac{(\alpha_{g} \rho_{n})^{n+1, k}_{j} - (\alpha_{g} \rho_{n})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{g, j + \onehalf}\frac{\don{\alpha^{n}_{g} \rho^{n}_{n}}^{n+1,k}_{d, j+\onehalf}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{g, j - \onehalf}\frac{\don{\alpha^{n}_{g} \rho^{n}_{n}}^{n+1,k}_{d, j-\onehalf}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a, j - \onehalf}} & = & 0 \\
+V_{c,j}\frac{(\alpha_{g} \rho_{n})^{n+1, k}_{j} - (\alpha_{g} \rho_{n})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{g, j + \onehalf}\frac{\don{\alpha^{n}_{g} \rho^{n}_{n}}^{n+1,k}_{d, j+\onehalf}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{g, j - \onehalf}\frac{\don{\alpha^{n}_{g} \rho^{n}_{n}}^{n+1,k}_{d, j-\onehalf}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a, j - \onehalf}} & = & 0 \\
 %
 \label{eqn:advection_of_liq_mass}
-V_{j}\frac{(\alpha_{l} \rho_{l})^{n+1, k}_{j} - (\alpha_{l} \rho_{l})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{l, j + \onehalf}\frac{\don{ \alpha^{n}_{l} \rho^{n}_{l} }^{n+1,k}_{d, j+\onehalf}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{l, j - \onehalf}\frac{\don{\alpha^{n}_{l} \rho^{n}_{l}}^{n+1,k}_{d, j-\onehalf}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a, j - \onehalf}} & = & 0 \\
+V_{c,j}\frac{(\alpha_{l} \rho_{l})^{n+1, k}_{j} - (\alpha_{l} \rho_{l})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{l, j + \onehalf}\frac{\don{ \alpha^{n}_{l} \rho^{n}_{l} }^{n+1,k}_{d, j+\onehalf}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{l, j - \onehalf}\frac{\don{\alpha^{n}_{l} \rho^{n}_{l}}^{n+1,k}_{d, j-\onehalf}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a, j - \onehalf}} & = & 0 \\
 %
 \label{eqn:advection_of_gas_energy}
-V_{j}\frac{(\alpha_g \rho_g h_g)^{n+1, k}_{j} - (\alpha_g \rho_g h_g)^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{g, j + \onehalf}\frac{\don{\alpha^n_g \rho^n_g h^{n}_{g}}^{n+1,k}_{d, j+\onehalf}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{g, j - \onehalf}\frac{\don{\alpha^{n}_{g} \rho^{n}_{g} h^{n}_{g}}^{n+1,k}_{d, j-\onehalf}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a, j - \onehalf}} &  & \\
+V_{c,j}\frac{(\alpha_g \rho_g h_g)^{n+1, k}_{j} - (\alpha_g \rho_g h_g)^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{g, j + \onehalf}\frac{\don{\alpha^n_g \rho^n_g h^{n}_{g}}^{n+1,k}_{d, j+\onehalf}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{g, j - \onehalf}\frac{\don{\alpha^{n}_{g} \rho^{n}_{g} h^{n}_{g}}^{n+1,k}_{d, j-\onehalf}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a, j - \onehalf}} &  & \\
 %
 \nonumber
-- V_{j} \alpha^{n}_{g} \frac{P^{\, n+1, k}_{j} - P^{\,n}_{j} }{\dt{}} & = & 0 \\
+- V_{c,j} \alpha^{n}_{g} \frac{P^{\, n+1, k}_{j} - P^{\,n}_{j} }{\dt{}} & = & 0 \\
 \label{eqn:advection_of_liq_energy}
-V_{j}\frac{(\alpha_{l} \rho_{l} h_{l})^{n+1, k}_{j} - (\alpha_{l} \rho_{l} h_{l} )^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{l, j + \onehalf}\frac{\don{\alpha^{n}_{l} \rho^{n}_{l} h^{n}_{l} }^{n+1, k}_{d, j+\onehalf}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{l, j - \onehalf}\frac{\don{\alpha^{n}_{l} \rho^{n}_{l} h^{n}_{l}}^{n+1, k}_{d, j-\onehalf}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a, j - \onehalf}} &  &  \\
+V_{c,j}\frac{(\alpha_{l} \rho_{l} h_{l})^{n+1, k}_{j} - (\alpha_{l} \rho_{l} h_{l} )^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{l, j + \onehalf}\frac{\don{\alpha^{n}_{l} \rho^{n}_{l} h^{n}_{l} }^{n+1, k}_{d, j+\onehalf}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{l, j - \onehalf}\frac{\don{\alpha^{n}_{l} \rho^{n}_{l} h^{n}_{l}}^{n+1, k}_{d, j-\onehalf}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a, j - \onehalf}} &  &  \\
 %
 \nonumber
-+ \dot{m}^{n+1, k}_{e, j + \onehalf}\frac{\don{\alpha^{n}_{e} \rho^{n}_{l} h^{n}_{l}}^{n+1, k}_{d, j+\onehalf}}{\ave{\alpha_{e} \rho_{l}}^{n}_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{e, j - \onehalf}\frac{\don{\alpha^{n}_{e} \rho^{n}_{l} h^{n}_{l}}^{n+1, k}_{d, j-\onehalf}}{\ave{\alpha_{e} \rho_{l}}^{n}_{a, j - \onehalf}} - V_{j} ( 1 - \alpha^{n}_{g})\frac{P^{\, n+1, k}_{j} - P^{\,n}_{j} }{\dt{}}& = & 0 \\
++ \dot{m}^{n+1, k}_{e, j + \onehalf}\frac{\don{\alpha^{n}_{e} \rho^{n}_{l} h^{n}_{l}}^{n+1, k}_{d, j+\onehalf}}{\ave{\alpha_{e} \rho_{l}}^{n}_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{e, j - \onehalf}\frac{\don{\alpha^{n}_{e} \rho^{n}_{l} h^{n}_{l}}^{n+1, k}_{d, j-\onehalf}}{\ave{\alpha_{e} \rho_{l}}^{n}_{a, j - \onehalf}} - V_{c,j} ( 1 - \alpha^{n}_{g})\frac{P^{\, n+1, k}_{j} - P^{\,n}_{j} }{\dt{}}& = & 0 \\
 %
 \label{eqn:advection_of_ent_mass}
-V_{j}\frac{(\alpha_{e} \rho_{l})^{n+1, k}_{j} - (\alpha_{e} \rho_{l})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{e, j + \onehalf}\frac{\don{\alpha^{n}_{e} \rho^{n}_{l}}^{n+1,k}_{d, j+\onehalf}}{\ave{\alpha_{e} \rho_{l}}^{n}_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{e, j - \onehalf}\frac{\don{\alpha^{n}_{e} \rho^{n}_{l}}^{n+1,k}_{d, j-\onehalf}}{\ave{\alpha_{e}\rho_{l}}^{n}_{a, j - \onehalf}} & = & 0 \\
+V_{c,j}\frac{(\alpha_{e} \rho_{l})^{n+1, k}_{j} - (\alpha_{e} \rho_{l})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{e, j + \onehalf}\frac{\don{\alpha^{n}_{e} \rho^{n}_{l}}^{n+1,k}_{d, j+\onehalf}}{\ave{\alpha_{e} \rho_{l}}^{n}_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{e, j - \onehalf}\frac{\don{\alpha^{n}_{e} \rho^{n}_{l}}^{n+1,k}_{d, j-\onehalf}}{\ave{\alpha_{e}\rho_{l}}^{n}_{a, j - \onehalf}} & = & 0 \\
 %
 \label{eqn:advection_of_vap_mass}
-V_{j}\frac{(\alpha_{g} \rho_{v})^{n+1, k}_{j} - (\alpha_{g} \rho_{v})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{g, j + \onehalf}\frac{\don{\alpha^{n}_{g} \rho^{n}_{v}}^{n+1,k}_{d, j+\onehalf}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{g, j - \onehalf}\frac{\don{\alpha^{n}_{g} \rho^{n}_{v}}^{n+1,k}_{d, j-\onehalf}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a, j - \onehalf}} & = & 0
+V_{c,j}\frac{(\alpha_{g} \rho_{v})^{n+1, k}_{j} - (\alpha_{g} \rho_{v})^{n}_{j} }{ \dt } + \dot{m}^{n+1, k}_{g, j + \onehalf}\frac{\don{\alpha^{n}_{g} \rho^{n}_{v}}^{n+1,k}_{d, j+\onehalf}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a, j + \onehalf}} - \dot{m}^{n+1, k}_{g, j - \onehalf}\frac{\don{\alpha^{n}_{g} \rho^{n}_{v}}^{n+1,k}_{d, j-\onehalf}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a, j - \onehalf}} & = & 0
 \end{IEEEeqnarray}
 
 It will be advantageous to a matrix, $\vec{\Xi}$, that converts the momenta at a continuity volume's edge to fluxes of mass and energy; \eqref{eqn:flux_matrix} will serve this purpose.

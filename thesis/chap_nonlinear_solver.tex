@@ -26,14 +26,14 @@ The nonlinear momentum equations, neglecting spatial discretization notation and
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:nlnLiqMomentumEquation}
-\dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)_{i}^{n}
+\dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)_{i}^{n}
  - \ave{\alpha_{l}}_{a}^{n} \nabla P^{\,n+1} + g \ave{\alpha_l \rho_l}_{a}^{n} - K^{n}_{wl}(\dot{m}_l^{n+1})^2 \right. \nonumber \\
  & + & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2 - \left[(1 - \eta)\Gamma u^{'} + S u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:nlnGasMomentumEquation}
-\dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_g \rho_g u_g) u_g  \cdot \vec{\bar{A}}\right)_{i}^{n} - \ave{\alpha_{g}}_{a}^{n} \nabla P^{\,n + 1} + g \ave{\alpha_g \rho_g}_{a}^{n} - K^{n}_{wg}(\dot{m}_g^{n+1})^2 \right.\nonumber \\
+\dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_g \rho_g u_g) u_g  \cdot \vec{\bar{A}}\right)_{i}^{n} - \ave{\alpha_{g}}_{a}^{n} \nabla P^{\,n + 1} + g \ave{\alpha_g \rho_g}_{a}^{n} - K^{n}_{wg}(\dot{m}_g^{n+1})^2 \right.\nonumber \\
 & - & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2 -K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 + \left[\Gamma u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:nlnEntMomentumEquation}
-\dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_e \rho_l u_e) u_e  \cdot \vec{\bar{A}}\right)_{i}^n -\ave{\alpha_{e}}_{a}^{n} \nabla P^{\,n+1} + g \ave{\alpha_e \rho_l}_{a}^{n} - K^{n}_{we}(\dot{m}_e^{n+1})^2\right. \nonumber \\
+\dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_e \rho_l u_e) u_e  \cdot \vec{\bar{A}}\right)_{i}^n -\ave{\alpha_{e}}_{a}^{n} \nabla P^{\,n+1} + g \ave{\alpha_e \rho_l}_{a}^{n} - K^{n}_{we}(\dot{m}_e^{n+1})^2\right. \nonumber \\
 &+& \left. K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 - \left[ \eta \Gamma u^{'} - S u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right)
 \end{IEEEeqnarray}
 
@@ -44,21 +44,20 @@ The momentum equations are then linearized around the current time value, $\dot{
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:linLiqMomentumEquation}
-\dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)_{i}^{n}
- -\ave{\alpha_{l}}_{a}^{n} \nabla P^{\,n} -\ave{\alpha_{l}}_{a}^{n} \nabla \delta P + g \ave{\alpha_l \rho_l}_{a}^{n} - K^{n}_{wl}(\dot{m}_l^{n})^{2} \right. \nonumber \\
-  & - & 2 K^{n}_{wl}(\dot{m}_l^{n})(\dot{m}_l^{n+1}-\dot{m}_l^{n})  + K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})^2 + 2 K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})(\dot{m}^{n}_g - \dot{m}_l^{n}) \nonumber \\
+\dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)_{i}^{n}
+ -\ave{\alpha_{l}}_{a}^{n} \nabla P^{\,n} -\ave{\alpha_{l}}_{a}^{n} \nabla \delta P + g \ave{\alpha_l \rho_l}_{a}^{n} \right. \nonumber \\
+  & + & K^{n}_{wl}(\dot{m}_l^{n})^{2} - 2 K^{n}_{wl}\dot{m}_l^{n}\dot{m}_l^{n+1} - K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})^2  \nonumber \\
  & + & \left. 2 K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})(\dot{m}^{n+1}_l - \dot{m}_g^{n+1}) - \left[(1 - \eta)\Gamma u^{'} + S u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:linGasMomentumEquation}
-\dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_g \rho_g u_g) u_g \cdot \vec{\bar{A}}\right)_{i}^{n}
- -\ave{\alpha_{g}}_{a}^{n} \nabla P^{\,n} -\ave{\alpha_{g}}_{a}^{n} \nabla \delta P + g \ave{\alpha_g \rho_g}_{a}^{n} - K^{n}_{wg}(\dot{m}_g^{n})^{2} \right. \nonumber \\
-  & - & 2 K^{n}_{wg}(\dot{m}_g^{n})(\dot{m}_g^{n+1}-\dot{m}_g^{n})  - K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})^2 - 2 K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})(\dot{m}^{n}_g - \dot{m}_l^{n}) \nonumber \\
- & - & 2 K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})(\dot{m}^{n+1}_l - \dot{m}_g^{n+1}) - K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})^2 \nonumber \\
- & - & 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n}_g - \dot{m}_e^{n}) - 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n+1}_e - \dot{m}_g^{n+1}) \nonumber \\
- & + & \left.  \left[\Gamma u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right) \\
+\dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_g \rho_g u_g) u_g \cdot \vec{\bar{A}}\right)_{i}^{n}
+ -\ave{\alpha_{g}}_{a}^{n} \nabla P^{\,n} -\ave{\alpha_{g}}_{a}^{n} \nabla \delta P + g \ave{\alpha_g \rho_g}_{a}^{n}  \right. \nonumber \\
+  & + & K^{n}_{wg}(\dot{m}_g^{n})^{2} + K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})^2 + K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})^2 + \left[\Gamma u^{'}\right]^{n} \nonumber \\
+ & - & 2 K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})(\dot{m}^{n+1}_l - \dot{m}_g^{n+1}) - 2 K^{n}_{wg}\dot{m}_g^{n}\dot{m}_g^{n+1} \nonumber \\
+ & - & \left. 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})\vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:linEntMomentumEquation}
-\dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\Delta t}{\Delta x}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_e \rho_e u_e) u_e \cdot \vec{\bar{A}}\right)_{i}^{n}
- -\ave{\alpha_{e}}_{a}^{n} \nabla P^{\,n} - \ave{\alpha_{e}}_{a}^{n} \nabla \delta P + g \ave{\alpha_e \rho_e}_{a}^{n} - K^{n}_{we}(\dot{m}_e^{n})^{2} \right. \nonumber \\
-  & - & 2 K^{n}_{we}(\dot{m}_e^{n})(\dot{m}_e^{n+1}-\dot{m}_e^{n})  + K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})^2 + 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n}_g - \dot{m}_e^{n}) \nonumber \\
+\dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_e \rho_e u_e) u_e \cdot \vec{\bar{A}}\right)_{i}^{n}
+ -\ave{\alpha_{e}}_{a}^{n} \nabla P^{\,n} - \ave{\alpha_{e}}_{a}^{n} \nabla \delta P + g \ave{\alpha_e \rho_e}_{a}^{n}  \right. \nonumber \\
+  & + & K^{n}_{we}(\dot{m}_e^{n})^{2} - 2 K^{n}_{we}\dot{m}_e^{n}\dot{m}_e^{n+1} - K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})^2  \nonumber \\
  & + & \left. 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n+1}_e - \dot{m}_g^{n+1}) -\left[ \eta \Gamma u^{'} - S u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right)
 \end{IEEEeqnarray}
 
@@ -81,22 +80,21 @@ The new time velocities used for advection in the continuity equations is define
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:nlnNcgMassEquation}
-V_c \left[(\alpha_g \rho_{n})^{n+1}\right. & - & \left. (\alpha_g \rho_{n})^{n}\right] = -\Delta t \sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right)_{i} \\
+V_c \left[(\alpha_g \rho_{n})^{n+1}\right. & - & \left. (\alpha_g \rho_{n})^{n}\right] = -\dt{} \sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right)_{i} \\
 \label{eqn:nlnVapMassEquation}
-V_c\left[ \left(\alpha_g \rho_v \right)^{n+1}\right. &-& \left. \left(\alpha_g \rho_v \right)^{n}\right] = - \Delta t \sum^{N_{f}}_{i\,=\,1} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right)_{i} + 
-\Delta t \Gamma^{n+1} \\
+V_c\left[ \left(\alpha_g \rho_v \right)^{n+1}\right. &-& \left. \left(\alpha_g \rho_v \right)^{n}\right] = - \dt{} \sum^{N_{f}}_{i\,=\,1} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right)_{i} + 
+\dt{} \Gamma^{n+1} \\
 \label{eqn:nlnGasEnergyEquation}
-V_c \left[ \left( \alpha_g \rho_g h_g \right)^{n+1} \right. & - & \left. \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_g ( P^{\,n+1} - P^{n} )\right ] = \Delta t \left[q_{wg} + \Gamma h^{'}_v + q_{i,v} + q_{gl}\right]^{n+1} \nonumber \\
-&- &\Delta t \sum^{N_{f}}_{i\,=\,1} \left(  \don{\alpha^{n}_g \rho^{n}_g h^{n}_{g}}^{n+1}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right)_{i} \\
+V_c \left[ \left( \alpha_g \rho_g h_g \right)^{n+1} \right. & - & \left. \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_g ( P^{\,n+1} - P^{n} )\right ] = \dt{} \left[q_{wg} + \Gamma h^{'}_v + q_{i,v} + q_{gl}\right]^{n+1} \nonumber \\
+&- &\dt{} \sum^{N_{f}}_{i\,=\,1} \left(  \don{\alpha^{n}_g \rho^{n}_g h^{n}_{g}}^{n+1}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right)_{i} \\
 \label{eqn:nlnLiqEnergyEquation}
-V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1} \right. & - & \left. \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1} - P^{\,n}) \right] = \Delta t \left[q_{wl} -\Gamma h^{'}_l +  q_{i,l} - q_{gl}\right]^{n+1} \nonumber \\
-& -& \Delta t \sum^{N_{f}}_{i\,=\,1} \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1}_{d} u^{n+1}_l \cdot \vec{\bar{A}} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right)_{i} \\
+V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1} \right. & - & \left. \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1} - P^{\,n}) \right] = \dt{} \left[q_{wl} -\Gamma h^{'}_l +  q_{i,l} - q_{gl}\right]^{n+1} \nonumber \\
+& -& \dt{} \sum^{N_{f}}_{i\,=\,1} \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1}_{d} u^{n+1}_l \cdot \vec{\bar{A}} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right)_{i} \\
 \label{eqn:nlnEntMassEquation}
-V_c \left[ \left(\alpha_e \rho_l \right)^{n+1}\right. & - & \left. \left(\alpha_e \rho_l \right)^{n} \right]= -\Delta t \sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right)_{i}\nonumber \\ 
-&+& \Delta t\left[ S -\eta\Gamma \right]^{n+1} \\
+V_c \left[ \left(\alpha_e \rho_l \right)^{n+1}\right. & - & \left. \left(\alpha_e \rho_l \right)^{n} \right]= -\dt{} \sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right)_{i}+ \dt{}\left[ S -\eta\Gamma \right]^{n+1} \\
 \label{eqn:nlnLiqMassEquation}
-V_c \left[ \left(\alpha_l \rho_l \right)^{n+1} \right. & - & \left. \left(\alpha_l \rho_l \right)^{n} \right]=  -\Delta t \sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^n_l \rho^n_l}^{n+1}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right)_{i} \nonumber \\
-&- &\Delta t\left[(1-\eta)\Gamma + S \right]^{n+1}
+V_c \left[ \left(\alpha_l \rho_l \right)^{n+1} \right. & - & \left. \left(\alpha_l \rho_l \right)^{n} \right]=  -\dt{} \sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^n_l \rho^n_l}^{n+1}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right)_{i} \nonumber \\
+&- &\dt{}\left[(1-\eta)\Gamma + S \right]^{n+1}
 \end{IEEEeqnarray}
 
 Unlike the momentum equations, the continuity equations are linearized with variables other than their conserved quantities, \eqref{eqn:independentVariables}.
@@ -207,7 +205,7 @@ The complete linear process is outlined in \alg{alg:linCobraAlgorithm}.
 \Require $\vec{x}^{0}$ and $t^{0}$
 \Set $n = 0$
 \Loop \; Transient Loop
-    \Set $t^{n+1} : = t^{n} + \Delta t$
+    \Set $t^{n+1} : = t^{n} + \dt{}$
 	\Algorithm Assemble Linear Pressure Matrix \Comment{\alg{alg:xschem}}
    	\Solve $\vec{A} \vec{\delta P} = \vec{res}$
 	\Algorithm Update Linear Variables \Comment{\alg{alg:updateVariables}}
@@ -250,6 +248,9 @@ This required that each of the Fortran procedures involved with the calculation 
 Where appropriate, the software was changed to reflect the distinction between old-time and iterate variables and to introduce terms that had been assumed to be equal to zero.
 Upon completion of the software audit, several architectural changes were made to expedite the implementation of the nonlinear solver.
 
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 \subsection{Active Domain Determination}
 \label{subsect:activeDomainDetermination}
 In \cobra{} the smallest geometric component that can be input is the channel.
@@ -359,18 +360,18 @@ The nonlinear solver uses Newton's method to iteratively find solution vectors t
 When using the nonlinear solver, the governing equations are linearized about a tentative value $\vec{y}^{n+1, k}$, which is differs from the linear case linearizes about the old time values $\vec{y}^{n}$.
 Two quantities that are important to the nonlinear solver are the residual and the update vectors, $\vec{F}^{k}$ and $\delta \vec{y}$ respectively.
 The residual vector is composed of the residuals from the governing partial differential equations that are being solved.
-Every momentum volume has associated with it three momentum equation residuals \eqref{eqn:nlnLiqMonentumResidual} -- \eqref{eqn:nlnEntMomentumResidual}.
+Every momentum volume has associated with it three momentum equation residuals \eqref{eqn:nlnLiqMomentumResidual} -- \eqref{eqn:nlnEntMomentumResidual}.
 
 \begin{IEEEeqnarray}{lCl}
-\label{eqn:nlnLiqMonentumResidual}
-F^{k}_{m, l} & = & \dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n} + \frac{\Delta t}{\Delta x}\left(\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)_{i}^{n}
+\label{eqn:nlnLiqMomentumResidual}
+F^{k}_{m, l} & = & \dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n} + \frac{\dt{}}{\dx{}}\left(\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)_{i}^{n}
  +\ave{\alpha_l}^{n}_{a} \nabla P^{\,n+1, k} - g \ave{\alpha_l \rho_l}_{a}^{n} \right. \nonumber \\
 & + & \left. K^{n}_{wl}(\dot{m}_l^{n+1, k})^2 - K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1,k}_{g})^2 + \left[(1 - \eta)\Gamma u^{'} + S u^{'}\right]^{n} \vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:nlnGasMomentumResidual}
-F^{k}_{m, g} & = & \dot{m}_{g}^{n+1,k} - \dot{m}_{g}^{n} + \frac{\Delta t}{\Delta x}\left(\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_g \rho_g u_g) u_g  \cdot \vec{\bar{A}}\right)_{i}^{n}  +\ave{\alpha_g}^{n}_{a} \nabla P^{\,n+1, k} - g \ave{\alpha_g \rho_g}_{a}^{n} \right.\nonumber \\
+F^{k}_{m, g} & = & \dot{m}_{g}^{n+1,k} - \dot{m}_{g}^{n} + \frac{\dt{}}{\dx{}}\left(\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_g \rho_g u_g) u_g  \cdot \vec{\bar{A}}\right)_{i}^{n}  +\ave{\alpha_g}^{n}_{a} \nabla P^{\,n+1, k} - g \ave{\alpha_g \rho_g}_{a}^{n} \right.\nonumber \\
 & + & \left. K^{n}_{wg}(\dot{m}_g^{n+1, k})^2 + K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1, k}_{g})^2 + K^{n}_{i,ge}(u^{n+1,k}_{e} - u^{n+1,k}_{g})^2 - (\Gamma u^{'})^{n} \vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:nlnEntMomentumResidual}
-F^{k}_{m, e} & = & \dot{m}_{e}^{n+1, k} - \dot{m}_{e}^{n} + \frac{\Delta t}{\Delta x}\left(\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_e \rho_l u_e) u_e  \cdot \vec{\bar{A}}\right)_{i}^{n} + \ave{\alpha_{e}}^{n}_{a} \nabla P^{\,n+1, k} - g \ave{\alpha_e \rho_l}^{n}_{a} \right. \nonumber \\
+F^{k}_{m, e} & = & \dot{m}_{e}^{n+1, k} - \dot{m}_{e}^{n} + \frac{\dt{}}{\dx{}}\left(\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_e \rho_l u_e) u_e  \cdot \vec{\bar{A}}\right)_{i}^{n} + \ave{\alpha_{e}}^{n}_{a} \nabla P^{\,n+1, k} - g \ave{\alpha_e \rho_l}^{n}_{a} \right. \nonumber \\
 & + & \left. K^{n}_{we}(\dot{m}_e^{n+1, k})^2 - K^{n}_{i,ge}(u^{n+1, k}_{e} - u^{n+1, k}_{g})^2 + \left[\eta \Gamma u^{'} - S u^{'}\right]^n\vphantom{\sum_{N_{k}}}\right)
 \end{IEEEeqnarray}
 
@@ -378,21 +379,21 @@ Likewise, each continuity volume has associated with it six residuals representi
 
 \begin{IEEEeqnarray}{lCl}
 \label{eqn:nlnNcgMassResidual}
-F^{k}_{c, n} & = & V_c\left[ (\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{n}\right] +\Delta t \sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1,k}_{d} u^{n+1, k}_{g}  \cdot \vec{\bar{A}}\right)_{i} \\
+F^{k}_{c, n} & = & V_c\left[ (\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{n}\right] +\dt{} \sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1,k}_{d} u^{n+1, k}_{g}  \cdot \vec{\bar{A}}\right)_{i} \\
 \label{eqn:nlnVapMassResidual}
-F^{k}_{c, v} & = & V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right] + \Delta t \sum^{N_{f}}_{i\,=\,1} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1,k}_{d} u^{n+1, k}_{g}  \cdot \vec{\bar{A}}\right)_{i} - \Delta t \Gamma^{n+1, k} \\
+F^{k}_{c, v} & = & V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right] + \dt{} \sum^{N_{f}}_{i\,=\,1} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1,k}_{d} u^{n+1, k}_{g}  \cdot \vec{\bar{A}}\right)_{i} - \dt{} \Gamma^{n+1, k} \\
 \label{eqn:nlnGasEnergyResidual}
-F^{k}_{e, g} & = & V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_{g} ( P^{n+1, k} - P^{n} ) \right] - \Delta t \left[q_{wg} + \Gamma h^{'}_v + q_{i,v} + q_{gl}\right]^{n+1, k} \nonumber \\
-&+& \Delta t \sum^{N_{f}}_{i\,=\,1} \left(\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  \cdot \vec{\bar{A}}\right)_{i} \\
+F^{k}_{e, g} & = & V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_{g} ( P^{\,n+1, k} - P^{\,n} ) \right] \nonumber \\
+& - & \dt{} \left[q_{wg} + \Gamma h^{'}_v + q_{i,v} + q_{gl}\right]^{n+1, k} + \dt{} \sum^{N_{f}}_{i\,=\,1} \left(\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  \cdot \vec{\bar{A}}\right)_{i} \\
 \label{eqn:nlnLiqEnergyResidual}
-F^{k}_{e, l} & = & V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})\right] - \Delta t \left[q_{wl} -\Gamma h^{'}_l +  q_{i,l} - q_{gl}\right]^{n+1,k}    \nonumber \\
-& +& \Delta t \sum^{N_{f}}_{i\,=\,1} \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_l \cdot \vec{\bar{A}} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_e  \cdot \vec{\bar{A}}\right)_{i} \\
+F^{k}_{e, l} & = & V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})\right] - \dt{} \left[q_{wl} -\Gamma h^{'}_l +  q_{i,l} - q_{gl}\right]^{n+1,k}    \nonumber \\
+& +& \dt{} \sum^{N_{f}}_{i\,=\,1} \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_l \cdot \vec{\bar{A}} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_e  \cdot \vec{\bar{A}}\right)_{i} \\
 \label{eqn:nlnEntMassResidual}
-F^{k}_{m, e} & = & V_c \left(\alpha_e \rho_l \right)^{n+1,k} - V_c \left(\alpha_e \rho_l \right)^{n} + \Delta t \sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  \cdot \vec{\bar{A}}\right)_{i} \nonumber \\
-&-& \Delta t\left[ S -\eta\Gamma \right]^{n+1,k} \\
+F^{k}_{m, e} & = & V_c \left(\alpha_e \rho_l \right)^{n+1,k} - V_c \left(\alpha_e \rho_l \right)^{n} + \dt{} \sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  \cdot \vec{\bar{A}}\right)_{i} \nonumber \\
+&-& \dt{}\left[ S -\eta\Gamma \right]^{n+1,k} \\
 \label{eqn:nlnLiqMassResidual}
-F^{k}_{m, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_l \rho_l \right)^{n} + \Delta t \sum^{N_{f}}_{i\,=\,1} \left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l \cdot \vec{\bar{A}}\right)_{i}   \nonumber \\
-&+& \Delta t\left[(1-\eta)\Gamma + S \right]^{n+1, k}
+F^{k}_{m, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_l \rho_l \right)^{n} + \dt{} \sum^{N_{f}}_{i\,=\,1} \left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l \cdot \vec{\bar{A}}\right)_{i}   \nonumber \\
+&+& \dt{}\left[(1-\eta)\Gamma + S \right]^{n+1, k}
 \end{IEEEeqnarray}
 
 The residuals from every volume in the active domain, both continuity and momentum, are assembled into the $\vec{F}^{k}$ vector.
@@ -449,7 +450,7 @@ However, if the Newton loop is terminated, then there are changes that were made
 \Require $\vec{x}^{0}$ and $t^{0}$
 \Set $n = 0$
 \Loop \; Transient Loop
-    \Set $t^{n+1} : = t^{n} + \Delta t$
+    \Set $t^{n+1} : = t^{n} + \dt{}$
     \Set $k = 0$
 	\Algorithm Assemble Nonlinear Pressure Matrix	 \Comment{\alg{alg:xschem}}
 	\Solve $\vec{A}^{k} \vec{\delta P}^{k} = \vec{res}^{k}$
@@ -504,7 +505,7 @@ On subsequent passes, a cubic-backtracking model is used.
 \Require $\vec{x}^{0}$ and $t^{0}$
 \Set $n = 0$
 \Loop \; Transient Loop
-    \Set $t^{n+1} : = t^{n} + \Delta t$
+    \Set $t^{n+1} : = t^{n} + \dt{}$
     \Set $k = 0$
 	\Algorithm Assemble Nonlinear Pressure Matrix	 \Comment{\alg{alg:xschem}}
 	\Solve $\vec{A}^{k} \vec{\delta P}^{k} = \vec{res}^{k}$
@@ -552,7 +553,7 @@ The primary input file for \cobra{} is fixed format, so it was decided that a se
 This decision allowed for existing models to be run in nonlinear mode without modification of the actual input file.
 The presence of the file ``\classname{nwt.cob}" triggers the input processing routine for the nonlinear solver.
 There are three parameters that need to be present in the input file; in order they are \kmax{},\ftol{}, and \dtol{}, each on a separate line. 
-If the file is present but empty, then the default values are used; they are $35$, $1.0\mbox{\textsc{e}-}5$, and $1.0\text{\sc{e}-}10$, respectively.
+If the file is present but empty, then the default values are used; they are $35$, \expneg{1.0}{5}, and \expneg{1.0}{10}, respectively.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -607,9 +608,9 @@ There are also limits placed upon the changes of the thermodynamic parameters wi
 The constrained thermodynamic parameters and the limits imposed upon their per-timestep changes are listed below.
 
 \begin{itemize}
-\item{Change of phasic enthalpy cannot be greater than 45 [$\frac{\text{BTU}}{\lbm{}}$].}
-\item{Change in pressure cannot be greater than 20 [psia].}
-\item{Change in partial pressure of the \ncg{} field cannot be greater than 20 [psia].}
+\item{Change of phasic enthalpy cannot be greater than $45$ [$\frac{\text{BTU}}{\lbm{}}$].}
+\item{Change in pressure cannot be greater than $20$ [psia].}
+\item{Change in partial pressure of the \ncg{} field cannot be greater than $20$ [psia].}
 \item{Thermodynamic variables would fall outside of the range of validity of the equations of state.}
 \end{itemize}
 
@@ -627,11 +628,11 @@ The \dt{} for any timestep is given by \eqref{eqn:time_step}.
 
 \begin{equation}
 \label{eqn:time_step}
-\Delta t^{n \rightarrow n+1} = \max\left[ \Delta t_{\text{MIN}}, \min\left[1.2 \Delta t^{n-1 \rightarrow n}, 0.85 \Delta t_{\text{CRNT}}, \Delta t_{\text{MAX}} \right]\right]
+\dt{}^{n \rightarrow n+1} = \max\left[ \dt{}_{\text{MIN}}, \min\left[1.2 \dt{}^{n-1 \rightarrow n}, 0.85 \dt{}_{\text{CRNT}}, \dt{}_{\text{MAX}} \right]\right]
 \end{equation}
 
-$\Delta t_{\text{CRNT}}$ is the most restrictive Courant number calculated for both axial and transverse flow, and a \dt{} that is based upon the time calculated to empty a given volume of the mass of a given field.
-The most restrictive of the Courant timestep is used as $\Delta t^{n \rightarrow n+1}$.
+$\dt{}_{\text{CRNT}}$ is the most restrictive Courant number calculated for both axial and transverse flow, and a \dt{} that is based upon the time calculated to empty a given volume of the mass of a given field.
+The most restrictive of the Courant timestep is used as $\dt{}^{n \rightarrow n+1}$.
 
 
 %-------------------------------------------------------------------------------
@@ -679,41 +680,44 @@ The scaling method developed during this work is an operator-based approach.
 The governing PDEs can be viewed as a collection of operators, both linear and nonlinear, acting upon the vector of independent parameters.
 The summation of these operators must balance to zero for the nonlinear equation to be satisfied.
 The scaling factor developed uses the magnitudes of these operators to determine an absolute measure of the physics processes occurring in a given volume.
-This is accomplished by summing the absolute value of the different discrete operators in the governing equations. 
+This is accomplished by summing the absolute value of the different discrete operators in the governing equations.
+
+For the momentum equations, \eqref{eqn:nlnLiqMomentumEquation} -- \eqref{eqn:nlnEntMomentumEquation}, the scaled residuals are shown in \eqref{eqn:nlnLiqMomentumScale} -- \eqref{eqn:nlnEntMomentumScale}.
 
 \begin{IEEEeqnarray}{lCl}
-\label{eqn:nlnLiqMonentumScale}
-S^{k}_{m, l} & = & \abs{\frac{\Delta x \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\Delta t}} + \abs{\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)^{n}_{i}}
- +\abs{\ave{\alpha_l}^{n}_{a} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_l \rho_l}_{a}^{n}} + \nonumber \\
-& & \abs{K^{n}_{wl}(\dot{m}_l^{n+1, k})^2} + \abs{K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1,k}_{g})^2} + \abs{\left[(1 - \eta)\Gamma u^{'}\right]^{n}} + \abs{\left[S u^{'}\right]^{n}} \\
+\label{eqn:nlnLiqMomentumScale}
+S^{k}_{m, l} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}} + \abs{\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)^{n}_{i}} +\abs{\ave{\alpha_l}^{n}_{a} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_l \rho_l}_{a}^{n}} \right.\nonumber \\
+& + & \left. \abs{K^{n}_{wl}(\dot{m}_l^{n+1, k})^2} + \abs{K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1,k}_{g})^2} + \abs{\left[(1 - \eta)\Gamma u^{'}\right]^{n}} + \abs{\left[S u^{'}\right]^{n}} \vphantom{\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}}} \right] \\
 \label{eqn:nlnGasMomentumScale}
-S^{k}_{m, g} & = & \abs{\frac{\Delta x \left[ \dot{m}_{g}^{n+1,k} - \dot{m}_{g}^{n}\right]}{\Delta t}} + \abs{\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_g \rho_g u_g) u_g  \cdot \vec{\bar{A}}\right)_{i}^{n}}  +\abs{\ave{\alpha_g}^{n}_{a} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_g \rho_g}_{a}^{n}} + \nonumber \\
-& & \abs{K^{n}_{wg}(\dot{m}_g^{n+1, k})^2} + \abs{K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1, k}_{g})^2} + \abs{K^{n}_{i,ge}(u^{n+1,k}_{e} - u^{n+1,k}_{g})^2} + \nonumber \\
-& & \abs{\left[\Gamma u^{'}\right]^{n}} \\
+S^{k}_{m, g} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[ \dot{m}_{g}^{n+1,k} - \dot{m}_{g}^{n}\right]}{\dt{}}} + \abs{\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_g \rho_g u_g) u_g  \cdot \vec{\bar{A}}\right)_{i}^{n}}  +\abs{\ave{\alpha_g}^{n}_{a} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_g \rho_g}_{a}^{n}} \right. \nonumber \\
+& + & \abs{K^{n}_{wg}(\dot{m}_g^{n+1, k})^2} + \abs{K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1, k}_{g})^2} + \abs{K^{n}_{i,ge}(u^{n+1,k}_{e} - u^{n+1,k}_{g})^2} \nonumber \\
+& + & \left. \abs{\left[\Gamma u^{'}\right]^{n}} \vphantom{\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}}} \right]\\
 \label{eqn:nlnEntMomentumScale}
-S^{k}_{m, e} & = & \abs{\frac{\Delta x \left[\dot{m}_{e}^{n+1, k} - \dot{m}_{e}^{n}\right]}{\Delta t}} + \abs{\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_e \rho_l u_e) u_e  \cdot \vec{\bar{A}}\right)_{i}^{n}} + \abs{\ave{\alpha_{e}}^{n}_{a} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_e \rho_l}^{n}_{a}} + \nonumber \\
-& & \abs{K^{n}_{we}(\dot{m}_e^{n+1, k})^2} + \abs{K^{n}_{i,ge}(u^{n+1, k}_{e} - u^{n+1, k}_{g})^2} + \abs{\left[\eta \Gamma u^{'}\right]^{n}} +\abs{\left[S u^{'}\right]^{n}}
+S^{k}_{m, e} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[\dot{m}_{e}^{n+1, k} - \dot{m}_{e}^{n}\right]}{\dt{}}} + \abs{\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_e \rho_l u_e) u_e  \cdot \vec{\bar{A}}\right)_{i}^{n}} + \abs{\ave{\alpha_{e}}^{n}_{a} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_e \rho_l}^{n}_{a}} \right. \nonumber \\
+& + & \left. \abs{K^{n}_{we}(\dot{m}_e^{n+1, k})^2} + \abs{K^{n}_{i,ge}(u^{n+1, k}_{e} - u^{n+1, k}_{g})^2} + \abs{\left[\eta \Gamma u^{'}\right]^{n}} +\abs{\left[S u^{'}\right]^{n}} \vphantom{\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}}} \right]
 \end{IEEEeqnarray}
 
 Likewise, each continuity volume has associated with it six residuals representing the mass and energy equations \eqref{eqn:nlnNcgMassResidual} -- \eqref{eqn:nlnLiqMassResidual}.
 
 \begin{IEEEeqnarray}{lCl}
 \label{eqn:nlnNcgMassScale}
-S^{k}_{c, n} & = & \abs{\frac{V_c\left[(\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{n}\right]}{\Delta t}} +\abs{\sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1,k}_{d} u^{n+1, k}_{g}  \cdot \vec{\bar{A}}\right)_{i}} \\
+S^{k}_{c, n} & = & \dt{}\left[\abs{\frac{V_c\left[(\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{n}\right]}{\dt{}}} + \sum^{N_{f}}_{i\,=\,1}\abs{\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1,k}_{d} u^{n+1, k}_{g}  \cdot \vec{\bar{A}}\right)}_{i} \right]\\
 \label{eqn:nlnVapMassScale}
-S^{k}_{c, v} & = & \abs{\frac{V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right]}{\Delta t}} + \abs{\sum^{N_{f}}_{i\,=\,1} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1,k}_{d} u^{n+1, k}_{g}  \cdot \vec{\bar{A}}\right)_{i}} + \abs{\Gamma^{n+1, k}} \\
+S^{k}_{c, v} & = & \dt{}\left[\abs{\frac{V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right]}{\dt{}}} + \sum^{N_{f}}_{i\,=\,1} \abs{ \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1,k}_{d} u^{n+1, k}_{g}  \cdot \vec{\bar{A}}\right)}_{i} \right. \nonumber \\
+& + & \left.  \abs{\Gamma^{n+1, k}} \vphantom{\abs{\frac{V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right]}{\dt{}}}} \right]\\
 \label{eqn:nlnGasEnergyScale}
-S^{k}_{e, g} & = & V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_{g} ( P^{n+1, k} - P^{n} ) \right] - \Delta t \left[q_{wg} + \Gamma h^{'}_v + q_{i,v} + q_{gl}\right]^{n+1, k} \nonumber \\
-&+& \Delta t \sum^{N_{f}}_{i\,=\,1} \left(\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  \cdot \vec{\bar{A}}\right)_{i} \\
+S^{k}_{e, g} & = & \dt{}\left[\abs{\frac{V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n}\right]}{\dt{}}} +\abs{\frac{V_c \alpha^{n}_{g} ( P^{n+1, k} - P^{n} )}{\dt{}}} + \abs{q_{wg}^{n+1, k}} \right. \nonumber \\
+& + & \left. \abs{\left[\Gamma h^{'}_v\right]^{n+1,k}} + \abs{q_{i,v}^{n+1,k}} +\abs{q^{n+1,k}_{gl}} + \sum^{N_{f}}_{i\,=\,1} \abs{\left(\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  \cdot \vec{\bar{A}}\right)}_{i} \vphantom{\abs{\frac{V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n}\right]}{\dt{}}}} \right]\\
 \label{eqn:nlnLiqEnergyScale}
-S^{k}_{e, l} & = & V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})\right] - \Delta t \left[q_{wl} -\Gamma h^{'}_l +  q_{i,l} - q_{gl}\right]^{n+1,k}    \nonumber \\
-& +& \Delta t \sum^{N_{f}}_{i\,=\,1} \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_l \cdot \vec{\bar{A}} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_e  \cdot \vec{\bar{A}}\right)_{i} \\
+S^{k}_{e, l} & = & \dt{}\left[ \abs{\frac{V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n}\right]}{\dt{}}} + \abs{\frac{V_c \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})}{\dt{}}} + \abs{q^{n+1, k}_{wl}} \right . \nonumber \\
+& + & \abs{\left[\Gamma h^{'}_l\right]^{n+1}} + \abs{q^{n+1,k}_{i,l}} + \abs{q_{gl}^{n+1,k}} + \sum^{N_{f}}_{i\,=\,1}\abs{\left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_l \cdot \vec{\bar{A}}\right)}_{i} \nonumber \\
+& + & \left. \sum^{N_{f}}_{i\,=\,1}\abs{\left(\don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_e  \cdot \vec{\bar{A}}\right)}_{i} \vphantom{ \abs{\frac{V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n}\right]}{\dt{}}}} \right] \\
 \label{eqn:nlnEntMassScale}
-S^{k}_{m, e} & = & V_c \left(\alpha_e \rho_l \right)^{n+1,k} - V_c \left(\alpha_e \rho_l \right)^{n} + \Delta t \sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  \cdot \vec{\bar{A}}\right)_{i} \nonumber \\
-&-& \Delta t\left[ S -\eta\Gamma \right]^{n+1,k} \\
+S^{k}_{m, e} & = & \dt{} \left[ \abs{\frac{V_c \left[\left(\alpha_e \rho_l \right)^{n+1,k} - \left(\alpha_e \rho_l \right)^{n}\right]}{\dt{}}} + \sum^{N_{f}}_{i\,=\,1}\abs{\left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  \cdot \vec{\bar{A}}\right)}_{i} \right. \nonumber \\
+& + & \left. \abs{S^{n+1, k}} + \abs{\left[\eta\Gamma \right]^{n+1,k}} \vphantom{\abs{\frac{V_c \left[\left(\alpha_e \rho_l \right)^{n+1,k} - \left(\alpha_e \rho_l \right)^{n}\right]}{\dt{}}}} \right] \\
 \label{eqn:nlnLiqMassScale}
-S^{k}_{m, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_l \rho_l \right)^{n} + \Delta t \sum^{N_{f}}_{i\,=\,1} \left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l \cdot \vec{\bar{A}}\right)_{i}   \nonumber \\
-&+& \Delta t\left[(1-\eta)\Gamma + S \right]^{n+1, k}
+S^{k}_{m, l} & = & \dt{}\left[\abs{\frac{V_c \left[\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n}\right]}{\dt{}}} + \sum^{N_{f}}_{i\,=\,1} \abs{\left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l \cdot \vec{\bar{A}}\right)}_{i} \right. \nonumber \\
+& + & \left. \abs{\left[(1-\eta)\Gamma\right]^{n+1,k}} + \abs{S^{n+1, k}} \vphantom{\abs{\frac{V_c \left[\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n}\right]}{\dt{}}}} \right]
 \end{IEEEeqnarray}
 
 This scaling creates a relative measure of the nonlinear residual when compared to the magnitude of the physics involved in the process.
