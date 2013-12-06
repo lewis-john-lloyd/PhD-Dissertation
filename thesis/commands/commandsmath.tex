@@ -86,6 +86,19 @@
 	\fi
 }
 \newcommand{\pluseq}{\mathrel{+}=}
-
+\DeclareRobustCommand{\ftol}{%
+	\ifmmode
+		F_{\text{tol}}
+	\else
+		$F_{\text{tol}}$
+	\fi
+}
+\DeclareRobustCommand{\dtol}{%
+	\ifmmode
+		\delta_{\text{tol}}
+	\else
+		$\delta_{\text{tol}}$
+	\fi
+}
 \delimitershortfall-1sp
 \newcommand\abs[1]{\left|#1\right|}
