@@ -327,9 +327,33 @@ Take for example a continuity volume with only two flowpaths connected to it.
 One flow path is connected to another continuity volume within the linear domain.
 The other flow path is connected to a continuity volume that resides within the nonlinear domain.
 When the Jacobian for these continuity volumes are taken, derivatives with respect to the flux terms are included.
+Since the flux terms are single terms in the equations, their derivatives are the identity matrix.
+The regular Jacobian is a six by six matrix.
+With the single linear connection, there is now an additional columns representing the change in the continuity equations with respect to the momenta the linear volume edge, \eqref{eqn:flux_matrix}.
+This matrix is eliminated through the use of \eqref{eqn:momStar}.
+The final system of equations for a given nonlinear boundary volume is a six by six + 1 * number of linear connections + 6 * number of nonlinear boundary connections.
+In this example the final size of the matrix will be 6 x 13.
+\begin{equation}
+\vec{J}|\vec{C}|\vec{I} = -(\vec{F} + \vec{\Psi})
+\end{equation}
+The six for the number of nonlinear boundary connections is equivalent to the flux of masses and energies.
+The residual for the nonlinear boundary volume does not include the flux into the nonlinear domain.
+This is omitted at this step to enable simpler algebra later.
+This system is then reduced inplace to the upper-triangular rectangular form. 
+
+\begin{equation}
+\vec{U}|\vec{L}^{-1}\vec{C}|\vec{L}^{-1} = -\vec{L}^{-1}(\vec{F} + \vec{\Psi})
+\end{equation}
+
+The last equation in this row is then normalized by its diagonal entry.
+
+\begin{equation}
+\vec{U}|\vec{L}^{-1}\vec{C}|\vec{L}^{-1} = -\vec{L}^{-1}(\vec{F} + \vec{\Psi})
+\end{equation}
 
 \begin{equation}
 \label{eqn:jacobianWithFluxTerms}
+\vec{J}_{c,j} = 
 \begin{bmatrix}
 \frac{\partial F_{m,n}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,n}}{\partial \alpha_g } & \frac{\partial F_{m,n}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,n}}{\partial ((1.0 - \alpha_g) h_l) } & \frac{\partial F_{m,n}}{\partial \alpha_e } & \frac{\partial F_{m,n}}{\partial P } \\
 \frac{\partial F_{m,l}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,l}}{\partial \alpha_g } & \frac{\partial F_{m,l}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,l}}{\partial ((1.0 - \alpha_g) h_l)} &\frac{\partial F_{m,l}}{\partial \alpha_e } & \frac{\partial F_{m,l}}{\partial P } \\
@@ -338,7 +362,6 @@ When the Jacobian for these continuity volumes are taken, derivatives with respe
 \frac{\partial F_{m,e}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,e}}{\partial \alpha_g } & \frac{\partial F_{m,e}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,e}}{\partial ((1.0 - \alpha_g) h_l)} &\frac{\partial F_{m,e}}{\partial \alpha_e } & \frac{\partial F_{m,e}}{\partial P } \\
 \frac{\partial F_{m,v}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,v}}{\partial \alpha_g } & \frac{\partial F_{m,v}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,v}}{\partial ((1.0 - \alpha_g) h_l)} & \frac{\partial F_{m,v}}{\partial \alpha_e } & \frac{\partial F_{m,v}}{\partial P }
 \end{bmatrix}
-= 2
 \end{equation}
  
  
