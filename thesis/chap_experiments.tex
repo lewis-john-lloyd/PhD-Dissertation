@@ -15,7 +15,7 @@ The two problems were set up so that the maximum allowable timestep was varied.
 Each problem was run with the following maximum allowable timesteps: 1 [s], 0.1 [s], 0.01 [s], 0.001 [s], 0.0001 [s], and 0.00001 [s]. 
 For the linear runs, the scaled residuals were evaluated after a single Newton step, $\vec{F}(\vec{x}^{1})$.
 For the nonlinear runs, the scaled nonlinear residuals were evaluated at the end of the Newton-loop.
-The nonlinear convergence criteria used in the nonlinear solver are described in \sect{sect:nlnCobraAlg}.
+The nonlinear convergence criteria used in the nonlinear solver are described in \sect{subsect:nlnCobraAlgo}.
 The temporal convergence metric was evaluated during post-processing.
 In total, there were twenty-four simulations run.
 The two different problems were each run at six different maximum timestep sizes on each of the two versions of \cobra{}.
@@ -96,19 +96,19 @@ The results from the simulation runs will now be analyzed to determine the impac
 The solutions produced by both solvers will be compared to determine the efficacy of the residual metric in determining the validity of the nonlinear solution.  
 
 For the flashing problem, the parameter of interest for temporal convergence testing is $\alpha_g$ at 2 [in] from the inlet of the stand pipe.
-\fig{fig:flashing_1em1} shows the gaseous volume fraction 2 [in] from the inlet of the stand pipe as a function of time for a \dtmax{} of 1.0E-1 [s] for both the linear and the nonlinear solvers.
+\fig{fig:flashing_1em1} shows the gaseous volume fraction 2 [in] from the inlet of the stand pipe as a function of time for a \dtmax{} of \expneg{1.0}{1} [s] for both the linear and the nonlinear solvers.
 
 \begin{figure}[h!tb]
 \centering
 \includegraphics[width=0.6\textwidth]{plots/flashing_1em1.eps}
-\caption{Flashing solution at \dtmax{} = 1.0E-1 {[s]}}
+\caption{Flashing solution at \dtmax{} = \expneg{1.0}{1} {[s]}}
 \label{fig:flashing_1em1}
 \end{figure}
 
 \begin{figure}[h!tb]
 \centering
 \includegraphics[width=.6\textwidth]{plots/flashing_1em5.eps}
-\caption{Flashing solution at \dtmax{} = 1.0E-5 {[s]}.}
+\caption{Flashing solution at \dtmax{} = \expneg{1.0}{5} {[s]}.}
 \label{fig:flashing_1em5}
 \end{figure}
 
@@ -135,7 +135,7 @@ However, both \fig{fig:cobra_mode_flashing} and \fig{fig:nl_mode_flashing} show 
 The two solvers, when applied to the same problem that contains highly nonlinear physics, produce two different timestep size invariant solutions.
 These two solutions achieve qualitative timestep size invariance at different timestep sizes.
 The parameter of interest in the solution produced by the nonlinear solver with a 1 [s] \dtmax{} is qualitatively close to that produced with a 0.1 [s] \dtmax{}, \fig{fig:nl_flashing_compare}.
-The same level of qualitative timestep size invariance is achieved in the linear solver solutions between a \dtmax{} of 1.0E-3 [s] and 1.0E-4 [s], \fig{fig:cobra_flashing_compare}.
+The same level of qualitative timestep size invariance is achieved in the linear solver solutions between a \dtmax{} of \expneg{1.0}{3} [s] and \expneg{1.0}{4} [s], \fig{fig:cobra_flashing_compare}.
 
 \begin{figure}[h!bt]
 \centering
@@ -186,7 +186,7 @@ Therefore, in the nonlinear solver the reduction of the maximum timestep size pr
 s\begin{figure}[h!tb]
 \centering
 \includegraphics[width=0.6\textwidth]{plots/single_1em5.eps}
-\caption{Single-phase solution with \dtmax{} = 1.0E-5 {[s]}.}
+\caption{Single-phase solution with \dtmax{} = \expneg{1.0}{5} {[s]}.}
 \label{fig:single_1em5}
 \end{figure}
 
@@ -194,7 +194,7 @@ The single-phase case was designed to test if the linear solver produced a simul
 More specifically, it was designed to show that for problems where the physics of interest have relatively low nonlinearities, the linear solver provides as accurate a solution as the nonlinear solver.
 \fig{fig:single_1em1} and \fig{fig:single_1em5} show the solution produced by both the nonlinear and linear solvers of \cobra{}.
 Unlike the flashing problem, both solvers were able to solve the problem for all of the \dtmax{} specified.
-The solutions produced by both solvers are qualitatively equivalent at \dtmax{} = 1.0 [s] and \dtmax{} = 1.0E-5 [s].
+The solutions produced by both solvers are qualitatively equivalent at \dtmax{} = 1.0 [s] and \dtmax{} = \expneg{1.0}{5} [s].
 This indicates that the linear solver is adequate in regions where the solution is not highly nonlinear.
 
 One way to quantify the difference between the solutions is by measuring the residual convergence metrics outlined in \sect{sect:temporal_convergence}.
@@ -258,22 +258,29 @@ It has a high degree of connectivity.
 
 \subsection{Results}
 \label{subsect:ge_results}
-
-Here is where I show how the results in great agreement with each other.
+Here is where I show how the results are in great agreement with each other.
 Also I will point out the under prediction of the pressure differentials as predicted by \cobra{}.
+Show conservation of mass and energy for each of the cases.
 
-\section{Simple LWR Quenching Reflood Model}
-\label{sect:quench_problem}
-This test problem is intended to represent a simplified model of an LWR during the reflood portion of a LOCA.
-It was
+\section{Variable Momentum Area Boundary Condition}
+\label{sect:varAmom}
 
 \subsection{Model}
-\label{subsect:quench_model}
+\label{subsect:varAmomModel}
 The model is as follows:
 Here is the geometry:
 
+\subsection{Results}
+\label{subsect:varAmomResults}
+
+\section{Filling Channel with Air}
+\label{sect:varFillWithAir}
+
+\subsection{Model}
+\label{subsect:varFWAModel}
+The model is as follows:
+Here is the geometry:
 
 \subsection{Results}
-\label{subsect:quench_results}
-
+\label{subsect:varFWAResults}
 

@@ -148,7 +148,7 @@ The two loops, one over the momentum volumes and one over the continuity volumes
 This grouping will be known hereafter as assembling the pressure matrix for a given domain.
 \alg{alg:xschem} shows the two loops and their associated actions.
 
-\begin{algo}[h!]
+\begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Loop \; Momentum Volumes
@@ -179,10 +179,10 @@ This grouping will be known hereafter as assembling the pressure matrix for a gi
 
 The system, \eqref{eqn:pressureUpdateSystem}, is then solved to determine the pressure updates for the whole domain.
 A loop over each continuity volume is then performed so that the pressure update can be used in solving its associated upper triangular system for the updates to the other five continuity variables in \eqref{eqn:linearUpdate}.
-As the loop over the continuity volume is progressing, any momentum volume connected to the given continuity volume will have its momenta updated, \eqref{eqn:momStar} to include the contribution from that continuity volumes change in pressure. 
+As the loop over the continuity volume is progressing, any momentum volume connected to the given continuity volume will have its momenta updated according to \eqref{eqn:momStar} to include the contribution from that continuity volumes change in pressure. 
 This update loop is shown in \alg{alg:updateVariables}.
 
-\begin{algo}[h!]
+\begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Loop \; Continuity Volumes
@@ -199,7 +199,7 @@ This update loop is shown in \alg{alg:updateVariables}.
 Upon completion of this process, a single timestep is considered to have been taken.
 The complete linear process is outlined in \alg{alg:linCobraAlgorithm}.
 
-\begin{algo}[h!]
+\begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Require $\vec{x}^{0}$ and $t^{0}$
@@ -296,7 +296,7 @@ Depending upon the input the correct arrays and initialization was performed thr
 Wherever interaction with the pressure matrix was required, branching code was required to access the appropriate matrix entries.
 This was the default method for having multiple options for the solvers.
 
-\begin{figure}[h!]
+\begin{figure}[ht!]
 \singlespace\centering
 \input{images/matrixClassDiagram}
 \caption{Matrix Class Diagram}
@@ -512,7 +512,7 @@ On subsequent passes, a cubic-backtracking model is used.
 	\Algorithm Update Nonlinear Variables \Comment{\alg{alg:updateVariables}} 
     \Loop \; Newton Loop
 		\Algorithm Assemble Nonlinear Pressure Matrix \Comment{\alg{alg:xschem}}
-		\Algorithm Globalization Loop \Comment{\alg{alg:globalization}}
+		\Algorithm Globalization Loop %\Comment{\alg{alg:globalization}}
 		\Algorithm Convergence Determination \Comment{\alg{alg:nlnConvergence}}
 		\If{ \textbf{end} Newton loop}
 			\State Undo partial Newton Step
