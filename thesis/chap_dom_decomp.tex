@@ -402,6 +402,77 @@ Each continuity volumes has
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
+\subsection{Solver Data Structures}
+\label{subsect:domDecompDataStructs}
+
+\cobra{} provides the user with three options for the linear algebra method to be used for solving for the pressure update.
+These are the Gauss elimination, the SuperLU solver \cite{Li1999}, and the Pardiso solver \cite{Schenk2006, Schenk2007}.
+The SuperLU and the Pardiso solvers utilize sparse matrix storage and the Gauss elimination routine utilizes a full matrix.
+The sparsity of the matrices typically encountered are such that use of the direct solver is discouraged.
+
+Based upon the \cobra{} input file, one of these three solvers is used for finding the pressure update.
+Given that the original software was written in a mixture FORTRAN 77 and Fortran 90, and as such was based upon procedural programming practices, the memory structure for each of the solvers were predefined in modules.
+Depending upon the input the correct array initialization was performed through branching logic in the software.
+Additionally, wherever there was interaction with the pressure matrix branching logic was required to properly access the appropriate matrix entries.
+This method for having multiple solvers.
+
+\begin{figure}[ht!]
+\singlespace\centering
+\input{images/matrixClassDiagram}
+\caption{Matrix Class Diagram}
+\label{fig:matrixClassDiagram}
+\end{figure}
+
+This architecture was deemed to be inappropriate for the work being done.
+The object-oriented features in Fortran 2003/2008 standards provided an alternative method of handling the pressure matrix.
+The matrix storage structure was first replaced with an abstract class, \classname{matrix}.
+The \classname{matrix} class contains the number of right hand sides anticipated as well as the total number of pressure updates, $N$.
+Additionally, this class would provide interfaces for the following procedures:
+
+\begin{itemize}
+\item{put : a procedure that sets $\vec{A}_{i,j}$ to a given value.}
+\item{get : a procedure that returns $\vec{A}_{i,j}$.}
+\item{scale : a procedure for scaling $\vec{A}_{i, :}$ by a given value.}
+\item{reset : a procedure for setting $\vec{A} = \vec{0}$.}
+\item{invert : a procedure that returns $\vec{x}$ from $\vec{A}\vec{x} = \vec{b}$.}
+\end{itemize}
+
+Given that the SuperLU and the Pardiso solvers utilize sparse matrices and the Gauss elimination routine uses a full matrix, there are two further abstract classes that inherit from \classname{matrix}; they are \classname{fullMatrix} and \classname{sparseMatrix}.
+The \classname{fullMatrix} class contains an array representing $\vec{A}$.
+The \classname{sparseMatrix} class contains the information required to construct a sparse matrix; however, the exact storage format is not specified in \classname{sparseMatrix}.
+Both \classname{fullMatrix} and \classname{sparseMatrix} contain procedural implementations of the interfaces defined in \classname{matrix}.
+There are three concrete classes that correspond to the three supported solvers: \classname{dsolveMatrix}, \classname{superluMatrix}, and \classname{pardisoMatrix}; all three implement their own linear system solving routines under the invert interface.
+\classname{dsolveMatrix} is a concrete class inheriting from \classname{fullMatrix} that includes pivoting information.
+\classname{superluMatrix} and \classname{pardisoMatrix} are concrete classes inheriting from \classname{sparseMatrix} that implement the matrix storage schemes for their respective solvers.
+\fig{fig:matrixClassDiagram} shows the class diagram for the \classname{matrix} ecosystem.
+
+\begin{figure}[h!]
+\singlespace\centering
+\input{images/solverClassDiagram}
+\caption{Solver Class Diagram}
+\label{fig:solverClassDiagram}
+\end{figure}
+
+Once the matrix ecosystem was developed, an abstract solver class was designed.
+The \classname{solver} class contains the size of the system, $N_{a}$; a pointer to a \classname{matrix} object, $\vec{A}$; and the right hand side of the linear system, \classname{reS}.
+\classname{solver} specifies the interface for an initialization routine, init.
+In addition, \classname{solver} specifies the following procedures for manipulating the linear system:
+
+\begin{itemize}
+\item{ insert : a procedure for inserting a continuity volume's pressure equation into $\vec{A}_{i, :}$.}
+\item{ solve : an interface to call the solver associated with the matrix.}
+\item{ scale : a procedure for scaling $\vec{A}_{i, :}$ and $\vec{res}_{i}$.}
+\item{ reset : a procedure for setting $\vec{A} = \vec{0}$ and $\vec{res} = \vec{0}$.}
+\end{itemize}
+
+There are three concrete classes that inherit from the abstract solver class: \classname{dsolveSolver}, \classname{superluSolver}, and \classname{pardisoSolver}.
+Each of these concrete classes specifies an initialization routine that takes an adjacency list data structure, instantiates the \classname{matrix} pointer to the appropriate concrete subtype, and sets the appropriate matrix parameters.
+By abstracting the matrices and solvers in this way, a consistent interface is provided to the rest of the software.
+\fig{fig:solverClassDiagram} shows the class diagram for the \classname{solver} ecosystem.
+
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 \section{Algorithmic Considerations}
 \label{sect:dd_algo_con}
 

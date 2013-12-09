@@ -2,10 +2,10 @@
 \label{chap:nln_solver}
 The original \cobra{} software utilized the single Newton step of the traditional semi-implicit method.
 In order to investigate the effects of nonlinear convergence upon the determination of the temporal convergence for a given solution, \cobra{} was modified to enable an iterative global Newton's method.
-Several algorithmic problems were identified and resolved during this work.
-For effective use of the nonlinear solver, a meaningful convergence metric was required for the determination of nonlinear convergence.
-A physics based scaling method was developed to provide a physically meaningful convergence metric.
-A metric was developed and tested to aid in the identification of solutions that may not be temporally converged.
+To achieve this several algorithmic problems were identified and resolved during this work.
+Then, for effective use of the nonlinear solver, a physics-based scaling method was developed to provide a physically meaningful metric for the determination of nonlinear convergence.
+Finally, a metric was developed and tested to aid in the identification of solutions that may not be temporally converged.
+This chapter will discuss each of these phases of development.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -15,11 +15,10 @@ A metric was developed and tested to aid in the identification of solutions that
 
 \cobra{} utilizes the semi-implicit method as outlined in \sect{subsect:semi_implicit}.
 A detailed description of the solution algorithm as implemented will be presented in the following section.
-The linearized semi-implicit method is not traditionally casts as a system of nonlinear equations.
+The linearized semi-implicit method is not traditionally cast as a system of nonlinear equations.
 The governing equations in the traditional semi-implicit method are not viewed through the lens of a single Newton step for a system of nonlinear equations.
 Instead, the view that the linearization is from $\vec{x}^{n}$ to $\vec{x}^{n+1}$, as opposed to $\vec{x}^{n+1, k}$ to $\vec{x}^{n+1, k+1}$, is standard in the literature of linearized system analysis software.
 For that reason, the following discussion will present the algorithm from the point of view of a single-shot linearization.
-The following discussion will parallel the algorithmic flow within the \cobra{} software.
 
 Assuming that all data has been initialized properly, the first step in \cobra{} is a loop over all momentum equations in the domain.
 The nonlinear momentum equations, neglecting spatial discretization notation and external sources, are given in \eqref{eqn:nlnLiqMomentumEquation} -- \eqref{eqn:nlnEntMomentumEquation}.
@@ -37,8 +36,8 @@ The nonlinear momentum equations, neglecting spatial discretization notation and
 &+& \left. K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 - \left[ \eta \Gamma u^{'} - S u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right)
 \end{IEEEeqnarray}
 
-In the above equations the flux terms are summed over $N_{f}$, which indicates the number of continuity volumes to which a given momentum volume connects.
-The coefficients $K$ represent effective friction factors calculated using parameters only from time n.
+In the above equations the flux terms are summed over $N_{c}$, which indicates the number of continuity volumes to which a given momentum volume connects.
+The coefficients $K$ represent effective friction factors calculated using parameters only from time $n$.
 The interfacial transfer terms are also explicitly evaluated.
 The momentum equations are then linearized around the current time value, $\dot{\vec{m}}^{n}$, giving \eqref{eqn:linLiqMomentumEquation} - \eqref{eqn:linEntMomentumEquation}.
 
@@ -62,8 +61,8 @@ The momentum equations are then linearized around the current time value, $\dot{
 \end{IEEEeqnarray}
 
 The momentum equations, \eqref{eqn:linLiqMomentumEquation} - \eqref{eqn:linEntMomentumEquation}, are now linear in the unknown variables $\dot{\vec{m}}^{n+1}$.
-These equations are now solved for the unknown new time momenta, $\dot{\vec{m}}^{n+1}$.
-The $\delta P$ is left as an unknown, creating an additional uknown on the right hand side of the linear system.
+These equations are then solved for the unknown new time momenta, $\dot{\vec{m}}^{n+1}$.
+The $\delta P$ is left as an unknown, creating an additional unknown on the right hand side of the linear system.
 The resulting system is of the form $\displaystyle \vec{J}_{m, j} \dot{\vec{m}}_{j}^{n+1} = \vec{a}_{j} + \sum^{N_{c,j}}_{i\,=\,1} \vec{b}_{j} \delta P_{i}$.
 The solution of this linear system is expressed in \eqref{eqn:momStar}.
 
@@ -73,10 +72,10 @@ The solution of this linear system is expressed in \eqref{eqn:momStar}.
 \end{equation}
 
 The definition for the new-time momenta is a function of the as of yet unknown changes in pressures that occur in the continuity volumes connected by the momentum volume.
-The portion of the right hand side of \eqref{eqn:momStar} that is known, $\dot{\vec{m}}^{*}$, is considered to be the tentative new time momenta.
-Once all of the momenta equations has been solved in the above manner, providing an estimated new-time momenta for each momentum volume, the domain's continuity volumes are then looped over.
+The $\dot{\vec{m}}^{*}$ vector on the right hand side of \eqref{eqn:momStar} contains the tentative new time momenta.
+Once all of the momentum equations have been solved in the above manner, providing estimated new-time momenta for each momentum volume, the domain's continuity volumes are then looped over.
 The continuity equations used in this work, omitting external sources, are shown in \eqref{eqn:nlnNcgMassEquation} -- \eqref{eqn:nlnLiqMassEquation}. 
-The new time velocities used for advection in the continuity equations is defined with the new time momenta, \eqref{eqn:momStar}, in conjunction with \eqref{eqn:si_vel}.
+The new-time velocities used for advection in the continuity equations are defined with the new-time momenta, \eqref{eqn:momStar}, in conjunction with \eqref{eqn:si_vel}.
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:nlnNcgMassEquation}
@@ -98,9 +97,9 @@ V_c \left[ \left(\alpha_l \rho_l \right)^{n+1} \right. & - & \left. \left(\alpha
 \end{IEEEeqnarray}
 
 Unlike the momentum equations, the continuity equations are linearized with variables other than their conserved quantities, \eqref{eqn:independentVariables}.
-This creates a more complicated linearization procedure than that used for the momenta equations.
+This creates a more complicated linearization procedure than that used for the momentum equations.
 The new-time variables in \eqref{eqn:nlnNcgMassEquation} -- \eqref{eqn:nlnLiqMassEquation} are linearized about the old-time variables with respect to the continuity variables in \eqref{eqn:independentVariables}.
-The use of the \eqref{eqn:momStar} in defining the new-time velocities introduces inter-continuity volume coupling through the momentum equations dependency upon changes in pressure, $\delta P$.
+The use of \eqref{eqn:momStar} in defining the new-time velocities introduces inter-continuity volume coupling through the momentum equations' dependency upon changes in pressure, $\delta P$.
 
 \begin{equation}
 \label{eqn:linSystem}
@@ -139,8 +138,9 @@ Additionally, while the momentum equations were fully expanded to solve for the 
 \end{equation}
 
 Each continuity volume's linearized system of equations, \eqref{eqn:linSystem}, is subjected to partial LU decomposition without pivoting.
-The upper triangular rectangular system for each continuity is then stored for later back substitution.
-The sixth equation in \eqref{eqn:linSystem} is then scaled by its diagonal.
+The lower triangular matrix has a unit diagonal.
+The sixth equation in the upper-triangular system is then scaled by its diagonal.
+This upper-triangular rectangular system for each continuity volume is then stored for later back-substitution.
 Since the pressure update corresponds to the last row in the system of equations, this allows for the isolation of the pressure updates.
 The last row of each continuity volume's \eqref{eqn:linSystem} is then formed into a global pressure matrix, $\vec{A}_{N,N}$, and its associated right hand side, $\vec{r}$.
 
@@ -179,7 +179,7 @@ This grouping will be known hereafter as assembling the pressure matrix for a gi
 
 The system, \eqref{eqn:pressureUpdateSystem}, is then solved to determine the pressure updates for the whole domain.
 A loop over each continuity volume is then performed so that the pressure update can be used in solving its associated upper triangular system for the updates to the other five continuity variables in \eqref{eqn:linearUpdate}.
-As the loop over the continuity volume is progressing, any momentum volume connected to the given continuity volume will have its momenta updated according to \eqref{eqn:momStar} to include the contribution from that continuity volumes change in pressure. 
+As the loop over the continuity volume is progressing, any momentum volume connected to the given continuity volume will have its momenta updated according to \eqref{eqn:momStar} to include the contribution from that continuity volumes' change in pressure. 
 This update loop is shown in \alg{alg:updateVariables}.
 
 \begin{algo}[ht!]
@@ -224,9 +224,8 @@ The solution obtained via this process is subjected to several physical and comp
 \section{Nonlinear Solver}
 \label{sect:nlnCobraSolver}
 As obtained, the \cobra{} software used the single Newton step of the semi-implicit method as outlined in \sect{sect:linCobraAlg} for a timestep.
-In order to evaluate the subdomain nonlinear refinement algorithm, \cobra{} needed to be modified to be able to take multiple Newton steps within a given step.
-Additionally, a linesearch globalization strategy was added to the software.
-The \cobra{} software needed to be modified to be able do the following:
+In order to evaluate the subdomain nonlinear refinement algorithm, \cobra{} needed to be modified to be able to take multiple Newton steps within a given timestep.
+To achieve this goal, the following objectives needed to be met:
 
 \begin{itemize}
 \item{Create a data framework for constructing vector quantities such as $\vec{x}^{k}$ and $\vec{F}$.}
@@ -235,18 +234,18 @@ The \cobra{} software needed to be modified to be able do the following:
 \item{Implement a globalization strategy for Newton's method.}
 \end{itemize}
 
-Given the formation of the governing equations from \sect{sect:linCobraAlg}, several modification were required to implement a nonlinear solver.
-The correct linearization about a new-time guess value as opposed to the old time needed to be evaluated.
-Each Newton step is an incremental change in the new-time variable, not a change in the independent parameters over at timestep.
-Memory saving techniques had been employed in the construction of the linear solver that precluded more than one Newton step.
+Given the formation of the governing equations from \sect{sect:linCobraAlg}, several modifications were required to implement the nonlinear solver.
+First, the correct linearization about a new-time guess value as opposed to the old time needed to be implemented.
+Each Newton step is an incremental change in the new-time variable, not a change in the independent parameters over a timestep.
+Second, memory saving techniques had been employed in the construction of the linear solver that precluded more than one Newton step.
 In particular, there had been the implicit assumption within the software that the first Newton iterate, $\vec{x}^{n+1, 0}$, was the old-time variable $\vec{x}^{n}$.
 This design decision required that all subroutines involved with the evaluation of the components of both the nonlinear residual and its Jacobian be vetted for accurate usage of variables.
-In addition, the assumption that $\vec{x}^{n+1, k} = \vec{x}^{n}$ produced source code that was inconsistent with an iterative Newton method.
+Third, the assumption that $\vec{x}^{n+1, k} = \vec{x}^{n}$ produced source code that was inconsistent with an iterative Newton method.
 The source code was modified to reflect the intended discretization of the governing conservation laws.
 To do this, areas had to be identified where: there were implicit cancellation of terms, the new-time variables were used in place of old-time variables, and the old-time variables were used in place of new-time variables.
-This required that each of the Fortran procedures involved with the calculation of the various physical parameters and operators needed to be evaluated to determine if the variables being used were correct.
+This required each of the Fortran procedures involved with the calculation of the various physical parameters and operators to be evaluated to determine if the variables being used were correct.
 Where appropriate, the software was changed to reflect the distinction between old-time and iterate variables and to introduce terms that had been assumed to be equal to zero.
-Upon completion of the software audit, several architectural changes were made to expedite the implementation of the nonlinear solver.
+Additionally, upon verification of the proper discretization of the governing equations, several architectural changes were also made to expedite the implementation of the nonlinear solver.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -254,11 +253,9 @@ Upon completion of the software audit, several architectural changes were made t
 \subsection{Active Domain Determination}
 \label{subsect:activeDomainDetermination}
 In \cobra{} the smallest geometric component that can be input is the channel.
-As mentioned in \ref{sect:geometry} channels inherit their geometric properties from the section in which they reside.
-To create geometrically complicated problems, it is possible to enforce zero momentum in a given momentum volume.
-This constraint is known as a no-flow boundary condition.
-These boundary conditions decoupled adjacent continuity volumes by eliminating the flow-paths that connect them.
-This boundary condition allows users to create more complicated models by isolating portions of the domain.
+As mentioned in \sect{sect:geometry} channels inherit their geometric properties from the section in which they reside.
+To create geometrically complicated problems, it is possible to enforce zero momentum in a given momentum volume, decoupling adjacent continuity volumes by eliminating the flow-paths that connect them.
+This constraint is known as a no-flow boundary condition, and it allowed users to create more complicated models by isolating portions of the domain.
 If an area that is isolated and is not connected to a different boundary condition, then it is known as an inactive region.
 The inactive regions are thermodynamically isolated and form a closed system.
 These areas of the domain do not impact the solution in the portion of the domain that has boundary values, known as the active region.
@@ -271,84 +268,12 @@ The pressure matrix, $\vec{A}_{N\,x\,N}$, was sized based upon the number of vol
 During development it was determined that those continuity and momentum volumes which were in the inactive region would be pruned from the the simulation.
 While the additional costs of including these volumes in the simulation have historically been acceptable, the use of an iterative solver would amplify the computational time spent in those regions to an unacceptable degree.
 Removing these inactive volumes saved computational time by precluding the evaluation of the residuals at those locations and by modifying the size of the pressure system \eqref{eqn:pressureUpdateSystem}.
-Additionally, since the inactive regions of the problem are interpreted as not being part of the system being modeled, including their equations in the residual would not provide accurate measures of convergence.
+Additionally, since the inactive regions of the problem are interpreted as not being part of the system being modeled, including their equations in the residual would not provide an accurate measure of convergence.
 
 To determine which areas of the domain were active and which ones were inactive, a geometry traversing routine was written.
-This routine parses the input file and proceeds to create an adjacency list data structure to represent the active portion of the domain.
+This routine parses the \cobra{} input file and creates an adjacency list data structure to represent the active portion of the domain.
 The data structure allowed the active volumes to be treated independently from the memory structure of the software.
 Once the active volumes were identified, the way in which the domain information was stored in memory was changed.
-
-%-------------------------------------------------------------------------------
-%-------------------------------------------------------------------------------
-%-------------------------------------------------------------------------------
-\subsection{Object Oriented Modifications}
-\label{subsect:ooFortran}
-
-During this work, the architecture of \cobra{} was significantly modified.
-\cobra{} provides the user with three options for the linear algebra method to be used for solving for the pressure update.
-These are the Gauss elimination, the SuperLU solver \cite{Li1999}, and the Pardiso solver \cite{Schenk2006, Schenk2007}.
-The SuperLU and the Pardiso solvers utilize sparse matrix storage and the Gauss elimination routine utilizes a full matrix.
-The sparsity of the matrices typically encountered are such that use of the direct solver is discouraged.
-Based upon input, one of these three solvers are used for finding the pressure update.
-Given that the original software was written in a mixture FORTRAN 77 and Fortran 90, and as such was based upon procedural programming practices.
-This meant that the memory structures for each type of solver was defined in a module.
-Depending upon the input the correct arrays and initialization was performed through branching logic in the software.
-Wherever interaction with the pressure matrix was required, branching code was required to access the appropriate matrix entries.
-This was the default method for having multiple options for the solvers.
-
-\begin{figure}[ht!]
-\singlespace\centering
-\input{images/matrixClassDiagram}
-\caption{Matrix Class Diagram}
-\label{fig:matrixClassDiagram}
-\end{figure}
-
-This architecture was deemed to be inappropriate for the work being done.
-The object oriented features in Fortran 2003/2008 standards provided an alternative method of handling the pressure matrix.
-The matrix storage structure was first abstracted into an abstract \classname{matrix} class.
-Each \classname{matrix} contains the number of right hand sides anticipated and the total number pressure updates, $N$.
-Additionally, this class would provide the interfaces for the following procedures:
-
-\begin{itemize}
-\item{put : a procedure that sets $\vec{A}_{i,j}$ to a given value.}
-\item{get : a procedure that returns $\vec{A}_{i,j}$.}
-\item{scale : a procedure for scaling $\vec{A}_{i, :}$ by a given value.}
-\item{reset : a procedure for setting $\vec{A} = \vec{0}$.}
-\item{invert : a procedure that returns $\vec{x}$ from $\vec{A}\vec{x} = \vec{b}$.}
-\end{itemize}
-
-Given that the SuperLU and the Pardiso solvers utilize sparse matrices and the Gauss elimination routine uses a full matrix, there are two further abstract classes that inherit from \classname{matrix}; they are \classname{fullMatrix} and \classname{sparseMatrix}.
-The \classname{fullMatrix} class contains an array representing $\vec{A}$.
-The \classname{sparseMatrix} class contains the information required to construct a sparse matrix; however, the exact storage format is not specified in \classname{sparseMatrix}.
-Both \classname{fullMatrix} and \classname{sparseMatrix} contain procedural implementations of the interfaces defined in \classname{matrix}.
-There are three concrete classes that correspond to the three supported solvers: \classname{dsolveMatrix}, \classname{superluMatrix}, and \classname{pardisoMatrix}; all three implement their own linear system solving routines under the invert interface.
-\classname{dsolveMatrix} is a concrete class inheriting from \classname{fullMatrix} that includes pivoting information.
-\classname{superluMatrix} and \classname{pardisoMatrix} are concrete classes inheriting from \classname{sparseMatrix} that implement the matrix storage schemes for their respective solvers.
-\fig{fig:matrixClassDiagram} shows the class diagram for the \classname{matrix} ecosystem.
-
-\begin{figure}[h!]
-\singlespace\centering
-\input{images/solverClassDiagram}
-\caption{Solver Class Diagram}
-\label{fig:solverClassDiagram}
-\end{figure}
-
-Once the matrix ecosystem was developed, an abstract solver class was designed.
-The \classname{solver} class contains the size $N_{a}$ of the system, a pointer to a \classname{matrix}, $\vec{A}$, and the right hand side of the linear system.
-\classname{solver} specifies the interface for an initialization routine, init.
-In addition \classname{solver} specifies the following procedures for manipulating the linear system:
-
-\begin{itemize}
-\item{ insert : a procedure for inserting a continuity volume's pressure equation into $\vec{A}_{i, :}$.}
-\item{ solve : an interface to call the solver associated with the matrix.}
-\item{ scale : a procedure for scaling $\vec{A}_{i, :}$ and $\vec{res}_{i}$.}
-\item{ reset : a procedure for setting $\vec{A} = \vec{0}$ and $\vec{res} = \vec{0}$.}
-\end{itemize}
-
-There are three concrete classes that inherit from the abstract solver class: \classname{dsolveSolver}, \classname{superluSolver}, and \classname{pardisoSolver}.
-Each of these concrete classes specifies an initialization routine that takes an adjacency list data structure, instantiates the \classname{matrix} pointer to the appropriate concrete subtype, and sets the appropriate matrix parameters.
-By abstracting the matrices and solvers in this way, a consistent interface is provided to the rest of the software.
-\fig{fig:solverClassDiagram} shows the class diagram for the \classname{solver} ecosystem.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -357,7 +282,7 @@ By abstracting the matrices and solvers in this way, a consistent interface is p
 \label{subsect:nlnCobraAlgo}
 
 The nonlinear solver uses Newton's method to iteratively find solution vectors that more accurately solve the discrete algebraic system of equations.
-When using the nonlinear solver, the governing equations are linearized about a tentative value $\vec{y}^{n+1, k}$, which is differs from the linear case linearizes about the old time values $\vec{y}^{n}$.
+When using the nonlinear solver, the governing equations are linearized about a tentative value $\vec{y}^{n+1, k}$; this differs from the linear case which linearizes about the old-time values $\vec{y}^{n}$.
 Two quantities that are important to the nonlinear solver are the residual and the update vectors, $\vec{F}^{k}$ and $\delta \vec{y}$ respectively.
 The residual vector is composed of the residuals from the governing partial differential equations that are being solved.
 Every momentum volume has associated with it three momentum equation residuals \eqref{eqn:nlnLiqMomentumResidual} -- \eqref{eqn:nlnEntMomentumResidual}.
@@ -398,14 +323,15 @@ F^{k}_{m, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_
 
 The residuals from every volume in the active domain, both continuity and momentum, are assembled into the $\vec{F}^{k}$ vector.
 The accuracy of a given solution can be measured by a norm of the residual vector of the nonlinear system.
-If the exact solution for the nonlinear system were know, every residual would be identically $\vec{0}$; however, in practice the residual will never be identically zero.
-As such it is necessary to discuss the various means by which a solution for a time-step is determined to be accurate enough.
-While the Newton step is being evaluated, the residual is evaluated $\vec{F}(\vec{x}^{n+1,k})$.
-Once the Newton update, $\delta \vec{x}^{k}$, has been calculated, the residual is reevaluated at $\vec{F}(\vec{x}^{n+1, k+1})$.
-In this way the accuracy of the solution vector, $\vec{x}^{n+1}$, can be compared to determine how well the update vector performed in providing a more accurate solution.
-In \cobra{} there are three way in which the iterative newton loop can be terminated.
-One way to terminate the Newton loop is to have the number of Newton iterates, $k$, exceed a specified threshold, $\kmax{}$.
-Another way to terminate the Newton loop is to have the relative update vector, \eqref{eqn:nlnUpdateVector}, drops below a specified threshold $\dtol{}$.
+If the exact solution for the nonlinear system were known, every residual would be identically $\vec{0}$; however, in practice the residual will never be identically zero.
+As such it is necessary to discuss the various means by which a solution for a timestep is determined to be accurate enough.
+
+While the Newton step is being performed, the residual is being evaluated with the current solution vector, $\vec{x}^{n+1,k}$.
+Once the Newton update vector, $\delta \vec{x}^{k}$, has been calculated, the residual is reevaluated using the new solution vector, $\vec{x}^{n+1, k+1}$.
+Using the two residuals, $\vec{F}^{k}$ and $\vec{F}^{k+1}$, the comparative accuracy of the two solution vectors can be determined.
+In \cobra{} there are three ways in which the iterative Newton loop can be terminated.
+One way is to have the number of Newton iterates, $k$, exceed a specified threshold, $\kmax{}$.
+Another way is to have the relative update vector, \eqref{eqn:nlnUpdateVector}, drop below a specified threshold $\dtol{}$.
 
 \begin{equation}
 \label{eqn:nlnUpdateVector}
@@ -558,86 +484,6 @@ If the file is present but empty, then the default values are used; they are $35
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
-\section{Algorithmic Considerations}
-\label{sect:algoConcerns}
-
-\comment{
-This section needs to be reviewed.
-In particular, there are several algorithmic issues that need to be added.
-The relinearization of the momenta to achieve equal velocities is important.
-I also believe this to be a rather disjoint section.
-}
-
-The solution algorithms outlined in \sect{sect:linCobraAlg} and \sect{sect:nlnCobraSolver} have several algorithmic issues that need to be addressed.
-Among these issues are phase appearance and disappearance (hereafter referred to as phase transition), timestep solution acceptance criteria, and timestep size selection.
-
-Given that the governing conservation laws in thermal-hydraulic analyses are those of two-phase flow, phase transition is integral to accurate simulations.
-The methods for addressing phase transitions within two-phase analysis software are ad hoc procedures that vary from software to software.
-While each algorithmic implementation of the various methods addresses this issue out of necessity, there is no systematic or optimal way of doing so.
-However, certain physical limits have been identified that need to be considered \cite{Bestion2000}.
-
-When the two-phase flow within \cobra{} approaches that of single-phase flow, there is a lower limit imposed upon the volume fraction of the phase that is disappearing.
-This means that \cobra{} does not transition between the two-phase flow governing equations and the governing equations for single-phase flow.
-Even during simulated single-phase flow, the non-dominant phase is still present, but it is at a very small volume fraction.
-However, since the \ncgs{} and the vapor fields share a common volume fraction, the partial pressure of the \ncgs{} is allowed to go to zero. 
-Since \cobra{} incorporates two liquid fields, the lower limit for the aggregate liquid volume fraction, $\alpha_e + \alpha_l$, is equally divided between the two liquid fields.
-As a phase approaches depletion, $\alpha_k \rightarrow \alpha_{k,\text{min}}$, the velocity of the depleting phase is required to approach that of the remaining phase.
-This velocity equilibrium is imposed by artificially increasing the interfacial drag between the two phases.
-
-However, there is a subtle issue created by artificially increasing the interfacial drag between the two phases.
-The increased interfacial drag will dominate the residual for the momentum equation of the phase that is not disappearing.
-It was determined that the two coefficients should be kept the same.
-Since the new-time velocity is what is forced to be equal by the interfacial drag, at the beginning of the next timestep, the old time velocity is not equal to the new-time velocity at the end of the previous timestep.
-This meant that at the beginning of every timestep where the simulation was effectively single phase, there was slip between the two phases even though there was no slip at the end of the previous timestep.
-To assist in removing this problem, the velocity of the depleted phase is relinearized every timestep to be equal to within round off of the dominant phase.
-The linearization point is determined by the ratio of the macroscopic densities.
- 
-Upon completion of a timestep within \cobra{}, there are certain constraints that are imposed upon the independent parameters.
-These constraints are designed to deal with the possibility that the obtained solution may not be an accurate one.
-After the single Newton step, the updated parameters are evaluated to determine their validity.
-There are two ways of resolving potentially invalid solutions: parameter limiting and timestep failure.
-The limiting procedure can either truncate the updated parameter so that it falls within a valid range, or the timestep can be considered a failure.
-When a predicted volume fraction falls outside of its valid range, it is truncated to obey the constraint of equation \eqref{eqn:volume_fraction}.
-
-\begin{equation}
-\label{eqn:volume_fraction}
-\alpha_{k,\text{min}} \leq \alpha_k \leq \alpha_{k,\text{max}} 
-\end{equation}
-
-There are also limits placed upon the changes of the thermodynamic parameters within a timestep in \cobra{}.
-The constrained thermodynamic parameters and the limits imposed upon their per-timestep changes are listed below.
-
-\begin{itemize}
-\item{Change of phasic enthalpy cannot be greater than $45$ [$\frac{\text{BTU}}{\lbm{}}$].}
-\item{Change in pressure cannot be greater than $20$ [psia].}
-\item{Change in partial pressure of the \ncg{} field cannot be greater than $20$ [psia].}
-\item{Thermodynamic variables would fall outside of the range of validity of the equations of state.}
-\end{itemize}
-
-The first three limits are an attempt to mitigate an initial guess that may be outside of the Newton step's radius of convergence.
-If any of the above limits are exceeded, the timestep is considered a failure and is repeated with a smaller timestep size.
-
-Another algorithmic concern is how to identify a potentially poor linearization point in the presence of phase transitions. 
-This can be considered a predictive error correction technique.
-It uses information from the explicit portion of the nonlinear residual to identify situations where the linearization point may be poor.
-In \cobra{} this method is used only for the prediction of \ncg{} appearance.
-
-To determine the \dt{} at each timestep \cobra{} uses an adaptive timestep selection algorithm.
-This algorithm is based upon a maximum permissible timestep based upon the material Courant limit.
-The \dt{} for any timestep is given by \eqref{eqn:time_step}.
-
-\begin{equation}
-\label{eqn:time_step}
-\dt{}^{n \rightarrow n+1} = \max\left[ \dt{}_{\text{MIN}}, \min\left[1.2 \dt{}^{n-1 \rightarrow n}, 0.85 \dt{}_{\text{CRNT}}, \dt{}_{\text{MAX}} \right]\right]
-\end{equation}
-
-$\dt{}_{\text{CRNT}}$ is the most restrictive Courant number calculated for both axial and transverse flow, and a \dt{} that is based upon the time calculated to empty a given volume of the mass of a given field.
-The most restrictive of the Courant timestep is used as $\dt{}^{n \rightarrow n+1}$.
-
-
-%-------------------------------------------------------------------------------
-%-------------------------------------------------------------------------------
-%-------------------------------------------------------------------------------
 \section{Operator-Based Scaling}
 \label{sect:nlnScaling}
 
@@ -670,9 +516,9 @@ A challenge that has been addressed in this work is the development of a method 
 In constructing this scaling factor it was determined that the following characteristics were desirable:
 
 \begin{itemize}
-\item{$(S_{i}^{k})^{-1} F^{k}_i \approx 1$ when $\vec{x}^{k}$ is a "poor" solution.}
-\item{$(S_{i}^{k})^{-1} F^{k}_i \rightarrow 0$ when phase $i$ disappears.}
-\item{$0 \leq \abs{(S_{i}^{k})^{-1} F^{k}_{i}} \leq 1 $ for all values of $\vec{x}^{k}_i$.}
+\item{$(S_{i}^{-1} F_i)^{k} \approx 1$ when $\vec{x}^{k}$ is a "poor" solution.}
+\item{$(S_{i}^{-1} F_i)^{k} \rightarrow 0$ when phase $i$ disappears.}
+\item{$0 \leq \abs{S_{i}^{-1} F^{k}_{i}}^{k} \leq 1 $ for all values of $\vec{x}^{k}_i$.}
 \end{itemize}
 
 This dynamic behavior of the residual necessitates a method for scaling that adapts to relevant physical situations.
@@ -814,3 +660,82 @@ However, this moment has the disadvantage of weighting the latter portion of the
 \label{eqn:metricResidualMoment}
 \tilde{R}_{\text{M}} = \frac{\int_{t^{0}}^{t^{N}} \,\tau\,||\vec{F}(\tau)||_2 \,\mathrm{d} \tau}{\int_{t^{0}}^{t^{N}} \,\tau \,\mathrm{d} \tau}
 \end{equation}
+
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+\section{Algorithmic Considerations}
+\label{sect:algoConcerns}
+
+\comment{
+This section needs to be reviewed.
+In particular, there are several algorithmic issues that need to be added.
+The relinearization of the momenta to achieve equal velocities is important.
+I also believe this to be a rather disjoint section.
+}
+
+The solution algorithms outlined in \sect{sect:linCobraAlg} and \sect{sect:nlnCobraSolver} have several algorithmic issues that need to be addressed.
+Among these issues are phase appearance and disappearance (hereafter referred to as phase transition), timestep solution acceptance criteria, and timestep size selection.
+
+Given that the governing conservation laws in thermal-hydraulic analyses are those of two-phase flow, phase transition is integral to accurate simulations.
+The methods for addressing phase transitions within two-phase analysis software are ad hoc procedures that vary from software to software.
+While each algorithmic implementation of the various methods addresses this issue out of necessity, there is no systematic or optimal way of doing so.
+However, certain physical limits have been identified that need to be considered \cite{Bestion2000}.
+
+When the two-phase flow within \cobra{} approaches that of single-phase flow, there is a lower limit imposed upon the volume fraction of the phase that is disappearing.
+This means that \cobra{} does not transition between the two-phase flow governing equations and the governing equations for single-phase flow.
+Even during simulated single-phase flow, the non-dominant phase is still present, but it is at a very small volume fraction.
+However, since the \ncgs{} and the vapor fields share a common volume fraction, the partial pressure of the \ncgs{} is allowed to go to zero. 
+Since \cobra{} incorporates two liquid fields, the lower limit for the aggregate liquid volume fraction, $\alpha_e + \alpha_l$, is equally divided between the two liquid fields.
+As a phase approaches depletion, $\alpha_k \rightarrow \alpha_{k,\text{min}}$, the velocity of the depleting phase is required to approach that of the remaining phase.
+This velocity equilibrium is imposed by artificially increasing the interfacial drag between the two phases.
+
+However, there is a subtle issue created by artificially increasing the interfacial drag between the two phases.
+The increased interfacial drag will dominate the residual for the momentum equation of the phase that is not disappearing.
+It was determined that the two coefficients should be kept the same.
+Since the new-time velocity is what is forced to be equal by the interfacial drag, at the beginning of the next timestep, the old time velocity is not equal to the new-time velocity at the end of the previous timestep.
+This meant that at the beginning of every timestep where the simulation was effectively single phase, there was slip between the two phases even though there was no slip at the end of the previous timestep.
+To assist in removing this problem, the velocity of the depleted phase is relinearized every timestep to be equal to within round off of the dominant phase.
+The linearization point is determined by the ratio of the macroscopic densities.
+ 
+Upon completion of a timestep within \cobra{}, there are certain constraints that are imposed upon the independent parameters.
+These constraints are designed to deal with the possibility that the obtained solution may not be an accurate one.
+After the single Newton step, the updated parameters are evaluated to determine their validity.
+There are two ways of resolving potentially invalid solutions: parameter limiting and timestep failure.
+The limiting procedure can either truncate the updated parameter so that it falls within a valid range, or the timestep can be considered a failure.
+When a predicted volume fraction falls outside of its valid range, it is truncated to obey the constraint of equation \eqref{eqn:volume_fraction}.
+
+\begin{equation}
+\label{eqn:volume_fraction}
+\alpha_{k,\text{min}} \leq \alpha_k \leq \alpha_{k,\text{max}} 
+\end{equation}
+
+There are also limits placed upon the changes of the thermodynamic parameters within a timestep in \cobra{}.
+The constrained thermodynamic parameters and the limits imposed upon their per-timestep changes are listed below.
+
+\begin{itemize}
+\item{Change of phasic enthalpy cannot be greater than $45$ [$\frac{\text{BTU}}{\lbm{}}$].}
+\item{Change in pressure cannot be greater than $20$ [psia].}
+\item{Change in partial pressure of the \ncg{} field cannot be greater than $20$ [psia].}
+\item{Thermodynamic variables would fall outside of the range of validity of the equations of state.}
+\end{itemize}
+
+The first three limits are an attempt to mitigate an initial guess that may be outside of the Newton step's radius of convergence.
+If any of the above limits are exceeded, the timestep is considered a failure and is repeated with a smaller timestep size.
+
+Another algorithmic concern is how to identify a potentially poor linearization point in the presence of phase transitions. 
+This can be considered a predictive error correction technique.
+It uses information from the explicit portion of the nonlinear residual to identify situations where the linearization point may be poor.
+In \cobra{} this method is used only for the prediction of \ncg{} appearance.
+
+To determine the \dt{} at each timestep \cobra{} uses an adaptive timestep selection algorithm.
+This algorithm is based upon a maximum permissible timestep based upon the material Courant limit.
+The \dt{} for any timestep is given by \eqref{eqn:time_step}.
+
+\begin{equation}
+\label{eqn:time_step}
+\dt{}^{n \rightarrow n+1} = \max\left[ \dt{}_{\text{MIN}}, \min\left[1.2 \dt{}^{n-1 \rightarrow n}, 0.85 \dt{}_{\text{CRNT}}, \dt{}_{\text{MAX}} \right]\right]
+\end{equation}
+
+$\dt{}_{\text{CRNT}}$ is the most restrictive Courant number calculated for both axial and transverse flow, and a \dt{} that is based upon the time calculated to empty a given volume of the mass of a given field.
+The most restrictive of the Courant timestep is used as $\dt{}^{n \rightarrow n+1}$.

@@ -5,7 +5,7 @@ It is the responsibility of the Nuclear Regulatory Commission (NRC) to issue lic
 Chapter 1 of Title 10 of the Code of Federal Regulations (10CFR) details the regulatory procedures that govern the NRC.
 Part 50 of 10CFR (10CFR50) lays out the process by which an applicant can obtain both construction and operating licenses for NPPs.
 One of the documents required prior to the issuance of any license under 10CFR50 is a safety analysis report (SAR).
-In part, SARs for Light Water Reactors (LWRs) require the applicant to provide an evaluation of their Emergency Core Cooling System (ECCS) during postulated loss-of-coolant accidents (LOCA).
+In part, SARs for Light Water Reactors (LWRs) require the applicant to provide an evaluation of their emergency core cooling systems during postulated loss-of-coolant accidents (LOCA).
 This evaluation must conform with section 46 of 10CFR50, which requires the applicant to perform analyses for ``a number of postulated loss-of-coolant accidents of different sizes, locations, and other properties sufficient to provide assurance that the most severe postulated loss-of-coolant accidents are calculated" \cite{CFR10}.
 This requires designers and operators of NPPs to model the thermal-hydraulic behavior within the core of a reactor during postulated LOCAs.  
 The diverse physical conditions experienced by the reactor during postulated accidents necessitate the inclusion of a range of complex physics during safety analyses.
@@ -44,33 +44,26 @@ The boundaries of the continuity volumes align with the center of the momentum v
 
 The computational modeling framework involves two primary components: sections and channels.
 The total axial length of the problem, $L$, is divided into $M$ sections, $S_i$.
-Each section is defined by two bounding elevations and a spatial discretization of that span into $J$ discrete non-overlapping axial segments, $\Delta x_{i,j}$, that represent the axial spacing of the continuity volumes.
+Each section is defined by two bounding elevations and a spatial discretization of that span into $J$ discrete non-overlapping axial segments, $\dx{}_{i,j}$, that represent the axial spacing of the continuity volumes.
 The total number of continuity volumes in a given channel is $n$ while the number of momentum volumes is $n+1$.
 The particular spatial discretization of a given section is independent from that of the other sections.
 A sum of the lengths of each section provides the total axial length of a given problem, \eqref{eqn:sections}.
 
 \begin{equation}
 \label{eqn:sections}
-L = \sum_{i=1}^{M} S_i = \sum_{i=1}^{M}\sum_{j=1}^{J(i)} \Delta x_{i,j}
+L = \sum_{i=1}^{M} S_i = \sum_{i=1}^{M}\sum_{j=1}^{J(i)} \dx{}_{i,j}
 \end{equation}
 
 Within a given section, channels are defined.
 A channel inherits the axial discretization of its parent section.
-The number of channels in a given section, $T(i)$, is independent of the number of channels in other sections.
-The total number of channels, $K$, within a given problem is defined by \eqref{eqn:number_of_channels}.
-
-\begin{equation}
-\label{eqn:number_of_channels}
-K = \sum_{i = 1}^{M} T(i)
-\end{equation}
-
-Each continuity and momentum volume has an associated cross-sectional area, $A_{c_{k,j}}$ and $A_{m_{k,j}}$. 
+The number of channels in a given section is independent of the number of channels in other sections.
+Each continuity and momentum volume has an associated cross-sectional area, $A_{c, j}$ and $A_{m,j}$. 
 The total volume of a channel, $\omega_k$, is given by the sum of the continuity volumes within that channel, \eqref{eqn:channel_volume}.
 By definition the momentum volumes do not contain mass or energy.
 
 \begin{equation}
 \label{eqn:channel_volume}
-\omega_k = \sum_{j = 1}^{J(k)} \Delta x_{k,j} A_{c_{k,j}}
+\omega_k = \sum_{j = 1}^{J(k)} \dx{}_{k,j} A_{c_{k,j}}
 \end{equation}
 
 The sum of all channel volumes, \eqref{eqn:domain_decomp}, is the total domain volume, $\Omega$.
@@ -82,9 +75,9 @@ The sum of all channel volumes, \eqref{eqn:domain_decomp}, is the total domain v
 
 It is also possible to model multi-dimensional flow through the definition of transverse flow paths that connect two channels within a given section.
 The transverse flow paths are considered orthogonal to the axial flow direction.
-In this way \cobra{} is capable of modeling complex geometries.
-For example, it is permissible to have the flow from a single channel split into multiple channels in an adjacent section.
+Additionally, it is permissible to have the flow from a single channel split into multiple channels in an adjacent section.
 This flow splitting is only permitted at section boundaries.
+\cobra{} is capable of modeling complex geometries by using these two features.
 An example of a \cobra{} model that includes these different geometric characteristics is given in \fig{fig:complex_geometry}.
 
 \begin{figure}[h!t]
@@ -126,8 +119,8 @@ Since all quantities are area-averaged, the tilde in \eqref{eqn:area_average} wi
 \tilde{a} = \frac{1}{A}\int_{A} a \;\mathrm{d}\tilde{A}
 \end{equation}
 
-The particular formulation of the two-phase flow equation used in \cobra{} is commonly referred to as a two-phase, three-field formulation.
-This designation comes from the three water fields that are modeled by the software. 
+The particular formulation of the two-phase flow equation used in \cobra{} is commonly referred to as a ``two-phase, three-field formulation".
+While this designation comes from the three water fields that are modeled by the software, there software also modeled dissolved \ncg{} fields.
 To simulate the behavior of in-core fluid dynamics during accident scenarios more accurately, the liquid and the gaseous phases are each divided into two distinct fields.
 The two fields of the liquid phase are a continuous liquid field and an entrained liquid droplet field.
 The gaseous phase is composed of a \ncg{} field and a water-vapor field. 
@@ -160,7 +153,7 @@ This assumption is made because the simulations of interest are dominated by ine
 The wall-shear effects of viscosity are accounted for via empirically based friction correlations.
 }
 \item{
-Being that \cobra{} was developed primarily as a sub-channel analysis tool for NPPs with a vertically-oriented core, there is an assumption that the primary flow direction is in-line with the gravity vector, which will be referred to as the axial flow direction.}
+The primary positive flow direction is counter to the gravity vector, which will be referred to as the axial flow direction. This vertically oriented coordinate system was chosen to accommodate the vertical core design of NPPs.}
 \item{
 The mechanical energy of the phases is neglected in the conservation of energy. 
 The assumption is that in the simulations of interest the mechanical energy term is negligible.
@@ -182,7 +175,7 @@ The details of this system of partial differential equations are discussed below
 \subsubsection{Conservation of Mass Equations}
 \label{subsubsect:mass_equations}
 
-There are four equations that represent the conservation of mass, one for each of the \ncg{} \eqref{eqn:conservation_of_ncg}, vapor \eqref{eqn:conservation_of_vap}, continuous liquid  \eqref{eqn:conservation_of_liq}, and entrained liquid \eqref{eqn:conservation_of_ent} fields.
+There are four equations that represent the conservation of mass, one each for the \ncg{} \eqref{eqn:conservation_of_ncg}, vapor \eqref{eqn:conservation_of_vap}, continuous liquid  \eqref{eqn:conservation_of_liq}, and entrained liquid \eqref{eqn:conservation_of_ent} fields.
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:conservation_of_ncg}
@@ -240,10 +233,11 @@ The gaseous phasic enthalpy, however, is defined according to \eqref{eqn:gaseous
 
 \begin{equation}
 \label{eqn:gaseous_enthalpy}
-\alpha_g \{\rho_g h_g\} = \alpha_g \rho_v h_v + \alpha_g \rho_n h_n
+\rho_g h_g = \rho_v h_v + \rho_n h_n
 \end{equation}
 
-The various terms on the right hand sides of \eqref{eqn:con_energy_gas} and \eqref{eqn:con_energy_liq} are defined as follows.
+The various terms on the right hand sides of \eqref{eqn:con_energy_gas} and \eqref{eqn:con_energy_liq} are defined as follows:
+
 \begin{itemize}
 \item{
 $\Gamma^{'''} h^{'}_k$:
@@ -451,7 +445,7 @@ First, the area in the flux term, $\tilde{A}$, is taken as the minimum of two ar
 \min\left(A_{m,j}, A_{m,j+1}\right)
 \end{equation}
 
-Second, the velocity that is used to determine the origin of the donored quantity is the arithmetic mean of the velocities from the two adjacent momentum volumes, \eqref{eqn:average_advecting_vel}.
+Second, the velocity that is used to determine the donored quantities is the arithmetic mean of the velocities from the two adjacent momentum volumes, \eqref{eqn:average_advecting_vel}.
 
 \begin{equation}
 \label{eqn:average_advecting_vel}
@@ -529,7 +523,7 @@ The other option, the non-conservative form, is to expand analytically the tempo
 
 Within \cobra{} the temporal derivative is approximated by a one-step difference scheme, \eqref{eqn:simple_partial_t}, where the continuous time variables are now evaluated at discrete points, $t^0, t^1, \ldots, t^N$.
 The notations $t^0$ and $t^N$ represent the initial and final time, respectively.
-The term ''one-step" refers to the fact that the temporal derivative involves only two consecutive points in time.
+The term ``one-step" refers to the fact that the temporal derivative involves only two consecutive points in time.
 
 \begin{IEEEeqnarray}{rcl}
 \int^{t^{n+1}}_{t^n}\frac{\partial \vec{y}(\vec{x})}{\partial t}\mathrm{d}\tau & = & \int^{t^{n+1}}_{t^n}\vec{E}(\vec{y}(\vec{x}))\mathrm{d}\tau \nonumber \\
@@ -583,10 +577,10 @@ The semi-discrete formulation, \eqref{eqn:simple_partial_t}, is expressed as a f
 \vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}(\vec{x}^n) -\Delta t \vec{E}^{*}
 \end{equation}
 
-Depending upon the approximation of $\vec{E}^{*}$ and the number of stages, the temporal integration method used has an associated temporal accuracy.
+The temporal integration method used has an associated temporal accuracy that depends upon the approximation of $\vec{E}^{*}$ and the number of stages. 
 The temporal accuracy is a way of quantifying the behavior of the solution as the timestep is reduced.
 Order of accuracy estimates for temporal integration techniques are proportionality statements between the numerical error and a power of the timestep, $\mathcal{O}(\Delta t^k)$ \cite{LeVeque2007}. 
-However, it has been shown that if the nonlinear problem, \eqref{eqn:nonlinear_residuals}, is not solved at every time step, the temporal accuracy of a method can be degraded \cite{Knoll2001, Mahaffy1993}.
+However, it has been shown that if the nonlinear problem, \eqref{eqn:nonlinear_residuals}, is not solved at every timestep, the temporal accuracy of a method can be degraded \cite{Knoll2001, Mahaffy1993}.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -599,7 +593,7 @@ The nonlinear residual being solved is a function of the new-time unknowns, $\ve
 Newton's method is an iterative procedure to obtain $\vec{x}^{*}$ such that $\vec{F}(\vec{x}^{*}) = 0$.
 Since Newton's method is an iterative procedure for obtaining the correct new-time variables, two superscripts are required.
 The nonlinear iterate superscript will be $k$.
-Successive linearization of the nonlinear problem \eqref{eqn:newton_taylor} generates an iterative solution method.
+Successive linearization of the nonlinear problem, \eqref{eqn:newton_taylor}, generates an iterative solution method.
 
 \begin{IEEEeqnarray}{rcccl}
 0 & = & \vec{F}(\vec{x}^{n+1,k}+\vec{\delta x}^k) & = & \vec{F}(\vec{x}^{n+1,k}) +  \int_{\vec{x}^{n+1,k}}^{\vec{x}^{n+1,k}+\vec{\delta x}^k}\frac{\partial \vec{F}}{\partial \vec{x}}(\vec{z}) \mathrm{d} \vec{z} \nonumber \\
@@ -681,7 +675,7 @@ While the momentum conservation equations have the identity matrix, $\vec{I}$, f
 \begin{algorithmic}[1]
 \Require $\vec{x}^{0}$ and $t^{0}$
 \Set $n = 0$
-\Loop \; Take a Time Step
+\Loop \; Take a Timestep
     \State $t^{n+1} : = t^{n} + \Delta t$
     \Calculate $\vec{F}(\vec{x}^n)$ and $\vec{J}(\vec{x}^n)$
     \Calculate $\vec{\delta x} = -\vec{J}^{-1}\vec{F}$
@@ -693,7 +687,7 @@ While the momentum conservation equations have the identity matrix, $\vec{I}$, f
 \end{algo}
 
 While this particular method is the least computationally expensive on a per timestep basis, it has a severe weakness.
-That weakness is the Courant-Friedrichs-Lewy (CFL) limit imposed upon the time step size, $\Delta t$.
+That weakness is the Courant-Friedrichs-Lewy (CFL) limit imposed upon the timestep size, $\Delta t$.
 The CFL limit is a relationship between the spatial and temporal discretization and the characteristic velocities of information propagation in the problem of interest \cite{LeVeque2007, Tannehill1997}.
 For the case of \eqref{eqn:explicit}, the CFL limit is given in \eqref{eqn:cfl_explicit}.
 
@@ -768,7 +762,7 @@ The computational implementation of a fully implicit method is presented in \alg
 
 Another alternative method for integrating \eqref{eqn:temporal_semi_discrete} is the semi-implicit method.
 It was developed to overcome the sonic Courant limitations of the explicit method while avoiding both the high computational cost and excessive diffusivity of the fully implicit method \cite{Liles1978}.
-There are two distinguishing characteristics of the semi-implicit method: the pressure gradient terms in the momentum conservation equations and the velocities for the advection of mass and energy use new-time variables. 
+The two distinguishing characteristics of the semi-implicit method are the use of new-time variables in the evaluation of the pressure gradient in the momentum conservation equations and the advecting velocities used in the mass and energy equations. 
 The implicit evaluation of the pressure gradient in the momentum equations is what leads to a CFL limit known as the material Courant limit.
 Similar to the sonic Courant limit discussed in \sect{subsect:numerics_explicit}, the material Courant limit dictates the largest $\Delta t$ that can be achieved while maintaining a stable solution algorithm.
 In this method the Courant limit is given by \eqref{eqn:si_cfl}.
@@ -939,7 +933,7 @@ When modeling full NPP transients, it is advantageous to use sub-channel softwar
 The combination of different specialized software is a common practice.
 This coupling of capabilities can be accomplished in two ways: the two pieces of software can be merged or they can be coupled via data exchange.
 Examples of the first method are MARS \cite{Jeong2008}, COBRA/TRAC \cite{Thurgood1983c}, and TRACE \cite{TRACE}.
-Coupling software via data exchange is a more common option \cite{Makihara2003, Aumiller2002, Aumiller2001, Avramova2006, Weaver2002, Rodriguez2002}, and it will be discussed below.
+Coupling software via data exchange is a more common option \cite{Makihara2003, Aumiller2002, Aumiller2001, Avramova2006, Weaver2002, Rodriguez2002}, and it will be discussed first.
 
 When coupling via data exchange, the use of explicit coupling can lead to a sonic Courant limit imposed at the boundary of the two coupled systems \cite{Ragusa2009, Aumiller2001}.
 To circumvent the sonic Courant limit, a semi-implicit method for the coupling of software via data exchange has been developed for thermal-hydraulic simulations \cite{Weaver2002, Aumiller2002}.
@@ -955,7 +949,7 @@ The presentation of the method is in terms of the \relap53d{} conservation equat
 The coupling method first developed presented \relap53d{} as both the master and slave software \cite{Weaver2002}.
 Later work showed how this base method could be extended to allow coupling between \relap53d{} and the \cobra{} subchannel analysis software \cite{Aumiller2002}.
 This reformulation was designed to allow for a consistent transition between a two-phase, two-field based solver and and a two-phase, three-field based solver. 
-A short outline of the method as formulated for \relap53d{} coupling is presented below.
+A short outline of the method as formulated for \relap53d{} coupling follows.
 
 The semi-implicit domain decomposition is accomplished via the staggered mesh formulation.
 The master domain is truncated on a continuity volume.
@@ -978,8 +972,8 @@ Upon forming the pressure matrix, the Newton update for the pressures will be ex
 
 From the point-of-view of the slave process, the momentum volume between the master domain and the slave domain is a traditional momentum volume.
 Since the interface boundary between the master and salve domain is composed entirely of momentum volumes, the only implicit unknowns from the master domain used in the slave domain are the pressures from the coupled continuity volumes.
-These implicit pressures are expressed in terms of the old-time pressures and an update to the pressure from the old-time value and the new-time values.
-The pressure update for the continuity volumes at the boundary of the master domain, $\delta P_{\text{cbv}}^{n+1}$, is expressed in terms of the unknown velocities in the slave momentum volumes adjacent to the boundary of the master continuity volumes, \eqref{eqn:pressure_coupled} \cite{Weaver2002}.
+These implicit pressures are expressed in terms of the old-time pressures and the updates to those pressures from the old-time values and the new-time values.
+The pressure update for a given continuity volume at the boundary of the master domain, $\delta P_{\text{cbv}}^{n+1}$, is expressed in terms of the unknown velocities in the slave momentum volumes adjacent to the boundary of the master continuity volumes, \eqref{eqn:pressure_coupled} \cite{Weaver2002}.
 
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:pressure_coupled}
@@ -1003,7 +997,7 @@ The use of more detailed physics for the in-core thermal-hydraulic behavior is a
 
 If the semi-implicit coupling methodology is used to couple two pieces of software that use the semi-implicit method, then the boundaries between the two domains no longer represent a disparity in the global method used.
 This fact enables the use of the material Courant limit at coupling boundaries.
-This domain decomposition method allows each subdomain to use consistent boundary information in its calculations.
+Consequently, this domain decomposition method allows each subdomain to use consistent boundary information in its calculations.
 
 Additionally, if the boundary values are explicitly evaluated, then the decomposition of the global problem could be viewed as an application of an additive Schwarz domain decomposition algorithm.
 In an additive Schwarz algorithm the boundary values for each subdomain are functions only of the old-time values in the other domains.
@@ -1046,5 +1040,5 @@ Isolation of a specified subdomain where nonlinearities are high was achieved by
 For this work, the subdomains to be isolated were geometric components predetermined by the user.
 Upon isolation, the coupled subdomain were subjected to a globally convergent Newton method to resolve the nonlinearities at every timestep.
 This converged solution was then communicated via the coupling coefficients to the linear portion of the domain for use in calculating its single-shot Newton step.
-This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling may provide a route to obtaining nonlinearly-converged timestep-size insensitive solutions for traditional two-phase flow methods with a lower computational cost than traditional fully iterative Newton methods.
+This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling may provide a route to obtaining nonlinearly-converged, timestep-size insensitive solutions for traditional two-phase flow methods with a lower computational cost than fully iterative Newton methods.
 The convergence of the nonlinearities within a given subdomain may allow for temporal convergence to be determined at timestep sizes larger than those required by the current single-shot linearization methods.
