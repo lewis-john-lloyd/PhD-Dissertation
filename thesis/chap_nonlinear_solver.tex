@@ -1,11 +1,10 @@
 \chapter{Nonlinear \cobra{}}
 \label{chap:nln_solver}
-The original \cobra{} software utilized the single Newton step of the traditional semi-implicit method.
+The original \cobra{} software utilized the single timestep of the traditional semi-implicit method.
 In order to investigate the effects of nonlinear convergence upon the determination of the temporal convergence for a given solution, \cobra{} was modified to enable an iterative global Newton's method.
-To achieve this several algorithmic problems were identified and resolved during this work.
-Then, for effective use of the nonlinear solver, a physics-based scaling method was developed to provide a physically meaningful metric for the determination of nonlinear convergence.
-Finally, a metric was developed and tested to aid in the identification of solutions that may not be temporally converged.
-This chapter will discuss each of these phases of development.
+Then, for effective use of the nonlinear solver, a operator-based scaling method was developed to provide a physically meaningful measure of convergence.
+A metric was then developed and tested to aid in the identification of solutions that may not be temporally converged.
+This chapter will discuss each of these phases of development as well several implementation specific practicalities that were identified and resolved.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -216,23 +215,26 @@ The complete linear process is outlined in \alg{alg:linCobraAlgorithm}.
 \label{alg:linCobraAlgorithm}
 \end{algo}
 
-The solution obtained via this process is subjected to several physical and computational limits discussed in \sect{sect:algoConcerns}.
+The solution obtained via this process is subjected to several physical and computational limits discussed in \sect{sect:miscConcerns}.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 \section{Nonlinear Solver}
 \label{sect:nlnCobraSolver}
-As obtained, the \cobra{} software used the single Newton step of the semi-implicit method as outlined in \sect{sect:linCobraAlg} for a timestep.
+As obtained, the \cobra{} software used the single timestep of the semi-implicit method as outlined in \sect{sect:linCobraAlg}.
 In order to evaluate the subdomain nonlinear refinement algorithm, \cobra{} needed to be modified to be able to take multiple Newton steps within a given timestep.
-To achieve this goal, the following objectives needed to be met:
+To achieve this goal, the several objectives were met.
+First, the software routines that calculated portions of $\vec{F}(\vec{x}^{k})$ and $\vec{J}(x^{k})$ were evaluated and transitioned to the proper nonlinear discretization.
+Second, a method to identify the active portion of the domain was developed to correctly construct $\vec{x}$ and $\vec{F}$.
+Lastly, a Newton loop algorithm was implemented.
+This section will describe work done to meet the above objectives.
 
-\begin{itemize}
-\item{Create a data framework for constructing vector quantities such as $\vec{x}^{k}$ and $\vec{F}$.}
-\item{Correctly evaluate $\vec{F}(\vec{x}^{k})$ and $\vec{J}(x^{k})$.}
-\item{Develop proper scaling of $\vec{F}(\vec{x}^{k})$.}
-\item{Implement a globalization strategy for Newton's method.}
-\end{itemize}
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+\subsection{Evaluation of Discretization}
+\label{subsect:nonlinearDiscretization}
 
 Given the formation of the governing equations from \sect{sect:linCobraAlg}, several modifications were required to implement the nonlinear solver.
 First, the correct linearization about a new-time guess value as opposed to the old time needed to be implemented.
@@ -260,8 +262,14 @@ If an area that is isolated and is not connected to a different boundary conditi
 The inactive regions are thermodynamically isolated and form a closed system.
 These areas of the domain do not impact the solution in the portion of the domain that has boundary values, known as the active region.
 After evaluating several prototypical models, it was determined that a large portion of the domain of these problems were thermodynamically isolable.
+\fig{fig:activeDomain} shows an example of a domain with inactive regions.
 
-\comment{A picture of the active vs. inactive would be nice here.}
+\begin{figure}[h!t]
+\centering
+There will be a picture of active vs inactive domains here.
+\caption{A Domain with Inactive Regions}
+\label{fig:activeDomain}
+\end{figure}
 
 Originally, \cobra{} would solve the momentum and continuity equations at every defined location in the problem.
 The pressure matrix, $\vec{A}_{N\,x\,N}$, was sized based upon the number of volumes in the domain, $N$, not the number of active volumes, $N_{a}$.
@@ -402,104 +410,21 @@ However, if the Newton loop is terminated, then there are changes that were made
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
-\subsection{Globalization Strategy}
-\label{subsect:nlnGlobalStrategy}
-
-\comment{
-Here will be another algorithm that has the globalization loop.
-This section needs some work.
-}
-
-A globalization strategy was implemented for the Newton algorithm.
-A linesearch algorithm was chosen for this.
-The second is the globalization loop termination criteria.
-The globalization strategy implemented in \cobra{} is a line search algorithm \cite{Dennis1996}.
-The two globalization loop termination criteria are:
-
-\begin{enumerate}
-\item{$\frac{1}{2}||\vec{F}^{k+1, j}||^{2}_{2} < \frac{1}{2}||\vec{F}^{k}||^{2}_{2} - \alpha ||\vec{F}^{k}||^{2}_{2}$ }
-\item{$\sqrt{\lambda_{j+1}}||\delta \tilde{\vec{x}}^{k}||_{2} < \dtol{}$}
-\end{enumerate}
-
-If neither of the loop termination criteria are met, then a step-length parameter, $\lambda_j$, is calculated.
-On the first pass through the globalization loop within a given Newton step, a quadratic backtracking model is adopted.
-On subsequent passes, a cubic-backtracking model is used.
-
-\begin{algo}[h!]
-\setlength{\baselineskip}{0.625\baselineskip}
-\begin{algorithmic}[1]
-\Require $\vec{x}^{0}$ and $t^{0}$
-\Set $n = 0$
-\Loop \; Transient Loop
-    \Set $t^{n+1} : = t^{n} + \dt{}$
-    \Set $k = 0$
-	\Algorithm Assemble Nonlinear Pressure Matrix	 \Comment{\alg{alg:xschem}}
-	\Solve $\vec{A}^{k} \vec{\delta P}^{k} = \vec{res}^{k}$
-	\Algorithm Update Nonlinear Variables \Comment{\alg{alg:updateVariables}} 
-    \Loop \; Newton Loop
-		\Algorithm Assemble Nonlinear Pressure Matrix \Comment{\alg{alg:xschem}}
-		\Algorithm Globalization Loop %\Comment{\alg{alg:globalization}}
-		\Algorithm Convergence Determination \Comment{\alg{alg:nlnConvergence}}
-		\If{ \textbf{end} Newton loop}
-			\State Undo partial Newton Step
-			\State \textbf{break} Newton Loop 
-		\EndIf		
-		\Set $k \pluseq 1$
-		\Solve $\vec{A}^{k} \vec{\delta P}^{k} = \vec{res}^{k}$
-		\Algorithm Update Nonlinear Variables \Comment{\alg{alg:updateVariables}}
-	\EndLoop
-	\Set $n \pluseq 1$
-\EndLoop
-\end{algorithmic}
-\caption{Nonlinear \cobra{} with Globalization Strategy.}
-\label{alg:nlnGlobalizedAlgorithm}
-\end{algo}
-
-%-------------------------------------------------------------------------------
-%-------------------------------------------------------------------------------
-%-------------------------------------------------------------------------------
-\subsection{Quality Control}
-\label{subsect:nlnDevelopment}
-The development of the nonlinear solver within \cobra{} took place under strict quality assurance guidelines.
-At every step of the development, the linear solver was required to maintain the same solution.
-This verification was dependent upon a larger number of verification and assessment problems.
-The output of the unmodified \cobra{} and the modified \cobra{} software was compared to machine precision.
-It was required that either the results of the two simulations be identical or that the reason for the difference be identified and understood.
-The \cobra{} software has the ability to repeat a time-step.
-As such, it was required that the backup capabilities continued to work while nonlinear solver was being implemented.
-Additionally, testing was done to ensure that the ability to restart the software mid-simulation was unaffected.
-While adding time to the development cycle, the overhead of the quality assurance procedures ensured that the linear solver could continue to be used for design purposes.
-
-%-------------------------------------------------------------------------------
-%-------------------------------------------------------------------------------
-%-------------------------------------------------------------------------------
-\subsection{Nonlinear Input File}
-\label{subsect:nlnCobraInputFile}
-The primary input file for \cobra{} is fixed format, so it was decided that a separate input file for the nonlinear solver would provide the most flexibility when running simulations.
-This decision allowed for existing models to be run in nonlinear mode without modification of the actual input file.
-The presence of the file ``\classname{nwt.cob}" triggers the input processing routine for the nonlinear solver.
-There are three parameters that need to be present in the input file; in order they are \kmax{},\ftol{}, and \dtol{}, each on a separate line. 
-If the file is present but empty, then the default values are used; they are $35$, \expneg{1.0}{5}, and \expneg{1.0}{10}, respectively.
-
-%-------------------------------------------------------------------------------
-%-------------------------------------------------------------------------------
-%-------------------------------------------------------------------------------
 \section{Operator-Based Scaling}
 \label{sect:nlnScaling}
 
-As part of the \cobra{} modification a novel operator based scaling has been developed to obtain meaningful convergence thresholds.
-An important aspect of the nonlinear solver outlined above is the convergence criteria.
-The iterative solver depends upon the scaled residual to determine when convergence has been achieved.
-In particular, various norms of the residual are evaluated to measure the degree to which the nonlinear system of algebraic equations are being satisfied.
-The evaluation of residual norms encourages the use of a scaling matrix for the residual vector.
-Without scaling the residual has several negative characteristics.
-The different equations will have different scales at a given point in time because of the physical quantities that they represent.
-Over the course of the transient the magnitude of any given equation can vary dramatically.
-Summing equations with different units is not good.
-When the summation occurs those equations whose terms are the largest may have an unscaled residual that is orders of magnitude greater than others.
-This will mean that any norm taken of the residuals will be subject to a bias towards those equations with the largest numerical value by virtue of their units.
+An important aspect of the nonlinear solver outlined in \sect{sect:nlnCobraSolver} is the convergence criteria.
+As part of this work a novel operator based scaling has been developed to obtain meaningful convergence thresholds.
+The iterative solver depends upon the scaled residual to help determine when convergence has been achieved.
+In particular, various norms of the residual vector are evaluated to measure the degree to which the nonlinear system of algebraic equations are being satisfied.
+The evaluation of residual norms necessitates the use of a scaling matrix for the residual vector.
 
-Here is a list of the residuals and their units.
+Without proper scaling the residual has several negative characteristics.
+The different conservation equations will have different orders of magnitude at a given point in time because of the physical quantities that they represent.
+Over the course of the transient the phasic composition of a volume can vary dramatically as phases appear and disappear.
+When norms are taken of the unscaled residual those equations whose terms are the largest may have a residual that is orders of magnitude greater than the others.
+This will create a situation where any norm taken of the residual will be biased towards certain equations due to the their units or phasic composition.
+
 For a given continuity volume, the nonlinear residual will have six components: four for the conservation of mass and two for the conservation of energy.
 For each momentum volume, the three conservation of momentum equations will form the three components of the nonlinear residual.
 These residuals have the units of the conserved quantities for their corresponding PDEs; \tab{tab:scaling_units_scales} shows the units for the different conservation equations.
@@ -511,7 +436,7 @@ These residuals have the units of the conserved quantities for their correspondi
 \label{tab:scaling_units_scales}
 \end{table}
 
-For the aforementioned reasons, it is desirable to scale the residuals.
+For the aforementioned reasons, it is desirable to scale the residual.
 A challenge that has been addressed in this work is the development of a method for scaling of these residuals that is based upon the local physics of interest at any given point in the transient.
 In constructing this scaling factor it was determined that the following characteristics were desirable:
 
@@ -521,14 +446,13 @@ In constructing this scaling factor it was determined that the following charact
 \item{$0 \leq \abs{S_{i}^{-1} F^{k}_{i}}^{k} \leq 1 $ for all values of $\vec{x}^{k}_i$.}
 \end{itemize}
 
-This dynamic behavior of the residual necessitates a method for scaling that adapts to relevant physical situations.
+The dynamic behavior of the residual necessitates a method for scaling that adapts to relevant physical situations.
 The scaling method developed during this work is an operator-based approach.
 The governing PDEs can be viewed as a collection of operators, both linear and nonlinear, acting upon the vector of independent parameters.
 The summation of these operators must balance to zero for the nonlinear equation to be satisfied.
 The scaling factor developed uses the magnitudes of these operators to determine an absolute measure of the physics processes occurring in a given volume.
 This is accomplished by summing the absolute value of the different discrete operators in the governing equations.
 This scaling creates a relative measure of the nonlinear residual when compared to the magnitude of the physics involved in the process.
-
 
 \begin{IEEEeqnarray}{lCl}
 \label{eqn:nlnLiqMomentumScale}
@@ -569,13 +493,15 @@ S^{k}_{m, l} & = & \dt{}\left[\abs{\frac{V_c \left[\left(\alpha_l \rho_l \right)
 
 The issue of phase transition also needed to be considered during this work.
 Since \cobra{} does not actually transition the governing equations to those for single-phase flow, there will always be a nonlinear residual for those phases that are nominally absent.
-It was determined that the effects of maintaining a depleted phase in the system of equations when solving the nonlinear problem created spurious convergence issues when using these scale factor.
+It was determined that the effects of maintaining a depleted phase in the system of equations when solving the nonlinear problem created spurious convergence issues when using these scale factors.
 The unscaled residuals would be on the order of machine round-off.
 The operator based scaling factors for these residuals would also be within orders of magnitude of machine round-off.
-This created the situation where the scaled nonlinear residual for the depleted field would be of $\mathcal{O}$(1).
+However, the residual would be unable to decrease with additional Newton steps due to parametric constraints.
+This created the situation where the scaled nonlinear residual for the depleted field would stagnate at approximately $\mathcal{O}$(1).
 These depleted residuals would dominate the norms used to determine convergence.
-To overcome this deficiency it was determined that when a phase or field began to deplete, the scaling factor would be scaled up to create an artificial decrease in the residual to counter the artificial presence of the depleted field.
-This scaling is shown by \eqref{eqn:scaling_factor_small}.
+
+To overcome this deficiency it was determined that when a phase or field began to deplete, the scaling factor itself would be scaled to create an artificial decrease in the scaled residual to counter the artificial presence of the depleted field.
+This scaling function is shown by \eqref{eqn:scaling_factor_small}.
 
 \begin{equation}
 \label{eqn:scaling_factor_small}
@@ -584,7 +510,7 @@ S_k = \max[1.0, \left(C_1 \frac{\alpha_{k,\text{MIN}}}{\alpha_k}\right)^{C_2} ] 
 
 For this work, the constant $C_1$ was set equal to 100, and the exponent $C_2$ was set equal to 10.
 This particular phase transition scaling produced the regular operator scaling factor when the volume fraction of a phase is at least two orders of magnitude greater than the minimum volume fraction for that phase.
-This drove the scaled residuals for phases that were nominally not present to well below those residuals for equations that were active.
+This drove the scaled residuals for phases that were nominally not present to well below those residuals for equations of the phases that were present.
 
 Another phase depletion limit was a floor placed upon the scale factor.
 For each equation, the scale factor was limited to the minimum possible value of the conserved quantity based upon the volume fraction limits.
@@ -664,40 +590,107 @@ However, this moment has the disadvantage of weighting the latter portion of the
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
-\section{Algorithmic Considerations}
-\label{sect:algoConcerns}
+\section{Additional Considerations}
+\label{sect:miscConcerns}
 
-\comment{
-This section needs to be reviewed.
-In particular, there are several algorithmic issues that need to be added.
-The relinearization of the momenta to achieve equal velocities is important.
-I also believe this to be a rather disjoint section.
-}
+There are several aspects of the solution algorithms outlined in \sect{sect:linCobraAlg} and \sect{sect:nlnCobraSolver} that require additional information.
+First, the method for activating the nonlinear solver is provided.
+After that, the quality control used during development is discussed.
+Then several practical issues that arise from the discretization of the governing equations and the methods used to solve the resulting system are discussed.
+Among these are the treatment of phase transition and timestep selection and acceptance criteria.
 
-The solution algorithms outlined in \sect{sect:linCobraAlg} and \sect{sect:nlnCobraSolver} have several algorithmic issues that need to be addressed.
-Among these issues are phase appearance and disappearance (hereafter referred to as phase transition), timestep solution acceptance criteria, and timestep size selection.
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+\subsection{Quality Control}
+\label{subsect:nlnDevelopment}
+The development of the nonlinear solver within \cobra{} took place under strict quality assurance guidelines.
+At every step of the development, the linear solver was required to maintain the same solution.
+This verification was dependent upon a larger number of verification and assessment problems.
+The output of the unmodified \cobra{} and the modified \cobra{} software was compared to machine precision.
+It was required that either the results of the two simulations be identical or that the reason for the difference be identified and understood.
+The \cobra{} software has the ability to repeat a timestep.
+As such, it was required that the backup capabilities continued to work while nonlinear solver was being implemented.
+Additionally, testing was done to ensure that the ability to restart the software mid-simulation was unaffected.
+While adding time to the development cycle, the overhead of the quality assurance procedures ensured that the linear solver could continue to be used for design purposes.
 
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+\subsection{Nonlinear Input File}
+\label{subsect:nlnCobraInputFile}
+The primary input file for \cobra{} is fixed format, so it was decided that a separate input file for the nonlinear solver would provide the most flexibility when running simulations.
+This decision allowed for existing models to be run in nonlinear mode without modification of the actual input file.
+The presence of the file ``\classname{nwt.cob}" triggers the input processing routine for the nonlinear solver.
+There are three parameters that need to be present in the input file; in order they are \kmax{},\ftol{}, and \dtol{}, each on a separate line. 
+If the file is present but empty, then the default values are used; they are $35$, \expneg{1.0}{5}, and \expneg{1.0}{10}, respectively.
+
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+\subsection{Phase Transition}
+\label{subsect:nlnPhaseTransition}
 Given that the governing conservation laws in thermal-hydraulic analyses are those of two-phase flow, phase transition is integral to accurate simulations.
-The methods for addressing phase transitions within two-phase analysis software are ad hoc procedures that vary from software to software.
-While each algorithmic implementation of the various methods addresses this issue out of necessity, there is no systematic or optimal way of doing so.
-However, certain physical limits have been identified that need to be considered \cite{Bestion2000}.
+The ability to model a simulation as it moves from single-phase flow to multi-phase flow and back is the keystone of the software.
+However, the methods for addressing phase transitions within two-phase analysis software are ad hoc procedures that vary between implementations.
+While every software package addresses this issue out of necessity, there is no agreed upon systematic or optimal way of doing so.
+However, there are certain physical limits that have been identified that need to be considered when dealing with phase transitions \cite{Bestion2000}.
 
-When the two-phase flow within \cobra{} approaches that of single-phase flow, there is a lower limit imposed upon the volume fraction of the phase that is disappearing.
-This means that \cobra{} does not transition between the two-phase flow governing equations and the governing equations for single-phase flow.
-Even during simulated single-phase flow, the non-dominant phase is still present, but it is at a very small volume fraction.
+When multi-phase flow within \cobra{} approaches that of single-phase flow, there is a lower limit imposed upon the volume fraction of the phase that is disappearing.
+This means that the software does not transition between the governing equations for two-phase flow and those for single-phase flow when a phase depletes.
+Even during simulated single-phase flow, the non-dominant phase is still present, but it is at a small volume fraction.
 However, since the \ncgs{} and the vapor fields share a common volume fraction, the partial pressure of the \ncgs{} is allowed to go to zero. 
 Since \cobra{} incorporates two liquid fields, the lower limit for the aggregate liquid volume fraction, $\alpha_e + \alpha_l$, is equally divided between the two liquid fields.
-As a phase approaches depletion, $\alpha_k \rightarrow \alpha_{k,\text{min}}$, the velocity of the depleting phase is required to approach that of the remaining phase.
-This velocity equilibrium is imposed by artificially increasing the interfacial drag between the two phases.
+As a phase approaches depletion, $\alpha_k \rightarrow \alpha_{k,\text{min}}$, or starts to appear, several physical limits are imposed upon the depleted phase.
 
-However, there is a subtle issue created by artificially increasing the interfacial drag between the two phases.
-The increased interfacial drag will dominate the residual for the momentum equation of the phase that is not disappearing.
-It was determined that the two coefficients should be kept the same.
-Since the new-time velocity is what is forced to be equal by the interfacial drag, at the beginning of the next timestep, the old time velocity is not equal to the new-time velocity at the end of the previous timestep.
-This meant that at the beginning of every timestep where the simulation was effectively single phase, there was slip between the two phases even though there was no slip at the end of the previous timestep.
-To assist in removing this problem, the velocity of the depleted phase is relinearized every timestep to be equal to within round off of the dominant phase.
-The linearization point is determined by the ratio of the macroscopic densities.
- 
+First, the velocity of the depleting phase is required to approach that of the carrier phase.
+The following list shows how the velocities are required to behave as their respective volume fractions approach zero.
+\begin{itemize}
+\item{ $\alpha_e \rightarrow 0$ : $u_e \rightarrow u_g$}
+\item{ $\alpha_g \rightarrow 0$ : $u_g \rightarrow u_l$}
+\item{ $\alpha_l \rightarrow 0$ : $u_l \rightarrow u_g$}
+\end{itemize}
+These velocity equilibrium constraints are imposed by artificially increasing the interfacial drag between the two phases.
+However, there is a subtle issue created by this increase in the the interfacial drag.
+If the new-time velocities are not equal, then the increased interfacial drag will dominate the residual for the momentum equation of the phase that is not disappearing.
+Since \cobra{} uses conservation of momentum equations with momentum as an independent parameter as well as a semi-implicit discretization, the velocities are poorly defined.
+Compare the old-time velocity, as defined by \eqref{eqn:oldTimeVelocity}, with the new-time velocity as defined by \eqref{eqn:si_vel}.
+
+\begin{equation}
+\label{eqn:oldTimeVelocity}
+u^{n}_{k, j \pm \onehalf} = \frac{\dot{m}^{n}_{k, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha_{k} \rho_{k}}^{n}_{a, j \pm \onehalf}} 
+\end{equation}
+
+Since the new-time velocity is what is forced to be equal by the interfacial drag, at the beginning of the next timestep, the old-time velocity is not equal to the new-time velocity at the end of the previous timestep.
+The discrepancy in the definition of the velocities, \eqref{eqn:compareVelocities}, created a non-zero relative velocity between the depleted phase and the present phase at the beginning of every timestep.
+
+\begin{equation}
+\label{eqn:compareVelocities}
+\frac{\dot{m}^{n+1}_{k, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha_{k} \rho_{k}}^{n}_{a, j \pm \onehalf}} \neq \frac{\dot{m}^{n+1}_{k, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha_{k} \rho_{k}}^{n+1}_{a, j \pm \onehalf}}
+\end{equation}
+
+For the linear solver, this was acceptable; however, the iterative nature of the nonlinear solver exacerbated this problem.
+This created a situation where multiple Newton steps might have been required to drive the new-time relative velocity to zero even though the previous timesteps new-time relative velocity was zero.
+To remove this problem, if the new-time relative velocity of the previous timestep is below a certain threshold, $u_{r, min}$, then the momentum of the depleted phase, $\dot{m}_{d}$, is relinearized so that the new-time relative velocity is zero.
+The linearization point is equal to the carrier momentum, $\dot{m}_{c}$ multiplied by the ratio depleted phase's to the carrier phase's macroscopic densities, \eqref{eqn:velRelinearization}.
+
+\begin{equation}
+\label{eqn:velRelinearization}
+\dot{m}^{n+1}_{d, j \pm \onehalf} = \dot{m}^{n+1}_{c, j \pm \onehalf} \frac{\ave{\alpha_{d} \rho_{d}}^{n}_{a, j \pm \onehalf}}{\ave{\alpha_{c} \rho_{c}}^{n+1}_{a, j \pm \onehalf}}
+\end{equation}
+
+The second limit placed upon the the thermodynamic state of the depleting phase.
+Below a certain threshold, the thermodynamic state of the depleted phase is set to be equal to the saturation properties associated with the thermodynamic state of carrier phase.
+Additionally, this issue applied to the presence or absence of the \ncg{} field.
+Within \cobra{}, only the \ncg{} field is capable of being fully depleted; the partial pressure of the \ncg{} field is allowed to go to zero.
+To determine if the initial linear point for $P^{n+1}_{n}$ is appropriate, information from the explicit portion of the continuity equations is used to identify situations where the linearization point may be poor.
+
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+\subsection{Timestep Selection and Acceptance}
+\label{subsect:nlnTimesteps}
+
 Upon completion of a timestep within \cobra{}, there are certain constraints that are imposed upon the independent parameters.
 These constraints are designed to deal with the possibility that the obtained solution may not be an accurate one.
 After the single Newton step, the updated parameters are evaluated to determine their validity.
@@ -717,16 +710,10 @@ The constrained thermodynamic parameters and the limits imposed upon their per-t
 \item{Change of phasic enthalpy cannot be greater than $45$ [$\frac{\text{BTU}}{\lbm{}}$].}
 \item{Change in pressure cannot be greater than $20$ [psia].}
 \item{Change in partial pressure of the \ncg{} field cannot be greater than $20$ [psia].}
-\item{Thermodynamic variables would fall outside of the range of validity of the equations of state.}
 \end{itemize}
 
-The first three limits are an attempt to mitigate an initial guess that may be outside of the Newton step's radius of convergence.
+These three limits are an attempt to mitigate an initial guess that may be outside of the Newton step's radius of convergence.
 If any of the above limits are exceeded, the timestep is considered a failure and is repeated with a smaller timestep size.
-
-Another algorithmic concern is how to identify a potentially poor linearization point in the presence of phase transitions. 
-This can be considered a predictive error correction technique.
-It uses information from the explicit portion of the nonlinear residual to identify situations where the linearization point may be poor.
-In \cobra{} this method is used only for the prediction of \ncg{} appearance.
 
 To determine the \dt{} at each timestep \cobra{} uses an adaptive timestep selection algorithm.
 This algorithm is based upon a maximum permissible timestep based upon the material Courant limit.

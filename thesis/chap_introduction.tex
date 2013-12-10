@@ -521,9 +521,10 @@ The other option, the non-conservative form, is to expand analytically the tempo
 \frac{\partial \alpha_k \rho_k u_k}{\partial t} = \alpha_k \rho_k \frac{\partial u_k}{\partial t} + u_k \frac{\partial \alpha_k \rho_k}{\partial t}
 \end{equation}
 
-Within \cobra{} the temporal derivative is approximated by a one-step difference scheme, \eqref{eqn:simple_partial_t}, where the continuous time variables are now evaluated at discrete points, $t^0, t^1, \ldots, t^N$.
+Within \cobra{} the temporal derivative is approximated by a one-step difference scheme where the continuous time variables are now evaluated at discrete points, $t^0, t^1, \ldots, t^N$.
 The notations $t^0$ and $t^N$ represent the initial and final time, respectively.
 The term ``one-step" refers to the fact that the temporal derivative involves only two consecutive points in time.
+The integral over a time interval, $\dt{} = t^{n+1} - t^{n}$, is show in \eqref{eqn:simple_partial_t}.
 
 \begin{IEEEeqnarray}{rcl}
 \int^{t^{n+1}}_{t^n}\frac{\partial \vec{y}(\vec{x})}{\partial t}\mathrm{d}\tau & = & \int^{t^{n+1}}_{t^n}\vec{E}(\vec{y}(\vec{x}))\mathrm{d}\tau \nonumber \\

@@ -12,7 +12,7 @@ The following section contains three sections that describe the mathematical for
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 \section{Mathematical Formulation}
-\label{sec:dd_math}
+\label{sec:domDecompMath}
 
 \cobra{} uses a staggered mesh to represent the computational domain.
 The domain decomposition takes place within the context of a Newton step.
@@ -313,22 +313,15 @@ This is annoying as crap to describe.
 I will give it a shot in words.
 }
 
-In order to active the spatially selective nonlinear solver, the nonlinear solver input file needs to have additional information.
-The software needs to know which channels are going to be in the nonlinear domain.
-As meantioned elsewhere \comment{maybe} the basic unit of domain decomposition is the channel.
-Each channel has a user-specified ID.
-The nonlinear input file described \comment{here} has the following appended to it:
-'begin-nln-channels'
-<chanID\_1>
-<chanID\_2>
-<chanID\_3>
-...
-<chanID\_N>
-'end-nln-channels'
-Where <chanID\_N> is the channel ID that will be included in the nonlinear domain.
-There are no requirements that the channels specified to be nonlinear form a contiguous domain.
-This input file specifies the channel id which will be subject to multiple Newton iterates.
-The nonlinear tolerances and iterates apply to the nonlinear domain only.
+\begin{figure}[ht]
+\centering
+\input{images/isoparametric_volume}
+\caption{A single continuity volume.}
+\label{fig:single3dvol}
+\end{figure}
+
+
+
 
 The procedures that were written to determine which continuity volumes were active and which were inactive were modified to separate the domain in two: a liner and a nonlinear domain.
 
@@ -364,6 +357,10 @@ The last equation in this row is then normalized by its diagonal entry.
 
 The Jacobian for each entry is then stored for later use.
 
+
+After the solution in the nonlinear domain has been obtained, a loop over all continuity volumes in the linear domain is performed to obtain the new time values for the continuity volumes.
+Each continuity volumes has 
+
 \begin{equation}
 \label{eqn:jacobianWithFluxTerms}
 \vec{J}_{c,j} = 
@@ -383,38 +380,53 @@ The Jacobian for each entry is then stored for later use.
 \section{Implementation in \cobra{}}
 \label{sec:dd_algo}
 
-The algorithmic implementation of the domain decomposition algorithm is now detailed.
-This is going to be long.
-Supposedly.
+The domain decomposition method outlined in \sect{sec:domDecompMath} was integrated into the \cobra{} software.
+In this section, several architectural changes necessary to implement the domain decomposition are outlined.
+First, the modification of how the solvers are structured is discussed.
+Then, the implementation of an object-oriented domain system for proper domain identification is detailed.
+Additionally, the algorithmic implementation of the domain decomposition is shown in detail.
 
-I am a single volume:
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+\subsection{Dual Domain Input File}
+\label{subsect:domDecompInputFile}
 
-\begin{figure}[ht]
-\centering
-\input{images/isoparametric_volume}
-\caption{A single continuity volume.}
-\label{fig:single3dvol}
-\end{figure}
-
-After the solution in the nonlinear domain has been obtained, a loop over all continuity volumes in the linear domain is performed to obtain the new time values for the continuity volumes.
-Each continuity volumes has 
+In order to active the spatially selective nonlinear solver, the nonlinear solver input file needs to have additional information.
+The software needs to know which channels are going to be in the nonlinear domain.
+As meantioned elsewhere \comment{maybe} the basic unit of domain decomposition is the channel.
+Each channel has a user-specified ID.
+The nonlinear input file described \comment{here} has the following appended to it:
+'begin-nln-channels'
+<chanID\_1>
+<chanID\_2>
+<chanID\_3>
+...
+<chanID\_N>
+'end-nln-channels'
+Where <chanID\_N> is the channel ID that will be included in the nonlinear domain.
+There are no requirements that the channels specified to be nonlinear form a contiguous domain.
+This input file specifies the channel id which will be subject to multiple Newton iterates.
+The nonlinear tolerances and iterates apply to the nonlinear domain only.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 \subsection{Solver Data Structures}
-\label{subsect:domDecompDataStructs}
+\label{subsect:domDecompSolverStructs}
+
+As seen in \sect{sect:linCobraAlg}, the linear system that ends up being solved to obtain the Newton update vector is the pressure matrix.
+\cobra{} provides the user with the ability to chose from three different linear algebra methods for solver the pressure matrix.
+The method that the user selects via the \cobra{} input file, ``\classname{deck.inp}" determines the data storage structure of the pressure matrix.
+Each of the three methods utilizes a different matrix storage format.
+Given that the original software was written in a mixture FORTRAN 77 and Fortran 90, and as such was based upon procedural programming practices, the memory structure for each of the three possible pressure matrices were predefined in different modules.
+However, this paradigm precluded the existence of two pressure matrices, one for the linear domain and one for the nonlinear domain.
+The way in which the solver was stored and accessed was modified to enable multiple solvers and to reduce the logical complexity of accessing the proper matrix.
 
 \cobra{} provides the user with three options for the linear algebra method to be used for solving for the pressure update.
 These are the Gauss elimination, the SuperLU solver \cite{Li1999}, and the Pardiso solver \cite{Schenk2006, Schenk2007}.
 The SuperLU and the Pardiso solvers utilize sparse matrix storage and the Gauss elimination routine utilizes a full matrix.
 The sparsity of the matrices typically encountered are such that use of the direct solver is discouraged.
-
-Based upon the \cobra{} input file, one of these three solvers is used for finding the pressure update.
-Given that the original software was written in a mixture FORTRAN 77 and Fortran 90, and as such was based upon procedural programming practices, the memory structure for each of the solvers were predefined in modules.
-Depending upon the input the correct array initialization was performed through branching logic in the software.
-Additionally, wherever there was interaction with the pressure matrix branching logic was required to properly access the appropriate matrix entries.
-This method for having multiple solvers.
 
 \begin{figure}[ht!]
 \singlespace\centering
@@ -446,7 +458,7 @@ There are three concrete classes that correspond to the three supported solvers:
 \classname{superluMatrix} and \classname{pardisoMatrix} are concrete classes inheriting from \classname{sparseMatrix} that implement the matrix storage schemes for their respective solvers.
 \fig{fig:matrixClassDiagram} shows the class diagram for the \classname{matrix} ecosystem.
 
-\begin{figure}[h!]
+\begin{figure}[h!t]
 \singlespace\centering
 \input{images/solverClassDiagram}
 \caption{Solver Class Diagram}
@@ -473,8 +485,73 @@ By abstracting the matrices and solvers in this way, a consistent interface is p
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
-\section{Algorithmic Considerations}
-\label{sect:dd_algo_con}
+\subsection{Volume Data Structures}
+\label{subsect:domDecompVolumeStructs}
 
-Are there any algorithmic considerations?
-I am sure there are.
+Since there are two domains now, they need to distinguished.
+The method for determining this was objects.
+
+
+
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+\subsection{Domain Decomposition Algorithm}
+\label{subsect:domDecompAlgorithm}
+
+First, the input file is parsed to determine which channels are in the nonlinear domain.
+The entire domain is traversed to determine which volumes are in the nonlinear domain and which volumes are in the linear domain.
+A single timestep is now broken into two parts, the linear part and the nonlinear part.
+At the beginning of a timestep, the entire domain is traversed to assemble the pressure matrices for both the linear and the nonlinear.
+After this, the linear pressure matrix with the additional right hand sides is inverted.
+Once the linear pressure matrix is inverted, the coefficients for the nonlinear boundary volumes are collected via \alg{alg:domDecompGetCoef}.
+
+\begin{algo}[h!t]
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Set x = 2
+\end{algorithmic}
+\caption{Obtain Nonlinear Boundary Volume Coefficients.}
+\label{alg:domDecompGetCoef}
+\end{algo}
+
+
+\begin{algo}[h!t]
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \Set $t^{n+1} : = t^{n} + \dt{}$
+	\Algorithm Assemble Nonlinear and Linear Pressure Matrices	 \Comment{\alg{alg:xschem}}
+	\If{ \textbf{LinearSolver} }
+		\Solve $\vec{A}_{l} \vec{\delta P}_{l} = \vec{res}_{l}$	
+	\EndIf
+	\If{ \textbf{NonlinearSolver} }
+	    \Set $k = 0$
+		\Algorithm Get Nonlinear Coefficients \Comment{\alg{alg:domDecompGetCoef}}
+		\Algorithm Set Nonlinear Boundary Values \Comment{\alg{alg:domDecompSetMat}}
+		\Solve $\vec{A}^{k}_{n} \vec{\delta P}_{n}^{k} = \vec{res}_{n}^{k}$	
+		\Algorithm Update Nonlinear Variables \Comment{\alg{alg:updateVariables}} 
+	    \Loop \; Newton Loop
+			\Algorithm Assemble Nonlinear Pressure Matrix \Comment{\alg{alg:xschem}}
+			\Algorithm Convergence Determination \Comment{\alg{alg:nlnConvergence}}
+			\If{ \textbf{end} Newton loop}
+				\State Undo partial Newton Step
+				\State \textbf{break} Newton Loop 
+			\EndIf		
+			\Set $k \pluseq 1$
+			\Algorithm Set Nonlinear Boundary Values \Comment{\alg{alg:domDecompSetMat}}
+			\Solve $\vec{A}^{k} \vec{\delta P}^{k} = \vec{res}^{k}$
+			\Algorithm Update Nonlinear Variables \Comment{\alg{alg:updateVariables}}
+		\EndLoop
+	\EndIf
+	\If{ \textbf{LinearSolver} }
+		\Algorithm Update Linear Variables \Comment{\alg{alg:updateVariables}}
+	\EndIf
+	\Set $n \pluseq 1$
+\EndLoop
+\end{algorithmic}
+\caption{Dual domain \cobra{} algorithm.}
+\label{alg:domDecompAlgorithm}
+\end{algo}

@@ -148,27 +148,27 @@
 % Make the page numbers Arabic (1, 2, etc)
 \clearpage\pagenumbering{arabic}
 
-%\include{chap_introduction}     % Chapter: Introduction
+\include{chap_introduction}     % Chapter: Introduction
 \include{chap_nonlinear_solver} % Chapter: Nonlinear Solver
 \include{chap_dom_decomp}       % Chapter: Domain Decomposition Algorithm
-%\include{chap_experiments}      % Chapter: Numerical Experiments
-%\include{chap_final_thoughts}   % Chapter: Conclusion and musings
+\include{chap_experiments}      % Chapter: Numerical Experiments
+\include{chap_final_thoughts}   % Chapter: Conclusion and musings
 
 %=======================================================================
 % Bibliography
 %=======================================================================
-%\bibliographystyle{plainnat}
-%\bibliography{bibliography/references}
+\bibliographystyle{plainnat}
+\bibliography{bibliography/references}
 
 %=======================================================================
 % Appendices
 %=======================================================================
-%\noappendixtables
-%\noappendixfigures
-%\begin{appendices}
-%\include{app_input_decks}         % Appendix: Input Decks
-%\include{app_dom_testing}         % Appendix: Domain Decomposition Testing Procedure
-%\end{appendices}
+\noappendixtables
+\noappendixfigures
+\begin{appendices}
+\include{app_input_decks}         % Appendix: Input Decks
+\include{app_dom_testing}         % Appendix: Domain Decomposition Testing Procedure
+\end{appendices}
 
 %=======================================================================
 % End Document
