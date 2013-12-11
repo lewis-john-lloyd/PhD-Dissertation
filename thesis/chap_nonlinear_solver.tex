@@ -25,13 +25,13 @@ The nonlinear momentum equations, neglecting spatial discretization notation and
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:nlnLiqMomentumEquation}
 \dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)_{i}^{n}
- - \ave{\alpha_{l}}_{a}^{n} \nabla P^{\,n+1} + g \ave{\alpha_l \rho_l}_{a}^{n} - K^{n}_{wl}(\dot{m}_l^{n+1})^2 \right. \nonumber \\
+ - \ave{\alpha_{l}}_{\text{a}}^{n} \nabla P^{\,n+1} + g \ave{\alpha_l \rho_l}_{\text{a}}^{n} - K^{n}_{wl}(\dot{m}_l^{n+1})^2 \right. \nonumber \\
  & + & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2 - \left[(1 - \eta)\Gamma u^{'} + S u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:nlnGasMomentumEquation}
-\dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_g \rho_g u_g) u_g  \cdot \vec{\bar{A}}\right)_{i}^{n} - \ave{\alpha_{g}}_{a}^{n} \nabla P^{\,n + 1} + g \ave{\alpha_g \rho_g}_{a}^{n} - K^{n}_{wg}(\dot{m}_g^{n+1})^2 \right.\nonumber \\
+\dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_g \rho_g u_g) u_g  \cdot \vec{\bar{A}}\right)_{i}^{n} - \ave{\alpha_{g}}_{\text{a}}^{n} \nabla P^{\,n + 1} + g \ave{\alpha_g \rho_g}_{\text{a}}^{n} - K^{n}_{wg}(\dot{m}_g^{n+1})^2 \right.\nonumber \\
 & - & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2 -K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 + \left[\Gamma u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:nlnEntMomentumEquation}
-\dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_e \rho_l u_e) u_e  \cdot \vec{\bar{A}}\right)_{i}^n -\ave{\alpha_{e}}_{a}^{n} \nabla P^{\,n+1} + g \ave{\alpha_e \rho_l}_{a}^{n} - K^{n}_{we}(\dot{m}_e^{n+1})^2\right. \nonumber \\
+\dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_e \rho_l u_e) u_e  \cdot \vec{\bar{A}}\right)_{i}^n -\ave{\alpha_{e}}_{\text{a}}^{n} \nabla P^{\,n+1} + g \ave{\alpha_e \rho_l}_{\text{a}}^{n} - K^{n}_{we}(\dot{m}_e^{n+1})^2\right. \nonumber \\
 &+& \left. K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 - \left[ \eta \Gamma u^{'} - S u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right)
 \end{IEEEeqnarray}
 
@@ -43,18 +43,18 @@ The momentum equations are then linearized around the current time value, $\dot{
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:linLiqMomentumEquation}
 \dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)_{i}^{n}
- -\ave{\alpha_{l}}_{a}^{n} \nabla P^{\,n} -\ave{\alpha_{l}}_{a}^{n} \nabla \delta P + g \ave{\alpha_l \rho_l}_{a}^{n} \right. \nonumber \\
+ -\ave{\alpha_{l}}_{\text{a}}^{n} \nabla P^{\,n} -\ave{\alpha_{l}}_{\text{a}}^{n} \nabla \delta P + g \ave{\alpha_l \rho_l}_{\text{a}}^{n} \right. \nonumber \\
   & + & K^{n}_{wl}(\dot{m}_l^{n})^{2} - 2 K^{n}_{wl}\dot{m}_l^{n}\dot{m}_l^{n+1} - K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})^2  \nonumber \\
  & + & \left. 2 K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})(\dot{m}^{n+1}_l - \dot{m}_g^{n+1}) - \left[(1 - \eta)\Gamma u^{'} + S u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:linGasMomentumEquation}
 \dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_g \rho_g u_g) u_g \cdot \vec{\bar{A}}\right)_{i}^{n}
- -\ave{\alpha_{g}}_{a}^{n} \nabla P^{\,n} -\ave{\alpha_{g}}_{a}^{n} \nabla \delta P + g \ave{\alpha_g \rho_g}_{a}^{n}  \right. \nonumber \\
+ -\ave{\alpha_{g}}_{\text{a}}^{n} \nabla P^{\,n} -\ave{\alpha_{g}}_{\text{a}}^{n} \nabla \delta P + g \ave{\alpha_g \rho_g}_{\text{a}}^{n}  \right. \nonumber \\
   & + & K^{n}_{wg}(\dot{m}_g^{n})^{2} + K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})^2 + K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})^2 + \left[\Gamma u^{'}\right]^{n} \nonumber \\
  & - & 2 K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})(\dot{m}^{n+1}_l - \dot{m}_g^{n+1}) - 2 K^{n}_{wg}\dot{m}_g^{n}\dot{m}_g^{n+1} \nonumber \\
  & - & \left. 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})\vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:linEntMomentumEquation}
 \dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( (\alpha_e \rho_e u_e) u_e \cdot \vec{\bar{A}}\right)_{i}^{n}
- -\ave{\alpha_{e}}_{a}^{n} \nabla P^{\,n} - \ave{\alpha_{e}}_{a}^{n} \nabla \delta P + g \ave{\alpha_e \rho_e}_{a}^{n}  \right. \nonumber \\
+ -\ave{\alpha_{e}}_{\text{a}}^{n} \nabla P^{\,n} - \ave{\alpha_{e}}_{\text{a}}^{n} \nabla \delta P + g \ave{\alpha_e \rho_e}_{\text{a}}^{n}  \right. \nonumber \\
   & + & K^{n}_{we}(\dot{m}_e^{n})^{2} - 2 K^{n}_{we}\dot{m}_e^{n}\dot{m}_e^{n+1} - K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})^2  \nonumber \\
  & + & \left. 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n+1}_e - \dot{m}_g^{n+1}) -\left[ \eta \Gamma u^{'} - S u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right)
 \end{IEEEeqnarray}
@@ -298,13 +298,13 @@ Every momentum volume has associated with it three momentum equation residuals \
 \begin{IEEEeqnarray}{lCl}
 \label{eqn:nlnLiqMomentumResidual}
 F^{k}_{m, l} & = & \dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n} + \frac{\dt{}}{\dx{}}\left(\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)_{i}^{n}
- +\ave{\alpha_l}^{n}_{a} \nabla P^{\,n+1, k} - g \ave{\alpha_l \rho_l}_{a}^{n} \right. \nonumber \\
+ +\ave{\alpha_l}^{n}_{\text{a}} \nabla P^{\,n+1, k} - g \ave{\alpha_l \rho_l}_{\text{a}}^{n} \right. \nonumber \\
 & + & \left. K^{n}_{wl}(\dot{m}_l^{n+1, k})^2 - K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1,k}_{g})^2 + \left[(1 - \eta)\Gamma u^{'} + S u^{'}\right]^{n} \vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:nlnGasMomentumResidual}
-F^{k}_{m, g} & = & \dot{m}_{g}^{n+1,k} - \dot{m}_{g}^{n} + \frac{\dt{}}{\dx{}}\left(\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_g \rho_g u_g) u_g  \cdot \vec{\bar{A}}\right)_{i}^{n}  +\ave{\alpha_g}^{n}_{a} \nabla P^{\,n+1, k} - g \ave{\alpha_g \rho_g}_{a}^{n} \right.\nonumber \\
+F^{k}_{m, g} & = & \dot{m}_{g}^{n+1,k} - \dot{m}_{g}^{n} + \frac{\dt{}}{\dx{}}\left(\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_g \rho_g u_g) u_g  \cdot \vec{\bar{A}}\right)_{i}^{n}  +\ave{\alpha_g}^{n}_{\text{a}} \nabla P^{\,n+1, k} - g \ave{\alpha_g \rho_g}_{\text{a}}^{n} \right.\nonumber \\
 & + & \left. K^{n}_{wg}(\dot{m}_g^{n+1, k})^2 + K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1, k}_{g})^2 + K^{n}_{i,ge}(u^{n+1,k}_{e} - u^{n+1,k}_{g})^2 - (\Gamma u^{'})^{n} \vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:nlnEntMomentumResidual}
-F^{k}_{m, e} & = & \dot{m}_{e}^{n+1, k} - \dot{m}_{e}^{n} + \frac{\dt{}}{\dx{}}\left(\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_e \rho_l u_e) u_e  \cdot \vec{\bar{A}}\right)_{i}^{n} + \ave{\alpha_{e}}^{n}_{a} \nabla P^{\,n+1, k} - g \ave{\alpha_e \rho_l}^{n}_{a} \right. \nonumber \\
+F^{k}_{m, e} & = & \dot{m}_{e}^{n+1, k} - \dot{m}_{e}^{n} + \frac{\dt{}}{\dx{}}\left(\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_e \rho_l u_e) u_e  \cdot \vec{\bar{A}}\right)_{i}^{n} + \ave{\alpha_{e}}^{n}_{\text{a}} \nabla P^{\,n+1, k} - g \ave{\alpha_e \rho_l}^{n}_{\text{a}} \right. \nonumber \\
 & + & \left. K^{n}_{we}(\dot{m}_e^{n+1, k})^2 - K^{n}_{i,ge}(u^{n+1, k}_{e} - u^{n+1, k}_{g})^2 + \left[\eta \Gamma u^{'} - S u^{'}\right]^n\vphantom{\sum_{N_{k}}}\right)
 \end{IEEEeqnarray}
 
@@ -456,14 +456,14 @@ This scaling creates a relative measure of the nonlinear residual when compared 
 
 \begin{IEEEeqnarray}{lCl}
 \label{eqn:nlnLiqMomentumScale}
-S^{k}_{m, l} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}} + \abs{\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)^{n}_{i}} +\abs{\ave{\alpha_l}^{n}_{a} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_l \rho_l}_{a}^{n}} \right.\nonumber \\
+S^{k}_{m, l} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}} + \abs{\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_l \rho_l u_l) u_l \cdot \vec{\bar{A}}\right)^{n}_{i}} +\abs{\ave{\alpha_l}^{n}_{\text{a}} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_l \rho_l}_{\text{a}}^{n}} \right.\nonumber \\
 & + & \left. \abs{K^{n}_{wl}(\dot{m}_l^{n+1, k})^2} + \abs{K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1,k}_{g})^2} + \abs{\left[(1 - \eta)\Gamma u^{'}\right]^{n}} + \abs{\left[S u^{'}\right]^{n}} \vphantom{\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}}} \right] \\
 \label{eqn:nlnGasMomentumScale}
-S^{k}_{m, g} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[ \dot{m}_{g}^{n+1,k} - \dot{m}_{g}^{n}\right]}{\dt{}}} + \abs{\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_g \rho_g u_g) u_g  \cdot \vec{\bar{A}}\right)_{i}^{n}}  +\abs{\ave{\alpha_g}^{n}_{a} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_g \rho_g}_{a}^{n}} \right. \nonumber \\
+S^{k}_{m, g} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[ \dot{m}_{g}^{n+1,k} - \dot{m}_{g}^{n}\right]}{\dt{}}} + \abs{\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_g \rho_g u_g) u_g  \cdot \vec{\bar{A}}\right)_{i}^{n}}  +\abs{\ave{\alpha_g}^{n}_{\text{a}} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_g \rho_g}_{\text{a}}^{n}} \right. \nonumber \\
 & + & \abs{K^{n}_{wg}(\dot{m}_g^{n+1, k})^2} + \abs{K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1, k}_{g})^2} + \abs{K^{n}_{i,ge}(u^{n+1,k}_{e} - u^{n+1,k}_{g})^2} \nonumber \\
 & + & \left. \abs{\left[\Gamma u^{'}\right]^{n}} \vphantom{\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}}} \right]\\
 \label{eqn:nlnEntMomentumScale}
-S^{k}_{m, e} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[\dot{m}_{e}^{n+1, k} - \dot{m}_{e}^{n}\right]}{\dt{}}} + \abs{\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_e \rho_l u_e) u_e  \cdot \vec{\bar{A}}\right)_{i}^{n}} + \abs{\ave{\alpha_{e}}^{n}_{a} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_e \rho_l}^{n}_{a}} \right. \nonumber \\
+S^{k}_{m, e} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[\dot{m}_{e}^{n+1, k} - \dot{m}_{e}^{n}\right]}{\dt{}}} + \abs{\sum^{N_{c}}_{i\,=\,1} \left( (\alpha_e \rho_l u_e) u_e  \cdot \vec{\bar{A}}\right)_{i}^{n}} + \abs{\ave{\alpha_{e}}^{n}_{\text{a}} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_e \rho_l}^{n}_{\text{a}}} \right. \nonumber \\
 & + & \left. \abs{K^{n}_{we}(\dot{m}_e^{n+1, k})^2} + \abs{K^{n}_{i,ge}(u^{n+1, k}_{e} - u^{n+1, k}_{g})^2} + \abs{\left[\eta \Gamma u^{'}\right]^{n}} +\abs{\left[S u^{'}\right]^{n}} \vphantom{\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}}} \right]
 \end{IEEEeqnarray}
 
@@ -658,7 +658,7 @@ Compare the old-time velocity, as defined by \eqref{eqn:oldTimeVelocity}, with t
 
 \begin{equation}
 \label{eqn:oldTimeVelocity}
-u^{n}_{k, j \pm \onehalf} = \frac{\dot{m}^{n}_{k, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha_{k} \rho_{k}}^{n}_{a, j \pm \onehalf}} 
+u^{n}_{k, j \pm \onehalf} = \frac{\dot{m}^{n}_{k, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha_{k} \rho_{k}}^{n}_{\text{a}, j \pm \onehalf}} 
 \end{equation}
 
 Since the new-time velocity is what is forced to be equal by the interfacial drag, at the beginning of the next timestep, the old-time velocity is not equal to the new-time velocity at the end of the previous timestep.
@@ -666,7 +666,7 @@ The discrepancy in the definition of the velocities, \eqref{eqn:compareVelocitie
 
 \begin{equation}
 \label{eqn:compareVelocities}
-\frac{\dot{m}^{n+1}_{k, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha_{k} \rho_{k}}^{n}_{a, j \pm \onehalf}} \neq \frac{\dot{m}^{n+1}_{k, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha_{k} \rho_{k}}^{n+1}_{a, j \pm \onehalf}}
+\frac{\dot{m}^{n+1}_{k, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha_{k} \rho_{k}}^{n}_{\text{a}, j \pm \onehalf}} \neq \frac{\dot{m}^{n+1}_{k, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha_{k} \rho_{k}}^{n+1}_{\text{a}, j \pm \onehalf}}
 \end{equation}
 
 For the linear solver, this was acceptable; however, the iterative nature of the nonlinear solver exacerbated this problem.
@@ -676,7 +676,7 @@ The linearization point is equal to the carrier momentum, $\dot{m}_{c}$ multipli
 
 \begin{equation}
 \label{eqn:velRelinearization}
-\dot{m}^{n+1}_{d, j \pm \onehalf} = \dot{m}^{n+1}_{c, j \pm \onehalf} \frac{\ave{\alpha_{d} \rho_{d}}^{n}_{a, j \pm \onehalf}}{\ave{\alpha_{c} \rho_{c}}^{n+1}_{a, j \pm \onehalf}}
+\dot{m}^{n+1}_{d, j \pm \onehalf} = \dot{m}^{n+1}_{c, j \pm \onehalf} \frac{\ave{\alpha_{d} \rho_{d}}^{n+1}_{\text{a}, j \pm \onehalf}}{\ave{\alpha_{c} \rho_{c}}^{n+1}_{\text{a}, j \pm \onehalf}}
 \end{equation}
 
 The second limit placed upon the the thermodynamic state of the depleting phase.

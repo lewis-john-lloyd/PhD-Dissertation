@@ -394,16 +394,21 @@ Additionally, the algorithmic implementation of the domain decomposition is show
 
 In order to active the spatially selective nonlinear solver, the nonlinear solver input file needs to have additional information.
 The software needs to know which channels are going to be in the nonlinear domain.
-As meantioned elsewhere \comment{maybe} the basic unit of domain decomposition is the channel.
+As mentioned elsewhere \comment{maybe} the basic unit of domain decomposition is the channel.
 Each channel has a user-specified ID.
 The nonlinear input file described \comment{here} has the following appended to it:
+{
+\singlespace
+\begin{verbatim}
 'begin-nln-channels'
-<chanID\_1>
-<chanID\_2>
-<chanID\_3>
+<chanID_1>
+<chanID_2>
+<chanID_3>
 ...
-<chanID\_N>
+<chanID_N>
 'end-nln-channels'
+\end{verbatim}
+}
 Where <chanID\_N> is the channel ID that will be included in the nonlinear domain.
 There are no requirements that the channels specified to be nonlinear form a contiguous domain.
 This input file specifies the channel id which will be subject to multiple Newton iterates.

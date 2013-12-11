@@ -142,9 +142,9 @@ The basis for this assumption is that, while the entrained droplets are being mo
 The liquid and gaseous phases are assumed to be in pressure equilibrium with the interface between the phases.
 The basis for this assumption is that the inter-phase dynamics at the interface are negligible when compared to the bulk flow dynamics.
 }
-\item{The gaseous phases are in mechanical equilibrium.}
-\item{The gaseous phases obey Dalton's Law.}
-\item{The gaseous phases are in thermal equilibrium.}
+\item{The \ncg{} and steam components of the gaseous phase are in mechanical equilibrium.}
+\item{The two components of the gaseous phase obey Dalton's Law.}
+\item{The two components of the gaseous phase are in thermal equilibrium.}
 \item{
 The viscous dissipation of momentum in the axial flow direction and the associated generation of energy are neglected.
 This assumption is made because the simulations of interest are dominated by inertial forces, not viscous, so that the neglected terms would be small compared to other terms in the calculations.
@@ -157,6 +157,9 @@ The primary positive flow direction is counter to the gravity vector, which will
 \item{
 The mechanical energy of the phases is neglected in the conservation of energy. 
 The assumption is that in the simulations of interest the mechanical energy term is negligible.
+}
+\item{
+The effects of turbulence are neglected in this work.
 }
 \end{itemize}
 
@@ -191,11 +194,11 @@ There are four equations that represent the conservation of mass, one each for t
 The left-hand sides of \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:conservation_of_ent} represent the Lagrangian derivative for the given field.
 The terms on the right-hand side represent the volumetric inter-field ($S^{'''}$), inter-phase ($\Gamma^{'''}$),  and external ($s_{m,k}$) sources or sinks of mass.
 Since there are two liquid fields, the net phasic mass transfer between the water-vapor field and the liquid fields, $\Gamma^{'''}$, is apportioned between the continuous liquid field and the entrained liquid field.
-This division is given by \eqref{eqn:apportionment_of_mass_transfer}, where $\eta$ is an apportionment factor. 
+The relationship between the phasic mass transfer terms is given by \eqref{eqn:apportionment_of_mass_transfer}, where $\eta$ is an apportionment factor. 
 
 \begin{equation}
 \label{eqn:apportionment_of_mass_transfer}
-\Gamma^{'''} = \Gamma^{'''}_v = -( \Gamma^{'''}_e + \Gamma^{'''}_l ) =  \eta \Gamma^{'''} + (1 - \eta)\Gamma^{'''} = \Gamma^{'''}
+\Gamma^{'''} = \eta \Gamma^{'''} + (1 - \eta)\Gamma^{'''}
 \end{equation}
 
 The inter-field transfer of mass occurs only between the continuous and entrained liquid fields, \eqref{eqn:entrainment_deentrainment}.
@@ -207,7 +210,7 @@ S^{'''}_l + S^{'''}_e = 0
 
 Within the conservation of mass equations several assumptions from \sect{subsect:assumptions} are evident.
 The mechanical equilibrium of the \ncg{} and the vapor field manifests itself in the singular velocity for the two gaseous fields: $\vec{u}_g$, where the $g$ subscript denotes the total gaseous phase.
-Dalton's Law allows the two gaseous fields to occupy the same volume, thus providing for a singular volume fraction, $\alpha_g$.
+Dalton's Law allows the two components of the gaseous phase to occupy the same volume, thus providing for a singular volume fraction, $\alpha_g$.
 The thermodynamic equilibrium of the two liquid fields results in only one liquid density, $\rho_l$.
 
 %-------------------------------------------------------------------------------
@@ -220,7 +223,7 @@ In addition to the conservation of mass equations there are conservation of ener
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:con_energy_gas}
-\frac{\partial \left( \alpha_g \{\rho_g h_g\} \right)}{\partial t } + \nabla \cdot \left(  \alpha_g \{\rho_g h_g\} \vec{u}_g \right) & =& \nonumber \\
+\frac{\partial \left( \alpha_g \rho_g h_g \right)}{\partial t } + \nabla \cdot \left(  \alpha_g \rho_g h_g \vec{u}_g \right) & =& \nonumber \\
 \Gamma^{'''} h^{'}_v + q^{'''}_{i,v} + q^{'''}_{n,l}  + q^{'''}_{w,g} + \alpha_g\frac{\partial P}{\partial t} + s_{e,g}  & &\\
 \label{eqn:con_energy_liq}
 \frac{\partial \left( (1 - \alpha_g) \rho_l h_l \right) }{\partial t } + \nabla \cdot \left( \alpha_l \rho_l h_l \vec{u}_l \right) + \nabla \cdot \left( \alpha_e \rho_l h_l \vec{u}_e \right)& = & \nonumber \\
@@ -374,9 +377,9 @@ In the thermal-hydraulic safety analysis methods of interest the governing equat
 The discussion that follows is specific to \cobra{}, but other safety analysis software use similar procedures \cite{RELAP,TRACE}.
 
 The labeling scheme for the finite volumes is shown in \fig{fig:vertical_pipe_with_cells}, which is a segment of a channel.
-Two momentum volumes, $j$ and $j-1$, spatially overlap a continuity volume, $j$.
+Two momentum volumes, $j + \onehalf $ and $j - \onehalf$, spatially overlap a continuity volume, $j$.
 Variables are indexed by the mesh on which their conservation equations are defined.
-For example, the velocity $u_j$ would be spatially located at center of the momentum volume $j$ and at the boundary between the continuity volumes $j$ and $j-1$.
+For example, the velocity $u_{j - \onehalf}$ would be spatially located at center of the momentum volume $j - \onehalf $ and at the boundary between the continuity volumes $j$ and $j-1$.
 
 \begin{figure}[ht]
 \centering
@@ -410,7 +413,7 @@ For illustrative purposes, \eqref{eqn:conservation_of_liq} will be integrated ov
 
 For the mass-flux terms evaluated on the continuity volume edge, the advected quantity is evaluated using a 1st order upwind method \cite{Tannehill1997}.
 The velocity and cross-sectional area utilized in the continuity flux terms, $u_j$ and $A_{m,j}$, have the values defined in the momentum volume that aligns with the boundary of continuity volumes.
-The sign of the velocity at the volume boundary determines the value of the donored quantity, $\ave{a}_{d,j \pm \onehalf}$.
+The sign of the velocity at the volume boundary determines the value of the donored quantity, $\don{a}_{\text{d},j \pm \onehalf}$.
 A generic formulation for this scheme is given by \eqref{eqn:upwind_donoring}.
 The same general procedure is used for the other five scalar conservation equations.
 
@@ -419,22 +422,22 @@ The same general procedure is used for the other five scalar conservation equati
 V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\int_{V_j}\nabla \cdot \left( \alpha_l \rho_l u_l \right) \mathrm{d}V -(1-\eta_j)\Gamma_j - S_j + s_{m,l,j}V_j \nonumber \\
 V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left[\alpha_l \rho_l u_l A_{m}\right]_{x_{j-\onehalf}}^{x_{j+\onehalf}} -(1-\eta_j)\Gamma_j - S_j + s_{m,l,j}V_j \nonumber \\
 \label{eqn:spatially_discrete_liq_m_con}
-V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left( \don{\alpha_l \rho_l}_{d,j+\onehalf} u_{l,j+1} A_{m,j+1} - \don{\alpha_l \rho_l}_{d,j-\onehalf} u_{l,j} A_{m,j}\right) \nonumber \\
+V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left( \don{\alpha_l \rho_l}_{\text{d},j+\onehalf} u_{l,j+\onehalf} A_{m,j+\onehalf} - \don{\alpha_l \rho_l}_{\text{d},j-\onehalf} u_{l,j - \onehalf} A_{m,j - \onehalf}\right) \nonumber \\
 & & -(1-\eta)\Gamma_j - S_j + s_{m,l,j}V_j
 \end{IEEEeqnarray}
 
 \begin{equation}
 \label{eqn:upwind_donoring}
-\ave{a}_{d, j - \onehalf} = \begin{cases} a_{j-1} &  u_j \geq 0 \\ a_{j} & u_j < 0 \end{cases}
+\don{a}_{\text{d}, j - \onehalf} = \begin{cases} a_{j-1} &  u_{j - \onehalf} \geq 0 \\ a_{j} & u_{j - \onehalf} < 0 \end{cases}
 \end{equation}
 
 The three momentum conservation equations, \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent}, are integrated over their momentum volume.
-The cross-sectional area for a momentum volume, $A_{m,j}$, can be defined independently of the two cross-sectional areas of the adjoining continuity volumes.
+The cross-sectional area for a momentum volume, $A_{m,j + \onehalf}$, can be defined independently of the two cross-sectional areas of the adjoining continuity volumes.
 The momentum flux terms, \eqref{eqn:momentum_flux_terms}, are treated similarly to the flux terms in the continuity equations.
 
 \begin{equation}
 \label{eqn:momentum_flux_terms}
--\left[<\alpha_l \rho_l u_l>_{d} u_l \tilde{A}\right]_{x_{j-\onehalf}}^{x_{j + \onehalf}}
+-\left[<\alpha_l \rho_l u_l>_{d} u_l \tilde{A}\right]_{x_{j }}^{x_{j + 1}}
 \end{equation}
 
 There are two primary differences.
@@ -442,14 +445,14 @@ First, the area in the flux term, $\tilde{A}$, is taken as the minimum of two ar
 
 \begin{equation}
 \label{eqn:area_def}
-\min\left(A_{m,j}, A_{m,j+1}\right)
+\tilde{A}_{j} = \min\left(A_{m,j - \onehalf}, A_{m,j+\onehalf}\right)
 \end{equation}
 
 Second, the velocity that is used to determine the donored quantities is the arithmetic mean of the velocities from the two adjacent momentum volumes, \eqref{eqn:average_advecting_vel}.
 
 \begin{equation}
 \label{eqn:average_advecting_vel}
-u_{k,j+\frac{1}{2}} = \frac{1}{2}\left(u_{k,j} + u_{k, j+1}\right)
+u_{k,j} = \frac{1}{2}\left(u_{k,j - \onehalf} + u_{k, j+ \onehalf}\right)
 \end{equation}
 
 The ordering of the governing equations within a given continuity volumes is as follows:
@@ -494,18 +497,18 @@ The choice of the nine variables that will be solved for is another distinguishi
 \vec{x} = [\alpha_{g}P_{n}, \alpha_g, \alpha_g h_v, (1 - \alpha_g) h_l, \alpha_e, P, \dot{m}_g, \dot{m}_l, \dot{m}_e]^{T}
 \end{equation}
 
-The definition of $\dot{m}_k$ is given by \eqref{eqn:mom_dot}.
+The definition of the conserved momentum quantity, $\dot{m}_k$, is given by \eqref{eqn:mom_dot}.
 
 \begin{equation}
 \label{eqn:mom_dot}
-\dot{m}_{k} = \ave{\alpha_k \rho_k}_{a} u_{k} A_{m}
+\dot{m}_{k} = \ave{\alpha_k \rho_k}_{\text{a}} u_{k} A_{m}
 \end{equation}
 
 The averaging operator $\ave{a}_{a}$ provides the average of a quantity from the two adjoining continuity volumes, \eqref{eqn:average_val}.
 
 \begin{equation}
 \label{eqn:average_val}
-\ave{a}_{a,j} = \frac{a_{j} + a_{j+1}}{2}
+\ave{a}_{a,j + \onehalf} = \frac{a_{j} + a_{j+1}}{2}
 \end{equation}
 
 The choice of independent parameters used in \cobra{} is not the only option.
@@ -596,17 +599,16 @@ Since Newton's method is an iterative procedure for obtaining the correct new-ti
 The nonlinear iterate superscript will be $k$.
 Successive linearization of the nonlinear problem, \eqref{eqn:newton_taylor}, generates an iterative solution method.
 
-\begin{IEEEeqnarray}{rcccl}
-0 & = & \vec{F}(\vec{x}^{n+1,k}+\vec{\delta x}^k) & = & \vec{F}(\vec{x}^{n+1,k}) +  \int_{\vec{x}^{n+1,k}}^{\vec{x}^{n+1,k}+\vec{\delta x}^k}\frac{\partial \vec{F}}{\partial \vec{x}}(\vec{z}) \mathrm{d} \vec{z} \nonumber \\
+\begin{equation}
 \label{eqn:newton_taylor}
-0 & = & \vec{F}(\vec{x}^{n+1,k}+\vec{\delta x}^k) & \approx & \vec{F}(\vec{x}^{n+1,k}) + \vec{J}(\vec{x}^{n+1,k}) \cdot \vec{\delta x}^k
-\end{IEEEeqnarray}
+0 = \vec{F}(\vec{x}^{n+1,k}+\vec{\delta x}^k) \approx \vec{F}(\vec{x}^{n+1,k}) + \vec{J}(\vec{x}^{n+1,k}) \cdot \vec{\delta x}^k
+\end{equation}
 
 The algorithm is then one of finding successive updates, $\vec{\delta x}^k = \vec{x}^{n+1,k+1} - \vec{x}^{n+1,k}$, by solving \eqref{eqn:newton}.
 
 \begin{equation}
 \label{eqn:newton}
-\vec{J}(\vec{x}^{n+1,k})\cdot \vec{\delta x}^k = -\vec{F}(\vec{x^{n+1,k}})
+\vec{J}(\vec{x}^{n+1,k})\cdot \vec{\delta x}^k = -\vec{F}(\vec{x}^{n+1,k})
 \end{equation} 
 
 Since the system of nonlinear equations being solved represents a transient simulation, the iterations at each timestep start with an initial guess for the new-time variables that is equal to the old-time variables, $\vec{x}^{n+1,0} = \vec{x}^{n}$.
@@ -620,17 +622,17 @@ The algorithm generalizes to a multi-stage temporal integration method by enclos
 \Require $\vec{x}^{0}$ and $t^{0}$
 \Set $n = 0$
 \Loop \; Transient Loop
-    \State $t^{n+1} : = t^{n} + \Delta t$
-    \State $k = 0$
-    \State $\vec{x}^{n+1,k} = \vec{x}^{n}$
+    \Set $t^{n+1} = t^{n} + \dt{}$
+    \Set $k = 0$
+    \Set $\vec{x}^{n+1,k} = \vec{x}^{n}$
     \Loop \; Newton Loop
 		\Calculate $\vec{F}(\vec{x}^{n+1,k})$ and $\vec{J}(\vec{x}^{n+1,k})$
 		\Calculate $\vec{\delta x}^k = - \vec{J}^{-1}\cdot\vec{F}$
 		\BlackBox $\vec{x}^{n+1,k+1}$
-		\State $k = k + 1$
+		\Set $k \pluseq 1$
 		\BlackBox Loop Termination Criteria
 	\EndLoop
-	\State $n = n + 1$
+	\Set $n \pluseq 1$
 \EndLoop
 \end{algorithmic}
 \caption{Local Newton's method for single-stage temporal integration.}
@@ -681,7 +683,7 @@ While the momentum conservation equations have the identity matrix, $\vec{I}$, f
     \Calculate $\vec{F}(\vec{x}^n)$ and $\vec{J}(\vec{x}^n)$
     \Calculate $\vec{\delta x} = -\vec{J}^{-1}\vec{F}$
     \Calculate $\vec{x}^{n+1} = \vec{x}^{n} + \vec{\delta x}$ 
-\EndLoop{\;$n = n+1$}
+\EndLoop{\;$n \pluseq n+1$}
 \end{algorithmic}
 \caption{Single-stage, fully explicit, single-shot linearization method.}
 \label{algo:explicit}
@@ -736,22 +738,20 @@ The computational implementation of a fully implicit method is presented in \alg
 \Require $\vec{x}^{0}$ and $t^{0}$
 \Set $n = 0$
 \Loop \; Transient Loop
-    \State $t^{n+1} : = t^{n} + \Delta t$
-    \For{$j = 1 \to 2$} \; Stage Loop
-    \State $k = 0$
-    \State $\vec{x}^{k} = \vec{x}^{n}$
+    \Set $t^{n+1} : = t^{n} + \Delta t$
+    \Set $k = 0$
+    \Set $\vec{x}^{k} = \vec{x}^{n}$
     \Loop \; Newton Loop
 		\Calculate $\vec{F}(\vec{x}^{k})$ and $\vec{J}(\vec{x}^{k})$
 		\Calculate $\vec{\delta x}^k = - \vec{J}^{-1}\cdot\vec{F}$
 		\BlackBox $\vec{x}^{k+1}$
-		\State $k = k + 1$
+		\Set $k \pluseq 1$
 		\BlackBox Loop Termination Criteria
 	\EndLoop	
-	\EndFor
-	\State $n = n + 1$
+	\Set $n \pluseq 1$
 \EndLoop
 \end{algorithmic}
-\caption{Fully implicit, two-stage, nonlinear-solver method.}
+\caption{Fully implicit nonlinear-solver method.}
 \label{algo:implicit}
 \end{algo}
 
@@ -779,14 +779,13 @@ The limit on timestep size is due to the explicit evaluation of the donored quan
 As stated, the flux of mass and energy include new-time velocities, $u^{n+1}_k$.
 Since \cobra{} uses momenta, $\dot{m}_{k}$, as independent parameters, the velocities are derived quantities, whose functional form is given in \eqref{eqn:si_vel}.
 The $\ave{\alpha_k \rho_k}^{n}_{a}$ represents the arithmetic average of macroscopic densities from adjoining continuity volumes.
+The averaging operator $\ave{a}^{n}_{\text{a}}$ is an extension of \eqref{eqn:upwind_donoring}.
 
 \begin{equation}
 \label{eqn:si_vel}
-u^{n+1}_{k, j \pm \onehalf} = \frac{\dot{m}^{n+1}_{k, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha_{k} \rho_{k}}^{n}_{a, j \pm \onehalf}} 
+u^{n+1}_{k, j \pm \onehalf} = \frac{\dot{m}^{n+1}_{k, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha_{k} \rho_{k}}^{n}_{\text{a}, j \pm \onehalf}} 
 \end{equation}
 
-The donoring operator $\don{a}^{n}_{d}$ is an extension of \eqref{eqn:upwind_donoring}.
-The donored quantities and the velocities used to determine the direction of donoring are evaluated with their old-time values.
 
 \alg{alg:si_legacy} shows the algorithm for solving the semi-implicit method.
 
@@ -796,11 +795,11 @@ The donored quantities and the velocities used to determine the direction of don
 \Require $\vec{x}^{0}$ and $t^{0}$
 \Set $n = 0$
 \Loop \; Transient Loop
-    \State $t^{n+1} : = t^{n} + \Delta t$
+    \Set $t^{n+1} : = t^{n} + \Delta t$
 	\Calculate $\vec{F}(\vec{x}^{n})$ and $\vec{J}(\vec{x}^{n})$
 	\BlackBox $\vec{\delta x} = - \vec{J}^{-1}\cdot\vec{F}$
 	\Calculate $\vec{x}^{n+1} = \vec{x}^{n} + \vec{\delta x}$
-	\State $n = n + 1$
+	\Set $n \pluseq 1$
 \EndLoop
 \end{algorithmic}
 \caption{\cobra{} Semi-Implicit method.}
@@ -843,7 +842,7 @@ For each stage the residual and Jacobian matrix will be denoted by $\vec{F}_k$ a
 \Require $\vec{x}^{0}$ and $t^{0}$
 \Set $n = 0$
 \Loop \; Transient Loop
-    \State $t^{n+1} : = t^{n} + \Delta t$
+    \Set $t^{n+1} : = t^{n} + \Delta t$
 	\Calculate $\vec{F}_1$ and $\vec{J}_1$
 	\Calculate $\vec{u}^{*}$ from $\vec{\delta u}^{*} = -\vec{J}^{-1}_1\vec{F}_1$
 	\Loop \; Newton Loop
@@ -853,7 +852,7 @@ For each stage the residual and Jacobian matrix will be denoted by $\vec{F}_k$ a
 		\BlackBox Loop Termination Criteria
 	\EndLoop
 	\Calculate $\vec{x}^{n+1}$ from $\vec{F}_3$.
-	\State $n = n + 1$
+	\Set $n \pluseq 1$
 \EndLoop
 \end{algorithmic}
 \caption{SETS method.}
@@ -909,13 +908,13 @@ In stage three, the nonlinear relation between the conserved quantities and the 
 \Require $\vec{x}^{0}$ and $t^{0}$
 \Set $n = 0$
 \Loop \; Transient Loop
-    \State $t^{n+1} : = t^{n} + \Delta t$
+    \Set $t^{n+1} : = t^{n} + \Delta t$
 	\Calculate $\vec{F}_1$ and $\vec{J}_1$
 	\Calculate $\vec{c}^{*}$ and $\vec{u}^{n+1}$ from $\vec{\delta x}^{*} = -\vec{J}^{-1}_1\vec{F}_1$
 	\Calculate $\vec{F}_2$
 	\Calculate $\vec{c}^{**}$ from $\vec{F}_2$
 	\Calculate $\vec{c}^{n+1}$ from $\vec{F}_3$.
-	\State $n = n + 1$
+	\Set $n \pluseq 1$
 \EndLoop
 \end{algorithmic}
 \caption{Nearly-Implicit method}
@@ -959,17 +958,17 @@ Upon forming the pressure matrix, the Newton update for the pressures will be ex
 
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:si_relap}
-\delta P^{n+1}_{k} = a_k & + & 
-\sum_{j = 1}^{N_c} b_{k,j}n_{g,j}^{n+1} +
-\sum_{j = 1}^{N_c} c_{k,j}u_{g,j}^{n+1} +
-\sum_{j = 1}^{N_c} d_{k,j}u_{f,j}^{n+1} +
-\sum_{j = 1}^{N_c} e_{k,j}m_{g,j}^{n+1} +
-\sum_{j = 1}^{N_c} f_{k,j}m_{f,j}^{n+1} \nonumber \\
-& + & \sum_{j = 1}^{N_c} g_{k,j}w_{g,j}^{n+1} +
-\sum_{j = 1}^{N_c} h_{k,j}w_{f,j}^{n+1}
+\delta P^{n+1}_{j} = a_j & + & 
+\sum_{i = 1}^{N_{\text{CPL}}} b_{j,i}n_{g,i}^{n+1} +
+\sum_{i = 1}^{N_{\text{CPL}}} c_{j,i}u_{g,i}^{n+1} +
+\sum_{i = 1}^{N_{\text{CPL}}} d_{j,i}u_{f,i}^{n+1} +
+\sum_{i = 1}^{N_{\text{CPL}}} e_{j,i}m_{g,i}^{n+1} +
+\sum_{i = 1}^{N_{\text{CPL}}} f_{j,i}m_{f,i}^{n+1} \nonumber \\
+& + & \sum_{i = 1}^{N_{\text{CPL}}} g_{j,i}w_{g,i}^{n+1} +
+\sum_{i = 1}^{N_{\text{CPL}}} h_{j,i}w_{f,i}^{n+1}
 \end{IEEEeqnarray}
 
-\eqref{eqn:si_relap} represents change in pressure in every volume in the computational domain as a linear combination of the fluxes of mass ($n_{g,j}^{n+1}$, $m_{g,j}^{n+1}$, and $m_{f,j}^{n+1}$), volume ($w_{f,j}^{n+1}$ and $w_{g,j}^{n+1}$), and internal energy ($u_{g,j}^{n+1}$ and $u_{f,j}^{n+1}$) through the $N_c$ coupled boundaries.
+\eqref{eqn:si_relap} represents change in pressure in every volume in the computational domain as a linear combination of the fluxes of mass ($n_{g,j}^{n+1}$, $m_{g,j}^{n+1}$, and $m_{f,j}^{n+1}$), volume ($w_{f,j}^{n+1}$ and $w_{g,j}^{n+1}$), and internal energy ($u_{g,j}^{n+1}$ and $u_{f,j}^{n+1}$) through the $N_\text{CPL}$ coupled boundaries.
 
 From the point-of-view of the slave process, the momentum volume between the master domain and the slave domain is a traditional momentum volume.
 Since the interface boundary between the master and salve domain is composed entirely of momentum volumes, the only implicit unknowns from the master domain used in the slave domain are the pressures from the coupled continuity volumes.
@@ -979,13 +978,13 @@ The pressure update for a given continuity volume at the boundary of the master 
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:pressure_coupled}
 \delta P^{n+1}_{\text{cbv}} = a_{\text{cbv}} & + & 
-\sum_{j = 1}^{N_c} b_{\text{cbv},j}\don{\alpha^n_g \rho^n_n}^{n}_{d} A_j v_{g,j}^{n+1} +
-\sum_{j = 1}^{N_c} c_{\text{cbv},j}\don{\alpha_g^n \rho_g^n u^n_g}_{d}^{n} A_j v_{g,j}^{n+1} \nonumber \\
-& + & \sum_{j = 1}^{N_c} d_{\text{cbv},j} \don{\alpha_f^n \rho_f^n u_f^n}_{d}^{n} A_j v_{f,j}^{n+1} +
-\sum_{j = 1}^{N_c} e_{\text{cbv},j} \don{\alpha_g^n \rho_g^n}_{d}^{n} A_j v_{g,j}^{n+1} \nonumber \\
-& + & \sum_{j = 1}^{N_c} f_{\text{cbv},j} \don{\alpha_f^n \rho_f^n}_{d}^{n} A_j v_{f,j}^{n+1} +
-\sum_{j = 1}^{N_c} g_{\text{cbv},j} \don{\alpha^n_g}_{d}^{n} A_j v_{g,j}^{n+1} \nonumber \\
-&+ & \sum_{j = 1}^{N_c} h_{\text{cbv},j} \don{\alpha_f^n}_{d}^{n} A_j v_{f,j}^{n+1}
+\sum_{i = 1}^{N_{\text{CPL}}} b_{\text{cbv},i}\don{\alpha^n_g \rho^n_n}^{n}_{\text{d}} A_i v_{g,i}^{n+1} +
+\sum_{i = 1}^{N_{\text{CPL}}} c_{\text{cbv},i}\don{\alpha_g^n \rho_g^n u^n_g}_{\text{d}}^{n} A_i v_{g,i}^{n+1} \nonumber \\
+& + & \sum_{i = 1}^{N_{\text{CPL}}} d_{\text{cbv},i} \don{\alpha_f^n \rho_f^n u_f^n}_{\text{d}}^{n} A_i v_{f,i}^{n+1} +
+\sum_{i = 1}^{N_{\text{CPL}}} e_{\text{cbv},i} \don{\alpha_g^n \rho_g^n}_{\text{d}}^{n} A_i v_{g,i}^{n+1} \nonumber \\
+& + & \sum_{i = 1}^{N_{\text{CPL}}} f_{\text{cbv},i} \don{\alpha_f^n \rho_f^n}_{\text{d}}^{n} A_i v_{f,i}^{n+1} +
+\sum_{i = 1}^{N_{\text{CPL}}} g_{\text{cbv},i} \don{\alpha^n_g}_{\text{d}}^{n} A_i v_{g,i}^{n+1} \nonumber \\
+&+ & \sum_{i = 1}^{N_{\text{CPL}}} h_{\text{cbv},i} \don{\alpha_f^n}_{\text{d}}^{n} A_i v_{f,i}^{n+1}
 \end{IEEEeqnarray}
 
 This formulation allows for the updated pressure in the master domain to be calculated within the slave domain without inter-software communication.
