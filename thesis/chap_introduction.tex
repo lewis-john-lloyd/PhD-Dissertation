@@ -230,7 +230,7 @@ In addition to the conservation of mass equations there are conservation of ener
 -\Gamma^{'''} h^{'}_l +  q^{'''}_{i,l} - q^{'''}_{n,l}  + q^{'''}_{w,l} + (1 - \alpha_g) \frac{\partial P}{\partial t} + s_{e,l}  & &
 \end{IEEEeqnarray}
 
-The conservation of energy equations used in this work are formulated such that the conserved quantities are the phasic enthalpies, $\alpha_k \rho_k h_k$.
+The conservation of energy equations used in this work are formulated such that the conserved quantities are the phasic enthalpies, $\alpha_{\phi} \rho_{\phi} h_{\phi}$, where $\phi$ represents either either the gaseous or the liquid phase.
 Under the assumption of thermodynamic equilibrium for the two liquid fields, there is a single liquid enthalpy for the two fields.
 The gaseous phasic enthalpy, however, is defined according to \eqref{eqn:gaseous_enthalpy}.
 
@@ -243,12 +243,12 @@ The various terms on the right hand sides of \eqref{eqn:con_energy_gas} and \eqr
 
 \begin{itemize}
 \item{
-$\Gamma^{'''} h^{'}_k$:
+$\Gamma^{'''} h^{'}_{\phi}$:
  energy transfer due to the phase change of water.
- The effective enthalpies, $h^{'}_k$, are dependent upon the mechanism of phase change.
+ The effective enthalpies, $h^{'}_{\phi}$, are dependent upon the mechanism of phase change.
 }
 \item{
-$q^{'''}_{i,k}$:
+$q^{'''}_{i,\phi}$:
 energy transfer between the liquid and vapor fields and the saturated interface.
 }
 \item{
@@ -256,17 +256,17 @@ $q^{'''}_{n,l}$:
 energy transfer between the liquid fields and the \ncgs{}.
 }
 \item{
-$q^{'''}_{w,k}$:
+$q^{'''}_{w,\phi}$:
  energy transfer between the solid-structures and a given phase.
 }
 \item{
-$\alpha_k \frac{\partial P}{\partial t}$:
- pressure work done by a given phase $k$.
+$\alpha_{\phi} \frac{\partial P}{\partial t}$:
+ pressure work done by a given phase $\phi$.
  The liquid volume fraction is the sum of the volume fractions of the continuous and the entrained liquid fields.
 }
 \item{
-$s_{e,k}$:
- external source/sink of energy for a given field $k$.
+$s_{e,\phi}$:
+ external source/sink of energy for a given field $\phi$.
 }
 \end{itemize}
 
@@ -305,20 +305,20 @@ The various terms in \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent} are desc
 
 \begin{itemize}
 \item{
-$\alpha_k \nabla P$:
-pressure gradient acting on field $k$.
+$\alpha_{\phi} \nabla P$:
+pressure gradient acting on field $\phi$.
 }
 \item{
-$\alpha_k \rho_k \vec{g}$:
-gravity body force acting upon field $k$.
+$\alpha_{\phi} \rho_{\phi} \vec{g}$:
+gravity body force acting upon field $\phi$.
 }
 \item{
-$\vec{\tau}^{'}_{w,k}$:
- shear forces from contact between field $k$ and the channel walls. 
+$\vec{\tau}^{'}_{w,\phi}$:
+ shear forces from contact between field $\phi$ and the channel walls. 
 }
 \item{
-$\vec{\tau}^{'}_{i,k_1\,k_2}$:
- shear forces from the interface between fields $k_1$ and $k_2$. 
+$\vec{\tau}^{'}_{i,\phi_1\,\phi_2}$:
+ shear forces from the interface between fields $\phi_1$ and $\phi_2$. 
 }
 \item{
 $\Gamma^{'''}\vec{u}^{'}$:
@@ -331,8 +331,8 @@ $S^{'''}\vec{u}^{'}$:
  The $\vec{u}^{'}$ term depends upon the net inter-field transfer of mass.
 }
 \item{
-$s_{p,k}$:
- external sources/sinks of momentum for field $k$.
+$s_{p,\phi}$:
+ external sources/sinks of momentum for field $\phi$.
 }
 \end{itemize}
 
@@ -412,7 +412,7 @@ For illustrative purposes, \eqref{eqn:conservation_of_liq} will be integrated ov
 \end{figure}
 
 For the mass-flux terms evaluated on the continuity volume edge, the advected quantity is evaluated using a 1st order upwind method \cite{Tannehill1997}.
-The velocity and cross-sectional area utilized in the continuity flux terms, $u_j$ and $A_{m,j}$, have the values defined in the momentum volume that aligns with the boundary of continuity volumes.
+The velocity and cross-sectional area utilized in the continuity flux terms, $u_{j \pm \onehalf}$ and $A_{m,j \pm \onehalf}$, have the values defined in the momentum volume that aligns with the boundary of continuity volumes.
 The sign of the velocity at the volume boundary determines the value of the donored quantity, $\don{a}_{\text{d},j \pm \onehalf}$.
 A generic formulation for this scheme is given by \eqref{eqn:upwind_donoring}.
 The same general procedure is used for the other five scalar conservation equations.
@@ -437,7 +437,7 @@ The momentum flux terms, \eqref{eqn:momentum_flux_terms}, are treated similarly 
 
 \begin{equation}
 \label{eqn:momentum_flux_terms}
--\left[<\alpha_l \rho_l u_l>_{d} u_l \tilde{A}\right]_{x_{j }}^{x_{j + 1}}
+-\left[\don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a},l} \tilde{A}\right]_{x_{j }}^{x_{j + 1}}
 \end{equation}
 
 There are two primary differences.
@@ -448,22 +448,22 @@ First, the area in the flux term, $\tilde{A}$, is taken as the minimum of two ar
 \tilde{A}_{j} = \min\left(A_{m,j - \onehalf}, A_{m,j+\onehalf}\right)
 \end{equation}
 
-Second, the velocity that is used to determine the donored quantities is the arithmetic mean of the velocities from the two adjacent momentum volumes, \eqref{eqn:average_advecting_vel}.
+Second, the phasic velocity that is used to determine the donored quantities is the arithmetic mean of the velocities from the two adjacent momentum volumes, \eqref{eqn:average_advecting_vel}.
 
 \begin{equation}
 \label{eqn:average_advecting_vel}
-u_{k,j} = \frac{1}{2}\left(u_{k,j - \onehalf} + u_{k, j+ \onehalf}\right)
+\ave{u}_{\text{a},\phi, j} = \frac{u_{\phi, j - \onehalf} + u_{\phi, j+ \onehalf}}{2}
 \end{equation}
 
 The ordering of the governing equations within a given continuity volumes is as follows:
 
 \begin{enumerate}
 \item{Conservation of the \ncg{} field mass.}
-\item{Conservation of the vapor field mass.}
+\item{Conservation of the continuous liquid field mass.}
 \item{Conservation of the gaseous phase energy.}
 \item{Conservation of the liquid phase energy.}
 \item{Conservation of the entrained liquid field mass.}
-\item{Conservation of the continuous liquid field mass.}
+\item{Conservation of the vapor field mass.}
 \end{enumerate}
 
 The conservation of momentum equations within a given momentum volume are ordered as follows:
@@ -497,21 +497,22 @@ The choice of the nine variables that will be solved for is another distinguishi
 \vec{x} = [\alpha_{g}P_{n}, \alpha_g, \alpha_g h_v, (1 - \alpha_g) h_l, \alpha_e, P, \dot{m}_g, \dot{m}_l, \dot{m}_e]^{T}
 \end{equation}
 
-The definition of the conserved momentum quantity, $\dot{m}_k$, is given by \eqref{eqn:mom_dot}.
+The definition of the conserved momentum quantity for a given phase, $\dot{m}_{\phi}$, is given by \eqref{eqn:mom_dot}.
 
 \begin{equation}
 \label{eqn:mom_dot}
-\dot{m}_{k} = \ave{\alpha_k \rho_k}_{\text{a}} u_{k} A_{m}
+\dot{m}_{\phi} = \ave{\alpha_{\phi} \rho_{\phi}}_{\text{a}} u_{\phi} A_{m}
 \end{equation}
 
-The averaging operator $\ave{a}_{a}$ provides the average of a quantity from the two adjoining continuity volumes, \eqref{eqn:average_val}.
+The averaging operator $\ave{a}_{\text{a}}$ provides the average of a quantity from the two adjoining continuity volumes, \eqref{eqn:average_val}.
 
 \begin{equation}
 \label{eqn:average_val}
-\ave{a}_{a,j + \onehalf} = \frac{a_{j} + a_{j+1}}{2}
+\ave{a}_{\text{a},j + \onehalf} = \frac{a_{j} + a_{j+1}}{2}
 \end{equation}
 
 The choice of independent parameters used in \cobra{} is not the only option.
+The use of the momenta and phasic enthalpies, such as $\alpha_g h_v$, as independent parameters represents.
 Other software, such as TRACE and \relap53d{}, use variants of these parameters.
 These variations include the use of velocities instead of momenta and temperatures or internal energies instead of enthalpies \cite{RELAP, TRACE}.
 
@@ -521,7 +522,7 @@ The other option, the non-conservative form, is to expand analytically the tempo
 
 \begin{equation}
 \label{eqn:non_conservative}
-\frac{\partial \alpha_k \rho_k u_k}{\partial t} = \alpha_k \rho_k \frac{\partial u_k}{\partial t} + u_k \frac{\partial \alpha_k \rho_k}{\partial t}
+\frac{\partial \alpha_{\phi} \rho_{\phi} u_{\phi}}{\partial t} = \alpha_{\phi} \rho_{\phi} \frac{\partial u_{\phi}}{\partial t} + u_k \frac{\partial \alpha_{\phi} \rho_{\phi}}{\partial t}
 \end{equation}
 
 Within \cobra{} the temporal derivative is approximated by a one-step difference scheme where the continuous time variables are now evaluated at discrete points, $t^0, t^1, \ldots, t^N$.
@@ -583,7 +584,7 @@ The semi-discrete formulation, \eqref{eqn:simple_partial_t}, is expressed as a f
 
 The temporal integration method used has an associated temporal accuracy that depends upon the approximation of $\vec{E}^{*}$ and the number of stages. 
 The temporal accuracy is a way of quantifying the behavior of the solution as the timestep is reduced.
-Order of accuracy estimates for temporal integration techniques are proportionality statements between the numerical error and a power of the timestep, $\mathcal{O}(\Delta t^k)$ \cite{LeVeque2007}. 
+Order of accuracy estimates for temporal integration techniques are proportionality statements between the numerical error and a power of the timestep, $\mathcal{O}(\dt{}^{p})$ \cite{LeVeque2007}. 
 However, it has been shown that if the nonlinear problem, \eqref{eqn:nonlinear_residuals}, is not solved at every timestep, the temporal accuracy of a method can be degraded \cite{Knoll2001, Mahaffy1993}.
 
 %-------------------------------------------------------------------------------
@@ -690,23 +691,23 @@ While the momentum conservation equations have the identity matrix, $\vec{I}$, f
 \end{algo}
 
 While this particular method is the least computationally expensive on a per timestep basis, it has a severe weakness.
-That weakness is the Courant-Friedrichs-Lewy (CFL) limit imposed upon the timestep size, $\Delta t$.
+That weakness is the Courant-Friedrichs-Lewy (CFL) limit imposed upon the timestep size, $\dt{}$.
 The CFL limit is a relationship between the spatial and temporal discretization and the characteristic velocities of information propagation in the problem of interest \cite{LeVeque2007, Tannehill1997}.
 For the case of \eqref{eqn:explicit}, the CFL limit is given in \eqref{eqn:cfl_explicit}.
 
 \begin{equation}
 \label{eqn:cfl_explicit}
-\Delta t_j \lesssim \frac{\Delta x_j}{|u_j|+|c_j|}
+\dt{}_j \lesssim \frac{\dx{}_j}{|u_{\phi,j}|+|c_j|}
 \end{equation}
 
 In \eqref{eqn:cfl_explicit}, $c_j$ and $u_j$ are the speed of sound and the magnitude of a given phasic velocity, respectively, at a given location within the domain.
-Using the local fluid conditions, $\Delta t_j$ is calculated at every point within the domain.
-The $\Delta t$ chosen for the $t^{n} \rightarrow t^{n+1}$ timestep is the most restrictive calculated value over the domain.
+Using the local fluid conditions, $\dt{}_j$ is calculated at every point within the domain.
+The $\dt{}$ chosen for the $t^{n} \rightarrow t^{n+1}$ timestep is the most restrictive calculated value over the domain.
 While the explicit method may provide the lowest computational cost on a per-timestep basis, the number of timesteps required for a given problem will be much greater due to this restrictive CFL limitation.
 
 \begin{equation}
 \label{eqn:global_cfl}
-\Delta t = \min_{j \in \Omega} \Delta t_j
+\dt{} = \min_{j \in \Omega} \dt{}_j
 \end{equation}
 
 Put another way, the maximum permissible timestep size is determined by the most restrictive CFL limit within the domain.
@@ -770,22 +771,21 @@ In this method the Courant limit is given by \eqref{eqn:si_cfl}.
 
 \begin{equation}
 \label{eqn:si_cfl}
-\Delta t_j \lesssim \frac{\Delta x_j}{|u_{k,j}|}
+\dt{}_j \lesssim \frac{\dx{}_j}{|u_{\phi,j}|}
 \end{equation}
 
 The characteristic velocity used in the calculation of the Courant limit is based on the phasic velocity only.
 This allows for larger, but still limited, timestep sizes than the explicit method.
 The limit on timestep size is due to the explicit evaluation of the donored quantities in the flux terms in the conservation equations.
-As stated, the flux of mass and energy include new-time velocities, $u^{n+1}_k$.
-Since \cobra{} uses momenta, $\dot{m}_{k}$, as independent parameters, the velocities are derived quantities, whose functional form is given in \eqref{eqn:si_vel}.
-The $\ave{\alpha_k \rho_k}^{n}_{a}$ represents the arithmetic average of macroscopic densities from adjoining continuity volumes.
+As stated, the flux of mass and energy include new-time velocities, $u^{n+1}_{\phi}$.
+Since \cobra{} uses momenta, $\dot{m}_{\phi}$, as independent parameters, the velocities are derived quantities, whose functional form is given in \eqref{eqn:si_vel}.
+The $\ave{\alpha_{\phi} \rho_{\phi}}^{n}_{\text{a}}$ represents the arithmetic average of macroscopic densities from adjoining continuity volumes.
 The averaging operator $\ave{a}^{n}_{\text{a}}$ is an extension of \eqref{eqn:upwind_donoring}.
 
 \begin{equation}
 \label{eqn:si_vel}
-u^{n+1}_{k, j \pm \onehalf} = \frac{\dot{m}^{n+1}_{k, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha_{k} \rho_{k}}^{n}_{\text{a}, j \pm \onehalf}} 
+u^{n+1}_{\phi, j \pm \onehalf} = \frac{\dot{m}^{n+1}_{\phi, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha_{\phi} \rho_{\phi}}^{n}_{\text{a}, j \pm \onehalf}} 
 \end{equation}
-
 
 \alg{alg:si_legacy} shows the algorithm for solving the semi-implicit method.
 
@@ -876,14 +876,14 @@ The energy temporal derivatives are similarly expanded.
 
 \begin{equation}
 \label{eqn:ni_dt}
-\frac{\partial \alpha_k \rho_k}{\partial t} = \alpha_k \frac{\partial \rho_k}{\partial t} + \rho_k \frac{\partial \alpha_k}{\partial t}
+\frac{\partial \alpha_{\phi} \rho_{\phi}}{\partial t} = \alpha_{\phi} \frac{\partial \rho_{\phi}}{\partial t} + \rho_{\phi} \frac{\partial \alpha_{\phi}}{\partial t}
 \end{equation}
 
 The temporal discretization of \eqref{eqn:ni_dt} is given by \eqref{eqn:ni_dis_dt}.
 
 \begin{equation}
 \label{eqn:ni_dis_dt}
-\alpha_k \frac{\partial \rho_k}{\partial t} + \rho_k \frac{\partial \alpha_k}{\partial t} = \alpha^n_k\frac{ \rho^{n+1}_k - \rho^{n}_k}{\Delta t} + \rho^{n}_k\frac{\alpha^{n+1}_k - \alpha^{n}_k}{\Delta t}
+\alpha_{\phi} \frac{\partial \rho_{\phi}}{\partial t} + \rho_{\phi} \frac{\partial \alpha_{\phi}}{\partial t} = \alpha^{n}_{\phi} \frac{ \rho^{n+1}_{\phi} - \rho^{n}_{\phi}}{\dt{}} + \rho^{n}_{\phi} \frac{\alpha^{n+1}_{\phi} - \alpha^{n}_{\phi} }{\dt}
 \end{equation}
 
 The momentum equations are implicit in their momentum flux, pressure, and interfacial exchange terms.

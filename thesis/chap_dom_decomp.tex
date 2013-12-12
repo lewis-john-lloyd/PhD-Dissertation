@@ -508,6 +508,26 @@ First, the input file is parsed to determine which channels are in the nonlinear
 The entire domain is traversed to determine which volumes are in the nonlinear domain and which volumes are in the linear domain.
 A single timestep is now broken into two parts, the linear part and the nonlinear part.
 At the beginning of a timestep, the entire domain is traversed to assemble the pressure matrices for both the linear and the nonlinear.
+Each continuity volume within the linear domain that connects to the nonlinear domain is treated slightly differently.
+The flux terms from the equations are not included in the residual.
+The derivatives of those flux terms are also not included in the linear system.
+This changes the size of $\vec{C}_{j}$ by removing one of the entries.
+Additionally, the derivatives of the flux terms with respect to themselves, the identify matrix $\vec{I}$, is added to the linear system.
+If a linear continuity volume is attached through more than one surface to the nonlinear domain, then there will be multiple identity matrices in the continuity volume's linear system.
+The resulting system will be subjected to the same LU decomposition as outlined for a regular volume.
+The last equation with the additional right hand sides will be assembled into the linear domains pressure matrix.
+The linear system for the linear domain is inverted by the chosen solver.
+The additional coefficients represent the coefficients for the boundary flux between the linear and the nonlinear domain.
+After the inversion of the pressure matrix, then coefficients for the nonlinear boundary volumes are collected into the nonlinear boundary volumes for ease of manipulation later.
+This is shown in an algorithm \comment{I AM THE ALGORITHM}.
+Now that the coefficients have been collected and the linear domain has been inverted, the additional entries in the nonlinear pressure matrix that represent the boundary pressures are populated.
+This population is acompolished by looping over all the nonlinear boundary volumes.
+For each nonlinear boundary volume  has a pressure equation aassocaited with it.
+Due to the inversion of the linear domain's pressure matrix, the pressure of each nonlinear boundary volumes now has a dependence upon all other nonlinear boundary volumes and the nonlinear volumes to which they attach.
+This creates a second loop inside of the outer loop that loiops over all the nonlinear boundary volumes agttain.
+Within this loop there is a third loop that goes over all of the interfaces that that volume has with the nonlinear domain.
+This is a system of three nested loops.
+The inner nonlinear boundary volume loop calculates the dfluxdp with comparison to 
 After this, the linear pressure matrix with the additional right hand sides is inverted.
 Once the linear pressure matrix is inverted, the coefficients for the nonlinear boundary volumes are collected via \alg{alg:domDecompGetCoef}.
 
