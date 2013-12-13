@@ -1,0 +1,36 @@
+\begin{tikzpicture}
+
+\begin{class}[text width=6cm]{baseVolume}{-4,0}
+	\attribute{+ solver : ptr, solver}
+	\attribute{+ ord : int}
+	\attribute{+ num\_cons : int}
+	\attribute{+ cons : int}
+	\attribute{+ con\_type : int(:)}
+	\attribute{+ con\_ord : int(:)}
+	\attribute{+ gap\_ord : int(:)}
+	\attribute{+ b\_ords : int(:)}
+	\attribute{+ con\_coords : int(:,:)}
+	\attribute{+ fp\_coords : int(:,:)}
+	\attribute{+ con\_sig : real(:)}
+	\attribute{+ b : int(:,:)}
+	\attribute{+ jac : int(:,:)}
+\end{class}
+
+\begin{class}[text width=7cm]{nbcVolume}{4,0}
+	\inherit{baseVolume}
+	\attribute{+ nln\_solver : ptr, solver }
+	\attribute{+ dp : real}
+	\attribute{+ coef\_mat : real(:,:)}
+	\attribute{+ flux : real(:,:)}
+	\attribute{+ dflux\_dp : real(:,:)}
+	\attribute{+ donored\_values : real(:,:)}
+	\attribute{+ nbc\_cons : int}
+	\attribute{+ nln\_ord\_by\_local\_nbc\_ord : int(:)}
+	\attribute{+ nbc\_con\_ord : int(:)}
+	\attribute{+ nbc\_con\_map : int(:)}
+	\attribute{+ nbc\_ords : int(:)}
+	\attribute{+ coords : int(:)}
+	\attribute{+ nbc\_coords : int(:,:)}
+\end{class}
+
+\end{tikzpicture}

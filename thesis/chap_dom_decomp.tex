@@ -313,15 +313,12 @@ This is annoying as crap to describe.
 I will give it a shot in words.
 }
 
-\begin{figure}[ht]
+\begin{figure}[ht!]
 \centering
 \input{images/isoparametric_volume}
 \caption{A single continuity volume.}
 \label{fig:single3dvol}
 \end{figure}
-
-
-
 
 The procedures that were written to determine which continuity volumes were active and which were inactive were modified to separate the domain in two: a liner and a nonlinear domain.
 
@@ -396,7 +393,8 @@ In order to active the spatially selective nonlinear solver, the nonlinear solve
 The software needs to know which channels are going to be in the nonlinear domain.
 As mentioned elsewhere \comment{maybe} the basic unit of domain decomposition is the channel.
 Each channel has a user-specified ID.
-The nonlinear input file described \comment{here} has the following appended to it:
+The nonlinear input file described \sect{subsect:nlnCobraInputFile} has the following appended to it:
+
 {
 \singlespace
 \begin{verbatim}
@@ -409,6 +407,7 @@ The nonlinear input file described \comment{here} has the following appended to 
 'end-nln-channels'
 \end{verbatim}
 }
+
 Where <chanID\_N> is the channel ID that will be included in the nonlinear domain.
 There are no requirements that the channels specified to be nonlinear form a contiguous domain.
 This input file specifies the channel id which will be subject to multiple Newton iterates.
@@ -463,7 +462,7 @@ There are three concrete classes that correspond to the three supported solvers:
 \classname{superluMatrix} and \classname{pardisoMatrix} are concrete classes inheriting from \classname{sparseMatrix} that implement the matrix storage schemes for their respective solvers.
 \fig{fig:matrixClassDiagram} shows the class diagram for the \classname{matrix} ecosystem.
 
-\begin{figure}[h!t]
+\begin{figure}[ht!]
 \singlespace\centering
 \input{images/solverClassDiagram}
 \caption{Solver Class Diagram}
@@ -493,10 +492,22 @@ By abstracting the matrices and solvers in this way, a consistent interface is p
 \subsection{Volume Data Structures}
 \label{subsect:domDecompVolumeStructs}
 
+Given that the domain was now being broken into two units, the original memory storage for volumes became cumbersome.
+It was determined that the path forward would embrace the object-oriented lifestyle.
+For the reasons outlined in the solver section.
+\comment{here be a reference, arggh!}
+There are two types of volumes: those that inhabit a single domain and those which are in the linear domain but have a flowpath connecting the to nonlinear domain.
+The following structure was developed.
+Here we go.
 Since there are two domains now, they need to distinguished.
 The method for determining this was objects.
 
-
+\begin{figure}[ht!]
+\singlespace\centering
+\input{images/volumeClassDiagram}
+\caption{Volume Class Diagram}
+\label{fig:volumeClassDiagram}
+\end{figure}
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -519,19 +530,9 @@ The last equation with the additional right hand sides will be assembled into th
 The linear system for the linear domain is inverted by the chosen solver.
 The additional coefficients represent the coefficients for the boundary flux between the linear and the nonlinear domain.
 After the inversion of the pressure matrix, then coefficients for the nonlinear boundary volumes are collected into the nonlinear boundary volumes for ease of manipulation later.
-This is shown in an algorithm \comment{I AM THE ALGORITHM}.
-Now that the coefficients have been collected and the linear domain has been inverted, the additional entries in the nonlinear pressure matrix that represent the boundary pressures are populated.
-This population is acompolished by looping over all the nonlinear boundary volumes.
-For each nonlinear boundary volume  has a pressure equation aassocaited with it.
-Due to the inversion of the linear domain's pressure matrix, the pressure of each nonlinear boundary volumes now has a dependence upon all other nonlinear boundary volumes and the nonlinear volumes to which they attach.
-This creates a second loop inside of the outer loop that loiops over all the nonlinear boundary volumes agttain.
-Within this loop there is a third loop that goes over all of the interfaces that that volume has with the nonlinear domain.
-This is a system of three nested loops.
-The inner nonlinear boundary volume loop calculates the dfluxdp with comparison to 
-After this, the linear pressure matrix with the additional right hand sides is inverted.
-Once the linear pressure matrix is inverted, the coefficients for the nonlinear boundary volumes are collected via \alg{alg:domDecompGetCoef}.
+This is shown in \alg{alg:domDecompGetCoef}.
 
-\begin{algo}[h!t]
+\begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Set x = 2
@@ -540,8 +541,18 @@ Once the linear pressure matrix is inverted, the coefficients for the nonlinear 
 \label{alg:domDecompGetCoef}
 \end{algo}
 
+Now that the coefficients have been collected and the linear domain has been inverted, the additional entries in the nonlinear pressure matrix that represent the boundary pressures are populated.
+This population is accomplished by looping over all the nonlinear boundary volumes.
+For each nonlinear boundary volume  has a pressure equation associated with it.
+Due to the inversion of the linear domain's pressure matrix, the pressure of each nonlinear boundary volumes now has a dependence upon all other nonlinear boundary volumes and the nonlinear volumes to which they attach.
+This creates a second loop inside of the outer loop that loops over all the nonlinear boundary volumes again.
+Within this loop there is a third loop that goes over all of the interfaces that that volume has with the nonlinear domain.
+This is a system of three nested loops.
+The inner nonlinear boundary volume loop calculates the dfluxdp with comparison to 
+After this, the linear pressure matrix with the additional right hand sides is inverted.
+Once the linear pressure matrix is inverted, the coefficients for the nonlinear boundary volumes are collected via \alg{alg:domDecompGetCoef}.
 
-\begin{algo}[h!t]
+\begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Require $\vec{x}^{0}$ and $t^{0}$
