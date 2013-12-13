@@ -258,16 +258,17 @@ In \cobra{} the smallest geometric component that can be input is the channel.
 As mentioned in \sect{sect:geometry} channels inherit their geometric properties from the section in which they reside.
 To create geometrically complicated problems, it is possible to enforce zero momentum in a given momentum volume, decoupling adjacent continuity volumes by eliminating the flow-paths that connect them.
 This constraint is known as a no-flow boundary condition, and it allowed users to create more complicated models by isolating portions of the domain.
-\comment{Here is where I am trying to explain what isolated domains mean.}
-If an area that is isolated and is not connected to a different boundary condition, then it is known as an inactive region.
+If an isolated domain is not connected to an external boundary condition, then it is marked as an inactive region.
 The inactive regions are thermodynamically isolated and form a closed system.
 These areas of the domain do not impact the solution in the portion of the domain that has boundary values, known as the active region.
 After evaluating several prototypical models, it was determined that a large portion of the domain of these problems were thermodynamically isolable.
 \fig{fig:activeDomain} shows an example of a domain with inactive regions.
+The inactive portions of the domain are marked with grey, the active with white, and the external boundary conditions with black.
+Inter-channel flowpaths are marked with dashed lines.
 
 \begin{figure}[h!t]
 \centering
-There will be a picture of active vs inactive domains here.
+\input{images/active_inactive}
 \caption{A Domain with Inactive Regions}
 \label{fig:activeDomain}
 \end{figure}
@@ -414,13 +415,13 @@ However, if the Newton loop is terminated, then there are changes that were made
 \section{Operator-Based Scaling}
 \label{sect:nlnScaling}
 
-\comment{here is where I need to reference Frepoli's paper.}
 An important aspect of the nonlinear solver outlined in \sect{sect:nlnCobraSolver} is the convergence criteria.
 As part of this work a novel operator based scaling has been developed to obtain meaningful convergence thresholds.
 The iterative solver depends upon the scaled residual to help determine when convergence has been achieved.
 In particular, various norms of the residual vector are evaluated to measure the degree to which the nonlinear system of algebraic equations are being satisfied.
 The evaluation of residual norms necessitates the use of a scaling matrix for the residual vector.
 
+\comment{Somewhere in here is where I need to reference Frepoli's paper.}
 Without proper scaling the residual has several negative characteristics.
 The different conservation equations will have different orders of magnitude at a given point in time because of the physical quantities that they represent.
 Over the course of the transient the phasic composition of a volume can vary dramatically as phases appear and disappear.
