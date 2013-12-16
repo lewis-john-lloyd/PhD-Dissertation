@@ -141,12 +141,12 @@ The linear system from \sect{sect:linCobraAlg}, \eqref{eqn:linSystem}, is modifi
 For the $N_{f}$ flowpaths connecting the boundary volume to the linear domain, there will be entries in the $\vec{K}_{c, j}$ matrix that correspond to the inter-continuity volume pressure coupling due to the momentum equations.
 In addition there will now be $N_{\text{NBC}}$ identity matrices corresponding to the linear-nonlinear boundaries associated with the given continuity volume.
 The identity matrices are produced by taking the derivatives of \eqref{eqn:nbcNcgMassEquation} -- \eqref{eqn:nbcVapMassEquation} with respect to the inter-domain flowrates, $\vec{\Psi}_{p}$.
-The collection of these identity matrices is known as $\vec{P}$.
+The collection of these identity matrices is known as $\vec{Q}$.
 The resulting system is given by \eqref{eqn:nbcLinSystem}, where $N_{t} = 6 \left( 1 + N_{\text{NBC}}\right) + N_{f}$.
 
 \begin{equation}
 \label{eqn:nbcLinSystem}
-\left[\right.\underbrace{\vec{Z}_{c, j}}_{6\, \text{x}\, N_{t}}\left.\right] \delta \vec{C}_{j} = \left[\right.\underbrace{\vec{J}_{c, j}}_{6\, \text{x}\, 6}|\underbrace{\vec{K}_{c, j}}_{6\, \text{x}\, N_{f}}|{\underbrace{\vec{P}_{c, j}}_{6\, \text{x}\, 6 N_{\text{NBC}}}}\left.\right]\delta \vec{C}_{j} = \vec{r}_{c,j}
+\left[\right.\underbrace{\vec{Z}_{c, j}}_{6\, \text{x}\, N_{t}}\left.\right] \delta \vec{C}_{j} = \left[\right.\underbrace{\vec{J}_{c, j}}_{6\, \text{x}\, 6}|\underbrace{\vec{K}_{c, j}}_{6\, \text{x}\, N_{f}}|{\underbrace{\vec{Q}_{c, j}}_{6\, \text{x}\, 6 N_{\text{NBC}}}}\left.\right]\delta \vec{C}_{j} = \vec{r}_{c,j}
 \end{equation}
 
 The linear system for the boundary volume is then subjected to partial LU decomposition without pivoting.
@@ -177,63 +177,14 @@ For each nonlinear boundary volume, there will be an additional row in the nonli
 The final nonlinear pressure matrix will have $N_{\text{nln}} + N_{n}$ equations and unknowns.
 This matrix is then inverted to obtain the tentative new-time values for the nonlinear domain.
 The nonlinear domain is then subjected to multiple Newton iterates as outlined in \sect{sect:nlnCobraSolver}.
-The norms used for convergence determination are the norms of the nonlinear domain only.
-This is
+The norms used for convergence determination are formulated from the residuals and updates from the nonlinear domain only.
 
-The following procedure will show the development of a single domain newton step.
+Upon completion of the Newton iterations for the nonlinear domain, the linear domain is then subjected to the update.
+All pressure updates are functions of the inter-domain flowrates, which are now known.
+These flowrates are used to obtain the correct pressure updates.
+Once those pressure updates are obtained, the entire linear domain is looped over, where the linear updates are obtained.
+The completion of the linear update marks the completion of a single time-step.
 
-
-The procedures that were written to determine which continuity volumes were active and which were inactive were modified to separate the domain in two: a liner and a nonlinear domain.
-
-When formulating the governing equations, the fluxes between the linear and nonlinear domains are treated as additional nonlinear variables.
-When the linear domain is formulated, these flux terms are treated as variational parameters within the continuity volumes in the linear domain that lie on the boundary of the nonlinear domain.
-Take for example a continuity volume with only two flowpaths connected to it.
-One flow path is connected to another continuity volume within the linear domain.
-The other flow path is connected to a continuity volume that resides within the nonlinear domain.
-When the Jacobian for these continuity volumes are taken, derivatives with respect to the flux terms are included.
-Since the flux terms are single terms in the equations, their derivatives are the identity matrix.
-The regular Jacobian is a six by six matrix.
-With the single linear connection, there is now an additional columns representing the change in the continuity equations with respect to the momenta the linear volume edge, \eqref{eqn:flux_matrix}.
-This matrix is eliminated through the use of \eqref{eqn:momStar}.
-The final system of equations for a given nonlinear boundary volume is a six by six + 1 * number of linear connections + 6 * number of nonlinear boundary connections.
-In this example the final size of the matrix will be 6 x 13.
-\begin{equation}
-\vec{J}|\vec{C}|\vec{I} = -(\vec{F} + \vec{\Psi})
-\end{equation}
-The six for the number of nonlinear boundary connections is equivalent to the flux of masses and energies.
-The residual for the nonlinear boundary volume does not include the flux into the nonlinear domain.
-This is omitted at this step to enable simpler algebra later.
-This system is then reduced in-place to the upper-triangular rectangular form. 
-
-\begin{equation}
-\vec{U}|\vec{L}^{-1}\vec{C}|\vec{L}^{-1} = -\vec{L}^{-1}(\vec{F} + \vec{\Psi})
-\end{equation}
-
-The last equation in this row is then normalized by its diagonal entry.
-
-\begin{equation}
-\vec{U}|\vec{L}^{-1}\vec{C}|\vec{L}^{-1} = -\vec{L}^{-1}(\vec{F} + \vec{\Psi})
-\end{equation}
-
-The Jacobian for each entry is then stored for later use.
-
-
-After the solution in the nonlinear domain has been obtained, a loop over all continuity volumes in the linear domain is performed to obtain the new time values for the continuity volumes.
-Each continuity volumes has 
-
-\begin{equation}
-\label{eqn:jacobianWithFluxTerms}
-\vec{J}_{c,j} = 
-\begin{bmatrix}
-\frac{\partial F_{m,n}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,n}}{\partial \alpha_g } & \frac{\partial F_{m,n}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,n}}{\partial ((1.0 - \alpha_g) h_l) } & \frac{\partial F_{m,n}}{\partial \alpha_e } & \frac{\partial F_{m,n}}{\partial P } \\
-\frac{\partial F_{m,l}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,l}}{\partial \alpha_g } & \frac{\partial F_{m,l}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,l}}{\partial ((1.0 - \alpha_g) h_l)} &\frac{\partial F_{m,l}}{\partial \alpha_e } & \frac{\partial F_{m,l}}{\partial P } \\
-\frac{\partial F_{e,g}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{e,g}}{\partial \alpha_g } & \frac{\partial F_{e,g}}{\partial (\alpha_g h_v)} & \frac{\partial F_{e,g}}{\partial ((1.0 - \alpha_g) h_l)} &\frac{\partial F_{e,g}}{\partial \alpha_e } & \frac{\partial F_{e,l}}{\partial P } \\
-\frac{\partial F_{e,l}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{e,l}}{\partial \alpha_g } & \frac{\partial F_{e,l}}{\partial (\alpha_g h_v)} & \frac{\partial F_{e,l}}{\partial ((1.0 - \alpha_g) h_l)} &\frac{\partial F_{e,l}}{\partial \alpha_e } & \frac{\partial F_{e,g}}{\partial P } \\
-\frac{\partial F_{m,e}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,e}}{\partial \alpha_g } & \frac{\partial F_{m,e}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,e}}{\partial ((1.0 - \alpha_g) h_l)} &\frac{\partial F_{m,e}}{\partial \alpha_e } & \frac{\partial F_{m,e}}{\partial P } \\
-\frac{\partial F_{m,v}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,v}}{\partial \alpha_g } & \frac{\partial F_{m,v}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,v}}{\partial ((1.0 - \alpha_g) h_l)} & \frac{\partial F_{m,v}}{\partial \alpha_e } & \frac{\partial F_{m,v}}{\partial P }
-\end{bmatrix}
-\end{equation}
- 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -400,7 +351,6 @@ The two loops, one over the momentum volumes and one over the continuity volumes
 This grouping will be known hereafter as assembling the pressure matrix for a given domain.
 \alg{alg:xschem} shows the two loops and their associated actions.
 
-
 Each continuity volume within the linear domain that connects to the nonlinear domain is treated slightly differently.
 The flux terms from the equations are not included in the residual.
 The derivatives of those flux terms are also not included in the linear system.
@@ -417,7 +367,17 @@ This is shown in \alg{alg:domDecompGetCoef}.
 \begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
-\Set x = 2
+\For{i = 1, $N_{\text{nln}}$}
+	\Set $\text{b} \Rightarrow \text{nbcVolume[i].solver.res(nbcVolume[i].ord,:)}$
+	\For{j = 1, $N_{\text{nln}}$}
+		\For{ k = 1, nbcVolume[j].nbc\_cons}
+			\Set g\_ord = nbcVolume[j].nbc\_con\_ord(k)
+			\Set s\_ord = 2 + 6 $*$ (g\_ord - 1)
+			\Set e\_ord = s\_ord + 5
+			\Set nbcVolume[i].coef\_mat(1:6, g\_ord) = b(s\_ord:e\_ord)
+		\EndFor
+	\EndFor
+\EndFor
 \end{algorithmic}
 \caption{Obtain Nonlinear Boundary Volume Coefficients.}
 \label{alg:domDecompGetCoef}
@@ -431,8 +391,39 @@ This creates a second loop inside of the outer loop that loops over all the nonl
 Within this loop there is a third loop that goes over all of the interfaces that that volume has with the nonlinear domain.
 This is a system of three nested loops.
 The inner nonlinear boundary volume loop calculates the flux derivatives with respect to pressures with comparison to 
-After this, the linear pressure matrix with the additional right hand sides is inverted.)
-Once the linear pressure matrix is inverted, the coefficients for the nonlinear boundary volumes are collected via \alg{alg:domDecompGetCoef}.
+This process is shown in detail in \alg{alg:domDecompSetMat}.
+
+\begin{algo}[ht!]
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\For{i = 1, $N_{\text{nln}}$}
+	\Set A $\Rightarrow$ nbcVolume[i].nln\_solver.A
+	\Set i\_ord = nbcVolume[i].nln\_ord
+	\For{j = 1, $N_{\text{nln}}$}
+		\Set j\_ord = nbcVolume[j].nln\_ord
+		\For{ k = 1, nbcVolume[i].nbc\_cons}
+			\Set g\_ord = nbcVolume[j].nbc\_con\_ord(k)
+			\Set k\_ord = nbcVolume[j].nln\_ord\_by\_local\_nbc\_ord(k)
+			\Set dp = nbcVolume[i].coef\_mat(:, g\_ord) $\cdot$ nbcVolume[j].dflux\_dp(:, k)
+			\Set A(i\_ord, k\_ord) $\pluseq$ dp
+			\Set A(i\_ord, j\_ord) $\minuseq$ dp
+		\EndFor
+	\EndFor
+	\Set res = nbcVolume[i].solver.res(nbcVolume[i].ord,:) $\cdot$ nbc\_flux
+	\Set nbcVolume[i].nln\_solver.res(i\_ord, 1) = res
+	\Set A(i\_ord, i\_ord) $\pluseq$ 1.0
+	\State \textbf{call:} nbcVolume[i].nln\_solver.rescale(i\_ord)
+\EndFor
+\end{algorithmic}
+\caption{Set Nonlinear Boundary Volume Pressure Equations Into Nonlinear Pressure Matrix.}
+\label{alg:domDecompSetMat}
+\end{algo}
+
+Once the pressure equations for the nonlinear boundary volumes have been inset in the nonlinear pressure matrix, the pressure matrix for the nonlinear domain is solved.
+The resulting pressure update vector is then used to update the nonlinear continuity volumes' variables according to \alg{alg:updateVariables}.
+The Newton loop is now entered.
+This loop is similar to that discussed in \sect{sect:nlnCobraSolver}, with the addition of a step to set the nonlinear boundary volumes' equations.
+Upon termination of the Newton loop, the linear domains' variables are updated.
 
 \begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
@@ -442,10 +433,8 @@ Once the linear pressure matrix is inverted, the coefficients for the nonlinear 
 \Loop \; Transient Loop
     \Set $t^{n+1} : = t^{n} + \dt{}$
 	\Algorithm Assemble Nonlinear and Linear Pressure Matrices	 \Comment{\alg{alg:xschem}}
-	\If{ \textbf{LinearSolver} }
-		\Solve $\vec{A}_{l} \vec{\delta P}_{l} = \vec{res}_{l}$	
-	\EndIf
-	\If{ \textbf{NonlinearSolver} }
+	\LineIf{ \classname{LinearSolver} }{\textbf{solve} $\vec{A}_{l} \vec{\delta P}_{l} = \vec{res}_{l}$}
+	\If{ \classname{NonlinearSolver} }
 	    \Set $k = 0$
 		\Algorithm Get Nonlinear Coefficients \Comment{\alg{alg:domDecompGetCoef}}
 		\Algorithm Set Nonlinear Boundary Values \Comment{\alg{alg:domDecompSetMat}}
@@ -453,7 +442,7 @@ Once the linear pressure matrix is inverted, the coefficients for the nonlinear 
 		\Algorithm Update Nonlinear Variables \Comment{\alg{alg:updateVariables}} 
 	    \Loop \; Newton Loop
 			\Algorithm Assemble Nonlinear Pressure Matrix \Comment{\alg{alg:xschem}}
-			\Algorithm Convergence Determination \Comment{\alg{alg:nlnConvergence}}
+			\Algorithm Nonlinear Convergence Determination \Comment{\alg{alg:nlnConvergence}}
 			\If{ \textbf{end} Newton loop}
 				\State Undo partial Newton Step
 				\State \textbf{break} Newton Loop 
@@ -464,9 +453,7 @@ Once the linear pressure matrix is inverted, the coefficients for the nonlinear 
 			\Algorithm Update Nonlinear Variables \Comment{\alg{alg:updateVariables}}
 		\EndLoop
 	\EndIf
-	\If{ \textbf{LinearSolver} }
-		\Algorithm Update Linear Variables \Comment{\alg{alg:updateVariables}}
-	\EndIf
+	\LineIf{ \classname{LinearSolver} }{\textbf{algorithm} Update Linear Variables} \Comment{\alg{alg:updateVariables}}
 	\Set $n \pluseq 1$
 \EndLoop
 \end{algorithmic}

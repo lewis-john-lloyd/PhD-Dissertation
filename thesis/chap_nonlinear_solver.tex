@@ -106,6 +106,21 @@ The use of \eqref{eqn:momStar} in defining the new-time velocities introduces in
 \end{equation}
 
 With the addition of the unknown pressure updates via the momenta, the six linearized continuity equations now form the linear system \eqref{eqn:linSystem}.
+In \eqref{eqn:linSystem}, the matrix $\vec{J}_{c, j}$ is the Jacobian of the six continuity equations with respect to the six independent parameters for those equations, as shown in \eqref{eqn:jacobianWithFluxTerms}.
+
+\begin{equation}
+\label{eqn:jacobianWithFluxTerms}
+\vec{J}_{c,j} = 
+\begin{bmatrix}
+\frac{\partial F_{m,n}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,n}}{\partial \alpha_g } & \frac{\partial F_{m,n}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,n}}{\partial ((1.0 - \alpha_g) h_l) } & \frac{\partial F_{m,n}}{\partial \alpha_e } & \frac{\partial F_{m,n}}{\partial P } \\
+\frac{\partial F_{m,l}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,l}}{\partial \alpha_g } & \frac{\partial F_{m,l}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,l}}{\partial ((1.0 - \alpha_g) h_l)} &\frac{\partial F_{m,l}}{\partial \alpha_e } & \frac{\partial F_{m,l}}{\partial P } \\
+\frac{\partial F_{e,g}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{e,g}}{\partial \alpha_g } & \frac{\partial F_{e,g}}{\partial (\alpha_g h_v)} & \frac{\partial F_{e,g}}{\partial ((1.0 - \alpha_g) h_l)} &\frac{\partial F_{e,g}}{\partial \alpha_e } & \frac{\partial F_{e,l}}{\partial P } \\
+\frac{\partial F_{e,l}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{e,l}}{\partial \alpha_g } & \frac{\partial F_{e,l}}{\partial (\alpha_g h_v)} & \frac{\partial F_{e,l}}{\partial ((1.0 - \alpha_g) h_l)} &\frac{\partial F_{e,l}}{\partial \alpha_e } & \frac{\partial F_{e,g}}{\partial P } \\
+\frac{\partial F_{m,e}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,e}}{\partial \alpha_g } & \frac{\partial F_{m,e}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,e}}{\partial ((1.0 - \alpha_g) h_l)} &\frac{\partial F_{m,e}}{\partial \alpha_e } & \frac{\partial F_{m,e}}{\partial P } \\
+\frac{\partial F_{m,v}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,v}}{\partial \alpha_g } & \frac{\partial F_{m,v}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,v}}{\partial ((1.0 - \alpha_g) h_l)} & \frac{\partial F_{m,v}}{\partial \alpha_e } & \frac{\partial F_{m,v}}{\partial P }
+\end{bmatrix}
+\end{equation}
+
 Additionally, while the momentum equations were fully expanded to solve for the new-time conserved quantities directly, the continuity equations instead solve for their associated updates, \eqref{eqn:linearUpdate}.
 
 \begin{equation}
