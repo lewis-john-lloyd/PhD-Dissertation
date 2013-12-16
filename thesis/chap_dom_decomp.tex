@@ -149,209 +149,39 @@ The resulting system is given by \eqref{eqn:nbcLinSystem}, where $N_{t} = 6 \lef
 \left[\right.\underbrace{\vec{Z}_{c, j}}_{6\, \text{x}\, N_{t}}\left.\right] \delta \vec{C}_{j} = \left[\right.\underbrace{\vec{J}_{c, j}}_{6\, \text{x}\, 6}|\underbrace{\vec{K}_{c, j}}_{6\, \text{x}\, N_{f}}|{\underbrace{\vec{P}_{c, j}}_{6\, \text{x}\, 6 N_{\text{NBC}}}}\left.\right]\delta \vec{C}_{j} = \vec{r}_{c,j}
 \end{equation}
 
-This system is then subjected to LU decomposition.
-Up to this point, the discussion of the linear and nonlinear algorithms have avoided the use of full nonlinear system.
+The linear system for the boundary volume is then subjected to partial LU decomposition without pivoting.
+This LU decomposition is such that the lower triangular matrix has ones along the diagonal.
+The $N_{\text{NBC}}$ identity matrices are now themselves the inverse of the lower triangular matrix.
+The final row of this reduced system is then scaled by $\vec{Z}[6,6]$.
+
+The linear pressure matrix is assembled with the sixth row from each continuity volume.
+There will be $N_{l}$ rows in the system that correspond to each of the linear continuity volumes.
+Let $N_{n}$ represent the total number of interfaces between the linear and the nonlinear domains.
+There will be an additional $6 N_{n}$ right hand sides for the linear pressure matrix that correspond to all of the unknown flowrates in the linear domain.
+Once the system has been inverted, the resulting pressure updates for the linear domain are functions of the unknown flowrates between the domains, as shown in \eqref{eqn:linearDomainPressureUpdates}.
+
+\begin{equation}
+\label{eqn:linearDomainPressureUpdates}
+\delta \vec{P} + \sum_{i\,=\,1}^{N_{n}} \sum_{e\,=\,1}^{6} \vec{w}_{i, e} \delta \Psi_{i, e} = \delta \vec{P}^{*} 
+\end{equation}
+
+The vectors $\vec{w}_{i, e}$ represent the coupling coefficients for each nonlinear boundary volume's pressure update.
+The pressure update represented in \eqref{eqn:linearDomainPressureUpdates} is taken to be $\delta \vec{P} = \vec{P}^{n+1} - \vec{P}^{n}$.
+This interpretation is comes from the definition of the linear domain.
+In the linear domain a single Newton step is taken to be the change from the old-time solution to the new-time solution, not an iterate.
+
+Once the linear system has been inverted, the nonlinear pressure matrix is finalized.
+Recall that the nonlinear continuity volumes are not modified by the domain decomposition.
+The nonlinear domain is composed of $N_{\text{nln}}$ continuity volumes.
+For each nonlinear boundary volume, there will be an additional row in the nonlinear pressure matrix.
+The final nonlinear pressure matrix will have $N_{\text{nln}} + N_{n}$ equations and unknowns.
+This matrix is then inverted to obtain the tentative new-time values for the nonlinear domain.
+The nonlinear domain is then subjected to multiple Newton iterates as outlined in \sect{sect:nlnCobraSolver}.
+The norms used for convergence determination are the norms of the nonlinear domain only.
+This is
 
 The following procedure will show the development of a single domain newton step.
 
-\begin{equation}
-\label{eqn:domainMatrix}
- \begin{bmatrix} 
-\vec{J}_{c_1} & \vec{\Xi}_{c_1,m_1} & \vec{0} \\
-\vec{J}_{m_1,c_1} & \vec{J}_{m_1} & \vec{J}_{m_1,c_2}  \\
-\vec{0} & \vec{\Xi}_{c_2,m_1} & \vec{J}_{c_2} \\
- \end{bmatrix} \begin{bmatrix}
- \vec{\delta c}_{1} \\
- \vec{\delta m}_{1} \\
- \vec{\delta c}_{2} \\
-\end{bmatrix}  = -\begin{bmatrix}
- \vec{F}_{c_1} \\
- \vec{F}_{m_1} \\
- \vec{F}_{c_2} \\
-\end{bmatrix}
- \end{equation}
- 
- \begin{equation}
-\label{eqn:domainMatrix2}
- \begin{bmatrix} 
-\vec{J}_{c_1} & \vec{\Xi}_{c_1,m_1} & \vec{0} \\
-\frac{\partial \dot{\vec{m}}_{1}}{\partial P_{1} } & \vec{I} & \frac{\partial \dot{\vec{m}}_{1}}{\partial P_{2} }  \\
-\vec{0} & \vec{\Xi}_{c_2,m_1} & \vec{J}_{c_2} \\
- \end{bmatrix} \begin{bmatrix}
- \vec{\delta c}_{1} \\
- \vec{\delta m}_{1} \\
- \vec{\delta c}_{2} \\
-\end{bmatrix}  = \begin{bmatrix}
- - \vec{F}_{c_1} \\
- \delta \dot{\vec{m}}^{*} \\
- - \vec{F}_{c_2} \\
-\end{bmatrix}
- \end{equation}
- 
-  
- \begin{equation}
-\label{eqn:domainMatrix3}
- \begin{bmatrix} 
-\vec{I} & \frac{\partial \dot{\vec{m}}_{1}}{\partial P_{1} } & \frac{\partial \dot{\vec{m}}_{1}}{\partial P_{2} }  \\
-\vec{0} & \vec{J}_{c_1} - \vec{\Xi}_{c_1,m_1} \frac{\partial \dot{\vec{m}}_{1}}{\partial P_{1} } & - \vec{\Xi}_{c_1,m_1} \frac{\partial \dot{\vec{m}}_{1}}{\partial P_{2} }  \\
-\vec{0} & -\vec{\Xi}_{c_2,m_1}\frac{\partial \dot{\vec{m}}_{1}}{\partial P_{1} } & \vec{J}_{c_2} - \vec{\Xi}_{c_2,m_1}\frac{\partial \dot{\vec{m}}_{1}}{\partial P_{2} } \\
- \end{bmatrix} \begin{bmatrix}
- \vec{\delta m}_{1} \\
- \vec{\delta c}_{1} \\
- \vec{\delta c}_{2} \\
-\end{bmatrix}  = \begin{bmatrix}
- \delta \dot{\vec{m}}^{*} \\
- - ( \vec{F}_{c_1} + \vec{\Xi}_{c_1,m_1} \delta \dot{\vec{m}}^{*} ) \\
- - ( \vec{F}_{c_2} + \vec{\Xi}_{c_2,m_1} \delta \dot{\vec{m}}^{*} )\\
-\end{bmatrix}
- \end{equation}
-
- \begin{equation}
-\label{eqn:domainMatrix4}
- \begin{bmatrix} 
-\vec{U}_{c_1} & - \vec{L}_{c_1}^{-1} \vec{\Xi}_{c_1,m_1} \frac{\partial \dot{\vec{m}}_{1}}{\partial P_{2} }  \\
--\vec{L}_{c_2}^{-1} \vec{\Xi}_{c_2,m_1}\frac{\partial \dot{\vec{m}}_{1}}{\partial P_{1} } & \vec{U}_{c_2} \\
- \end{bmatrix} \begin{bmatrix}
- \vec{\delta c}_{1} \\
- \vec{\delta c}_{2} \\
-\end{bmatrix}  = \begin{bmatrix}
- - \vec{L}_{c_1}^{-1} ( \vec{F}_{c_1} + \vec{\Xi}_{c_1,m_1} \delta \dot{\vec{m}}^{*} ) \\
- - \vec{L}_{c_2}^{-1} ( \vec{F}_{c_2} + \vec{\Xi}_{c_2,m_1} \delta \dot{\vec{m}}^{*} )\\
-\end{bmatrix}
- \end{equation}
- 
-  \begin{equation}
-\label{eqn:domainMatrix5}
- \begin{bmatrix} 
-1 & c_{1,2}  \\
-c_{2,1} & 1 \\
- \end{bmatrix} \begin{bmatrix}
- \delta P_{1} \\
- \delta P_{2} \\
-\end{bmatrix}  = \begin{bmatrix}
- f_1 \\
- f_2 \\
-\end{bmatrix}
- \end{equation}
- 
- The following is the domain decomposition version.
- 
- \begin{equation}
-\label{eqn:domainDecomp0}
- \begin{bmatrix} 
-\vec{J}_{c_1} & \vec{\Xi}_{c_1,m_1} & \vec{0} \\
-\vec{J}_{m_1,c_1} & \vec{J}_{m_1} & \vec{J}_{m_1,c_2}  \\
-\vec{0} & \vec{\Xi}_{c_2,m_1} & \vec{J}_{c_2} \\
- \end{bmatrix} \begin{bmatrix}
- \vec{\delta c}_{1} \\
- \vec{\delta m}_{1} \\
- \vec{\delta c}_{2} \\
-\end{bmatrix}  = -\begin{bmatrix}
- \vec{F}_{c_1} \\
- \vec{F}_{m_1} \\
- \vec{F}_{c_2} \\
-\end{bmatrix}
- \end{equation}
- 
- \begin{equation}
-\label{eqn:domainDecomp1}
- \begin{bmatrix} 
-\vec{J}_{c_1} & \vec{0} & - \vec{\Xi}_{m_1} & \vec{0} \\
-\vec{0} & \vec{I} & \vec{\Xi}_{m_1} & 0 \\
-\vec{J}_{m_1,c_1} & \vec{0} & \vec{J}_{m_1} & \vec{J}_{m_1,c_2}  \\
-\vec{0} & \vec{0} & \vec{\Xi}_{m_1} & \vec{J}_{c_2} \\
- \end{bmatrix} \begin{bmatrix}
- \vec{\delta c}_{1} \\
- \vec{\delta \Psi}_{1} \\
- \vec{\delta m}_{1} \\
- \vec{\delta c}_{2} \\
-\end{bmatrix}  = -\begin{bmatrix}
- \vec{F}_{c_1} \\
- \vec{0} \\
- \vec{F}_{m_1} \\
- \vec{F}_{c_2} \\
-\end{bmatrix}
- \end{equation} 
- 
- \begin{equation}
-\label{eqn:domainDecomp2}
- \begin{bmatrix} 
-\vec{J}_{c_1} & \vec{I} & \vec{0} & \vec{0} \\
-\vec{0} & \vec{I} & \vec{\Xi}_{m_1} & 0 \\
-\vec{J}_{m_1,c_1} & \vec{0} & \vec{J}_{m_1} & \vec{J}_{m_1,c_2}  \\
-\vec{0} & \vec{0} & \vec{\Xi}_{m_1} & \vec{J}_{c_2} \\
- \end{bmatrix} \begin{bmatrix}
- \vec{\delta c}_{1} \\
- \vec{\delta \Psi}_{1} \\
- \vec{\delta m}_{1} \\
- \vec{\delta c}_{2} \\
-\end{bmatrix}  = -\begin{bmatrix}
- \vec{F}_{c_1} \\
- \vec{0} \\
- \vec{F}_{m_1} \\
- \vec{F}_{c_2} \\
-\end{bmatrix}
- \end{equation}
- 
-  
- \begin{equation}
-\label{eqn:domainDecomp3}
- \begin{bmatrix} 
-\vec{J}_{c_1} & \vec{I} & \vec{0} & \vec{0} \\
-\vec{0} & \vec{I} & \vec{\Xi}_{m_1} & 0 \\
-\frac{\partial \dot{\vec{m}}_{1}}{\partial P_{1} } & \vec{0} & \vec{I} & \frac{\partial \dot{\vec{m}}_{1}}{\partial P_{2} }  \\
-\vec{0} & \vec{0} & \vec{\Xi}_{m_1} & \vec{J}_{c_2} \\
- \end{bmatrix} \begin{bmatrix}
- \vec{\delta c}_{1} \\
- \vec{\delta \Psi}_{1} \\
- \vec{\delta m}_{1} \\
- \vec{\delta c}_{2} \\
-\end{bmatrix}  = \begin{bmatrix}
- - \vec{F}_{c_1} \\
- \vec{0} \\
- \delta \dot{\vec{m}}^{*} \\
- - \vec{F}_{c_2} \\
-\end{bmatrix}
- \end{equation}
-
- \begin{equation}
-\label{eqn:domainDecomp4}
- \begin{bmatrix} 
-\vec{J}_{c_1} & \vec{I} & \vec{0} & \vec{0} \\
-- \vec{\Xi}_{m_1}\frac{\partial \dot{\vec{m}}_{1}}{\partial P_{1} } & \vec{I} & \vec{0} & -\vec{\Xi}_{m_1}\frac{\partial \dot{\vec{m}}_{1}}{\partial P_{2} } \\
-\frac{\partial \dot{\vec{m}}_{1}}{\partial P_{1} } & \vec{0} & \vec{I} & \frac{\partial \dot{\vec{m}}_{1}}{\partial P_{2} }  \\
-\vec{0} & \vec{0} & \vec{\Xi}_{m_1} & \vec{J}_{c_2} \\
- \end{bmatrix} \begin{bmatrix}
- \vec{\delta c}_{1} \\
- \vec{\delta \Psi}_{1} \\
- \vec{\delta m}_{1} \\
- \vec{\delta c}_{2} \\
-\end{bmatrix}  = \begin{bmatrix}
- - \vec{F}_{c_1} \\
- - \vec{\Xi}_{m_1} \delta \dot{\vec{m}}^{*} \\
- \delta \dot{\vec{m}}^{*} \\
- - \vec{F}_{c_2} \\
-\end{bmatrix}
- \end{equation}
- 
-  \begin{equation}
-\label{eqn:domainDecomp5}
- \begin{bmatrix} 
-1 & c_{1,2}  \\
-c_{2,1} & 1 \\
- \end{bmatrix} \begin{bmatrix}
- \delta P_{1} \\
- \delta P_{2} \\
-\end{bmatrix}  = \begin{bmatrix}
- f_1 \\
- f_2 \\
-\end{bmatrix}
- \end{equation}
- 
-\comment{
-This is annoying as crap to describe.
-I will give it a shot in words.
-}
 
 The procedures that were written to determine which continuity volumes were active and which were inactive were modified to separate the domain in two: a liner and a nonlinear domain.
 
