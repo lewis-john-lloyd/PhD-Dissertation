@@ -281,7 +281,7 @@ After evaluating several prototypical models, it was determined that a large por
 The inactive portions of the domain are marked with grey, the active with white, and the external boundary conditions with black.
 Inter-channel flowpaths are marked with dashed lines.
 
-\begin{figure}[h!t]
+\begin{figure}[ht!]
 \centering
 \input{images/active_inactive}
 \caption{A Domain with Inactive Regions}
@@ -385,7 +385,7 @@ Finally, the Newton loop will terminate if the scaled residual vector, \eqref{eq
 The scaling matrix, $\vec{S}^{k}$, will be discussed in detail in \sect{sect:nlnScaling}.
 The convergence determination logic for when to end the Newton loop is given in \alg{alg:nlnConvergence}.
 
-\begin{algo}[h!]
+\begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \If{ $||\tilde{\vec{F}}^{k+1}||_{2} \leq \ftol{}$}
@@ -407,7 +407,7 @@ If \alg{alg:nlnConvergence} determines that the Newton loop should not end, then
 However, if the Newton loop is terminated, then there are changes that were made during \alg{alg:xschem} that need to be undone.
 \alg{alg:nlnCobraAlgorithm} contains the current algorithmic implementation of the nonlinear semi-implicit method.
 
-\begin{algo}[h!]
+\begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Require $\vec{x}^{0}$ and $t^{0}$

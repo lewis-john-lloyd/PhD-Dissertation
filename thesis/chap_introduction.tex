@@ -35,7 +35,7 @@ There is one mesh comprised of continuity volumes and another comprised of momen
 Thermodynamic variables are defined as constant over the continuity volumes, while momenta are defined as constant over momentum volumes.
 The boundaries of the continuity volumes align with the center of the momentum volumes.
 
-\begin{figure}[ht]
+\begin{figure}[ht!]
 \centering
 \input{images/staggered_mesh}
 \caption{A staggered mesh.}
@@ -80,7 +80,7 @@ This flow splitting is only permitted at section boundaries.
 \cobra{} is capable of modeling complex geometries by using these two features.
 An example of a \cobra{} model that includes these different geometric characteristics is given in \fig{fig:complex_geometry}.
 
-\begin{figure}[h!t]
+\begin{figure}[ht!]
 \centering
 \input{images/complex_geometry}
 \caption{A \cobra{} model with transverse flow.}
@@ -178,7 +178,7 @@ The details of this system of partial differential equations are discussed below
 \subsubsection{Conservation of Mass Equations}
 \label{subsubsect:mass_equations}
 
-There are four equations that represent the conservation of mass, one each for the \ncg{} \eqref{eqn:conservation_of_ncg}, vapor \eqref{eqn:conservation_of_vap}, continuous liquid  \eqref{eqn:conservation_of_liq}, and entrained liquid \eqref{eqn:conservation_of_ent} fields.
+There are four equations that represent the conservation of mass, one each for the vapor \eqref{eqn:conservation_of_vap}, \ncg{} \eqref{eqn:conservation_of_ncg}, continuous liquid  \eqref{eqn:conservation_of_liq}, and entrained liquid \eqref{eqn:conservation_of_ent} fields.
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:conservation_of_ncg}
@@ -381,7 +381,7 @@ Two momentum volumes, $j + \onehalf $ and $j - \onehalf$, spatially overlap a co
 Variables are indexed by the mesh on which their conservation equations are defined.
 For example, the velocity $u_{j - \onehalf}$ would be spatially located at center of the momentum volume $j - \onehalf $ and at the boundary between the continuity volumes $j$ and $j-1$.
 
-\begin{figure}[ht]
+\begin{figure}[ht!]
 \centering
 \input{images/vertical_pipe_with_cells}
 \caption{Illustration of indexing scheme.}
@@ -392,7 +392,7 @@ Recalling the staggered mesh from \sect{sect:geometry}, the six scalar conservat
 The assumption in these integrals is that the value of the conserved quantities and all thermodynamically-related variables are constant within a given volume.
 \fig{fig:constant_value} shows a graphical representation of this idea for a generic function $f(x)$ over several spatial continuity volumes. 
 
-\begin{figure}[ht]
+\begin{figure}[ht!]
 \centering
 \input{images/constant_value}
 \caption{Constant variable values within computational volumes.}
@@ -404,7 +404,7 @@ The cross-sectional area of the boundary between two continuity volumes is given
 The volume integrated equation is given by \eqref{eqn:spatially_discrete_liq_m_con}.
 For illustrative purposes, \eqref{eqn:conservation_of_liq} will be integrated over a given volume, $V_j$, as shown in \fig{fig:single_volume}.
 
-\begin{figure}[h!t]
+\begin{figure}[ht!]
 \centering
 \input{images/single_volume}
 \caption{Single volume over which the conservation equations are integrated.}
@@ -542,7 +542,7 @@ The choice of how to approximate the temporal integral of the sources and sinks 
 There are two subcategories for solving this one-step temporal-integration problem, single-stage and multi-stage \cite{Stewart1981,LeVeque2007}.
 \alg{alg:single_stage_temporal} shows how a multi-stage temporal integration scheme would work.
 
-\begin{algo}[H]
+\begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Require $\vec{y}^{0}$ and $t^{0}$
@@ -617,7 +617,7 @@ The underlying assumption of this initial value is that the independent paramete
 \alg{alg:local_newton} provides an overview of a transient simulation using a Newton's method for a single-stage temporal integration scheme.
 The algorithm generalizes to a multi-stage temporal integration method by enclosing the Newton loop within a stage loop.
 
-\begin{algo}[H]
+\begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Require $\vec{x}^{0}$ and $t^{0}$
@@ -674,7 +674,7 @@ The algorithmic implementation is shown in \alg{algo:explicit}.
 Given the choice of independent parameters in \cobra{}, there are nonlinearities present in the temporal derivative.
 While the momentum conservation equations have the identity matrix, $\vec{I}$, for their temporal Jacobian, the continuity equations' temporal Jacobian is a [6x6] matrix with no inter-volume coupling terms.
 
-\begin{algo}[H]
+\begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Require $\vec{x}^{0}$ and $t^{0}$
@@ -733,7 +733,7 @@ Additionally, the solution of \eqref{eqn:implicit} is the most computationally e
 This computational expense comes from the full inter-volume coupling of the Jacobian matrix during the nonlinear solve.
 The computational implementation of a fully implicit method is presented in \alg{algo:implicit}.
 
-\begin{algo}[H]
+\begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Require $\vec{x}^{0}$ and $t^{0}$
@@ -789,7 +789,7 @@ u^{n+1}_{\phi, j \pm \onehalf} = \frac{\dot{m}^{n+1}_{\phi, j \pm \onehalf}}{A_{
 
 \alg{alg:si_legacy} shows the algorithm for solving the semi-implicit method.
 
-\begin{algo}[H]
+\begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Require $\vec{x}^{0}$ and $t^{0}$
@@ -836,7 +836,7 @@ The resulting system of coupled continuity equations is then solved.
 This final stage allows timestep sizes that exceed the material Courant limit.
 For each stage the residual and Jacobian matrix will be denoted by $\vec{F}_k$ and $\vec{J}_k$, with $k = 1 \to 3$.
 
-\begin{algo}[H]
+\begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Require $\vec{x}^{0}$ and $t^{0}$
@@ -902,7 +902,7 @@ This linear system is solved for the conserved quantities.
 In stage three, the nonlinear relation between the conserved quantities and the independent parameters is then approximated via a single-shot linearization of the equations of state.
 \alg{alg:ni} shows the three-stage process.
 
-\begin{algo}[H]
+\begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Require $\vec{x}^{0}$ and $t^{0}$
@@ -1021,7 +1021,7 @@ Using the semi-implicit software coupling as a means of domain coupling within a
 The methods used to simulate thermal-hydraulic behavior in NPPs are characterized by the manner in which the temporal-integration of the governing conservation equations and the manner in which the nonlinearities inherent in those fully discrete equations are resolved.
 Each of the methods outlined in \sect{sect:solution_techniques} has one thing in common: the nonlinear problem is solved globally, either through a single-shot linearization or through an iterative Newton procedure.
 
-\begin{figure}[h!t]
+\begin{figure}[ht!]
 \centering
 \input{images/my_diagram}
 \caption{Current and proposed software paradigms for thermal-hydraulic safety analysis.}

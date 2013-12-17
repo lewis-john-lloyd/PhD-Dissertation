@@ -7,6 +7,13 @@ If the number of Newton steps is not limited to one, then the nonlinearities may
 When the nonlinearities are isolated to a given nonlinear portion of the domain, the additional Newton steps do not improve the solution in the linear portion of the domain.
 The ability to resolve the nonlinear physics only where they occur could potentially provide a way to reduce the computational cost associated with resolving the nonlinear error for a given timestep.
 The following section contains three sections that describe the mathematical formulation of the domain decomposition, a description of its implementation, and several problems that were used to verify that the algorithm had been implemented properly.
+\comment{
+I am contemplating a reorganization of this chapter.
+The mathematical formulation is effectively the implementation without specifics.
+I feel that there is a large amount of redundancy between \sect{sec:domDecompMath} and \sect{sec:dd_algo}.
+I think that I may consolidate the two sections into one and not have any subsections in this chapter.
+Also, I know that the nomenclature may be inconsistent in places, but that is being ironed out at the moment.
+}
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -143,6 +150,14 @@ In addition there will now be $N_{\text{NBC}}$ identity matrices corresponding t
 The identity matrices are produced by taking the derivatives of \eqref{eqn:nbcNcgMassEquation} -- \eqref{eqn:nbcVapMassEquation} with respect to the inter-domain flowrates, $\vec{\Psi}_{p}$.
 The collection of these identity matrices is known as $\vec{Q}$.
 The resulting system is given by \eqref{eqn:nbcLinSystem}, where $N_{t} = 6 \left( 1 + N_{\text{NBC}}\right) + N_{f}$.
+\comment{
+I am going to be adjusting this section.
+I think that expressing this operations as a collections of columns as opposed to matrices will make this easier to explain.
+Also, I am going to work the fact that for the nonlinear boundary volume, the residual does not contain the flux at first.
+I can show that more easily than with the matrices below.
+Also, I need to be careful because the coupling is done not through fluxes, but through flowrates.
+I need to ensure that the flowrates is used.
+}
 
 \begin{equation}
 \label{eqn:nbcLinSystem}
