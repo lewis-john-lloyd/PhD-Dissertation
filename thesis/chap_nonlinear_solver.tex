@@ -38,7 +38,19 @@ The nonlinear momentum equations, neglecting spatial discretization notation and
 In the above equations the flux terms are summed over $N_{c}$, which indicates the number of continuity volumes to which a given momentum volume connects.
 The coefficients $K$ represent effective wall and interfacial friction factors calculated using parameters only from time $n$.
 The transfer of momentum associated with the interfacial transfer of mass is also explicitly evaluated.
-The momentum equations are then linearized around the current time value, $\dot{\vec{m}}^{n}$ and $P^{n}$, giving \eqref{eqn:linLiqMomentumEquation} - \eqref{eqn:linEntMomentumEquation}.
+The vector notation for the three momenta, \momVec{}, is defined by \eqref{eqn:momentumVector}.
+
+\begin{equation}
+\label{eqn:momentumVector}
+\momVec{} = \begin{bmatrix}
+\dot{m}_{l} \\
+\dot{m}_{g} \\
+\dot{m}_{e}
+\end{bmatrix}
+\end{equation}
+
+The terms in the momentum equations that are evaluated at their new-time values are then linearized about their old-time values.
+This includes the momenta, $\momVec{}^{n}$, and the pressure, $P^{n}$, giving \eqref{eqn:linLiqMomentumEquation} - \eqref{eqn:linEntMomentumEquation}.
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:linLiqMomentumEquation}
@@ -59,19 +71,19 @@ The momentum equations are then linearized around the current time value, $\dot{
  & + & \left. 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n+1}_e - \dot{m}_g^{n+1}) -\left[ \eta \Gamma u^{'} - S u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right)
 \end{IEEEeqnarray}
 
-The momentum equations, \eqref{eqn:linLiqMomentumEquation} - \eqref{eqn:linEntMomentumEquation}, are now linear in the unknown variables $\dot{\vec{m}}^{n+1}$.
-These equations are then solved for the unknown new time momenta, $\dot{\vec{m}}^{n+1}$.
+The momentum equations, \eqref{eqn:linLiqMomentumEquation} - \eqref{eqn:linEntMomentumEquation}, are now linear in the unknown variables $\momVec{}^{n+1}$.
+These equations are then solved for the unknown new time momenta, $\momVec{}^{n+1}$.
 The $\delta P$ is left as an unknown, creating an additional unknown on the right hand side of the linear system.
-The resulting system is of the form $\displaystyle \vec{J}_{m, j} \dot{\vec{m}}_{j}^{n+1} + \sum^{N_{c}}_{i\,=\,1} \vec{b}_{j} \delta P_{i} = \vec{a}_{j}$.
+The resulting system is of the form $\displaystyle \vec{A}_{j} \momVec{}_{j}^{n+1} = \vec{a}_{j} + \sum^{N_{c}}_{i\,=\,1} \vec{b}_{j} \delta P_{i}$.
 The solution of this linear system is expressed in \eqref{eqn:momStar}.
 
 \begin{equation}
 \label{eqn:momStar}
-\dot{\vec{m}}_{j}^{n+1} + \sum^{N_{c}}_{i\,=\,1} \frac{\partial \dot{\vec{m}}_{j}}{\partial P_{i}} \delta P_{i} = \dot{\vec{m}}^{*}_{j}
+\momVec{}_{j}^{n+1} = \momVec{}^{*}_{j} + \sum^{N_{c}}_{i\,=\,1} \frac{\partial \momVec{}_{j}}{\partial P_{i}} \delta P_{i}
 \end{equation}
 
 The definition for the new-time momenta is a function of the as of yet unknown changes in pressures that occur in the continuity volumes connected by the momentum volume.
-The $\dot{\vec{m}}^{*}$ vector on the right hand side of \eqref{eqn:momStar} contains the tentative new time momenta.
+The $\momVec{}^{*}$ vector on the right hand side of \eqref{eqn:momStar} contains the tentative new time momenta.
 Once all of the momentum equations have been solved in the above manner, providing estimated new-time momenta for each momentum volume, the domain's continuity volumes are then looped over.
 The continuity equations used in this work, omitting external sources, are shown in \eqref{eqn:nlnNcgMassEquation} -- \eqref{eqn:nlnLiqMassEquation}. 
 The new-time velocities used for advection in the continuity equations are defined with the new-time momenta, \eqref{eqn:momStar}, in conjunction with \eqref{eqn:si_vel}.
@@ -152,7 +164,7 @@ This grouping will be known hereafter as assembling the pressure matrix for a gi
 \begin{algorithmic}[1]
 \Loop \; Momentum Volumes
 	\Calculate $\vec{J}_{m, j}$, $\vec{a}_{j}$, and $\vec{b}_{j}$
-	\Calculate $\dot{\vec{m}}^{*}$ and $\frac{\partial \dot{\vec{m}}}{\partial P}$
+	\Calculate $\momVec{}^{*}$ and $\frac{\partial \momVec{}}{\partial P}$
 	\Calculate $\vec{F}_{m, j}$	
 	\Calculate $\vec{S}_{m, j}$	
 \EndLoop
@@ -187,7 +199,7 @@ This update loop is shown in \alg{alg:updateVariables}.
 \Loop \; Continuity Volumes
 	\Solve $\vec{U}_{c, j} \delta \vec{C}_{c, j} = \vec{r}^{*}_{c, j}$ using $\vec{\delta P}$		
 	\Loop \; Connected Flowpaths
-		\Set $\dot{\vec{m}}^{*}_{j} \pluseq sig \cdot \frac{\partial \dot{\vec{m}}}{\partial P} \delta P_{j}$
+		\Set $\momVec{}^{*}_{j} \pluseq sig \cdot \frac{\partial \momVec{}}{\partial P} \delta P_{j}$
 	\EndLoop
 \EndLoop
 \end{algorithmic}
@@ -315,18 +327,58 @@ The system of linear equations that results from the linearization is shown in \
 
 \begin{equation}
 \label{eqn:nlnMomentumSystem}
-\frac{\partial\, \vec{F}_{m}}{\partial \dot{m}^{n+1}_{l}} \delta \dot{m}_{l}^{k} + \frac{\partial\, \vec{F}_{m}}{\partial \dot{m}^{n+1}_{g}} \delta \dot{m}_{g}^{k} + \frac{\partial\, \vec{F}_{m}}{\partial \dot{m}^{n+1}_{e}} \delta \dot{m}_{e}^{k} + \sum_{i\,=\,1}^{N_{c}} \frac{\partial\, \vec{F}_{m}}{\partial P_{i}} \delta P_{i}^{k} = - \vec{F}_{m}
+\frac{\partial\, \vec{F}^{k}_{m}}{\partial \dot{m}^{n+1}_{l}} \delta \dot{m}_{l}^{k} + \frac{\partial\, \vec{F}^{k}_{m}}{\partial \dot{m}^{n+1}_{g}} \delta \dot{m}_{g}^{k} + \frac{\partial\, \vec{F}^{k}_{m}}{\partial \dot{m}^{n+1}_{e}} \delta \dot{m}_{e}^{k} + \sum_{i\,=\,1}^{N_{c}} \frac{\partial\, \vec{F}^{k}_{m}}{\partial P_{i}} \delta P_{i}^{k} = - \vec{F}_{m}
 \end{equation}
 
-This system of equations is solved for the new-time momenta.
+The first three columns on the right hand side of \eqref{eqn:nlnMomentumSystem} represent the derivatives of the momentum residual with respect to the momentum variables.
+These three columns will be referred to as the Jacobian matrix for a given momentum volume, $\vec{J}^{k}_{m}$, defined in \eqref{eqn:momentumJacobian}.
 
-Likewise, each continuity volume has associated with it six residuals representing the mass and energy equations \eqref{eqn:nlnNcgMassResidual} -- \eqref{eqn:nlnLiqMassResidual}.
+\begin{equation}
+\label{eqn:momentumJacobian}
+\vec{J}^{k}_{m} = 
+\begin{bmatrix}
+\frac{\partial F^{k}_{m,l}}{\partial \dot{m}^{n+1}_{l}} & \frac{\partial F^{k}_{m,l}}{\partial \dot{m}^{n+1}_{g}} & \frac{\partial F^{k}_{m,l}}{\partial \dot{m}^{n+1}_{e}} \\
+\frac{\partial F^{k}_{m,g}}{\partial \dot{m}^{n+1}_{l}} & \frac{\partial F^{k}_{m,g}}{\partial \dot{m}^{n+1}_{g}} & \frac{\partial F^{k}_{m,g}}{\partial \dot{m}^{n+1}_{e}} \\
+\frac{\partial F^{k}_{m,e}}{\partial \dot{m}^{n+1}_{l}} & \frac{\partial F^{k}_{m,e}}{\partial \dot{m}^{n+1}_{g}} & \frac{\partial F^{k}_{m,e}}{\partial \dot{m}^{n+1}_{e}} \\
+\end{bmatrix}
+\end{equation}
+
+Using \eqref{eqn:momentumVector} and \eqref{eqn:momentumJacobian}, \eqref{eqn:nlnMomentumSystem} can be expressed as \eqref{eqn:momentumMatrixSystem}.
+
+\begin{equation}
+\label{eqn:momentumMatrixSystem}
+\vec{J}^{k}_{m} \delta \momVec{}^{k}  = - \vec{F}^{k}_{m} - \sum_{i\,=\,1}^{N_{c}} \frac{\partial\, \vec{F}^{k}_{m}}{\partial P_{i}} \delta P_{i}^{k}
+\end{equation}
+
+This system of equations, \eqref{eqn:momentumMatrixSystem}, is then solved for the updated new-time momentum vector via the procedure shown in \eqref{eqn:momentumSolution}.
+
+\begin{IEEEeqnarray}{rcl}
+\label{eqn:momentumSolution}
+\vec{J}^{k}_{m} \delta \momVec{}^{k} & = & -\vec{F}_{m}^{k} - \sum^{N_{c}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}} \delta P^{k}_{i} \nonumber \\
+\vec{J}^{k}_{m} \left(\momVec{}^{n+1, k + 1} - \momVec{}^{n+1, k} \right) & = & -\vec{F}^{k}_{m} - \sum^{N_{c}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}} \delta P^{k}_{i} \nonumber \\
+\vec{J}^{k}_{m} \momVec{}^{n+1, k + 1} & = & - \vec{F}^{k}_{m} + \vec{J}^{k}_{m} \momVec{}^{n+1, k} - \sum^{N_{c}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}} \delta P^{k}_{i} \nonumber \\
+\momVec{}^{n+1, k + 1} & = & \vec{J}^{-1} \left(- \vec{F}^{k}_{m}  + \vec{J}^{k}_{m} \momVec{}^{n+1, k} \right) - \sum^{N_{c}}_{i\,=\,1} \vec{J}^{-1}_{m} \frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}} \delta P^{k}_{i} \nonumber \\
+\momVec{}^{n+1, k + 1} & = & \momVec{}^{n+1, k + \onehalf} + \sum^{N_{c}}_{i\,=\,1} \frac{\partial \momVec{}^{k}}{\partial P_{i}} \delta P^{k}_{i}
+\end{IEEEeqnarray}
+
+The variable $\momVec{}^{n+1, k + \onehalf}$ in \eqref{eqn:momentumSolution} is the iterative analog to $\momVec{}^{*}$ from \eqref{eqn:momStar}.
+For algebraic convenience, the update vector, $\delta \momVec{}^{k}$, is defined in \eqref{eqn:momentumUpdate}.
+
+\begin{IEEEeqnarray}{rcl}
+\label{eqn:momentumUpdate}
+\delta \momVec{}^{k} & = & - \vec{J}^{-1} \vec{F}_{m} - \sum_{i\,=\,1}^{N_{c}} \vec{J}^{-1}\frac{\partial\, \vec{F}_{m}}{\partial P_{i}} \delta P_{i}^{k} \nonumber \\
+\delta \momVec{}^{k} & = & \delta \momVec{}^{*} + \sum_{i\,=\,1}^{N_{c}} \frac{\partial\, \momVec{}}{\partial P_{i}} \delta P_{i}^{k}
+\end{IEEEeqnarray}
+
+Likewise, each continuity volume has associated with it six residuals representing the mass and energy equations \eqref{eqn:nlnNcgMassResidual} -- \eqref{eqn:nlnVapMassResidual}.
+For a given continuity volume, these six equations are collectively refereed to as $\vec{F}_{c}$.
 
 \begin{IEEEeqnarray}{lCl}
 \label{eqn:nlnNcgMassResidual}
 F^{k}_{c, n} & = & V_c\left[ (\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{n}\right] +\dt{} \sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1,k}_{d} u^{n+1, k}_{g}  \cdot \vec{\bar{A}}\right)_{i} \\
-\label{eqn:nlnVapMassResidual}
-F^{k}_{c, v} & = & V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right] + \dt{} \sum^{N_{f}}_{i\,=\,1} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1,k}_{d} u^{n+1, k}_{g}  \cdot \vec{\bar{A}}\right)_{i} - \dt{} \Gamma^{n+1, k} \\
+\label{eqn:nlnLiqMassResidual}
+F^{k}_{c, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_l \rho_l \right)^{n} + \dt{} \sum^{N_{f}}_{i\,=\,1} \left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l \cdot \vec{\bar{A}}\right)_{i}   \nonumber \\
+&+& \dt{}\left[(1-\eta)\Gamma + S \right]^{n+1, k} \\
 \label{eqn:nlnGasEnergyResidual}
 F^{k}_{e, g} & = & V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_{g} ( P^{\,n+1, k} - P^{\,n} ) \right] \nonumber \\
 & - & \dt{} \left[q_{wg} + \Gamma h^{'}_v + q_{i,v} + q_{gl}\right]^{n+1, k} + \dt{} \sum^{N_{f}}_{i\,=\,1} \left(\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  \cdot \vec{\bar{A}}\right)_{i} \\
@@ -336,36 +388,86 @@ F^{k}_{e, l} & = & V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( 
 \label{eqn:nlnEntMassResidual}
 F^{k}_{c, e} & = & V_c \left(\alpha_e \rho_l \right)^{n+1,k} - V_c \left(\alpha_e \rho_l \right)^{n} + \dt{} \sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  \cdot \vec{\bar{A}}\right)_{i} \nonumber \\
 &-& \dt{}\left[ S -\eta\Gamma \right]^{n+1,k} \\
-\label{eqn:nlnLiqMassResidual}
-F^{k}_{c, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_l \rho_l \right)^{n} + \dt{} \sum^{N_{f}}_{i\,=\,1} \left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l \cdot \vec{\bar{A}}\right)_{i}   \nonumber \\
-&+& \dt{}\left[(1-\eta)\Gamma + S \right]^{n+1, k}
+\label{eqn:nlnVapMassResidual}
+F^{k}_{c, v} & = & V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right] + \dt{} \sum^{N_{f}}_{i\,=\,1} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1,k}_{d} u^{n+1, k}_{g}  \cdot \vec{\bar{A}}\right)_{i} - \dt{} \Gamma^{n+1, k}
 \end{IEEEeqnarray}
 
-In \eqref{eqn:linSystem}, the matrix $\vec{J}_{c, j}$ is the Jacobian of the six continuity equations with respect to the six independent parameters for those equations, as shown in \eqref{eqn:jacobianWithFluxTerms}.
+For each continuity volume, the above six equations are linearized about the tentative new-time independent parameters.
+
+\begin{IEEEeqnarray}{rcl}
+\label{eqn:nlnContinuitySystem}
+ - \vec{F}^{k}_{c} & = & \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} \nonumber \\
+& + & \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum^{N_{f}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{c}}{\partial \momVec{}_{i} } \delta \momVec{}_{i}^{k} 
+\end{IEEEeqnarray}
+
+In \eqref{eqn:nlnContinuitySystem}, the first six columns on the right hand side, the derivatives of the continuity equations with respect to the six independent parameters for those equations, will be collectively referred to as the Jacobian for that continuity volume, $\vec{J}^{k}_{c}$.
+This Jacobian can be represented in matrix form as shown in \eqref{eqn:jacobianWithFluxTerms}.
 
 \begin{equation}
 \label{eqn:jacobianWithFluxTerms}
-\vec{J}_{c,j} = 
+\vec{J}^{k}_{c} = 
 \begin{bmatrix}
-\frac{\partial F_{m,n}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,n}}{\partial \alpha_g } & \frac{\partial F_{m,n}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,n}}{\partial ((1.0 - \alpha_g) h_l) } & \frac{\partial F_{m,n}}{\partial \alpha_e } & \frac{\partial F_{m,n}}{\partial P } \\
-\frac{\partial F_{m,l}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,l}}{\partial \alpha_g } & \frac{\partial F_{m,l}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,l}}{\partial ((1.0 - \alpha_g) h_l)} &\frac{\partial F_{m,l}}{\partial \alpha_e } & \frac{\partial F_{m,l}}{\partial P } \\
-\frac{\partial F_{e,g}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{e,g}}{\partial \alpha_g } & \frac{\partial F_{e,g}}{\partial (\alpha_g h_v)} & \frac{\partial F_{e,g}}{\partial ((1.0 - \alpha_g) h_l)} &\frac{\partial F_{e,g}}{\partial \alpha_e } & \frac{\partial F_{e,l}}{\partial P } \\
-\frac{\partial F_{e,l}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{e,l}}{\partial \alpha_g } & \frac{\partial F_{e,l}}{\partial (\alpha_g h_v)} & \frac{\partial F_{e,l}}{\partial ((1.0 - \alpha_g) h_l)} &\frac{\partial F_{e,l}}{\partial \alpha_e } & \frac{\partial F_{e,g}}{\partial P } \\
-\frac{\partial F_{m,e}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,e}}{\partial \alpha_g } & \frac{\partial F_{m,e}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,e}}{\partial ((1.0 - \alpha_g) h_l)} &\frac{\partial F_{m,e}}{\partial \alpha_e } & \frac{\partial F_{m,e}}{\partial P } \\
-\frac{\partial F_{m,v}}{\partial (\alpha_g P_{n})} & \frac{\partial F_{m,v}}{\partial \alpha_g } & \frac{\partial F_{m,v}}{\partial (\alpha_g h_v)} & \frac{\partial F_{m,v}}{\partial ((1.0 - \alpha_g) h_l)} & \frac{\partial F_{m,v}}{\partial \alpha_e } & \frac{\partial F_{m,v}}{\partial P }
+\frac{\partial F^{k}_{c,n}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{c,n}}{\partial \alpha_g } & \frac{\partial F^{k}_{c,n}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{c,n}}{\partial ((1 - \alpha_g) h_l) } & \frac{\partial F^{k}_{c,n}}{\partial \alpha_e } & \frac{\partial F^{k}_{c,n}}{\partial P } \\
+\frac{\partial F^{k}_{c,l}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{c,l}}{\partial \alpha_g } & \frac{\partial F^{k}_{c,l}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{c,l}}{\partial ((1 - \alpha_g) h_l)} &\frac{\partial F^{k}_{c,l}}{\partial \alpha_e } & \frac{\partial F^{k}_{c,l}}{\partial P } \\
+\frac{\partial F^{k}_{e,g}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{e,g}}{\partial \alpha_g } & \frac{\partial F^{k}_{e,g}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{e,g}}{\partial ((1 - \alpha_g) h_l)} &\frac{\partial F^{k}_{e,g}}{\partial \alpha_e } & \frac{\partial F^{k}_{e,g}}{\partial P } \\
+\frac{\partial F^{k}_{e,l}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{e,l}}{\partial \alpha_g } & \frac{\partial F^{k}_{e,l}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{e,l}}{\partial ((1 - \alpha_g) h_l)} &\frac{\partial F^{k}_{e,l}}{\partial \alpha_e } & \frac{\partial F^{k}_{e,l}}{\partial P } \\
+\frac{\partial F^{k}_{c,e}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{c,e}}{\partial \alpha_g } & \frac{\partial F^{k}_{c,e}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{c,e}}{\partial ((1 - \alpha_g) h_l)} &\frac{\partial F^{k}_{c,e}}{\partial \alpha_e } & \frac{\partial F^{k}_{c,e}}{\partial P } \\
+\frac{\partial F^{k}_{c,v}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{c,v}}{\partial \alpha_g } & \frac{\partial F^{k}_{c,v}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{c,v}}{\partial ((1 - \alpha_g) h_l)} & \frac{\partial F^{k}_{c,v}}{\partial \alpha_e } & \frac{\partial F^{k}_{c,v}}{\partial P }
 \end{bmatrix}
 \end{equation}
+
+The matrix of the derivatives of the continuity residual vector with respect to the momentum vector at the boundaries of the continuity volume, $\displaystyle \frac{\partial\,\vec{F}_{c}}{\partial \momVec{}_{i}}$, will be known as $\vec{\Xi}_{i}$.
+This matrix converts the momentum vector at a continuity volume's edge to mass and energy flows and is defined by \eqref{eqn:momentumToFlowRates}.
+
+\begin{equation}
+\label{eqn:momentumToFlowRates}
+\vec{\Xi}^{n+1, k}_{i} = \dt{} \begin{bmatrix}
+ 0 & \frac{\don{\alpha^{n}_{g} \rho^{n}_{n}}^{n+1,k}_{d}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a}} & 0 \\
+\frac{\don{\alpha^{n}_{l}\rho^{n}_{l}}^{n+1,k}_{d}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a}} & 0 & 0 \\
+0 & \frac{\don{\alpha^{n}_{g} \rho^{n}_{g} h^{n}_{g}}^{n+1,k}_{d}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a}} & 0 \\
+\frac{\don{\alpha^{n}_{l}\rho^{n}_{l} h^{n}_{l}}^{n+1,k}_{d}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a}} & 0 & \frac{\don{\alpha^{n}_{e} \rho^{n}_{l} h^{n}_{l}}^{n+1, k}_{d}}{\ave{\alpha_{e} \rho_{l}}^{n}_{a}} \\
+0 & 0 & \frac{ \don{\alpha^{n}_{e} \rho^{n}_{l}}^{n+1, k}_{d}}{ \ave{\alpha_{e} \rho_{l}}^{n}_{a}} \\
+0 & \frac{ \don{\alpha^{n}_{g} \rho^{n}_{v}}^{n+1, k}_{d}}{ \ave{\alpha_{g} \rho_{g}}^{n}_{a}} & 0
+\end{bmatrix}_{i}
+\end{equation}
+
+The definition of the momentum update vector, \eqref{eqn:momentumUpdate} is used to eliminate the momentum update vector from \eqref{eqn:nlnContinuitySystem}.
+Note that the summation over the number of continuity volumes to which a particular flow path connected is at most two terms.
+A momentum flow path can only connect to two continuity volumes.
+In the following substitution, one of the two continuity volumes is the continuity volume of interest.
+The other will be indexed with $i$, the reference coordinate for a flow paths to which the continuity volume is connected. 
+The resulting system is shown in \eqref{eqn:continuitySystem}.
+
+\begin{IEEEeqnarray}{rcl}
+\label{eqn:continuitySystem}
+ - \vec{F}^{k}_{c} & = & \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} \nonumber \\
+& + & \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum^{N_{f}}_{i\,=\,1} \vec{\Xi}^{k}_{i}\left( \delta \momVec{}_{i}^{*} + \frac{\partial \momVec{}^{k}}{\partial P} \delta P^{k} + \frac{\partial \momVec{}^{k}}{\partial P_{i}} \delta P_{i}^{k} \right)
+\end{IEEEeqnarray}
+
+By rearanging \eqref{eqn:continuitySystem}, the following system is obtained.
+
+\begin{IEEEeqnarray}{rcl}
+\label{eqn:continuitySystem02}
+\frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & + & \nonumber \\
+\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \left( \frac{\partial \vec{F}^{k}_{c}}{\partial P } + \sum^{N_{f}}_{i\,=\,1} \vec{\Xi}^{k}_{i}\frac{\partial \momVec{}^{k}_{i}}{\partial P}\right) \delta P^{k} + \sum^{N_{f}}_{i\,=\,1} \vec{\Xi}^{k}_{i} \frac{\partial \momVec{}^{k}}{\partial P_{i}} \delta P_{i}^{k} = - \vec{F}^{k}_{c} - \sum^{N_{f}}_{i\,=\,1} \vec{\Xi}^{k}_{i} \delta \momVec{}_{i}^{*} & &
+\end{IEEEeqnarray}
+
+In \eqref{eqn:continuitySystem02} there are six equations and six plus the number of connecting flow paths, $N_{f}$, unknowns.
+Notice that the right hand side of \eqref{eqn:continuitySystem02} is the residual evaluated at the tentative new-time values plus the change in the momentum vector.
+Since the continuity equations are linear functions of their flow paths momentum vectors, this combination is the equivalent of using $\momVec{}^{n+1, k + \onehalf}$ for the advecting velocity in the evaluation of the continuity residuals.
+There is now a discrepancy between the actual residuals for the continuity volumes and the right hand side of their linear systems.
+For convergence determination, the residual, $\vec{F}^{k}_{c}$, is used, not the modified right hand side in \eqref{eqn:continuitySystem02}.
 
 The algorithm for a single Newton step is given by \alg{alg:xschem}.
 During this time the residuals and scale factors, $\vec{F}^{n+1,k}$ and $\vec{S}^{n+1,k}$, are evaluated and stored during this process.
 The single Newton step outlined in \sect{sect:linCobraAlg} is used to construct the pressure matrix for the nonlinear solver.
 During the update portion of the nonlinear solver, \alg{alg:updateVariables}, the new-time momentum variables are determined based upon \eqref{eqn:momStar}.
-For the nonlinear solver, the change in momenta, $\delta \vec{\dot{m}}$, is calculated for each flowpath, \eqref{eqn:deltaMomenta}.
+For the nonlinear solver, the change in momenta, $\delta \momVec{}$, is calculated for each flowpath, \eqref{eqn:deltaMomenta}.
 This is necessary since the momentum equations are solved for the new-time variables directly, not their updates.
 
 \begin{equation}
 \label{eqn:deltaMomenta}
-\delta \vec{\dot{m}}^{k}_{j} = \vec{\dot{m}}^{n+1,k,*}_{j} + \sum^{N_{c}}_{i\,=\,1} \frac{\partial \vec{\dot{m}}_{j}}{\partial P_{i}}\big|^{n+1,k} \delta P^{k}_{i} - \vec{\dot{m}}^{n}_{j}
+\delta \momVec{}^{k}_{j} = \momVec{}^{n+1,k + \onehalf}_{j} + \sum^{N_{c}}_{i\,=\,1} \frac{\partial \momVec{}_{j}}{\partial P_{i}}\big|^{n+1,k} \delta P^{k}_{i} - \momVec{}^{n}_{j}
 \end{equation}
 
 The residuals from every volume in the active domain, both continuity and momentum, are assembled into the $\vec{F}^{k}$ vector.

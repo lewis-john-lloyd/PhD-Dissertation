@@ -1,11 +1,13 @@
 \chapter{Domain Decomposition}
 \label{chap:domain_decomposition}
+As discussed in \ref{sect:code_coupling}, domain decomposition in thermal-hydraulic, safety-analysis software is an established method to allow for different physics to be represented in different domains.
 The governing partial differential equations described in \sect{subsect:governing_equations} contain nonlinearities that are distributed in both space and time.
 In the absence of nonlinear physics a single Newton step is adequate to solve the governing set of discrete algebraic equations.
 However, if the number of Newton steps is limited to one for a given spatial mesh when nonlinearities are present, then the only way to resolve those nonlinearities is to refine the temporal discretization.
 If the number of Newton steps is not limited to one, then the nonlinearities may be resolved for a fixed temporal discretization.
 When the nonlinearities are isolated to a given nonlinear portion of the domain, the additional Newton steps do not improve the solution in the linear portion of the domain.
 The ability to resolve the nonlinear physics only where they occur could potentially provide a way to reduce the computational cost associated with resolving the nonlinear error for a given timestep.
+This research extends the domain coupling framework to allow for different domains to be consistently coupled while subject to different mathematical treatments.
 The following section contains three sections that describe the mathematical formulation of the domain decomposition, a description of its implementation, and several problems that were used to verify that the algorithm had been implemented properly.
 
 %-------------------------------------------------------------------------------
@@ -16,37 +18,26 @@ The following section contains three sections that describe the mathematical for
 
 With the selective nonlinear refinement algorithm, the domain is split into two segments, a linear domain and a nonlinear domain.
 There is no requirement that these two domains be contiguous.
-Each continuity volume and momentum volume in the domain is characterized as either existing in the linear domain or the nonlinear domain.
-Each momentum volume is associated with a single domain; the momentum equations are not modified, regardless of the domain in which they exists.
+Each continuity volume and momentum flow path is characterized as either existing in the linear domain or the nonlinear domain.
+Each momentum flow path is associated with a single domain; the momentum equations are not modified, regardless of the domain in which they exists.
 The coupling between the two domains occurs at the interfaces between the linear and the nonlinear domains.
-Those continuity volumes which are in the linear domain, but have flowpaths connecting them to the nonlinear domain, are considered to be nonlinear boundary volumes.
+Those continuity volumes which are in the linear domain, but have flow paths connecting them to the nonlinear domain, are considered to be nonlinear boundary volumes.
 All other continuity volumes have associated with them the nonlinear continuity equations, \eqref{eqn:nlnNcgMassEquation} -- \eqref{eqn:nlnVapMassEquation}.
 The nonlinear boundary volumes on the linear side of the domains' interface have a modified set of conservation equations which will now be discussed.
 
-The starting place for the formulation will be the continuity equations for a generic volume,  \fig{fig:single_volume}.
-
-\begin{figure}[ht!]
-\centering
-\input{images/isoparametric_volume}
-\caption{A single continuity volume.}
-\label{fig:single3dvol}
-\end{figure}
-
-The edges of the volume will be labeled $x_{j \pm \onehalf}$.
-The convention in \cobra{} is that the normal vector for a given volume will be outwardly directed.
-A positive flow corresponds to flow in the direction of increasing $x_{j}$.
-In the normal nonlinear continuity equations, \eqref{eqn:nlnNcgMassEquation} -- \eqref{eqn:nlnVapMassEquation}, the advection terms are formulated in terms new-time velocities and donored quantities evaluated using the new-time velocities.
-However, in a nonlinear boundary volume, the flowpath that connects the linear volume to the nonlinear volume is formulated in terms of phasic mass and energy flow rates through the domain interface, \eqref{eqn:massAndEnergyFluxes}.
+The starting place for the formulation of the nonlinear boundary volumes' continuity equations will be \eqref{eqn:nlnNcgMassEquation} -- \eqref{eqn:nlnVapMassEquation}.
+In these normal nonlinear continuity equations the advection terms are formulated in terms new-time velocities and donored quantities evaluated using the new-time velocities.
+However, in a nonlinear boundary volume, the $N_{\text{NBC}}$ flow paths that connects the linear continuity volume to the nonlinear continuity volume is formulated in terms of phasic mass and energy flow rates, \eqref{eqn:massAndEnergyFluxes}.
 
 \begin{equation}
 \label{eqn:massAndEnergyFluxes}
 \vec{\Psi}^{n+1, k}_{j \pm \onehalf} = \begin{bmatrix}
-\Psi_{m, n} \\
-\Psi_{m, l} \\
+\Psi_{c, n} \\
+\Psi_{c, l} \\
 \Psi_{e, g} \\
 \Psi_{e, l} \\
-\Psi_{m, e} \\
-\Psi_{m, v} \\
+\Psi_{c, e} \\
+\Psi_{c, v} \\
 \end{bmatrix}^{n+1, k}_{j \pm \onehalf}
 \end{equation}
 
@@ -70,42 +61,11 @@ The definition of the six unknown flow rates are shown in \eqref{eqn:nbcFluxDefi
 \end{bmatrix}_{j \pm \onehalf}
 \end{equation}
 
-The flow rate vector, $\vec{\Psi}$, can be expressed in matrix form as \eqref{eqn:nbcFluxMatrixStyle}.
+Using \eqref{eqn:momentumToFlowRates} and \eqref{eqn:momentumVector}, the flow rate vector, $\vec{\Psi}$, can be expressed in matrix form as \eqref{eqn:nbcFluxMatrixStyle}.
 
 \begin{equation}
 \label{eqn:nbcFluxMatrixStyle}
 \vec{\Psi}^{n+1, k}_{j \pm \onehalf} = \vec{\Xi}^{n+1, k}_{j \pm \onehalf} \cdot \vec{\dot{m}}^{n+1, k}_{j \pm \onehalf}
-\end{equation}
-
-The matrix that converts the momentum vector at a continuity volume's edge to mass and energy flows, $\vec{\Xi}$, will be defined by \eqref{eqn:flux_matrix}.
-
-\begin{equation}
-\label{eqn:flux_matrix}
-\vec{\Xi}^{n+1, k}_{j \pm \onehalf} = \begin{bmatrix}
-%
- 0 & \frac{\don{\alpha^{n}_{g} \rho^{n}_{n}}^{n+1,k}_{d}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a}} & 0 \\
-%
-\frac{\don{\alpha^{n}_{l}\rho^{n}_{l}}^{n+1,k}_{d}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a}} & 0 & 0 \\
-%
-0 & \frac{\don{\alpha^{n}_{g} \rho^{n}_{g} h^{n}_{g}}^{n+1,k}_{d}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a}} & 0 \\
-%
-\frac{\don{\alpha^{n}_{l}\rho^{n}_{l} h^{n}_{l}}^{n+1,k}_{d}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a}} & 0 & \frac{\don{\alpha^{n}_{e} \rho^{n}_{l} h^{n}_{l}}^{n+1, k}_{d}}{\ave{\alpha_{e} \rho_{l}}^{n}_{a}} \\
-%
-0 & 0 & \frac{ \don{\alpha^{n}_{e} \rho^{n}_{l}}^{n+1, k}_{d}}{ \ave{\alpha_{e} \rho_{l}}^{n}_{a}} \\
-%
-0 & \frac{ \don{\alpha^{n}_{g} \rho^{n}_{v}}^{n+1, k}_{d}}{ \ave{\alpha_{g} \rho_{g}}^{n}_{a}} & 0
-\end{bmatrix}_{j \pm \onehalf}
-\end{equation}
-
-Similarly, the momentum vector is given by \eqref{eqn:momenta_vector}.
-
-\begin{equation}
-\label{eqn:momenta_vector}
-\vec{\dot{m}}^{n+1, k}_{j \pm \onehalf} = \begin{bmatrix}
-\dot{m}_{l} \\
-\dot{m}_{g} \\
-\dot{m}_{e}
-\end{bmatrix}^{n+1, k}_{j \pm \onehalf}
 \end{equation}
 
 The corresponding continuity equations for a given nonlinear boundary volume in residual formulation are given by \eqref{eqn:nbcNcgMassEquation} -- \eqref{eqn:nbcVapMassEquation}.
@@ -133,33 +93,61 @@ F^{k}_{c, v} & = & V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alp
 & + & \dt{} \sum^{N_{\text{NBC}}}_{p\,=\,1}\left( \Psi^{n+1, k}_{m,v} \right)_{p}
 \end{IEEEeqnarray}
 
-In the above equations, the number of flowpaths connecting the nonlinear boundary volume to other continuity volumes within the linear domain is given by $N_{f}$.
-The summation index $i$ corresponds to the coordinate of the linear flowpath.
-The number of flowpaths connecting the boundary volume to the nonlinear domain is given by $N_{\text{NBC}}$.
-The summation index $p$ corresponds to the coordinates of the flowpath connecting the boundary volume to the nonlinear domain.
+In the above equations, the number of flow paths connecting the nonlinear boundary volume to other continuity volumes within the linear domain is given by $N_{f}$.
+The summation index $i$ corresponds to the coordinate of the linear flow path.
+The number of flow paths connecting the nonlinear boundary continuity volume to the nonlinear domain is given by $N_{\text{NBC}}$.
+The summation index $p$ corresponds to the coordinates of the flow path connecting the nonlinear boundary continuity volume to the nonlinear domain.
 
-The linear system from \sect{sect:linCobraAlg}, \eqref{eqn:linSystem}, is modified by the introduction of the flow rates, $\vec{\Psi}$, as unknown parameters.
-For the $N_{f}$ flowpaths connecting the boundary volume to the linear domain, there will be entries in the $\vec{K}_{c, j}$ matrix that correspond to the inter-continuity volume pressure coupling due to the momentum equations.
-In addition, there will now be $N_{\text{NBC}}$ identity matrices corresponding to the domain boundaries associated with the given continuity volume.
-The identity matrices are produced by taking the derivatives of \eqref{eqn:nbcNcgMassEquation} -- \eqref{eqn:nbcVapMassEquation} with respect to the inter-domain flowrates, $\vec{\Psi}_{p}$.
-The collection of these identity matrices is known as $\vec{Q}$.
-The resulting system is given by \eqref{eqn:nbcLinSystem}, where $N_{t} = 6 \left( 1 + N_{\text{NBC}}\right) + N_{f}$.
+By treating the boundary flow rates as independent parameters, the linearized system given in \eqref{eqn:nlnContinuitySystem} is modified to be \eqref{eqn:nbcContinuitySystem}.
+
+\begin{IEEEeqnarray}{rcl}
+\label{eqn:nbcContinuitySystem}
+ - \vec{F}^{k}_{c} & = & \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} \nonumber \\
+& + & \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum^{N_{f}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{c}}{\partial \momVec{}_{i} } \delta \momVec{}_{i}^{k} + \sum^{N_{\text{NBC}}}_{p\,=\,1} \frac{\partial \vec{F}^{k}_{c}}{\partial \vec{\Psi}_{p} } \delta \vec{\Psi}_{p}^{k} 
+\end{IEEEeqnarray}
+
+Since the continuity equations are linear in the boundary flow rates, the matrix of derivatives of the NBC volumes' continuity equations with respect to the boundary flow rates, $ \frac{\partial \vec{F}^{k}_{c}}{\partial \vec{\Psi}_{p} } $, is the identity matrix times the timestep size, $\dt{} \vec{I}$.
+For algorithmic convenience, the unknown flow rates in the continuity equations' residuals are kept as unknown parameters when solving the local linear system.
+However, the residual used for convergence does include this term.
+Utilizing the above two items, \eqref{eqn:momentumToFlowRates}, and \eqref{eqn:momentumUpdate}, the linear system for the NBC volume, \eqref{eqn:nbcContinuitySystem}, can be expressed as \eqref{eqn:nbcLinearSystem} in a manner analogous to that outlined in \sect{sect:nlnCobraSolver}.
+
+\begin{IEEEeqnarray}{rcl}
+\label{eqn:nbcLinearSystem}
+\frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & + & \nonumber \\
+\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \left( \frac{\partial \vec{F}^{k}_{c}}{\partial P } + \sum^{N_{f}}_{i\,=\,1} \vec{\Xi}^{k}_{i}\frac{\partial \momVec{}^{k}_{i}}{\partial P}\right) \delta P^{k} + \sum^{N_{f}}_{i\,=\,1} \vec{\Xi}^{k}_{i} \frac{\partial \momVec{}^{k}}{\partial P_{i}} \delta P_{i}^{k} + \dt{} \sum^{N_{\text{NBC}}}_{p\,=\,1} \delta \vec{\Psi}^{k}_{p} & = &\nonumber \\
+- \left( \vec{F}^{k}_{c} + \sum^{N_{f}}_{i\,=\,1} \vec{\Xi}^{k}_{i} \delta \momVec{}_{i}^{*} - \dt{} \sum^{N_{\text{NBC}}}_{p\,=\,1} \vec{\Psi}^{k}_{p} \right) - \dt{} \sum^{N_{\text{NBC}}}_{p\,=\,1} \vec{\Psi}^{k}_{p} & &
+\end{IEEEeqnarray}
+
+As outlined in \sect{sect:nlnCobraSolver}, the advection terms in the residuals on the right hand side of \eqref{eqn:nbcLinearSystem} are evaluated using $\momVec{}^{n+1, k + \onehalf}$.
+The first six columns of \eqref{eqn:nbcLinearSystem} will be represented by $\vec{J}_{n}$.
+The next $N_{f}$ columns, the inter-continuity coupling columns, will be represented by $\vec{K}_{n}$.
+The final $6 * N_{\text{NBC}}$ columns, representing the inter-domain flow rate coefficients, will be collectively referred to as $\vec{Q}_{n}$.
+This matrix, $\vec{Q}_{n}$, is also present with the opposite sign on the right hand side of \eqref{eqn:nbcLinearSystem}.
+Using this matrix notation, \eqref{eqn:nbcLinearSystem} can be represented as \eqref{eqn:nbcLinSystem}.
 
 \begin{equation}
 \label{eqn:nbcLinSystem}
-\left[\right.\underbrace{\vec{Z}_{c, j}}_{6\, \text{x}\, N_{t}}\left.\right] \delta \vec{C}_{j} = \left[\right.\underbrace{\vec{J}_{c, j}}_{6\, \text{x}\, 6}|\underbrace{\vec{K}_{c, j}}_{6\, \text{x}\, N_{f}}|{\underbrace{\vec{Q}_{c, j}}_{6\, \text{x}\, 6 N_{\text{NBC}}}}\left.\right]\delta \vec{C}_{j} = \vec{r}_{c,j}
+\left[ \vec{J}_{n} \vert \vec{K}_{n} \vert \vec{Q}_{n} \right] \delta \vec{C}_{j} = \left[\vec{r}_{n} \vert -\vec{Q}_{n}\right]
 \end{equation}
 
-The linear system for the nonlinear boundary volume is then subjected to partial LU decomposition without pivoting.
-This LU decomposition is such that the lower triangular matrix has ones along the diagonal.
-The $N_{\text{NBC}}$ identity matrices are now themselves the inverse of the lower triangular matrix.
-The final row of this reduced system is then scaled by $\vec{Z}[6,6]$.
+This rectangular linear system for the nonlinear boundary volume is then subjected to partial $\vec{LU}$ decomposition without pivoting.
 
-The linear pressure matrix is assembled with the sixth row from each continuity volume.
-There will be $N_{l}$ rows in the system that correspond to each of the linear continuity volumes.
+\begin{equation}
+\label{eqn:nbcLUSystem}
+\left[ \vec{U}_{n} \vert \vec{L}^{-1}_{n}\vec{K}_{n} \vert \vec{L}^{-1}_{n}\vec{Q}_{n} \right] \delta \vec{C}_{j} = \left[\vec{L}^{-1}_{n}\vec{r}_{n} \vert -\vec{L}^{-1}_{n}\vec{Q}_{n}\right]
+\end{equation}
+
+However, since product of $\vec{L}_{n}^{-1}\vec{Q}_{n}$ occurs twice in the resulting system, only a single instance is included in the solution of this system.
+The $\vec{Q}_{n}$ is omitted from the right-hand side of \eqref{eqn:nbcLinSystem} during the $\vec{LU}$ decomposition.
+This $\vec{LU}$ decomposition is such that the lower triangular matrix has ones along the diagonal.
+The $N_{\text{NBC}}$ identity matrices in $\vec{Q}_{n}$ are now themselves the inverse of the lower triangular matrix times \dt{}.
+The final row of the linear system in \eqref{eqn:nbcLUSystem} is then scaled by $\vec{U}_{n}[6,6]$.
+
+The linear pressure matrix is assembled with the sixth row from each continuity volume in the linear domain including the NBC volumes.
+There will be $N_{l}$ rows in the system that correspond to each of the linear pressure updates.
 Let $N_{n}$ represent the total number of interfaces between the linear and the nonlinear domains.
-There will be an additional $6 N_{n}$ right hand sides for the linear pressure matrix that correspond to all of the unknown flowrates in the linear domain.
-Once the system has been inverted, the resulting pressure updates for the linear domain are functions of the unknown flowrates between the domains, as shown in \eqref{eqn:linearDomainPressureUpdates}.
+There will be an additional $6 * N_{n}$ left-hand and right-hand sides for the linear pressure matrix that correspond to the coefficient matrices, $\vec{L}^{-1}_{n}\vec{Q}_{n}$, for the unknown flow rates in each of the NBC volumes.
+Once the system has been inverted, the resulting pressure updates for the linear domain are functions of the unknown flow rates between the domains, as shown in \eqref{eqn:linearDomainPressureUpdates}.
 
 \begin{equation}
 \label{eqn:linearDomainPressureUpdates}
@@ -181,8 +169,8 @@ The nonlinear domain is then subjected to multiple Newton iterates as outlined i
 The norms used for convergence determination are formulated from the residuals and updates from the nonlinear domain only.
 
 Upon completion of the Newton iterations for the nonlinear domain, the linear domain is then subjected to the update.
-All pressure updates are functions of the inter-domain flowrates, which are now known.
-These flowrates are used to obtain the correct pressure updates.
+All pressure updates are functions of the inter-domain flow rates, which are now known.
+These flow rates are used to obtain the correct pressure updates.
 Once those pressure updates are obtained, the entire linear domain is looped over, where the linear updates are obtained.
 The completion of the linear update marks the completion of a single time-step.
 
@@ -205,7 +193,7 @@ Lastly, the dual domain input file is described.
 \subsection{Pressure Matrix Data Structures}
 \label{subsect:domDecompSolverStructs}
 
-As seen in \sect{sect:linCobraAlg}, the linear system that ends up being solved to obtain the Newton update vector is the pressure matrix.
+As seen in \sect{sect:linCobraAlg}, the largest linear system that is solved during a Newton step is the pressure matrix that is used to obtain the pressure update vector.
 \cobra{} provides the user with three options for the linear algebra method to be used for solving for the pressure update: the Gauss elimination routine, the SuperLU solver \cite{Li1999}, and the Pardiso solver \cite{Schenk2006, Schenk2007}.
 The SuperLU and the Pardiso solvers utilize sparse matrix storage and the Gauss elimination routine utilizes a full matrix.
 The sparsity of the matrices typically encountered are such that use of the direct solver is discouraged.
@@ -259,7 +247,7 @@ Within the \classname{solver} class there is an interface for the initialization
 In addition, the following procedures for manipulating the linear system are defined:
 
 \begin{itemize}
-\item{ \classname{insert} : a procedure for inserting a continuity volume's pressure equation into $\vec{A}_{i, :}$.}
+\item{ \classname{insert} : a procedure for inserting the a continuity \classname{volume}'s pressure equation into $\vec{A}_{i, :}$.}
 \item{ \classname{solve} : an interface to call the solver associated with the matrix.}
 \item{ \classname{scale} : a procedure for scaling $\vec{A}_{i, :}$ and $\vec{res}_{i}$.}
 \item{ \classname{reset} : a procedure for setting $\vec{A} = \vec{0}$ and $\vec{res} = \vec{0}$.}

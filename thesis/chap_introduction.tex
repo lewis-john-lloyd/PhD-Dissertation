@@ -404,12 +404,20 @@ The cross-sectional area of the boundary between two continuity volumes is given
 The volume integrated equation is given by \eqref{eqn:spatially_discrete_liq_m_con}.
 For illustrative purposes, \eqref{eqn:conservation_of_liq} will be integrated over a given volume, $V_j$, as shown in \fig{fig:single_volume}.
 
+%\begin{figure}[ht!]
+%\centering
+%\input{images/single_volume}
+%\caption{Single volume over which the conservation equations are integrated.}
+%\label{fig:single_volume}
+%\end{figure}
+
 \begin{figure}[ht!]
 \centering
-\input{images/single_volume}
+\input{images/isoparametric_volume}
 \caption{Single volume over which the conservation equations are integrated.}
 \label{fig:single_volume}
 \end{figure}
+
 
 For the mass-flux terms evaluated on the continuity volume edge, the advected quantity is evaluated using a 1st order upwind method \cite{Tannehill1997}.
 The velocity and cross-sectional area utilized in the continuity flux terms, $u_{j \pm \onehalf}$ and $A_{m,j \pm \onehalf}$, have the values defined in the momentum volume that aligns with the boundary of continuity volumes.

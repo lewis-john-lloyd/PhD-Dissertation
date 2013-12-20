@@ -115,5 +115,12 @@
 		$#1\mbox{\textsc{e}+}#2$
 	\fi
 }
+\DeclareRobustCommand{\momVec}{
+	\ifmmode
+		\dot{\vec{m}}
+	\else
+		$\dot{\vec{m}}$
+	\fi
+}
 \delimitershortfall-1sp
 \newcommand\abs[1]{\left|#1\right|}
