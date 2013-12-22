@@ -9,7 +9,7 @@ This chapter will discuss each of these phases of development as well several im
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
-\section{Linear Solver}
+\section{Linear \cobra{}}
 \label{sect:linCobraAlg}
 
 \cobra{} utilizes the semi-implicit method as outlined in \sect{subsect:semi_implicit}.
@@ -232,11 +232,11 @@ The solution obtained via this process is subjected to several physical and comp
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
-\section{Nonlinear Solver}
+\section{Nonlinear \cobra{}}
 \label{sect:nlnCobraSolver}
 As obtained, the \cobra{} software used the single timestep of the semi-implicit method as outlined in \sect{sect:linCobraAlg}.
 In order to evaluate the subdomain nonlinear refinement algorithm, \cobra{} needed to be modified to be able to take multiple Newton steps within a given timestep.
-To achieve this goal, the several objectives were met.
+To achieve this goal, several objectives were met.
 First, the software routines that calculated portions of $\vec{F}(\vec{x}^{k})$ and $\vec{J}(x^{k})$ were evaluated and transitioned to the proper nonlinear discretization.
 Second, a method to identify the active portion of the domain was developed to correctly construct $\vec{x}$ and $\vec{F}$.
 Lastly, a Newton loop algorithm was implemented.
@@ -249,7 +249,7 @@ This section will describe work done to meet the above objectives.
 \label{subsect:nonlinearDiscretization}
 
 Given the formation of the governing equations from \sect{sect:linCobraAlg}, several modifications were required to implement the nonlinear solver.
-First, the correct linearization about a new-time guess value as opposed to the old time needed to be implemented.
+First, the correct linearization about a new-time guess value as opposed to the old-time value needed to be implemented.
 Each Newton step is an incremental change in the new-time variable, not a change in the independent parameters over a timestep.
 Second, memory saving techniques had been employed in the construction of the linear solver that precluded more than one Newton step.
 In particular, there had been the implicit assumption within the software that the first Newton iterate, $\vec{x}^{n+1, 0}$, was the old-time variable $\vec{x}^{n}$.
@@ -258,7 +258,7 @@ Third, the assumption that $\vec{x}^{n+1, k} = \vec{x}^{n}$ produced source code
 The source code was modified to reflect the intended discretization of the governing conservation laws.
 To do this, areas had to be identified where: there were implicit cancellation of terms, the new-time variables were used in place of old-time variables, and the old-time variables were used in place of new-time variables.
 This required each of the Fortran procedures involved with the calculation of the various physical parameters and operators to be evaluated to determine if the variables being used were correct.
-Where appropriate, the software was changed to reflect the distinction between old-time and iterate variables and to introduce terms that had been assumed to be equal to zero.
+Where appropriate, the software was changed to reflect the distinction between old-time and tentative new-time variables and to introduce terms that had been assumed to be equal to zero.
 Additionally, upon verification of the proper discretization of the governing equations, several architectural changes were also made to expedite the implementation of the nonlinear solver.
 
 %-------------------------------------------------------------------------------
@@ -269,7 +269,7 @@ Additionally, upon verification of the proper discretization of the governing eq
 In \cobra{} the smallest geometric component that can be input is the channel.
 As mentioned in \sect{sect:geometry} channels inherit their geometric properties from the section in which they reside.
 To create geometrically complicated problems, it is possible to enforce zero momentum in a given momentum volume, decoupling adjacent continuity volumes by eliminating the flow-paths that connect them.
-This constraint is known as a no-flow boundary condition, and it allowed users to create more complicated models by isolating portions of the domain.
+This constraint is known as a no-flow boundary condition, and it allows more complicated models to be created by isolating portions of the domain.
 If an isolated domain is not connected to an external boundary condition, then it is marked as an inactive region.
 The inactive regions are thermodynamically isolated and form a closed system.
 These areas of the domain do not impact the solution in the portion of the domain that has boundary values, known as the active region.
@@ -300,13 +300,53 @@ Once the active volumes were identified, the way in which the domain information
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
-\subsection{Nonlinear Solver Algorithm}
+\subsection{Nonlinear Algorithm}
 \label{subsect:nlnCobraAlgo}
 
-The nonlinear solver uses Newton's method to iteratively find solution vectors that more accurately solve the discrete algebraic system of equations.
+During this research, the \cobra{} software was transitioned from the linear solver outlined in \sect{sect:linCobraAlg} to a nonlinearly-convergent solver. 
+The solution method selected for the nonlinear system was the iterative Newton's method.
+Newton's method uses successive linearizations to find a solution vector that adequately satisfies the system of discrete nonlinear equations.
+The algorithmic outline for the nonlinear solver is presented in \alg{alg:nlnCobraAlgorithm}.
+
+\begin{algo}[ht!]
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \Set $t^{n+1} : = t^{n} + \dt{}$
+    \Set $k = 0$
+	\Algorithm Assemble Nonlinear Pressure Matrix	 \Comment{\alg{alg:xschem}}
+	\Solve $\vec{A}^{k} \vec{\delta P}^{k} = \vec{res}^{k}$
+	\Algorithm Update Nonlinear Variables \Comment{\alg{alg:updateVariables}} 
+    \Loop \; Newton Loop
+		\Algorithm Assemble Nonlinear Pressure Matrix \Comment{\alg{alg:xschem}}
+		\Algorithm Convergence Determination \Comment{\alg{alg:nlnConvergence}}
+		\If{ \textbf{end} Newton loop}
+			\State Undo partial Newton Step
+			\State \textbf{break} Newton Loop 
+		\EndIf		
+		\Set $k \pluseq 1$
+		\Solve $\vec{A}^{k} \vec{\delta P}^{k} = \vec{res}^{k}$
+		\Algorithm Update Nonlinear Variables \Comment{\alg{alg:updateVariables}}
+	\EndLoop
+	\Set $n \pluseq 1$
+\EndLoop
+\end{algorithmic}
+\caption{Nonlinear \cobra{} algorithm.}
+\label{alg:nlnCobraAlgorithm}
+\end{algo}
+
+The following section will roughly parallel \alg{alg:nlnCobraAlgorithm}.
+First, the method by which the nonlinear residuals are evaluated and calculated is presented.
+This portion will be an extension of the procedure discussed in \sect{sect:linCobraAlg} and outlined in \alg{alg:xschem}.
+Second, the process through which the Newton vector is updated is outlined and discussed.
+Lastly, the method by which determination of convergence is discussed.
+
 When using the nonlinear solver, the governing equations are linearized about a tentative value $\vec{x}^{n+1, k}$; this differs from the linear case which linearizes about the old-time values $\vec{x}^{n}$.
-Two quantities that are important to the nonlinear solver are the residual and the update vectors, $\vec{F}^{k}$ and $\delta \vec{x}$ respectively.
+Two quantities that are important to the nonlinear solver are the residual vector, $\vec{F}^{k}$, and the update vector, $\delta \vec{x}$.
 The residual vector is composed of the residuals from the governing partial differential equations that are being solved.
+The update vector represents that changes in the solution vector that result from a given Newton step.
 Every momentum volume has associated with it three momentum equation residuals \eqref{eqn:nlnLiqMomentumResidual} -- \eqref{eqn:nlnEntMomentumResidual}.
 
 \begin{IEEEeqnarray}{lCl}
@@ -322,12 +362,12 @@ F^{k}_{m, e} & = & \dot{m}_{e}^{n+1, k} - \dot{m}_{e}^{n} + \frac{\dt{}}{\dx{}}\
 & + & \left. K^{n}_{we}(\dot{m}_e^{n+1, k})^2 - K^{n}_{i,ge}(u^{n+1, k}_{e} - u^{n+1, k}_{g})^2 + \left[\eta \Gamma u^{'} - S u^{'}\right]^n\vphantom{\sum_{N_{k}}}\right)
 \end{IEEEeqnarray}
 
-The three momentum equations are linearized about their tentative newt-time values.
+The three momentum equations are linearized about their tentative new-time values.
 The system of linear equations that results from the linearization is shown in \eqref{eqn:nlnMomentumSystem}.
 
 \begin{equation}
 \label{eqn:nlnMomentumSystem}
-\frac{\partial\, \vec{F}^{k}_{m}}{\partial \dot{m}^{n+1}_{l}} \delta \dot{m}_{l}^{k} + \frac{\partial\, \vec{F}^{k}_{m}}{\partial \dot{m}^{n+1}_{g}} \delta \dot{m}_{g}^{k} + \frac{\partial\, \vec{F}^{k}_{m}}{\partial \dot{m}^{n+1}_{e}} \delta \dot{m}_{e}^{k} + \sum_{i\,=\,1}^{N_{c}} \frac{\partial\, \vec{F}^{k}_{m}}{\partial P_{i}} \delta P_{i}^{k} = - \vec{F}_{m}
+\frac{\partial\, \vec{F}^{k}_{m}}{\partial \dot{m}^{n+1}_{l}} \delta \dot{m}_{l}^{k} + \frac{\partial\, \vec{F}^{k}_{m}}{\partial \dot{m}^{n+1}_{g}} \delta \dot{m}_{g}^{k} + \frac{\partial\, \vec{F}^{k}_{m}}{\partial \dot{m}^{n+1}_{e}} \delta \dot{m}_{e}^{k} + \sum_{i\,=\,1}^{N_{c}} \frac{\partial\, \vec{F}^{k}_{m}}{\partial P_{i}} \delta P_{i}^{k} = - \vec{F}^{k}_{m}
 \end{equation}
 
 The first three columns on the right hand side of \eqref{eqn:nlnMomentumSystem} represent the derivatives of the momentum residual with respect to the momentum variables.
@@ -355,19 +395,27 @@ This system of equations, \eqref{eqn:momentumMatrixSystem}, is then solved for t
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:momentumSolution}
 \vec{J}^{k}_{m} \delta \momVec{}^{k} & = & -\vec{F}_{m}^{k} - \sum^{N_{c}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}} \delta P^{k}_{i} \nonumber \\
-\vec{J}^{k}_{m} \left(\momVec{}^{n+1, k + 1} - \momVec{}^{n+1, k} \right) & = & -\vec{F}^{k}_{m} - \sum^{N_{c}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}} \delta P^{k}_{i} \nonumber \\
+\vec{J}^{k}_{m} \left[\momVec{}^{n+1, k + 1} - \momVec{}^{n+1, k} \right] & = & -\vec{F}^{k}_{m} - \sum^{N_{c}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}} \delta P^{k}_{i} \nonumber \\
 \vec{J}^{k}_{m} \momVec{}^{n+1, k + 1} & = & - \vec{F}^{k}_{m} + \vec{J}^{k}_{m} \momVec{}^{n+1, k} - \sum^{N_{c}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}} \delta P^{k}_{i} \nonumber \\
-\momVec{}^{n+1, k + 1} & = & \vec{J}^{-1} \left(- \vec{F}^{k}_{m}  + \vec{J}^{k}_{m} \momVec{}^{n+1, k} \right) - \sum^{N_{c}}_{i\,=\,1} \vec{J}^{-1}_{m} \frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}} \delta P^{k}_{i} \nonumber \\
+\momVec{}^{n+1, k + 1} & = & \left[\vec{J}^{k}\right]^{-1} \left[- \vec{F}^{k}_{m}  + \vec{J}^{k}_{m} \momVec{}^{n+1, k} \right] - \sum^{N_{c}}_{i\,=\,1} \left[\vec{J}^{k}_{m}\right]^{-1} \left[\frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}}\right] \delta P^{k}_{i} \nonumber \\
 \momVec{}^{n+1, k + 1} & = & \momVec{}^{n+1, k + \onehalf} + \sum^{N_{c}}_{i\,=\,1} \frac{\partial \momVec{}^{k}}{\partial P_{i}} \delta P^{k}_{i}
 \end{IEEEeqnarray}
 
-The variable $\momVec{}^{n+1, k + \onehalf}$ in \eqref{eqn:momentumSolution} is the iterative analog to $\momVec{}^{*}$ from \eqref{eqn:momStar}.
+The variable $\momVec{}^{n+1, k + \onehalf}$, defined in \eqref{eqn:momHalf}, present in \eqref{eqn:momentumSolution} is the iterative analog to $\momVec{}^{*}$ from \eqref{eqn:momStar}.
+
+\begin{IEEEeqnarray}{rcl}
+\label{eqn:momHalf}
+\momVec{}^{n+1, k + \onehalf} & = & \left[\vec{J}^{k}_{m}\right]^{-1}\left[ \vec{J}^{k}_{m} \momVec{}^{n+1, k}  - \vec{F}^{k}_{m} \right] \nonumber \\
+\momVec{}^{n+1, k + \onehalf} & = & \momVec{}^{n+1, k} - \left[\vec{J}^{k}_{m}\right]^{-1}\vec{F}^{k}_{m} \nonumber \\
+\momVec{}^{n+1, k + \onehalf} & = & \momVec{}^{n+1, k} + \delta \momVec{}^{*}
+\end{IEEEeqnarray}
+
 For algebraic convenience, the update vector, $\delta \momVec{}^{k}$, is defined in \eqref{eqn:momentumUpdate}.
 
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:momentumUpdate}
-\delta \momVec{}^{k} & = & - \vec{J}^{-1} \vec{F}_{m} - \sum_{i\,=\,1}^{N_{c}} \vec{J}^{-1}\frac{\partial\, \vec{F}_{m}}{\partial P_{i}} \delta P_{i}^{k} \nonumber \\
-\delta \momVec{}^{k} & = & \delta \momVec{}^{*} + \sum_{i\,=\,1}^{N_{c}} \frac{\partial\, \momVec{}}{\partial P_{i}} \delta P_{i}^{k}
+\delta \momVec{}^{k} & = & - \left[\vec{J}_{m}^{k}\right]^{-1} \vec{F}^{k}_{m} - \sum_{i\,=\,1}^{N_{c}} \left[\vec{J}_{m}^{k}\right]^{-1}\left[\frac{\partial\, \vec{F}^{k}_{m}}{\partial P_{i}}\right] \delta P_{i}^{k} \nonumber \\
+\delta \momVec{}^{k} & = & \delta \momVec{}^{*} + \sum_{i\,=\,1}^{N_{c}} \frac{\partial \momVec{}}{\partial P_{i}} \delta P_{i}^{k}
 \end{IEEEeqnarray}
 
 Likewise, each continuity volume has associated with it six residuals representing the mass and energy equations \eqref{eqn:nlnNcgMassResidual} -- \eqref{eqn:nlnVapMassResidual}.
@@ -400,22 +448,6 @@ For each continuity volume, the above six equations are linearized about the ten
 & + & \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum^{N_{f}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{c}}{\partial \momVec{}_{i} } \delta \momVec{}_{i}^{k} 
 \end{IEEEeqnarray}
 
-In \eqref{eqn:nlnContinuitySystem}, the first six columns on the right hand side, the derivatives of the continuity equations with respect to the six independent parameters for those equations, will be collectively referred to as the Jacobian for that continuity volume, $\vec{J}^{k}_{c}$.
-This Jacobian can be represented in matrix form as shown in \eqref{eqn:jacobianWithFluxTerms}.
-
-\begin{equation}
-\label{eqn:jacobianWithFluxTerms}
-\vec{J}^{k}_{c} = 
-\begin{bmatrix}
-\frac{\partial F^{k}_{c,n}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{c,n}}{\partial \alpha_g } & \frac{\partial F^{k}_{c,n}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{c,n}}{\partial ((1 - \alpha_g) h_l) } & \frac{\partial F^{k}_{c,n}}{\partial \alpha_e } & \frac{\partial F^{k}_{c,n}}{\partial P } \\
-\frac{\partial F^{k}_{c,l}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{c,l}}{\partial \alpha_g } & \frac{\partial F^{k}_{c,l}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{c,l}}{\partial ((1 - \alpha_g) h_l)} &\frac{\partial F^{k}_{c,l}}{\partial \alpha_e } & \frac{\partial F^{k}_{c,l}}{\partial P } \\
-\frac{\partial F^{k}_{e,g}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{e,g}}{\partial \alpha_g } & \frac{\partial F^{k}_{e,g}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{e,g}}{\partial ((1 - \alpha_g) h_l)} &\frac{\partial F^{k}_{e,g}}{\partial \alpha_e } & \frac{\partial F^{k}_{e,g}}{\partial P } \\
-\frac{\partial F^{k}_{e,l}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{e,l}}{\partial \alpha_g } & \frac{\partial F^{k}_{e,l}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{e,l}}{\partial ((1 - \alpha_g) h_l)} &\frac{\partial F^{k}_{e,l}}{\partial \alpha_e } & \frac{\partial F^{k}_{e,l}}{\partial P } \\
-\frac{\partial F^{k}_{c,e}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{c,e}}{\partial \alpha_g } & \frac{\partial F^{k}_{c,e}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{c,e}}{\partial ((1 - \alpha_g) h_l)} &\frac{\partial F^{k}_{c,e}}{\partial \alpha_e } & \frac{\partial F^{k}_{c,e}}{\partial P } \\
-\frac{\partial F^{k}_{c,v}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{c,v}}{\partial \alpha_g } & \frac{\partial F^{k}_{c,v}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{c,v}}{\partial ((1 - \alpha_g) h_l)} & \frac{\partial F^{k}_{c,v}}{\partial \alpha_e } & \frac{\partial F^{k}_{c,v}}{\partial P }
-\end{bmatrix}
-\end{equation}
-
 The matrix of the derivatives of the continuity residual vector with respect to the momentum vector at the boundaries of the continuity volume, $\displaystyle \frac{\partial\,\vec{F}_{c}}{\partial \momVec{}_{i}}$, will be known as $\vec{\Xi}_{i}$.
 This matrix converts the momentum vector at a continuity volume's edge to mass and energy flows and is defined by \eqref{eqn:momentumToFlowRates}.
 
@@ -435,16 +467,16 @@ The definition of the momentum update vector, \eqref{eqn:momentumUpdate} is used
 Note that the summation over the number of continuity volumes to which a particular flow path connected is at most two terms.
 A momentum flow path can only connect to two continuity volumes.
 In the following substitution, one of the two continuity volumes is the continuity volume of interest.
-The other will be indexed with $i$, the reference coordinate for a flow paths to which the continuity volume is connected. 
+The other will be indexed with $i$, the reference coordinate for a given flow path to which the continuity volume is connected. 
 The resulting system is shown in \eqref{eqn:continuitySystem}.
 
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:continuitySystem}
- - \vec{F}^{k}_{c} & = & \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} \nonumber \\
-& + & \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum^{N_{f}}_{i\,=\,1} \vec{\Xi}^{k}_{i}\left( \delta \momVec{}_{i}^{*} + \frac{\partial \momVec{}^{k}}{\partial P} \delta P^{k} + \frac{\partial \momVec{}^{k}}{\partial P_{i}} \delta P_{i}^{k} \right)
+\frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & + & \nonumber \\
+\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum^{N_{f}}_{i\,=\,1} \vec{\Xi}^{k}_{i}\left( \delta \momVec{}_{i}^{*} + \frac{\partial \momVec{}^{k}}{\partial P} \delta P^{k} + \frac{\partial \momVec{}^{k}}{\partial P_{i}} \delta P_{i}^{k} \right) = \vec{F}^{k}_{m} & &
 \end{IEEEeqnarray}
 
-By rearanging \eqref{eqn:continuitySystem}, the following system is obtained.
+By rearranging \eqref{eqn:continuitySystem}, the following system is obtained.
 
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:continuitySystem02}
@@ -453,13 +485,46 @@ By rearanging \eqref{eqn:continuitySystem}, the following system is obtained.
 \end{IEEEeqnarray}
 
 In \eqref{eqn:continuitySystem02} there are six equations and six plus the number of connecting flow paths, $N_{f}$, unknowns.
-Notice that the right hand side of \eqref{eqn:continuitySystem02} is the residual evaluated at the tentative new-time values plus the change in the momentum vector.
+The first six columns of \eqref{eqn:continuitySystem02} will be represented by $\vec{J}^{k}_{c}$.
+%This matrix is show in \eqref{eqn:jacobianWithFluxTerms}.
+%
+%\begin{equation}
+%\label{eqn:jacobianWithFluxTerms}
+%\vec{J}^{k}_{c} = 
+%\begin{bmatrix}
+%\frac{\partial F^{k}_{c,n}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{c,n}}{\partial \alpha_g } & \frac{\partial F^{k}_{c,n}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{c,n}}{\partial ((1 - \alpha_g) h_l) } & \frac{\partial F^{k}_{c,n}}{\partial \alpha_e } & \frac{\partial F^{k}_{c,n}}{\partial P } \\
+%\frac{\partial F^{k}_{c,l}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{c,l}}{\partial \alpha_g } & \frac{\partial F^{k}_{c,l}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{c,l}}{\partial ((1 - \alpha_g) h_l)} &\frac{\partial F^{k}_{c,l}}{\partial \alpha_e } & \frac{\partial F^{k}_{c,l}}{\partial P } \\
+%\frac{\partial F^{k}_{e,g}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{e,g}}{\partial \alpha_g } & \frac{\partial F^{k}_{e,g}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{e,g}}{\partial ((1 - \alpha_g) h_l)} &\frac{\partial F^{k}_{e,g}}{\partial \alpha_e } & \frac{\partial F^{k}_{e,g}}{\partial P } \\
+%\frac{\partial F^{k}_{e,l}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{e,l}}{\partial \alpha_g } & \frac{\partial F^{k}_{e,l}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{e,l}}{\partial ((1 - \alpha_g) h_l)} &\frac{\partial F^{k}_{e,l}}{\partial \alpha_e } & \frac{\partial F^{k}_{e,l}}{\partial P } \\
+%\frac{\partial F^{k}_{c,e}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{c,e}}{\partial \alpha_g } & \frac{\partial F^{k}_{c,e}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{c,e}}{\partial ((1 - \alpha_g) h_l)} &\frac{\partial F^{k}_{c,e}}{\partial \alpha_e } & \frac{\partial F^{k}_{c,e}}{\partial P } \\
+%\frac{\partial F^{k}_{c,v}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{c,v}}{\partial \alpha_g } & \frac{\partial F^{k}_{c,v}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{c,v}}{\partial ((1 - \alpha_g) h_l)} & \frac{\partial F^{k}_{c,v}}{\partial \alpha_e } & \frac{\partial F^{k}_{c,v}}{\partial P }
+%\end{bmatrix}
+%\end{equation}
+The next $N_{f}$ columns, representing the inter-continuity coupling, will be denoted  by $\vec{K}^{k}_{c}$.
+Notice that the right-hand side of \eqref{eqn:continuitySystem02} is the residual evaluated at the tentative new-time values plus the change in the momentum vector.
 Since the continuity equations are linear functions of their flow paths momentum vectors, this combination is the equivalent of using $\momVec{}^{n+1, k + \onehalf}$ for the advecting velocity in the evaluation of the continuity residuals.
-There is now a discrepancy between the actual residuals for the continuity volumes and the right hand side of their linear systems.
-For convergence determination, the residual, $\vec{F}^{k}_{c}$, is used, not the modified right hand side in \eqref{eqn:continuitySystem02}.
+Due to the use of the tentative new-time momenta in the advection terms, there is now a discrepancy between the residuals, $\vec{F}^{k}_{c}$, for the continuity volume and the right-hand side of the linear system, $\vec{r}^{k}_{c}$
+Note that for convergence determination, the residual, $\vec{F}^{k}_{c}$, is used, not the modified right hand side in \eqref{eqn:continuitySystem02}.
+Using the above matrix notation, \eqref{eqn:continuitySystem02} can be represented as \eqref{eqn:nlnLinearSystem}.
+
+\begin{equation}
+\label{eqn:nlnLinearSystem}
+\left[ \vec{J}^{k}_{c} \vert \vec{K}^{k}_{c} \right] \delta \vec{C}_{c}^{k} = \left[\vec{r}^{k}_{c}\right]
+\end{equation}
+
+This rectangular linear system for the nonlinear boundary volume is then subjected to partial $\vec{LU}$ decomposition without pivoting.
+
+\begin{equation}
+\label{eqn:nlnLUSystem}
+\left[ \vec{U}^{k}_{c} \vert \left[\vec{L}^{k}_{c}\right]^{-1}\vec{K}^{k}_{c} \right] \delta \vec{C}^{k}_{c} = \left[\vec{L}^{k}_{c}\right]^{-1}\vec{r}_{c}
+\end{equation}
+
+This $\vec{LU}$ decomposition is such that the lower triangular matrix has ones along the diagonal.
+The final row of the linear system in \eqref{eqn:nlnLUSystem} is then scaled by $\vec{U}^{k}_{c}[6,6]$.
+
 
 The algorithm for a single Newton step is given by \alg{alg:xschem}.
-During this time the residuals and scale factors, $\vec{F}^{n+1,k}$ and $\vec{S}^{n+1,k}$, are evaluated and stored during this process.
+During this process the residuals and scale factors, $\vec{F}^{n+1,k}$ and $\vec{S}^{n+1,k}$, are evaluated and stored.
 The single Newton step outlined in \sect{sect:linCobraAlg} is used to construct the pressure matrix for the nonlinear solver.
 During the update portion of the nonlinear solver, \alg{alg:updateVariables}, the new-time momentum variables are determined based upon \eqref{eqn:momStar}.
 For the nonlinear solver, the change in momenta, $\delta \momVec{}$, is calculated for each flowpath, \eqref{eqn:deltaMomenta}.
@@ -478,7 +543,8 @@ As such it is necessary to discuss the various means by which a solution for a t
 While the Newton step is being performed, the residual is being evaluated with the current solution vector, $\vec{x}^{n+1,k}$.
 Once the Newton update vector, $\delta \vec{x}^{k}$, has been calculated, the residual is reevaluated using the new solution vector, $\vec{x}^{n+1, k+1}$.
 Using the two residuals, $\vec{F}^{k}$ and $\vec{F}^{k+1}$, the comparative accuracy of the two solution vectors can be determined.
-In \cobra{} there are three ways in which the iterative Newton loop can be terminated.
+
+There are three ways in which the iterative Newton loop can be terminated.
 One way is to have the number of Newton iterates, $k$, exceed a specified threshold, $\kmax{}$.
 Another way is to have the relative update vector, \eqref{eqn:nlnUpdateVector}, drop below a specified threshold $\dtol{}$.
 
@@ -517,36 +583,6 @@ This is accomplished by looping over the domain and assembling the pressure matr
 According to \alg{alg:xschem}, the residual and scale factor are both evaluated during this process.
 If \alg{alg:nlnConvergence} determines that the Newton loop should not end, then the pressure matrix is already assembled and can be solved for the new update vector.
 However, if the Newton loop is terminated, then there are changes that were made during \alg{alg:xschem} that need to be undone.
-\alg{alg:nlnCobraAlgorithm} contains the current algorithmic implementation of the nonlinear semi-implicit method.
-
-\begin{algo}[ht!]
-\setlength{\baselineskip}{0.625\baselineskip}
-\begin{algorithmic}[1]
-\Require $\vec{x}^{0}$ and $t^{0}$
-\Set $n = 0$
-\Loop \; Transient Loop
-    \Set $t^{n+1} : = t^{n} + \dt{}$
-    \Set $k = 0$
-	\Algorithm Assemble Nonlinear Pressure Matrix	 \Comment{\alg{alg:xschem}}
-	\Solve $\vec{A}^{k} \vec{\delta P}^{k} = \vec{res}^{k}$
-	\Algorithm Update Nonlinear Variables \Comment{\alg{alg:updateVariables}} 
-    \Loop \; Newton Loop
-		\Algorithm Assemble Nonlinear Pressure Matrix \Comment{\alg{alg:xschem}}
-		\Algorithm Convergence Determination \Comment{\alg{alg:nlnConvergence}}
-		\If{ \textbf{end} Newton loop}
-			\State Undo partial Newton Step
-			\State \textbf{break} Newton Loop 
-		\EndIf		
-		\Set $k \pluseq 1$
-		\Solve $\vec{A}^{k} \vec{\delta P}^{k} = \vec{res}^{k}$
-		\Algorithm Update Nonlinear Variables \Comment{\alg{alg:updateVariables}}
-	\EndLoop
-	\Set $n \pluseq 1$
-\EndLoop
-\end{algorithmic}
-\caption{Nonlinear \cobra{} algorithm.}
-\label{alg:nlnCobraAlgorithm}
-\end{algo}
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------

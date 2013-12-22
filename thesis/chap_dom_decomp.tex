@@ -102,8 +102,8 @@ By treating the boundary flow rates as independent parameters, the linearized sy
 
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:nbcContinuitySystem}
- - \vec{F}^{k}_{c} & = & \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} \nonumber \\
-& + & \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum^{N_{f}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{c}}{\partial \momVec{}_{i} } \delta \momVec{}_{i}^{k} + \sum^{N_{\text{NBC}}}_{p\,=\,1} \frac{\partial \vec{F}^{k}_{c}}{\partial \vec{\Psi}_{p} } \delta \vec{\Psi}_{p}^{k} 
+\frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & + &  \nonumber \\
+\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum^{N_{f}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{c}}{\partial \momVec{}_{i} } \delta \momVec{}_{i}^{k} + \sum^{N_{\text{NBC}}}_{p\,=\,1} \frac{\partial \vec{F}^{k}_{c}}{\partial \vec{\Psi}_{p} } \delta \vec{\Psi}_{p}^{k}  = - \vec{F}^{k}_{c} & & 
 \end{IEEEeqnarray}
 
 Since the continuity equations are linear in the boundary flow rates, the matrix of derivatives of the NBC volumes' continuity equations with respect to the boundary flow rates, $ \frac{\partial \vec{F}^{k}_{c}}{\partial \vec{\Psi}_{p} } $, is the identity matrix times the timestep size, $\dt{} \vec{I}$.
