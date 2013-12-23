@@ -73,7 +73,7 @@ This includes the momenta, $\momVec{}^{n}$, and the pressure, $P^{n}$, giving \e
 
 The momentum equations, \eqref{eqn:linLiqMomentumEquation} - \eqref{eqn:linEntMomentumEquation}, are now linear in the unknown variables $\momVec{}^{n+1}$.
 These equations are then solved for the unknown new time momenta, $\momVec{}^{n+1}$.
-The $\delta P$ is left as an unknown, creating an additional unknown on the right hand side of the linear system.
+The $\delta P$ is left as an unknown, creating an additional unknown on the right-hand side of the linear system.
 The resulting system is of the form $\displaystyle \vec{A}_{j} \momVec{}_{j}^{n+1} = \vec{a}_{j} + \sum^{N_{c}}_{i\,=\,1} \vec{b}_{j} \delta P_{i}$.
 The solution of this linear system is expressed in \eqref{eqn:momStar}.
 
@@ -83,7 +83,7 @@ The solution of this linear system is expressed in \eqref{eqn:momStar}.
 \end{equation}
 
 The definition for the new-time momenta is a function of the as of yet unknown changes in pressures that occur in the continuity volumes connected by the momentum volume.
-The $\momVec{}^{*}$ vector on the right hand side of \eqref{eqn:momStar} contains the tentative new time momenta.
+The $\momVec{}^{*}$ vector on the right-hand side of \eqref{eqn:momStar} contains the tentative new time momenta.
 Once all of the momentum equations have been solved in the above manner, providing estimated new-time momenta for each momentum volume, the domain's continuity volumes are then looped over.
 The continuity equations used in this work, omitting external sources, are shown in \eqref{eqn:nlnNcgMassEquation} -- \eqref{eqn:nlnLiqMassEquation}. 
 The new-time velocities used for advection in the continuity equations are defined with the new-time momenta, \eqref{eqn:momStar}, in conjunction with \eqref{eqn:si_vel}.
@@ -153,7 +153,7 @@ The lower triangular matrix has a unit diagonal.
 The sixth equation in the upper-triangular system is then scaled by its diagonal.
 This upper-triangular rectangular system for each continuity volume is then stored for later back-substitution.
 Since the pressure update corresponds to the last row in the system of equations, this allows for the isolation of the pressure updates.
-The last row of each continuity volume's \eqref{eqn:linSystem} is then formed into a global pressure matrix, $\vec{A}_{N,N}$, and its associated right hand side, $\vec{r}$.
+The last row of each continuity volume's \eqref{eqn:linSystem} is then formed into a global pressure matrix, $\vec{A}_{N,N}$, and its associated right-hand side, $\vec{r}$.
 
 The two loops, one over the momentum volumes and one over the continuity volumes, form a single group of operations that act upon a given domain.
 This grouping will be known hereafter as assembling the pressure matrix for a given domain.
@@ -198,7 +198,7 @@ This update loop is shown in \alg{alg:updateVariables}.
 \begin{algorithmic}[1]
 \Loop \; Continuity Volumes
 	\Solve $\vec{U}_{c, j} \delta \vec{C}_{c, j} = \vec{r}^{*}_{c, j}$ using $\vec{\delta P}$		
-	\Loop \; Connected Flowpaths
+	\Loop \; Connected Flow Paths
 		\Set $\momVec{}^{*}_{j} \pluseq sig \cdot \frac{\partial \momVec{}}{\partial P} \delta P_{j}$
 	\EndLoop
 \EndLoop
@@ -268,7 +268,7 @@ Additionally, upon verification of the proper discretization of the governing eq
 \label{subsect:activeDomainDetermination}
 In \cobra{} the smallest geometric component that can be input is the channel.
 As mentioned in \sect{sect:geometry} channels inherit their geometric properties from the section in which they reside.
-To create geometrically complicated problems, it is possible to enforce zero momentum in a given momentum volume, decoupling adjacent continuity volumes by eliminating the flow-paths that connect them.
+To create geometrically complicated problems, it is possible to enforce zero momentum in a given momentum volume, decoupling adjacent continuity volumes by eliminating the flow paths that connect them.
 This constraint is known as a no-flow boundary condition, and it allows more complicated models to be created by isolating portions of the domain.
 If an isolated domain is not connected to an external boundary condition, then it is marked as an inactive region.
 The inactive regions are thermodynamically isolated and form a closed system.
@@ -276,7 +276,7 @@ These areas of the domain do not impact the solution in the portion of the domai
 After evaluating several prototypical models, it was determined that a large portion of the domain of these problems were thermodynamically isolable.
 \fig{fig:activeDomain} shows an example of a domain with inactive regions.
 The inactive portions of the domain are marked with grey, the active with white, and the external boundary conditions with black.
-Inter-channel flowpaths are marked with dashed lines.
+Inter-channel flow paths are marked with dashed lines.
 
 \begin{figure}[ht!]
 \centering
@@ -323,7 +323,6 @@ The algorithmic outline for the nonlinear solver is presented in \alg{alg:nlnCob
 		\Algorithm Assemble Nonlinear Pressure Matrix \Comment{\alg{alg:xschem}}
 		\Algorithm Convergence Determination \Comment{\alg{alg:nlnConvergence}}
 		\If{ \textbf{end} Newton loop}
-			\State Undo partial Newton Step
 			\State \textbf{break} Newton Loop 
 		\EndIf		
 		\Set $k \pluseq 1$
@@ -340,13 +339,14 @@ The algorithmic outline for the nonlinear solver is presented in \alg{alg:nlnCob
 The following section will roughly parallel \alg{alg:nlnCobraAlgorithm}.
 First, the method by which the nonlinear residuals are evaluated and calculated is presented.
 This portion will be an extension of the procedure discussed in \sect{sect:linCobraAlg} and outlined in \alg{alg:xschem}.
-Second, the process through which the Newton vector is updated is outlined and discussed.
-Lastly, the method by which determination of convergence is discussed.
+Second, the process through which the Newton vector is updated, \alg{alg:updateVariables}, is expounded upon and  discussed.
+Lastly, the method by which determination of convergence is discussed and is presented in \alg{alg:nlnConvergence}.
 
-When using the nonlinear solver, the governing equations are linearized about a tentative value $\vec{x}^{n+1, k}$; this differs from the linear case which linearizes about the old-time values $\vec{x}^{n}$.
-Two quantities that are important to the nonlinear solver are the residual vector, $\vec{F}^{k}$, and the update vector, $\delta \vec{x}$.
+A detailed discussion of process through which the nonlinear residuals are evaluated and the pressure matrix is assembled will now be presented.
+Using an iterative nonlinear solver requires that the governing equations be linearized about a tentative new-time value $\vec{x}^{n+1, k}$; this differs from the linear case in which the linearization occurs about the old-time values $\vec{x}^{n}$.
+Two quantities that are important to the iterative solver are the residual vector, $\vec{F}^{k}$, and the update vector, $\delta \vec{x}$.
+The update vector represents the changes in the solution vector that result from a given Newton step.
 The residual vector is composed of the residuals from the governing partial differential equations that are being solved.
-The update vector represents that changes in the solution vector that result from a given Newton step.
 Every momentum volume has associated with it three momentum equation residuals \eqref{eqn:nlnLiqMomentumResidual} -- \eqref{eqn:nlnEntMomentumResidual}.
 
 \begin{IEEEeqnarray}{lCl}
@@ -370,7 +370,7 @@ The system of linear equations that results from the linearization is shown in \
 \frac{\partial\, \vec{F}^{k}_{m}}{\partial \dot{m}^{n+1}_{l}} \delta \dot{m}_{l}^{k} + \frac{\partial\, \vec{F}^{k}_{m}}{\partial \dot{m}^{n+1}_{g}} \delta \dot{m}_{g}^{k} + \frac{\partial\, \vec{F}^{k}_{m}}{\partial \dot{m}^{n+1}_{e}} \delta \dot{m}_{e}^{k} + \sum_{i\,=\,1}^{N_{c}} \frac{\partial\, \vec{F}^{k}_{m}}{\partial P_{i}} \delta P_{i}^{k} = - \vec{F}^{k}_{m}
 \end{equation}
 
-The first three columns on the right hand side of \eqref{eqn:nlnMomentumSystem} represent the derivatives of the momentum residual with respect to the momentum variables.
+The first three columns on the right-hand side of \eqref{eqn:nlnMomentumSystem} represent the derivatives of the momentum residual with respect to the momentum variables.
 These three columns will be referred to as the Jacobian matrix for a given momentum volume, $\vec{J}^{k}_{m}$, defined in \eqref{eqn:momentumJacobian}.
 
 \begin{equation}
@@ -419,7 +419,7 @@ For algebraic convenience, the update vector, $\delta \momVec{}^{k}$, is defined
 \end{IEEEeqnarray}
 
 Likewise, each continuity volume has associated with it six residuals representing the mass and energy equations \eqref{eqn:nlnNcgMassResidual} -- \eqref{eqn:nlnVapMassResidual}.
-For a given continuity volume, these six equations are collectively refereed to as $\vec{F}_{c}$.
+For a given continuity volume, these six equations are collectively referred to as $\vec{F}_{c}$.
 
 \begin{IEEEeqnarray}{lCl}
 \label{eqn:nlnNcgMassResidual}
@@ -486,25 +486,11 @@ By rearranging \eqref{eqn:continuitySystem}, the following system is obtained.
 
 In \eqref{eqn:continuitySystem02} there are six equations and six plus the number of connecting flow paths, $N_{f}$, unknowns.
 The first six columns of \eqref{eqn:continuitySystem02} will be represented by $\vec{J}^{k}_{c}$.
-%This matrix is show in \eqref{eqn:jacobianWithFluxTerms}.
-%
-%\begin{equation}
-%\label{eqn:jacobianWithFluxTerms}
-%\vec{J}^{k}_{c} = 
-%\begin{bmatrix}
-%\frac{\partial F^{k}_{c,n}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{c,n}}{\partial \alpha_g } & \frac{\partial F^{k}_{c,n}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{c,n}}{\partial ((1 - \alpha_g) h_l) } & \frac{\partial F^{k}_{c,n}}{\partial \alpha_e } & \frac{\partial F^{k}_{c,n}}{\partial P } \\
-%\frac{\partial F^{k}_{c,l}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{c,l}}{\partial \alpha_g } & \frac{\partial F^{k}_{c,l}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{c,l}}{\partial ((1 - \alpha_g) h_l)} &\frac{\partial F^{k}_{c,l}}{\partial \alpha_e } & \frac{\partial F^{k}_{c,l}}{\partial P } \\
-%\frac{\partial F^{k}_{e,g}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{e,g}}{\partial \alpha_g } & \frac{\partial F^{k}_{e,g}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{e,g}}{\partial ((1 - \alpha_g) h_l)} &\frac{\partial F^{k}_{e,g}}{\partial \alpha_e } & \frac{\partial F^{k}_{e,g}}{\partial P } \\
-%\frac{\partial F^{k}_{e,l}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{e,l}}{\partial \alpha_g } & \frac{\partial F^{k}_{e,l}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{e,l}}{\partial ((1 - \alpha_g) h_l)} &\frac{\partial F^{k}_{e,l}}{\partial \alpha_e } & \frac{\partial F^{k}_{e,l}}{\partial P } \\
-%\frac{\partial F^{k}_{c,e}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{c,e}}{\partial \alpha_g } & \frac{\partial F^{k}_{c,e}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{c,e}}{\partial ((1 - \alpha_g) h_l)} &\frac{\partial F^{k}_{c,e}}{\partial \alpha_e } & \frac{\partial F^{k}_{c,e}}{\partial P } \\
-%\frac{\partial F^{k}_{c,v}}{\partial (\alpha_g P_{n})} & \frac{\partial F^{k}_{c,v}}{\partial \alpha_g } & \frac{\partial F^{k}_{c,v}}{\partial (\alpha_g h_v)} & \frac{\partial F^{k}_{c,v}}{\partial ((1 - \alpha_g) h_l)} & \frac{\partial F^{k}_{c,v}}{\partial \alpha_e } & \frac{\partial F^{k}_{c,v}}{\partial P }
-%\end{bmatrix}
-%\end{equation}
 The next $N_{f}$ columns, representing the inter-continuity coupling, will be denoted  by $\vec{K}^{k}_{c}$.
-Notice that the right-hand side of \eqref{eqn:continuitySystem02} is the residual evaluated at the tentative new-time values plus the change in the momentum vector.
-Since the continuity equations are linear functions of their flow paths momentum vectors, this combination is the equivalent of using $\momVec{}^{n+1, k + \onehalf}$ for the advecting velocity in the evaluation of the continuity residuals.
-Due to the use of the tentative new-time momenta in the advection terms, there is now a discrepancy between the residuals, $\vec{F}^{k}_{c}$, for the continuity volume and the right-hand side of the linear system, $\vec{r}^{k}_{c}$
-Note that for convergence determination, the residual, $\vec{F}^{k}_{c}$, is used, not the modified right hand side in \eqref{eqn:continuitySystem02}.
+Notice that the right-hand side of \eqref{eqn:continuitySystem02} is the residual evaluated at the tentative new-time values plus the change in the momentum vector multiplied by $\vec{\Xi}$.
+Since the continuity equations are linear functions of their flow paths' momentum vectors, this combination is the equivalent of using $\momVec{}^{n+1, k + \onehalf}$ for the advecting velocity in the evaluation of the continuity residuals.
+Due to the use of the tentative new-time momenta in the advection terms, there is now a discrepancy between the residuals, $\vec{F}^{k}_{c}$, for the continuity volume and the right-hand side of the linear system, $\vec{r}^{k}_{c}$.
+Note that for convergence determination, the residual, $\vec{F}^{k}_{c}$, is used, not the modified right-hand side in \eqref{eqn:continuitySystem02}.
 Using the above matrix notation, \eqref{eqn:continuitySystem02} can be represented as \eqref{eqn:nlnLinearSystem}.
 
 \begin{equation}
@@ -513,35 +499,39 @@ Using the above matrix notation, \eqref{eqn:continuitySystem02} can be represent
 \end{equation}
 
 This rectangular linear system for the nonlinear boundary volume is then subjected to partial $\vec{LU}$ decomposition without pivoting.
+This $\vec{LU}$ decomposition is such that the lower triangular matrix has ones along the diagonal.
+The final row of the linear system in \eqref{eqn:nlnLUSystem} is then scaled by $\vec{U}^{k}_{c}[6,6]$.
 
 \begin{equation}
 \label{eqn:nlnLUSystem}
 \left[ \vec{U}^{k}_{c} \vert \left[\vec{L}^{k}_{c}\right]^{-1}\vec{K}^{k}_{c} \right] \delta \vec{C}^{k}_{c} = \left[\vec{L}^{k}_{c}\right]^{-1}\vec{r}_{c}
 \end{equation}
 
-This $\vec{LU}$ decomposition is such that the lower triangular matrix has ones along the diagonal.
-The final row of the linear system in \eqref{eqn:nlnLUSystem} is then scaled by $\vec{U}^{k}_{c}[6,6]$.
+This scaled row of \eqref{eqn:nlnLUSystem} is referred to as the pressure equation for a given continuity volume.
+The pressure equations for all continuity volumes are collated into the global pressure matrix according to the continuity volumes' ordinal.
+This pressure matrix is then inverted to solve for the pressure update for all continuity volumes.
+At this point all continuity volumes are traversed to solve their linear systems, \eqref{eqn:nlnLUSystem}, for their update vectors.
 
-
-The algorithm for a single Newton step is given by \alg{alg:xschem}.
-During this process the residuals and scale factors, $\vec{F}^{n+1,k}$ and $\vec{S}^{n+1,k}$, are evaluated and stored.
-The single Newton step outlined in \sect{sect:linCobraAlg} is used to construct the pressure matrix for the nonlinear solver.
-During the update portion of the nonlinear solver, \alg{alg:updateVariables}, the new-time momentum variables are determined based upon \eqref{eqn:momStar}.
-For the nonlinear solver, the change in momenta, $\delta \momVec{}$, is calculated for each flowpath, \eqref{eqn:deltaMomenta}.
+The above discussion expounds upon the algorithm for a single Newton step that is given by \alg{alg:xschem}.
+During this process both the residuals and the scale factors, $\vec{F}^{k}$ and $\vec{S}^{k}$, are evaluated and stored.
+During this Newton step the pressure matrix is both constructed and solved.
+During the update portion of the nonlinear solver, \alg{alg:updateVariables}, the new-time momentum variables are calculated using \eqref{eqn:momentumSolution}.
+For the purpose of convergence determination, the change in the momentum vectors, $\delta \momVec{}$, is calculated for each flow path, \eqref{eqn:deltaMomenta}.
 This is necessary since the momentum equations are solved for the new-time variables directly, not their updates.
 
 \begin{equation}
 \label{eqn:deltaMomenta}
-\delta \momVec{}^{k}_{j} = \momVec{}^{n+1,k + \onehalf}_{j} + \sum^{N_{c}}_{i\,=\,1} \frac{\partial \momVec{}_{j}}{\partial P_{i}}\big|^{n+1,k} \delta P^{k}_{i} - \momVec{}^{n}_{j}
+\delta \momVec{}^{k} = \momVec{}^{n+1,k + \onehalf} + \sum^{N_{c}}_{i\,=\,1} \frac{\partial \momVec{}^{k}}{\partial P_{i}} \delta P^{k}_{i} - \momVec{}^{n+1, k}
 \end{equation}
 
 The residuals from every volume in the active domain, both continuity and momentum, are assembled into the $\vec{F}^{k}$ vector.
 The degree to which a given solution vector, $\vec{x}^{n+1, k}$, satisfies the governing differential equation can be measured by a norm of the residual vector of the nonlinear system.
-If the exact solution for the nonlinear system were known, every residual would be identically $\vec{0}$; however, in practice the residual will never be identically zero.
+If the exact solution for the nonlinear system were known, the residual vector would be identically $\vec{0}$; however, in practice the residual will never be identically zero.
 As such it is necessary to discuss the various means by which a solution for a timestep is determined to be accurate enough.
 
-While the Newton step is being performed, the residual is being evaluated with the current solution vector, $\vec{x}^{n+1,k}$.
+While a Newton step is being performed, the residual is being evaluated with the current solution vector, $\vec{x}^{n+1,k}$.
 Once the Newton update vector, $\delta \vec{x}^{k}$, has been calculated, the residual is reevaluated using the new solution vector, $\vec{x}^{n+1, k+1}$.
+Based upon the discussion above, the process for evaluating the residual is the same as that of assembling the pressure matrix.
 Using the two residuals, $\vec{F}^{k}$ and $\vec{F}^{k+1}$, the comparative accuracy of the two solution vectors can be determined.
 
 There are three ways in which the iterative Newton loop can be terminated.
@@ -557,10 +547,11 @@ Finally, the Newton loop will terminate if the scaled residual vector, \eqref{eq
 
 \begin{equation}
 \label{eqn:nlnScaledResidual}
-\tilde{\vec{F}}^{k} = (\vec{S}^{-1}\vec{F})^{k}
+\tilde{\vec{F}}^{k} = \left[\vec{S}^{k}\right]^{-1}\vec{F}^{k}
 \end{equation}
 
 The scaling matrix, $\vec{S}^{k}$, will be discussed in detail in \sect{sect:nlnScaling}.
+Note that is assembled and stored during the process of assembling the pressure matrix, \alg{alg:xschem}.
 The convergence determination logic for when to end the Newton loop is given in \alg{alg:nlnConvergence}.
 
 \begin{algo}[ht!]
@@ -580,9 +571,8 @@ The convergence determination logic for when to end the Newton loop is given in 
 
 In order to determine convergence according to \alg{alg:nlnConvergence}, it is necessary to have the values of $\vec{F}^{k+1}$ and $\vec{S}^{k+1}$.
 This is accomplished by looping over the domain and assembling the pressure matrix again.
-According to \alg{alg:xschem}, the residual and scale factor are both evaluated during this process.
-If \alg{alg:nlnConvergence} determines that the Newton loop should not end, then the pressure matrix is already assembled and can be solved for the new update vector.
-However, if the Newton loop is terminated, then there are changes that were made during \alg{alg:xschem} that need to be undone.
+As shown in \alg{alg:xschem}, the residual and scale factor are both evaluated during this process.
+If \alg{alg:nlnConvergence} determines that the Newton loop should not end, then the pressure matrix has already been  assembled and can then be solved for the new update vector.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------

@@ -319,6 +319,43 @@ This polymorphic approach allows for domain-agnostic procedures and references w
 \subsection{Domain Decomposition Algorithm}
 \label{subsect:domDecompAlgorithm}
 
+\comment{general intro paragraph to the algorithm portion of this chapter goes here.}
+
+\begin{algo}[ht!]
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \Set $t^{n+1} : = t^{n} + \dt{}$
+	\Algorithm Assemble Nonlinear and Linear Pressure Matrices	 \Comment{\alg{alg:xschem}}
+	\LineIf{ \classname{LinearSolver} }{\textbf{solve} $\vec{A}_{l} \vec{\delta P}_{l} = \vec{res}_{l}$}
+	\If{ \classname{NonlinearSolver} }
+	    \Set $k = 0$
+		\Algorithm Get Nonlinear Coefficients \Comment{\alg{alg:domDecompGetCoef}}
+		\Algorithm Set Nonlinear Boundary Values \Comment{\alg{alg:domDecompSetMat}}
+		\Solve $\vec{A}^{k}_{n} \vec{\delta P}_{n}^{k} = \vec{res}_{n}^{k}$	
+		\Algorithm Update Nonlinear Variables \Comment{\alg{alg:updateVariables}} 
+	    \Loop \; Newton Loop
+			\Algorithm Assemble Nonlinear Pressure Matrix \Comment{\alg{alg:xschem}}
+			\Algorithm Nonlinear Convergence Determination \Comment{\alg{alg:nlnConvergence}}
+			\If{ \textbf{end} Newton loop}
+				\State \textbf{break} Newton Loop 
+			\EndIf		
+			\Set $k \pluseq 1$
+			\Algorithm Set Nonlinear Boundary Values \Comment{\alg{alg:domDecompSetMat}}
+			\Solve $\vec{A}^{k} \vec{\delta P}^{k} = \vec{res}^{k}$
+			\Algorithm Update Nonlinear Variables \Comment{\alg{alg:updateVariables}}
+		\EndLoop
+	\EndIf
+	\LineIf{ \classname{LinearSolver} }{\textbf{algorithm} Update Linear Variables} \Comment{\alg{alg:updateVariables}}
+	\Set $n \pluseq 1$
+\EndLoop
+\end{algorithmic}
+\caption{Dual domain \cobra{} algorithm.}
+\label{alg:domDecompAlgorithm}
+\end{algo}
+
 First, the nonlinear domain-decomposition input file described in \sect{subsect:domDecompInputFile} is parsed to determine in which domain each channel belongs.
 Second, each continuity volume is designated as either a regular \classname{volume} or an {nbcVolume}.
 Then the  \classname{solver} objects are instantiated according to the \cobra{} input file.
@@ -413,42 +450,6 @@ The resulting pressure update vector is then used to update the nonlinear contin
 The Newton loop is now entered.
 This loop is similar to that discussed in \sect{sect:nlnCobraSolver}, with the addition of a step to set the nonlinear boundary volumes' equations.
 Upon termination of the Newton loop, the linear domain's variables are updated.
-
-\begin{algo}[ht!]
-\setlength{\baselineskip}{0.625\baselineskip}
-\begin{algorithmic}[1]
-\Require $\vec{x}^{0}$ and $t^{0}$
-\Set $n = 0$
-\Loop \; Transient Loop
-    \Set $t^{n+1} : = t^{n} + \dt{}$
-	\Algorithm Assemble Nonlinear and Linear Pressure Matrices	 \Comment{\alg{alg:xschem}}
-	\LineIf{ \classname{LinearSolver} }{\textbf{solve} $\vec{A}_{l} \vec{\delta P}_{l} = \vec{res}_{l}$}
-	\If{ \classname{NonlinearSolver} }
-	    \Set $k = 0$
-		\Algorithm Get Nonlinear Coefficients \Comment{\alg{alg:domDecompGetCoef}}
-		\Algorithm Set Nonlinear Boundary Values \Comment{\alg{alg:domDecompSetMat}}
-		\Solve $\vec{A}^{k}_{n} \vec{\delta P}_{n}^{k} = \vec{res}_{n}^{k}$	
-		\Algorithm Update Nonlinear Variables \Comment{\alg{alg:updateVariables}} 
-	    \Loop \; Newton Loop
-			\Algorithm Assemble Nonlinear Pressure Matrix \Comment{\alg{alg:xschem}}
-			\Algorithm Nonlinear Convergence Determination \Comment{\alg{alg:nlnConvergence}}
-			\If{ \textbf{end} Newton loop}
-				\State Undo partial Newton Step
-				\State \textbf{break} Newton Loop 
-			\EndIf		
-			\Set $k \pluseq 1$
-			\Algorithm Set Nonlinear Boundary Values \Comment{\alg{alg:domDecompSetMat}}
-			\Solve $\vec{A}^{k} \vec{\delta P}^{k} = \vec{res}^{k}$
-			\Algorithm Update Nonlinear Variables \Comment{\alg{alg:updateVariables}}
-		\EndLoop
-	\EndIf
-	\LineIf{ \classname{LinearSolver} }{\textbf{algorithm} Update Linear Variables} \Comment{\alg{alg:updateVariables}}
-	\Set $n \pluseq 1$
-\EndLoop
-\end{algorithmic}
-\caption{Dual domain \cobra{} algorithm.}
-\label{alg:domDecompAlgorithm}
-\end{algo}
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
