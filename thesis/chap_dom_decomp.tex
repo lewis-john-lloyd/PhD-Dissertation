@@ -172,7 +172,7 @@ Upon completion of the Newton iterations for the nonlinear domain, the linear do
 All pressure updates are functions of the inter-domain flow rates, which are now known.
 These flow rates are used to obtain the correct pressure updates.
 Once those pressure updates are obtained, the entire linear domain is looped over, where the linear updates are obtained.
-The completion of the linear update marks the completion of a single time-step.
+The completion of the linear update marks the completion of a single timestep.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -272,8 +272,8 @@ As part of the redesign, the software was partially transitioned to an object-ba
 
 A continuity volume was chosen as the basic unit for mesh representation.
 Given that the mesh is decomposed into dual domains, there were two types of continuity volumes that needed to be distinguished.
-The first type of volume includes all continuity volumes in the nonlinear domain and those continuity volumes in the linear domain that do not have a flowpath connecting them to the nonlinear domain.
-The second type of volume includes those continuity volumes in the linear domain that have a flowpath connecting them to the nonlinear domain.
+The first type of volume includes all continuity volumes in the nonlinear domain and those continuity volumes in the linear domain that do not have a flow path connecting them to the nonlinear domain.
+The second type of volume includes those continuity volumes in the linear domain that have a flow path connecting them to the nonlinear domain.
 The volume class diagram for \cobra{} is outlined in \fig{fig:volumeClassDiagram}.
 
 \begin{figure}[ht!]
@@ -293,9 +293,9 @@ In addition to the solver, the volume's ordinal is stored.
 This variable provides indexing information for the volume's pressure matrix.
 
 Additionally, information regarding the connectivity of the volume to other volumes is stored in several variables: \classname{num\_cons}, \classname{cons}, \classname{con\_type}, \classname{con\_ord}, \classname{gap\_ord}, \classname{con\_coords}, \classname{fp\_coords}, and \classname{con\_sig}.
-These variables represent the information necessary to properly references those flowpaths to which the continuity volume is connected as well as the continuity volumes on the other end of the flowpaths.
-This data structure has the drawback of storing redundant flowpath information.
-Each of the continuity volumes connected by a particular flowpath contain all of the information about that flowpath in separate memory locations.
+These variables represent the information necessary to properly references those flow paths to which the continuity volume is connected as well as the continuity volumes on the other end of the flow paths.
+This data structure has the drawback of storing redundant flow path information.
+Each of the continuity volumes connected by a particular flow path contain all of the information about that flow path in separate memory locations.
 sThis issue is known, and its resolution is part of ongoing development work of \cobra{}.
 
 The \classname{volume} also contains the Jacobian matrix and the right hand sides from \sect{sect:linCobraAlg}.
@@ -303,12 +303,12 @@ The local Jacobian matrix $\vec{J}_{c, j}$ is stored as \classname{jac}.
 The right hand side of the continuity volume's linear system, $\vec{F}_{c, j}$, is stored as \classname{b}.
 The variable \classname{b\_ords} provides a mapping between the local continuity volume's residual and flow rate coefficients to the global pressure matrix's ordinals.
 
-Those linear continuity volumes that are connected to the nonlinear domain via a flowpath have their own \classname{nbcVolume} class.
+Those linear continuity volumes that are connected to the nonlinear domain via a flow path have their own \classname{nbcVolume} class.
 This class, as shown in \fig{fig:volumeClassDiagram}, contains the additional information required to perform the domain decomposition.
 First, a second \classname{solver} pointer is present, \classname{nln\_solver}.
 This allows for proper indexing into the nonlinear pressure matrix when needed.
-Second, the \classname{nbcVolume} also contains a separate collection of variables describing those flowpaths that connect it to the nonlinear domain: \classname{nbc\_cons}, \classname{nbc\_con\_ord}, \classname{nbc\_con\_map}, \classname{nbc\_ords}, \classname{nbc\_coords}, \classname{coords}, and \classname{nln\_ord\_by\_local\_nbc\_ord}.
-Lastly, the \classname{nbcVolume} class also contains the pressure coefficients, \classname{coef\_mat}; the flow rate associated with the boundary, \classname{flux}; the derivative of the flow rate with respect to the pressure on either side of the flowpath, \classname{dflux\_dp}; the matrix $\vec{\Xi}$ in compressed storage, \classname{donored\_values}; and the right hand side of the linear domain's pressure solution, \classname{dp}.
+Second, the \classname{nbcVolume} also contains a separate collection of variables describing those flow paths that connect it to the nonlinear domain: \classname{nbc\_cons}, \classname{nbc\_con\_ord}, \classname{nbc\_con\_map}, \classname{nbc\_ords}, \classname{nbc\_coords}, \classname{coords}, and \classname{nln\_ord\_by\_local\_nbc\_ord}.
+Lastly, the \classname{nbcVolume} class also contains the pressure coefficients, \classname{coef\_mat}; the flow rate associated with the boundary, \classname{flux}; the derivative of the flow rate with respect to the pressure on either side of the flow path, \classname{dflux\_dp}; the matrix $\vec{\Xi}$ in compressed storage, \classname{donored\_values}; and the right hand side of the linear domain's pressure solution, \classname{dp}.
 
 Each continuity volume is represented by one of the above described \classname{volume} classes.
 This polymorphic approach allows for domain-agnostic procedures and references within the software.

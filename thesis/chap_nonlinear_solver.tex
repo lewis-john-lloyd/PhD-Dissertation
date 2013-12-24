@@ -234,11 +234,11 @@ The solution obtained via this process is subjected to several physical and comp
 %-------------------------------------------------------------------------------
 \section{Nonlinear \cobra{}}
 \label{sect:nlnCobraSolver}
-As obtained, the \cobra{} software used the single timestep of the semi-implicit method as outlined in \sect{sect:linCobraAlg}.
+As obtained, the \cobra{} software used the timestep of the semi-implicit method as outlined in \sect{sect:linCobraAlg}.
 In order to evaluate the subdomain nonlinear refinement algorithm, \cobra{} needed to be modified to be able to take multiple Newton steps within a given timestep.
 To achieve this goal, several objectives were met.
-First, the software routines that calculated portions of $\vec{F}(\vec{x}^{k})$ and $\vec{J}(x^{k})$ were evaluated and transitioned to the proper nonlinear discretization.
-Second, a method to identify the active portion of the domain was developed to correctly construct $\vec{x}$ and $\vec{F}$.
+First, the software routines that calculated portions of $\vec{F}(\vec{x}^{k})$ and $\vec{J}(\vec{x}^{k})$ were evaluated and transitioned to the proper nonlinear discretization.
+Second, a method to identify the active portion of the domain was developed to correctly construct $\vec{x}^{k}$ and $\vec{F}^{k}$.
 Lastly, a Newton loop algorithm was implemented.
 This section will describe work done to meet the above objectives.
 
@@ -249,6 +249,7 @@ This section will describe work done to meet the above objectives.
 \label{subsect:nonlinearDiscretization}
 
 Given the formation of the governing equations from \sect{sect:linCobraAlg}, several modifications were required to implement the nonlinear solver.
+Using an iterative nonlinear solver requires that the governing equations be linearized about a tentative new-time value $\vec{x}^{n+1, k}$; this differs from the linear case in which the linearization occurs about the old-time values $\vec{x}^{n}$.
 First, the correct linearization about a new-time guess value as opposed to the old-time value needed to be implemented.
 Each Newton step is an incremental change in the new-time variable, not a change in the independent parameters over a timestep.
 Second, memory saving techniques had been employed in the construction of the linear solver that precluded more than one Newton step.
@@ -343,7 +344,6 @@ Second, the process through which the Newton vector is updated, \alg{alg:updateV
 Lastly, the method by which determination of convergence is discussed and is presented in \alg{alg:nlnConvergence}.
 
 A detailed discussion of process through which the nonlinear residuals are evaluated and the pressure matrix is assembled will now be presented.
-Using an iterative nonlinear solver requires that the governing equations be linearized about a tentative new-time value $\vec{x}^{n+1, k}$; this differs from the linear case in which the linearization occurs about the old-time values $\vec{x}^{n}$.
 Two quantities that are important to the iterative solver are the residual vector, $\vec{F}^{k}$, and the update vector, $\delta \vec{x}$.
 The update vector represents the changes in the solution vector that result from a given Newton step.
 The residual vector is composed of the residuals from the governing partial differential equations that are being solved.
@@ -397,7 +397,7 @@ This system of equations, \eqref{eqn:momentumMatrixSystem}, is then solved for t
 \vec{J}^{k}_{m} \delta \momVec{}^{k} & = & -\vec{F}_{m}^{k} - \sum^{N_{c}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}} \delta P^{k}_{i} \nonumber \\
 \vec{J}^{k}_{m} \left[\momVec{}^{n+1, k + 1} - \momVec{}^{n+1, k} \right] & = & -\vec{F}^{k}_{m} - \sum^{N_{c}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}} \delta P^{k}_{i} \nonumber \\
 \vec{J}^{k}_{m} \momVec{}^{n+1, k + 1} & = & - \vec{F}^{k}_{m} + \vec{J}^{k}_{m} \momVec{}^{n+1, k} - \sum^{N_{c}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}} \delta P^{k}_{i} \nonumber \\
-\momVec{}^{n+1, k + 1} & = & \left[\vec{J}^{k}\right]^{-1} \left[- \vec{F}^{k}_{m}  + \vec{J}^{k}_{m} \momVec{}^{n+1, k} \right] - \sum^{N_{c}}_{i\,=\,1} \left[\vec{J}^{k}_{m}\right]^{-1} \left[\frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}}\right] \delta P^{k}_{i} \nonumber \\
+\momVec{}^{n+1, k + 1} & = & \left[\vec{J}_{m}^{k}\right]^{-1} \left[- \vec{F}^{k}_{m}  + \vec{J}^{k}_{m} \momVec{}^{n+1, k} \right] - \sum^{N_{c}}_{i\,=\,1} \left[\vec{J}^{k}_{m}\right]^{-1} \left[\frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}}\right] \delta P^{k}_{i} \nonumber \\
 \momVec{}^{n+1, k + 1} & = & \momVec{}^{n+1, k + \onehalf} + \sum^{N_{c}}_{i\,=\,1} \frac{\partial \momVec{}^{k}}{\partial P_{i}} \delta P^{k}_{i}
 \end{IEEEeqnarray}
 
@@ -463,7 +463,7 @@ This matrix converts the momentum vector at a continuity volume's edge to mass a
 \end{bmatrix}_{i}
 \end{equation}
 
-The definition of the momentum update vector, \eqref{eqn:momentumUpdate} is used to eliminate the momentum update vector from \eqref{eqn:nlnContinuitySystem}.
+The definition of the momentum update vector, \eqref{eqn:momentumUpdate}, is used to eliminate the momentum update vector from \eqref{eqn:nlnContinuitySystem}.
 Note that the summation over the number of continuity volumes to which a particular flow path connected is at most two terms.
 A momentum flow path can only connect to two continuity volumes.
 In the following substitution, one of the two continuity volumes is the continuity volume of interest.
@@ -476,7 +476,7 @@ The resulting system is shown in \eqref{eqn:continuitySystem}.
 \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum^{N_{f}}_{i\,=\,1} \vec{\Xi}^{k}_{i}\left( \delta \momVec{}_{i}^{*} + \frac{\partial \momVec{}^{k}}{\partial P} \delta P^{k} + \frac{\partial \momVec{}^{k}}{\partial P_{i}} \delta P_{i}^{k} \right) = \vec{F}^{k}_{m} & &
 \end{IEEEeqnarray}
 
-By rearranging \eqref{eqn:continuitySystem}, the following system is obtained.
+By rearranging \eqref{eqn:continuitySystem}, \eqref{eqn:continuitySystem02} is obtained.
 
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:continuitySystem02}
@@ -513,10 +513,10 @@ This pressure matrix is then inverted to solve for the pressure update for all c
 At this point all continuity volumes are traversed to solve their linear systems, \eqref{eqn:nlnLUSystem}, for their update vectors.
 
 The above discussion expounds upon the algorithm for a single Newton step that is given by \alg{alg:xschem}.
-During this process both the residuals and the scale factors, $\vec{F}^{k}$ and $\vec{S}^{k}$, are evaluated and stored.
-During this Newton step the pressure matrix is both constructed and solved.
-During the update portion of the nonlinear solver, \alg{alg:updateVariables}, the new-time momentum variables are calculated using \eqref{eqn:momentumSolution}.
-For the purpose of convergence determination, the change in the momentum vectors, $\delta \momVec{}$, is calculated for each flow path, \eqref{eqn:deltaMomenta}.
+It is during this process that both the residuals and the scale factors, $\vec{F}^{k}$ and $\vec{S}^{k}$, are evaluated and stored.
+Concurrently the pressure matrix is being both constructed and solved.
+In order to obtain the new-time momentum variables, \eqref{eqn:momentumSolution} is used during \alg{alg:updateVariables}.
+For the purpose of convergence determination, \alg{alg:nlnConvergence}, the change in the momentum vectors, $\delta \momVec{}$, is calculated for each flow path, \eqref{eqn:deltaMomenta}.
 This is necessary since the momentum equations are solved for the new-time variables directly, not their updates.
 
 \begin{equation}
@@ -551,7 +551,7 @@ Finally, the Newton loop will terminate if the scaled residual vector, \eqref{eq
 \end{equation}
 
 The scaling matrix, $\vec{S}^{k}$, will be discussed in detail in \sect{sect:nlnScaling}.
-Note that is assembled and stored during the process of assembling the pressure matrix, \alg{alg:xschem}.
+Note that it is assembled and stored during the process of assembling the pressure matrix, \alg{alg:xschem}.
 The convergence determination logic for when to end the Newton loop is given in \alg{alg:nlnConvergence}.
 
 \begin{algo}[ht!]
