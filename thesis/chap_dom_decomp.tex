@@ -1,6 +1,6 @@
 \chapter{Domain Decomposition}
 \label{chap:domain_decomposition}
-As discussed in \ref{sect:code_coupling}, domain decomposition in thermal-hydraulic, safety-analysis software is an established method to allow for different physics to be represented in different domains.
+As discussed in \sect{sect:code_coupling}, domain decomposition in thermal-hydraulic, safety-analysis software is an established method to allow for different physics to be represented in different domains.
 The governing partial differential equations described in \sect{subsect:governing_equations} contain nonlinearities that are distributed in both space and time.
 In the absence of nonlinear physics a single Newton step is adequate to solve the governing set of discrete algebraic equations.
 However, if the number of Newton steps is limited to one for a given spatial mesh when nonlinearities are present, then the only way to resolve those nonlinearities is to refine the temporal discretization.
@@ -8,7 +8,7 @@ If the number of Newton steps is not limited to one, then the nonlinearities may
 When the nonlinearities are isolated to a given nonlinear portion of the domain, the additional Newton steps do not improve the solution in the linear portion of the domain.
 The ability to resolve the nonlinear physics only where they occur could potentially provide a way to reduce the computational cost associated with resolving the nonlinear error for a given timestep.
 This research extends the domain coupling framework to allow for different domains to be consistently coupled while subject to different mathematical treatments.
-The following section contains three sections that describe the mathematical formulation of the domain decomposition, a description of its implementation, and several problems that were used to verify that the algorithm had been implemented properly.
+The following three sections describe the mathematical formulation of the domain decomposition, a description of its implementation, and several problems that were used to verify that the algorithm had been implemented properly.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
