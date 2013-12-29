@@ -35,7 +35,7 @@ The nonlinear momentum equations, neglecting spatial discretization notation and
 &+& \left. K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 - \left[ \eta \Gamma u^{'} - S u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right)
 \end{IEEEeqnarray}
 
-In the above equations the flux terms are summed over $N_{c}$, which indicates the number of continuity volumes to which a given momentum volume connects.
+In the above equations the flux terms are summed over $N_{c}$, which indicates the number of continuity volumes to which a given momentum flow path connects.
 The coefficients $K$ represent effective wall and interfacial friction factors calculated using parameters only from time $n$.
 The transfer of momentum associated with the interfacial transfer of mass is also explicitly evaluated.
 The vector notation for the three momenta, \momVec{}, is defined by \eqref{eqn:momentumVector}.
@@ -82,9 +82,9 @@ The solution of this linear system is expressed in \eqref{eqn:momStar}.
 \momVec{}_{j}^{n+1} = \momVec{}^{*}_{j} + \sum^{N_{c}}_{i\,=\,1} \frac{\partial \momVec{}_{j}}{\partial P_{i}} \delta P_{i}
 \end{equation}
 
-The definition for the new-time momenta is a function of the as of yet unknown changes in pressures that occur in the continuity volumes connected by the momentum volume.
+The definition for the new-time momenta is a function of the as of yet unknown changes in pressures that occur in the continuity volumes connected by the momentum flow path.
 The $\momVec{}^{*}$ vector on the right-hand side of \eqref{eqn:momStar} contains the tentative new time momenta.
-Once all of the momentum equations have been solved in the above manner, providing estimated new-time momenta for each momentum volume, the domain's continuity volumes are then looped over.
+Once all of the momentum equations have been solved in the above manner, providing estimated new-time momenta for each momentum flow path, the domain's continuity volumes are then looped over.
 The continuity equations used in this work, omitting external sources, are shown in \eqref{eqn:nlnNcgMassEquation} -- \eqref{eqn:nlnLiqMassEquation}. 
 The new-time velocities used for advection in the continuity equations are defined with the new-time momenta, \eqref{eqn:momStar}, in conjunction with \eqref{eqn:si_vel}.
 
@@ -155,14 +155,14 @@ This upper-triangular rectangular system for each continuity volume is then stor
 Since the pressure update corresponds to the last row in the system of equations, this allows for the isolation of the pressure updates.
 The last row of each continuity volume's \eqref{eqn:linSystem} is then formed into a global pressure matrix, $\vec{A}_{N,N}$, and its associated right-hand side, $\vec{r}$.
 
-The two loops, one over the momentum volumes and one over the continuity volumes, form a single group of operations that act upon a given domain.
+The two loops, one over the momentum flow paths and one over the continuity volumes, form a single group of operations that act upon a given domain.
 This grouping will be known hereafter as assembling the pressure matrix for a given domain.
 \alg{alg:xschem} shows the two loops and their associated actions.
 
 \begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
-\Loop \; Momentum Volumes
+\Loop \; Momentum Flow Paths
 	\Calculate $\vec{J}_{m, j}$, $\vec{a}_{j}$, and $\vec{b}_{j}$
 	\Calculate $\momVec{}^{*}$ and $\frac{\partial \momVec{}}{\partial P}$
 	\Calculate $\vec{F}_{m, j}$	
@@ -190,7 +190,7 @@ This grouping will be known hereafter as assembling the pressure matrix for a gi
 
 The system, \eqref{eqn:pressureUpdateSystem}, is then solved to determine the pressure updates for the whole domain.
 A loop over each continuity volume is then performed so that the pressure update can be used in solving its associated upper triangular system for the updates to the other five continuity variables in \eqref{eqn:linearUpdate}.
-As the loop over the continuity volume is progressing, any momentum volume connected to the given continuity volume will have its momenta updated according to \eqref{eqn:momStar} to include the contribution from that continuity volumes' change in pressure. 
+As the loop over the continuity volume is progressing, any momentum flow path connected to the given continuity volume will have its momenta updated according to \eqref{eqn:momStar} to include the contribution from that continuity volumes' change in pressure. 
 This update loop is shown in \alg{alg:updateVariables}.
 
 \begin{algo}[ht!]
@@ -269,7 +269,7 @@ Additionally, upon verification of the proper discretization of the governing eq
 \label{subsect:activeDomainDetermination}
 In \cobra{} the smallest geometric component that can be input is the channel.
 As mentioned in \sect{sect:geometry} channels inherit their geometric properties from the section in which they reside.
-To create geometrically complicated problems, it is possible to enforce zero momentum in a given momentum volume, decoupling adjacent continuity volumes by eliminating the flow paths that connect them.
+To create geometrically complicated problems, it is possible to enforce zero momentum in a given momentum flow path, decoupling adjacent continuity volumes by eliminating the flow paths that connect them.
 This constraint is known as a no-flow boundary condition, and it allows more complicated models to be created by isolating portions of the domain.
 If an isolated domain is not connected to an external boundary condition, then it is marked as an inactive region.
 The inactive regions are thermodynamically isolated and form a closed system.
@@ -288,7 +288,7 @@ Inter-channel flow paths are marked with dashed lines.
 
 Originally, \cobra{} would solve the momentum and continuity equations at every defined location in the problem.
 The pressure matrix, $\vec{A}_{N\,x\,N}$, was sized based upon the number of volumes in the domain, $N$, not the number of active volumes, $N_{a}$.
-During development it was determined that those continuity and momentum volumes which were in the inactive region would be pruned from the the simulation.
+During development it was determined that those continuity and momentum flow paths which were in the inactive region would be pruned from the the simulation.
 While the additional costs of including these volumes in the simulation have historically been acceptable, the use of an iterative solver would amplify the computational time spent in those regions to an unacceptable degree.
 Removing these inactive volumes saved computational time by precluding the evaluation of the residuals at those locations and by modifying the size of the pressure system \eqref{eqn:pressureUpdateSystem}.
 Additionally, since the inactive regions of the problem are interpreted as not being part of the system being modeled, including their equations in the residual would not provide an accurate measure of convergence.
@@ -347,7 +347,7 @@ A detailed discussion of process through which the nonlinear residuals are evalu
 Two quantities that are important to the iterative solver are the residual vector, $\vec{F}^{k}$, and the update vector, $\delta \vec{x}$.
 The update vector represents the changes in the solution vector that result from a given Newton step.
 The residual vector is composed of the residuals from the governing partial differential equations that are being solved.
-Every momentum volume has associated with it three momentum equation residuals \eqref{eqn:nlnLiqMomentumResidual} -- \eqref{eqn:nlnEntMomentumResidual}.
+Every momentum flow path has associated with it three momentum equation residuals \eqref{eqn:nlnLiqMomentumResidual} -- \eqref{eqn:nlnEntMomentumResidual}.
 
 \begin{IEEEeqnarray}{lCl}
 \label{eqn:nlnLiqMomentumResidual}
@@ -371,7 +371,7 @@ The system of linear equations that results from the linearization is shown in \
 \end{equation}
 
 The first three columns on the right-hand side of \eqref{eqn:nlnMomentumSystem} represent the derivatives of the momentum residual with respect to the momentum variables.
-These three columns will be referred to as the Jacobian matrix for a given momentum volume, $\vec{J}^{k}_{m}$, defined in \eqref{eqn:momentumJacobian}.
+These three columns will be referred to as the Jacobian matrix for a given momentum flow path, $\vec{J}^{k}_{m}$, defined in \eqref{eqn:momentumJacobian}.
 
 \begin{equation}
 \label{eqn:momentumJacobian}
@@ -593,7 +593,7 @@ When norms are taken of the unscaled residual those equations whose terms are th
 This will create a situation where any norm taken of the residual will be biased towards certain equations due to the their units or phasic composition.
 
 For a given continuity volume, the nonlinear residual will have six components: four for the conservation of mass and two for the conservation of energy.
-For each momentum volume, the three conservation of momentum equations will form the three components of the nonlinear residual.
+For each momentum flow path, the three conservation of momentum equations will form the three components of the nonlinear residual.
 These residuals have the units of the conserved quantities for their corresponding PDEs; \tab{tab:scaling_units_scales} shows the units for the different conservation equations.
 
 \begin{table}[ht!]
