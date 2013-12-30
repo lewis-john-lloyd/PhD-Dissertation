@@ -144,36 +144,81 @@ This $\vec{LU}$ decomposition is such that the lower triangular matrix has ones 
 The $N_{\text{NBC}}$ identity matrices in $\vec{Q}_{n}$ are now themselves the inverse of the lower triangular matrix times \dt{}.
 The final row of the linear system in \eqref{eqn:nbcLUSystem} is then scaled by the sixth row's sixth column entry, $\vec{U}_{n}[6,6]$.
 
-The linear pressure matrix is assembled with the sixth row from each continuity volume in the linear domain including the NBC volumes.
+The linear pressure matrix, $\vec{A}_{l}$, is assembled from the sixth row of each continuity volume's linear system in the linear domain including the NBC volumes.
 There will be $N_{l}$ rows in the system that correspond to each of the linear pressure updates.
 Let $N_{n}$ represent the total number of interfaces between the linear and the nonlinear domains.
-There will be an additional $6 * N_{n}$ left-hand and right-hand sides for the linear pressure matrix that correspond to the coefficient matrices, $\vec{L}^{-1}_{n}\vec{Q}_{n}$, for the unknown flow rates in each of the NBC volumes.
-Once the system has been inverted, the resulting pressure updates for the linear domain are functions of the unknown flow rates between the domains, as shown in \eqref{eqn:linearDomainPressureUpdates}.
-The vectors $\vec{w}_{i, e}$ represent the coupling coefficients for each NBC volume's pressure update.
+Since there can be multiple interfaces from a single NBC volume to the nonlinear domain, the $N_{n}$ is greater than or equal to the number of NBC volumes.
+There will be an additional $6 * N_{n}$ right-hand sides for the linear pressure matrix that correspond to the coefficient matrices, $\vec{L}^{-1}_{n}\vec{Q}_{n}$, for the unknown flow rates in each of the NBC volumes.
+The rectangular matrix of these right-hand sides will be referred to as $\vec{res}_{l}$.
+The resulting system is shown in \eqref{eqn:linearPressureMatrix}.
+
+\begin{equation}
+\label{eqn:linearPressureMatrix}
+\vec{A}_{l} \delta \vec{P}_{l} = \vec{res}_{l}
+\end{equation}
+
+Once \eqref{eqn:linearPressureMatrix} has been inverted, the resulting pressure updates, $\delta \vec{P}_{l}$, for the linear domain are functions of the all of the unknown flow rates between the domains, as shown in \eqref{eqn:linearDomainPressureUpdates}.
+The vectors $\vec{w}_{j, i}$ represent the coupling coefficients for each NBC volume's pressure update.
 
 \begin{equation}
 \label{eqn:linearDomainPressureUpdates}
-\delta \vec{P} + \sum_{i\,=\,1}^{N_{n}} \sum_{e\,=\,1}^{6} \vec{w}_{i, e} \delta \Psi_{i, e} = \delta \vec{P}^{*} 
+\delta P_{j} + \sum_{i\,=\,1}^{N_{n}} \vec{w}^{T}_{j, i} \cdot \delta \vec{\Psi}_{i} = \delta P_{j}^{*} - \sum_{i\,=\,1}^{N_{n}} \vec{w}^{T}_{j, i} \cdot{} \vec{\Psi}^{k}_{i}
 \end{equation}
 
-
-The pressure update represented in \eqref{eqn:linearDomainPressureUpdates} is taken to be $\delta \vec{P} = \vec{P}^{n+1} - \vec{P}^{n}$.
-This interpretation comes from the definition of the linear domain.
+\comment{I need to define the deltap star.}
 In the linear domain a single Newton step is taken to be the change from the old-time solution to the new-time solution, not an iterate.
+This interpretation means that \eqref{eqn:linearDomainPressureUpdates} is interpreted not as an iteratively solution but as a change from old-time to new-time values.
+As a result, the pressure update is taken to be $\delta P_{j} = P_{j}^{n+1} - P_{j}^{n}$, the flow rates on the right hand side are evaluated as $\vec{\Psi}^{n}$, and the flow rate updates are defined as $\delta \vec{\Psi} = \vec{\Psi}^{n+1} - \vec{\Psi}^{n}$.
 
 Once the linear system has been inverted, the nonlinear pressure matrix is finalized.
-Recall that the nonlinear continuity volumes are not modified by the domain decomposition.
+Recall that the nonlinear continuity volumes' governing equations are not modified by the domain decomposition.
 The nonlinear domain is composed of $N_{\text{nln}}$ continuity volumes.
-For each NBC volume, there will be an additional row in the nonlinear pressure matrix.
-The final nonlinear pressure matrix will have $N_{\text{nln}} + N_{n}$ equations and unknowns.
-This matrix is then inverted to obtain the tentative new-time values for the nonlinear domain.
-The nonlinear domain is then subjected to multiple Newton iterates as outlined in \sect{sect:nlnCobraSolver}.
-A deviation from the convergence procedure for a single Newton domain is that the norms used for convergence determination are formulated from the residuals and the updates only from the portion of the domain that is subject to the nonlinear solver.
+Additionally, for each NBC volume there will be an extra row in the nonlinear pressure matrix, $\vec{A}_{n}$, that corresponds to \eqref{eqn:linearDomainPressureUpdates}.
+However, within the nonlinear domain, the flow rates are not kept as unknowns; instead, the flow rates in \eqref{eqn:linearDomainPressureUpdates} are expressed in terms unknown pressures by using \eqref{eqn:momentumUpdate}, \eqref{eqn:nbcFluxMatrixStyle}, and \eqref{eqn:nbcFluxDerivative}.
 
-Upon completion of the Newton iterations for the nonlinear domain, the linear domain is then subjected to the update.
-All pressure updates are functions of the inter-domain flow rates, which are now known.
-These flow rates are used to obtain the correct pressure updates.
-Once those pressure updates are obtained, the entire linear domain is looped over, where the linear updates are obtained.
+\begin{equation}
+\label{eqn:nbcFluxDerivative}
+\delta \vec{\Psi} = \vec{\Xi}^{k} \cdot \delta \momVec{}
+\end{equation}
+
+The resulting equations for the pressure updates of the NBC volumes are given by \eqref{eqn:nbcPressureEquation} 
+
+\begin{IEEEeqnarray}{rcl}
+\delta P_{j} + \sum_{i\,=\,1}^{N_{n}} \vec{w}^{T}_{j,i} \vec{\Xi}^{k}_{i} \delta \vec{m}^{k}_{i} & = & \delta P^{*}_{j} - \sum_{i\,=\,1}^{N_{n}} \vec{w}^{T}_{j,i} \vec{\Xi}_{i}^{k} \momVec{}^{k}_{i}  \nonumber \\
+\delta P_{j} + \sum_{i\,=\,1}^{N_{n}} \vec{w}^{T}_{j,i} \left[\vec{\Xi}_{i}^{k} \frac{\partial \momVec{}_{i}^{k}}{\partial P_{s(i)}} \delta P_{s(i)} + \vec{\Xi}_{i}^{k} \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}\right] & = & \delta P^{*}_{j} - \sum_{i\,=\,1}^{N_{n}} \vec{w}^{T}_{j,i} \left[ \vec{\Xi}_{i}^{k} \momVec{}^{k}_{i} + \vec{\Xi}_{i}^{k}\delta \momVec{}^{*}_{i} \right] \nonumber \\
+\label{eqn:nbcPressureEquation}
+\delta P_{j} + \sum_{i\,=\,1}^{N_{n}} \vec{w}^{T}_{j,i} \left[\vec{\Xi}_{i}^{k} \frac{\partial \momVec{}_{i}^{k}}{\partial P_{s(i)}} \delta P_{s(i)} + \vec{\Xi}_{i}^{k} \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}\right] & = & \delta P^{*}_{j} - \sum_{i\,=\,1}^{N_{n}} \vec{w}^{T}_{j,i} \vec{\Xi}_{i}^{k} \momVec{}^{k + \onehalf}_{i}
+\end{IEEEeqnarray}
+
+The flux terms on the right-hand side of \eqref{eqn:nbcPressureEquation} are evaluated using $\momVec{}^{n+1,k+\onehalf}$.
+The subscript $s(i)$ represents the NBC volume to which the flow path $i$ is connected.
+The subscript $o(i)$ represent the nonlinear continuity volume to which the flow path $i$ is connected.
+\eqref{eqn:nbcPressureEquation} shows that every NBC volume has a functional dependence upon the change in pressure of not only every other NBC volume but also every nonlinear continuity volume that is connected to an NBC volume.  
+The final nonlinear pressure matrix will have $N_{\text{nln}} + N_{n}$ equations and unknowns and is represented by \eqref{eqn:nlnPressureMatrix}.
+
+\begin{equation}
+\label{eqn:nlnPressureMatrix}
+\vec{A}^{k}_{n} \delta \vec{P}^{k}_{n} = \vec{res}^{k}_{n}
+\end{equation}
+
+This system is then solved to obtain the pressure updates for the nonlinear domain.
+The continuity volumes and flow paths in the nonlinear domain are updated using $\delta \vec{P}^{k}_{n}$.
+The NBC volumes' pressures are not updated because the old iterate, $k$, of the NBC volume is always the old-time value to maintain consistency with the linear domain.
+The nonlinear domain is subjected to multiple Newton iterates as outlined in \sect{sect:nlnCobraSolver}.
+A deviation from the convergence procedure for a single Newton domain is that the norms used for convergence determination are formulated from the residuals and the updates only from the portion of the domain that is subject to the nonlinear solver.
+These two vectors, the residual and the update, do not include terms from the NBC volumes.
+
+Upon termination the Newton iterations for the nonlinear domain, all of the inter-domain flow rates are now known.
+These flow rates are used to obtain the linear domain's pressure updates.
+The linear domain's pressure updates, $\delta P_{j}$, have their functional dependence resolved by using \eqref{eqn:linearPressureResolution}.
+
+\begin{equation}
+\label{eqn:linearPressureResolution}
+\delta P_{j} = \delta P^{*}_{j} - \sum_{i\,=\,1}^{N_{n}} \vec{w}_{j,i}^{T} \vec{\Xi}^{k}_{i} \left[ \momVec{}^{k}_{i} + \delta \momVec{}_{i}\right]
+\end{equation}
+
+Once the pressure update vector for the linear domain is obtained, all of linear domain's continuity volumes and flow paths are looped over.
+During this loop, the new-time linear variables are calculated.
 The completion of the linear update marks the completion of a single timestep.
 
 %-------------------------------------------------------------------------------
@@ -345,7 +390,7 @@ This polymorphic approach allows for domain-agnostic procedures and references w
 			\EndIf		
 			\Set $k \pluseq 1$
 			\Algorithm Set Nonlinear Boundary Values \Comment{\alg{alg:domDecompSetMat}}
-			\Solve $\vec{A}^{k} \vec{\delta P}^{k} = \vec{res}^{k}$
+			\Solve $\vec{A}_{n}^{k} \vec{\delta P}_{n}^{k} = \vec{res}_{n}^{k}$
 			\Algorithm Update Nonlinear Variables \Comment{\alg{alg:updateVariables}}
 		\EndLoop
 	\EndIf
@@ -440,12 +485,11 @@ Once the pressure coefficients have been collected, and the linear domain has be
 This procedure is shown in detail in \alg{alg:domDecompSetMat}.
 This process is a system of three nested loops.
 The first loop is over all the NBC volumes in the domain.
-From \sect{sec:domDecompMath} and \eqref{eqn:linearDomainPressureUpdates}, each NBC volume has an associated pressure equation.
-The $\delta \Psi_{i,e}$ terms in \eqref{eqn:linearDomainPressureUpdates} are related to the nonlinear flow paths' flow rates via \eqref{eqn:s}.
-Due to the inversion of the linear domain's pressure matrix, the pressure equation of each NBC volume now has a dependence upon all other NBC volumes and the nonlinear volumes to which they attach, as shown in \eqref{eqn:blargyBlarp}.
-This creates a second, inner, loop over all NBC volumes for each NBC volume.
+From \sect{sec:domDecompMath} and \eqref{eqn:linearDomainPressureUpdates}, each NBC volume has an associated pressure equation, \eqref{eqn:nbcPressureEquation}.
+This equation represents the inter-dependency of the NBC volumes upon each other.
+Evaluating \eqref{eqn:nbcPressureEquation} requires an inner loop over all of the NBC volumes for each outer NBC volume.
 For each of these inner loop NBC volumes, their $N_{\text{NBC}}$ flow paths that connect them to nonlinear domain are then traversed.
-For each connecting flow path, the contribution is calculated and stored in the row of \vec{A} associated with the outer NBC volume. 
+For each connecting flow path, the contribution is calculated and stored in the row of $\vec{A}_{n}$ associated with the outer NBC volume.
 
 Once the pressure equations for the NBC volumes have been inserted into the nonlinear pressure matrix, the pressure matrix for the nonlinear domain is solved.
 The resulting pressure update vector is then used to update the nonlinear continuity volumes' variables according to \alg{alg:updateVariables}.
