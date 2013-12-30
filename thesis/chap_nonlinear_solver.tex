@@ -24,14 +24,14 @@ The nonlinear momentum equations, neglecting spatial discretization notation and
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:nlnLiqMomentumEquation}
-\dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( \don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a,l}} \cdot \vec{\bar{A}}\right)_{i}^{n}
+\dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum_{i\,\in\, N_{c}} \left( \don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a,l}} \tilde{A} \right)_{i}^{n}
  - \ave{\alpha_{l}}_{\text{a}}^{n} \nabla P^{\,n+1} + g \ave{\alpha_l \rho_l}_{\text{a}}^{n} - K^{n}_{wl}(\dot{m}_l^{n+1})^2 \right. \nonumber \\
  & + & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2 - \left[(1 - \eta)\Gamma u^{'} + S u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:nlnGasMomentumEquation}
-\dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( \don{\alpha_g \rho_g u_g}_{\text{d}} \ave{u}_{\text{a},g}  \cdot \vec{\bar{A}}\right)_{i}^{n} - \ave{\alpha_{g}}_{\text{a}}^{n} \nabla P^{\,n + 1} + g \ave{\alpha_g \rho_g}_{\text{a}}^{n} - K^{n}_{wg}(\dot{m}_g^{n+1})^2 \right.\nonumber \\
+\dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum_{i\,\in \,N_{c}} \left( \don{\alpha_g \rho_g u_g}_{\text{d}} \ave{u}_{\text{a},g}  \tilde{A} \right)_{i}^{n} - \ave{\alpha_{g}}_{\text{a}}^{n} \nabla P^{\,n + 1} + g \ave{\alpha_g \rho_g}_{\text{a}}^{n} - K^{n}_{wg}(\dot{m}_g^{n+1})^2 \right.\nonumber \\
 & - & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2 -K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 + \left[\Gamma u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:nlnEntMomentumEquation}
-\dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( \don{\alpha_e \rho_l u_e}_{\text{d}} \ave{u}_{\text{a},e}  \cdot \vec{\bar{A}}\right)_{i}^n -\ave{\alpha_{e}}_{\text{a}}^{n} \nabla P^{\,n+1} + g \ave{\alpha_e \rho_l}_{\text{a}}^{n} - K^{n}_{we}(\dot{m}_e^{n+1})^2\right. \nonumber \\
+\dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum_{i\,\in \,N_{c}} \left( \don{\alpha_e \rho_l u_e}_{\text{d}} \ave{u}_{\text{a},e}  \tilde{A} \right)_{i}^n -\ave{\alpha_{e}}_{\text{a}}^{n} \nabla P^{\,n+1} + g \ave{\alpha_e \rho_l}_{\text{a}}^{n} - K^{n}_{we}(\dot{m}_e^{n+1})^2\right. \nonumber \\
 &+& \left. K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 - \left[ \eta \Gamma u^{'} - S u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right)
 \end{IEEEeqnarray}
 
@@ -54,32 +54,32 @@ This includes the momenta, $\momVec{}^{n}$, and the pressure, $P^{n}$, giving \e
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:linLiqMomentumEquation}
-\dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( \don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a},l} \cdot \vec{\bar{A}}\right)_{i}^{n}
+\dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum_{i\, \in \, N_{c}} \left( \don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a},l} \tilde{A}\right)_{i}^{n}
  -\ave{\alpha_{l}}_{\text{a}}^{n} \nabla P^{\,n} -\ave{\alpha_{l}}_{\text{a}}^{n} \delta (\nabla P) + g \ave{\alpha_l \rho_l}_{\text{a}}^{n} \right. \nonumber \\
   & + & K^{n}_{wl}(\dot{m}_l^{n})^{2} - 2 K^{n}_{wl}\dot{m}_l^{n}\dot{m}_l^{n+1} - K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})^2  \nonumber \\
  & + & \left. 2 K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})(\dot{m}^{n+1}_l - \dot{m}_g^{n+1}) - \left[(1 - \eta)\Gamma u^{'} + S u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:linGasMomentumEquation}
-\dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( \don{\alpha_g \rho_g u_g}_{\text{d}} \ave{u}_{\text{a},g} \cdot \vec{\bar{A}}\right)_{i}^{n}
+\dot{m}_{g}^{n+1} - \dot{m}_{g}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum_{i\, \in \, N_{c}} \left( \don{\alpha_g \rho_g u_g}_{\text{d}} \ave{u}_{\text{a},g} \tilde{A}\right)_{i}^{n}
  -\ave{\alpha_{g}}_{\text{a}}^{n} \nabla P^{\,n} -\ave{\alpha_{g}}_{\text{a}}^{n} \delta (\nabla P) + g \ave{\alpha_g \rho_g}_{\text{a}}^{n}  \right. \nonumber \\
   & + & K^{n}_{wg}(\dot{m}_g^{n})^{2} + K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})^2 + K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})^2 + \left[\Gamma u^{'}\right]^{n} \nonumber \\
  & - & 2 K^{n}_{i,gl}(\dot{m}^{n}_l - \dot{m}_g^{n})(\dot{m}^{n+1}_l - \dot{m}_g^{n+1}) - 2 K^{n}_{wg}\dot{m}_g^{n}\dot{m}_g^{n+1} \nonumber \\
  & - & \left. 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})\vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:linEntMomentumEquation}
-\dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum^{N_{c}}_{i\,=\,1} \left( \don{\alpha_e \rho_e u_e}_{\text{d}} \ave{u}_{\text{a},e} \cdot \vec{\bar{A}}\right)_{i}^{n}
+\dot{m}_{e}^{n+1} - \dot{m}_{e}^{n} & = & \frac{\dt{}}{\dx{}}\left(- \sum_{i\, \in \, N_{c}} \left( \don{\alpha_e \rho_e u_e}_{\text{d}} \ave{u}_{\text{a},e} \tilde{A}\right)_{i}^{n}
  -\ave{\alpha_{e}}_{\text{a}}^{n} \nabla P^{\,n} - \ave{\alpha_{e}}_{\text{a}}^{n} \delta (\nabla P ) + g \ave{\alpha_e \rho_e}_{\text{a}}^{n}  \right. \nonumber \\
   & + & K^{n}_{we}(\dot{m}_e^{n})^{2} - 2 K^{n}_{we}\dot{m}_e^{n}\dot{m}_e^{n+1} - K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})^2  \nonumber \\
  & + & \left. 2 K^{n}_{i,ge}(\dot{m}^{n}_e - \dot{m}_g^{n})(\dot{m}^{n+1}_e - \dot{m}_g^{n+1}) -\left[ \eta \Gamma u^{'} - S u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right)
 \end{IEEEeqnarray}
 
 The momentum equations, \eqref{eqn:linLiqMomentumEquation} - \eqref{eqn:linEntMomentumEquation}, are now linear in the unknown variables $\momVec{}^{n+1}$.
-These equations are then solved for the unknown new time momenta, $\momVec{}^{n+1}$.
+These three equations are then simultaneously solved for the three unknown new time momenta, $\momVec{}^{n+1}$.
 The $\delta P$ is left as an unknown, creating an additional unknown on the right-hand side of the linear system.
-The resulting system is of the form $\displaystyle \vec{A}_{j} \momVec{}_{j}^{n+1} = \vec{a}_{j} + \sum^{N_{c}}_{i\,=\,1} \vec{b}_{j} \delta P_{i}$.
+The resulting system is of the form $\displaystyle \vec{A}_{j} \momVec{}_{j}^{n+1} = \vec{a}_{j} + \sum_{i\, \in \, N_{c}} \vec{b}_{j, i}\, \delta P_{i}$.
 The solution of this linear system is expressed in \eqref{eqn:momStar}.
 
 \begin{equation}
 \label{eqn:momStar}
-\momVec{}_{j}^{n+1} = \momVec{}^{*}_{j} + \sum^{N_{c}}_{i\,=\,1} \frac{\partial \momVec{}_{j}}{\partial P_{i}} \delta P_{i}
+\momVec{}_{j}^{n+1} = \momVec{}^{*}_{j} + \sum_{i\, \in \, N_{c}} \frac{\partial \momVec{}_{j}}{\partial P_{i}} \delta P_{i}
 \end{equation}
 
 The definition for the new-time momenta is a function of the as of yet unknown changes in pressures that occur in the continuity volumes connected by the momentum flow path.
@@ -90,20 +90,20 @@ The new-time velocities used for advection in the continuity equations are defin
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:nlnNcgMassEquation}
-V_c \left[(\alpha_g \rho_{n})^{n+1}\right. & - & \left. (\alpha_g \rho_{n})^{n}\right] = -\dt{} \sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right)_{i} \\
+V_c \left[(\alpha_g \rho_{n})^{n+1}\right. & - & \left. (\alpha_g \rho_{n})^{n}\right] = -\dt{} \sum_{i\, \in \, N_{f}}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1}_{d} u^{n+1}_g  A_{m} \right)_{i} \\
 \label{eqn:nlnVapMassEquation}
-V_c\left[ \left(\alpha_g \rho_v \right)^{n+1}\right. &-& \left. \left(\alpha_g \rho_v \right)^{n}\right] = - \dt{} \sum^{N_{f}}_{i\,=\,1} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right)_{i} + 
+V_c\left[ \left(\alpha_g \rho_v \right)^{n+1}\right. &-& \left. \left(\alpha_g \rho_v \right)^{n}\right] = - \dt{} \sum_{i \, \in \, N_{f}} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1}_{d} u^{n+1}_g  A_{m} \right)_{i} + 
 \dt{} \Gamma^{n+1} \\
 \label{eqn:nlnGasEnergyEquation}
 V_c \left[ \left( \alpha_g \rho_g h_g \right)^{n+1} \right. & - & \left. \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_g ( P^{\,n+1} - P^{n} )\right ] = \dt{} \left[q_{wg} + \Gamma h^{'}_v + q_{i,v} + q_{gl}\right]^{n+1} \nonumber \\
-&- &\dt{} \sum^{N_{f}}_{i\,=\,1} \left(  \don{\alpha^{n}_g \rho^{n}_g h^{n}_{g}}^{n+1}_{d} u^{n+1}_g  \cdot \vec{\bar{A}}\right)_{i} \\
+&- &\dt{} \sum_{i\, \in \, N_{f}} \left(  \don{\alpha^{n}_g \rho^{n}_g h^{n}_{g}}^{n+1}_{d} u^{n+1}_g  A_{m} \right)_{i} \\
 \label{eqn:nlnLiqEnergyEquation}
 V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1} \right. & - & \left. \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1} - P^{\,n}) \right] = \dt{} \left[q_{wl} -\Gamma h^{'}_l +  q_{i,l} - q_{gl}\right]^{n+1} \nonumber \\
-& -& \dt{} \sum^{N_{f}}_{i\,=\,1} \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1}_{d} u^{n+1}_l \cdot \vec{\bar{A}} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right)_{i} \\
+& -& \dt{} \sum_{i\, \in \, N_{f} } \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1}_{d} u^{n+1}_l A_{m} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1}_{d} u^{n+1}_e  A_{m} \right)_{i} \\
 \label{eqn:nlnEntMassEquation}
-V_c \left[ \left(\alpha_e \rho_l \right)^{n+1}\right. & - & \left. \left(\alpha_e \rho_l \right)^{n} \right]= -\dt{} \sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1}_{d} u^{n+1}_e  \cdot \vec{\bar{A}}\right)_{i}+ \dt{}\left[ S -\eta\Gamma \right]^{n+1} \\
+V_c \left[ \left(\alpha_e \rho_l \right)^{n+1}\right. & - & \left. \left(\alpha_e \rho_l \right)^{n} \right]= -\dt{} \sum_{i\,\in \,N_{f}} \left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1}_{d} u^{n+1}_e  A_{m} \right)_{i}+ \dt{}\left[ S -\eta\Gamma \right]^{n+1} \\
 \label{eqn:nlnLiqMassEquation}
-V_c \left[ \left(\alpha_l \rho_l \right)^{n+1} \right. & - & \left. \left(\alpha_l \rho_l \right)^{n} \right]=  -\dt{} \sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^n_l \rho^n_l}^{n+1}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right)_{i} \nonumber \\
+V_c \left[ \left(\alpha_l \rho_l \right)^{n+1} \right. & - & \left. \left(\alpha_l \rho_l \right)^{n} \right]=  -\dt{} \sum_{i\, \in \, N_{f} }\left( \don{\alpha^n_l \rho^n_l}^{n+1}_{d} u^{n+1}_l  A_{m} \right)_{i} \nonumber \\
 &- &\dt{}\left[(1-\eta)\Gamma + S \right]^{n+1}
 \end{IEEEeqnarray}
 
@@ -199,7 +199,7 @@ This update loop is shown in \alg{alg:updateVariables}.
 \Loop \; Continuity Volumes
 	\Solve $\vec{U}_{c, j} \delta \vec{C}_{c, j} = \vec{r}^{*}_{c, j}$ using $\vec{\delta P}$		
 	\Loop \; Connected Flow Paths
-		\Set $\momVec{}^{*}_{j} \pluseq sig \cdot \frac{\partial \momVec{}}{\partial P} \delta P_{j}$
+		\Set $\momVec{}^{*}_{j} \pluseq  \frac{\partial \momVec{}_{i}}{\partial P_{j}} \delta P_{j}$
 	\EndLoop
 \EndLoop
 \end{algorithmic}
@@ -220,7 +220,7 @@ The complete linear process is outlined in \alg{alg:linCobraAlgorithm}.
 	\Algorithm Assemble Linear Pressure Matrix \Comment{\alg{alg:xschem}}
    	\Solve $\vec{A} \vec{\delta P} = \vec{res}$
 	\Algorithm Update Linear Variables \Comment{\alg{alg:updateVariables}}
-	\Set $n = n + 1$
+	\Set $n \pluseq 1$
 \EndLoop
 \end{algorithmic}
 \caption{Linear \cobra{} algorithm.}
@@ -347,27 +347,30 @@ A detailed discussion of process through which the nonlinear residuals are evalu
 Two quantities that are important to the iterative solver are the residual vector, $\vec{F}^{k}$, and the update vector, $\delta \vec{x}$.
 The update vector represents the changes in the solution vector that result from a given Newton step.
 The residual vector is composed of the residuals from the governing partial differential equations that are being solved.
+This includes both the residuals from the continuity volumes and the residuals from the momentum flow paths.
+
 Every momentum flow path has associated with it three momentum equation residuals \eqref{eqn:nlnLiqMomentumResidual} -- \eqref{eqn:nlnEntMomentumResidual}.
+The vector notation for the three momentum equations is $\vec{F}_{m}$.
 
 \begin{IEEEeqnarray}{lCl}
 \label{eqn:nlnLiqMomentumResidual}
-F^{k}_{m, l} & = & \dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n} + \frac{\dt{}}{\dx{}}\left(\sum^{N_{c}}_{i\,=\,1} \left( \don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a},l} \cdot \vec{\bar{A}}\right)_{i}^{n}
+F^{k}_{m, l} & = & \dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n} + \frac{\dt{}}{\dx{}}\left(\sum_{i\,\in \, N_{c} } \left( \don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a},l} \tilde{A}\right)_{i}^{n}
  +\ave{\alpha_l}^{n}_{\text{a}} \nabla P^{\,n+1, k} - g \ave{\alpha_l \rho_l}_{\text{a}}^{n} \right. \nonumber \\
 & + & \left. K^{n}_{wl}(\dot{m}_l^{n+1, k})^2 - K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1,k}_{g})^2 + \left[(1 - \eta)\Gamma u^{'} + S u^{'}\right]^{n} \vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:nlnGasMomentumResidual}
-F^{k}_{m, g} & = & \dot{m}_{g}^{n+1,k} - \dot{m}_{g}^{n} + \frac{\dt{}}{\dx{}}\left(\sum^{N_{c}}_{i\,=\,1} \left( \don{\alpha_g \rho_g u_g}_{\text{d}} \ave{u}_{\text{a},g}  \cdot \vec{\bar{A}}\right)_{i}^{n}  +\ave{\alpha_g}^{n}_{\text{a}} \nabla P^{\,n+1, k} - g \ave{\alpha_g \rho_g}_{\text{a}}^{n} \right.\nonumber \\
+F^{k}_{m, g} & = & \dot{m}_{g}^{n+1,k} - \dot{m}_{g}^{n} + \frac{\dt{}}{\dx{}}\left(\sum_{i\, \in \, N_{c} } \left( \don{\alpha_g \rho_g u_g}_{\text{d}} \ave{u}_{\text{a},g}  \tilde{A}\right)_{i}^{n}  +\ave{\alpha_g}^{n}_{\text{a}} \nabla P^{\,n+1, k} - g \ave{\alpha_g \rho_g}_{\text{a}}^{n} \right.\nonumber \\
 & + & \left. K^{n}_{wg}(\dot{m}_g^{n+1, k})^2 + K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1, k}_{g})^2 + K^{n}_{i,ge}(u^{n+1,k}_{e} - u^{n+1,k}_{g})^2 - (\Gamma u^{'})^{n} \vphantom{\sum_{N_{k}}}\right) \\
 \label{eqn:nlnEntMomentumResidual}
-F^{k}_{m, e} & = & \dot{m}_{e}^{n+1, k} - \dot{m}_{e}^{n} + \frac{\dt{}}{\dx{}}\left(\sum^{N_{c}}_{i\,=\,1} \left( \don{\alpha_e \rho_l u_e}_{\text{d}} \ave{u}_{\text{a},e}  \cdot \vec{\bar{A}}\right)_{i}^{n} + \ave{\alpha_{e}}^{n}_{\text{a}} \nabla P^{\,n+1, k} - g \ave{\alpha_e \rho_l}^{n}_{\text{a}} \right. \nonumber \\
+F^{k}_{m, e} & = & \dot{m}_{e}^{n+1, k} - \dot{m}_{e}^{n} + \frac{\dt{}}{\dx{}}\left(\sum_{i\, \in \, N_{c} } \left( \don{\alpha_e \rho_l u_e}_{\text{d}} \ave{u}_{\text{a},e}  \tilde{A}\right)_{i}^{n} + \ave{\alpha_{e}}^{n}_{\text{a}} \nabla P^{\,n+1, k} - g \ave{\alpha_e \rho_l}^{n}_{\text{a}} \right. \nonumber \\
 & + & \left. K^{n}_{we}(\dot{m}_e^{n+1, k})^2 - K^{n}_{i,ge}(u^{n+1, k}_{e} - u^{n+1, k}_{g})^2 + \left[\eta \Gamma u^{'} - S u^{'}\right]^n\vphantom{\sum_{N_{k}}}\right)
 \end{IEEEeqnarray}
 
-The three momentum equations are linearized about their tentative new-time values.
-The system of linear equations that results from the linearization is shown in \eqref{eqn:nlnMomentumSystem}.
+These three momentum equations are now linearized about their tentative new-time values.
+The system of linear equations that results from this linearization is shown in \eqref{eqn:nlnMomentumSystem}.
 
 \begin{equation}
 \label{eqn:nlnMomentumSystem}
-\frac{\partial\, \vec{F}^{k}_{m}}{\partial \dot{m}^{n+1}_{l}} \delta \dot{m}_{l}^{k} + \frac{\partial\, \vec{F}^{k}_{m}}{\partial \dot{m}^{n+1}_{g}} \delta \dot{m}_{g}^{k} + \frac{\partial\, \vec{F}^{k}_{m}}{\partial \dot{m}^{n+1}_{e}} \delta \dot{m}_{e}^{k} + \sum_{i\,=\,1}^{N_{c}} \frac{\partial\, \vec{F}^{k}_{m}}{\partial P_{i}} \delta P_{i}^{k} = - \vec{F}^{k}_{m}
+\frac{\partial\, \vec{F}^{k}_{m}}{\partial \dot{m}^{n+1}_{l}} \delta \dot{m}_{l}^{k} + \frac{\partial\, \vec{F}^{k}_{m}}{\partial \dot{m}^{n+1}_{g}} \delta \dot{m}_{g}^{k} + \frac{\partial\, \vec{F}^{k}_{m}}{\partial \dot{m}^{n+1}_{e}} \delta \dot{m}_{e}^{k} + \sum_{i\, \in \, N_{c}} \frac{\partial\, \vec{F}^{k}_{m}}{\partial P_{i}} \delta P_{i}^{k} = - \vec{F}^{k}_{m}
 \end{equation}
 
 The first three columns on the right-hand side of \eqref{eqn:nlnMomentumSystem} represent the derivatives of the momentum residual with respect to the momentum variables.
@@ -387,18 +390,18 @@ Using \eqref{eqn:momentumVector} and \eqref{eqn:momentumJacobian}, \eqref{eqn:nl
 
 \begin{equation}
 \label{eqn:momentumMatrixSystem}
-\vec{J}^{k}_{m} \delta \momVec{}^{k}  = - \vec{F}^{k}_{m} - \sum_{i\,=\,1}^{N_{c}} \frac{\partial\, \vec{F}^{k}_{m}}{\partial P_{i}} \delta P_{i}^{k}
+\vec{J}^{k}_{m} \delta \momVec{}^{k}  = - \vec{F}^{k}_{m} - \sum_{i\, \in \, N_{c}} \frac{\partial\, \vec{F}^{k}_{m}}{\partial P_{i}} \delta P_{i}^{k}
 \end{equation}
 
 This system of equations, \eqref{eqn:momentumMatrixSystem}, is then solved for the updated new-time momentum vector via the procedure shown in \eqref{eqn:momentumSolution}.
 
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:momentumSolution}
-\vec{J}^{k}_{m} \delta \momVec{}^{k} & = & -\vec{F}_{m}^{k} - \sum^{N_{c}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}} \delta P^{k}_{i} \nonumber \\
-\vec{J}^{k}_{m} \left[\momVec{}^{n+1, k + 1} - \momVec{}^{n+1, k} \right] & = & -\vec{F}^{k}_{m} - \sum^{N_{c}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}} \delta P^{k}_{i} \nonumber \\
-\vec{J}^{k}_{m} \momVec{}^{n+1, k + 1} & = & - \vec{F}^{k}_{m} + \vec{J}^{k}_{m} \momVec{}^{n+1, k} - \sum^{N_{c}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}} \delta P^{k}_{i} \nonumber \\
-\momVec{}^{n+1, k + 1} & = & \left[\vec{J}_{m}^{k}\right]^{-1} \left[- \vec{F}^{k}_{m}  + \vec{J}^{k}_{m} \momVec{}^{n+1, k} \right] - \sum^{N_{c}}_{i\,=\,1} \left[\vec{J}^{k}_{m}\right]^{-1} \left[\frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}}\right] \delta P^{k}_{i} \nonumber \\
-\momVec{}^{n+1, k + 1} & = & \momVec{}^{n+1, k + \onehalf} + \sum^{N_{c}}_{i\,=\,1} \frac{\partial \momVec{}^{k}}{\partial P_{i}} \delta P^{k}_{i}
+\vec{J}^{k}_{m} \delta \momVec{}^{k} & = & -\vec{F}_{m}^{k} - \sum_{i\,\in \, N_{c} } \frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}} \delta P^{k}_{i} \nonumber \\
+\vec{J}^{k}_{m} \left[\momVec{}^{n+1, k + 1} - \momVec{}^{n+1, k} \right] & = & -\vec{F}^{k}_{m} - \sum_{i \, \in \, N_{c} } \frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}} \delta P^{k}_{i} \nonumber \\
+\vec{J}^{k}_{m} \momVec{}^{n+1, k + 1} & = & - \vec{F}^{k}_{m} + \vec{J}^{k}_{m} \momVec{}^{n+1, k} - \sum_{i \, \in \, N_{c} } \frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}} \delta P^{k}_{i} \nonumber \\
+\momVec{}^{n+1, k + 1} & = & \left[\vec{J}_{m}^{k}\right]^{-1} \left[- \vec{F}^{k}_{m}  + \vec{J}^{k}_{m} \momVec{}^{n+1, k} \right] - \sum_{i \, \in \, N_{c} } \left[\vec{J}^{k}_{m}\right]^{-1} \left[\frac{\partial \vec{F}^{k}_{m}}{\partial P_{i}}\right] \delta P^{k}_{i} \nonumber \\
+\momVec{}^{n+1, k + 1} & = & \momVec{}^{n+1, k + \onehalf} + \sum_{i \, \in \, N_{c} } \frac{\partial \momVec{}^{k}}{\partial P_{i}} \delta P^{k}_{i}
 \end{IEEEeqnarray}
 
 The variable $\momVec{}^{n+1, k + \onehalf}$, defined in \eqref{eqn:momHalf}, present in \eqref{eqn:momentumSolution} is the iterative analog to $\momVec{}^{*}$ from \eqref{eqn:momStar}.
@@ -414,8 +417,8 @@ For algebraic convenience, the update vector, $\delta \momVec{}^{k}$, is defined
 
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:momentumUpdate}
-\delta \momVec{}^{k} & = & - \left[\vec{J}_{m}^{k}\right]^{-1} \vec{F}^{k}_{m} - \sum_{i\,=\,1}^{N_{c}} \left[\vec{J}_{m}^{k}\right]^{-1}\left[\frac{\partial\, \vec{F}^{k}_{m}}{\partial P_{i}}\right] \delta P_{i}^{k} \nonumber \\
-\delta \momVec{}^{k} & = & \delta \momVec{}^{*} + \sum_{i\,=\,1}^{N_{c}} \frac{\partial \momVec{}}{\partial P_{i}} \delta P_{i}^{k}
+\delta \momVec{}^{k} & = & - \left[\vec{J}_{m}^{k}\right]^{-1} \vec{F}^{k}_{m} - \sum_{i\,\in \, N_{c}} \left[\vec{J}_{m}^{k}\right]^{-1}\left[\frac{\partial\, \vec{F}^{k}_{m}}{\partial P_{i}}\right] \delta P_{i}^{k} \nonumber \\
+\delta \momVec{}^{k} & = & \delta \momVec{}^{*} + \sum_{i\,\in \, N_{c}} \frac{\partial \momVec{}}{\partial P_{i}} \delta P_{i}^{k}
 \end{IEEEeqnarray}
 
 Likewise, each continuity volume has associated with it six residuals representing the mass and energy equations \eqref{eqn:nlnNcgMassResidual} -- \eqref{eqn:nlnVapMassResidual}.
@@ -423,21 +426,21 @@ For a given continuity volume, these six equations are collectively referred to 
 
 \begin{IEEEeqnarray}{lCl}
 \label{eqn:nlnNcgMassResidual}
-F^{k}_{c, n} & = & V_c\left[ (\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{n}\right] +\dt{} \sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1,k}_{d} u^{n+1, k}_{g}  \cdot \vec{\bar{A}}\right)_{i} \\
+F^{k}_{c, n} & = & V_c\left[ (\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{n}\right] +\dt{} \sum_{i\, \in \, N_{f}}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1,k}_{d} u^{n+1, k}_{g}  A_{m} \right)_{i} \\
 \label{eqn:nlnLiqMassResidual}
-F^{k}_{c, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_l \rho_l \right)^{n} + \dt{} \sum^{N_{f}}_{i\,=\,1} \left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l \cdot \vec{\bar{A}}\right)_{i}   \nonumber \\
+F^{k}_{c, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_l \rho_l \right)^{n} + \dt{} \sum_{i\,\in\,N_{f}} \left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l A_{m} \right)_{i}   \nonumber \\
 &+& \dt{}\left[(1-\eta)\Gamma + S \right]^{n+1, k} \\
 \label{eqn:nlnGasEnergyResidual}
 F^{k}_{e, g} & = & V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_{g} ( P^{\,n+1, k} - P^{\,n} ) \right] \nonumber \\
-& - & \dt{} \left[q_{wg} + \Gamma h^{'}_v + q_{i,v} + q_{gl}\right]^{n+1, k} + \dt{} \sum^{N_{f}}_{i\,=\,1} \left(\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  \cdot \vec{\bar{A}}\right)_{i} \\
+& - & \dt{} \left[q_{wg} + \Gamma h^{'}_v + q_{i,v} + q_{gl}\right]^{n+1, k} + \dt{} \sum_{i\,\in\,N_{f}} \left(\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  A_{m} \right)_{i} \\
 \label{eqn:nlnLiqEnergyResidual}
 F^{k}_{e, l} & = & V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})\right] - \dt{} \left[q_{wl} -\Gamma h^{'}_l +  q_{i,l} - q_{gl}\right]^{n+1,k}    \nonumber \\
-& +& \dt{} \sum^{N_{f}}_{i\,=\,1} \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_l \cdot \vec{\bar{A}} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_e  \cdot \vec{\bar{A}}\right)_{i} \\
+& +& \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_l A_{m} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} \\
 \label{eqn:nlnEntMassResidual}
-F^{k}_{c, e} & = & V_c \left(\alpha_e \rho_l \right)^{n+1,k} - V_c \left(\alpha_e \rho_l \right)^{n} + \dt{} \sum^{N_{f}}_{i\,=\,1}\left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  \cdot \vec{\bar{A}}\right)_{i} \nonumber \\
-&-& \dt{}\left[ S -\eta\Gamma \right]^{n+1,k} \\
+F^{k}_{c, e} & = & V_c \left(\alpha_e \rho_l \right)^{n+1,k} - V_c \left(\alpha_e \rho_l \right)^{n} + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} \nonumber \\
+&-& \dt{} \left[ S - \eta \Gamma \right]^{n+1, k} \\
 \label{eqn:nlnVapMassResidual}
-F^{k}_{c, v} & = & V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right] + \dt{} \sum^{N_{f}}_{i\,=\,1} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1,k}_{d} u^{n+1, k}_{g}  \cdot \vec{\bar{A}}\right)_{i} - \dt{} \Gamma^{n+1, k}
+F^{k}_{c, v} & = & V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right] + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1,k}_{d} u^{n+1, k}_{g} A_{m} \right)_{i} - \dt{} \Gamma^{n+1, k}
 \end{IEEEeqnarray}
 
 For each continuity volume, the above six equations are linearized about the tentative new-time independent parameters.
@@ -445,7 +448,7 @@ For each continuity volume, the above six equations are linearized about the ten
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:nlnContinuitySystem}
  - \vec{F}^{k}_{c} & = & \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} \nonumber \\
-& + & \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum^{N_{f}}_{i\,=\,1} \frac{\partial \vec{F}^{k}_{c}}{\partial \momVec{}_{i} } \delta \momVec{}_{i}^{k} 
+& + & \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum_{i \, \in \, N_{f} } \frac{\partial \vec{F}^{k}_{c}}{\partial \momVec{}_{i} } \delta \momVec{}_{i}^{k} 
 \end{IEEEeqnarray}
 
 The matrix of the derivatives of the continuity residual vector with respect to the momentum vector at the boundaries of the continuity volume, $\displaystyle \frac{\partial\,\vec{F}_{c}}{\partial \momVec{}_{i}}$, will be known as $\vec{\Xi}_{i}$.
@@ -464,16 +467,16 @@ This matrix converts the momentum vector at a continuity volume's edge to mass a
 \end{equation}
 
 The definition of the momentum update vector, \eqref{eqn:momentumUpdate}, is used to eliminate the momentum update vector from \eqref{eqn:nlnContinuitySystem}.
-Note that the summation over the number of continuity volumes to which a particular flow path connected is at most two terms.
-A momentum flow path can only connect to two continuity volumes.
-In the following substitution, one of the two continuity volumes is the continuity volume of interest.
-The other will be indexed with $i$, the reference coordinate for a given flow path to which the continuity volume is connected. 
+In the above equations, a given momentum flow path will be referenced by the index $i$.
+Note that the summation over the number of continuity volumes to which a particular flow path is connected is at most two terms.
+Since each momentum flow path can connect to only two continuity volumes, one of those two continuity volumes will be the current continuity volume, which will not be marked by an index.
+The other continuity volume connected via flow path $i$ will be indexed with $o(i)$.
 The resulting system is shown in \eqref{eqn:continuitySystem}.
 
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:continuitySystem}
 \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & + & \nonumber \\
-\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum^{N_{f}}_{i\,=\,1} \vec{\Xi}^{k}_{i}\left( \delta \momVec{}_{i}^{*} + \frac{\partial \momVec{}^{k}}{\partial P} \delta P^{k} + \frac{\partial \momVec{}^{k}}{\partial P_{i}} \delta P_{i}^{k} \right) = \vec{F}^{k}_{m} & &
+\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum_{i\, \in \, N_{f} } \vec{\Xi}^{k}_{i}\left( \delta \momVec{}_{i}^{*} + \frac{\partial \momVec{}_{i}^{k}}{\partial P} \delta P^{k} + \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}^{k} \right) = \vec{F}^{k}_{m} & &
 \end{IEEEeqnarray}
 
 By rearranging \eqref{eqn:continuitySystem}, \eqref{eqn:continuitySystem02} is obtained.
@@ -481,7 +484,8 @@ By rearranging \eqref{eqn:continuitySystem}, \eqref{eqn:continuitySystem02} is o
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:continuitySystem02}
 \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & + & \nonumber \\
-\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \left( \frac{\partial \vec{F}^{k}_{c}}{\partial P } + \sum^{N_{f}}_{i\,=\,1} \vec{\Xi}^{k}_{i}\frac{\partial \momVec{}^{k}_{i}}{\partial P}\right) \delta P^{k} + \sum^{N_{f}}_{i\,=\,1} \vec{\Xi}^{k}_{i} \frac{\partial \momVec{}^{k}}{\partial P_{i}} \delta P_{i}^{k} = - \vec{F}^{k}_{c} - \sum^{N_{f}}_{i\,=\,1} \vec{\Xi}^{k}_{i} \delta \momVec{}_{i}^{*} & &
+\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \left( \frac{\partial \vec{F}^{k}_{c}}{\partial P } + \sum_{i\,\in \, N_{f} } \vec{\Xi}^{k}_{i}\frac{\partial \momVec{}^{k}_{i}}{\partial P}\right) \delta P^{k} + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}^{k} & = & \nonumber \\
+- \vec{F}^{k}_{c} - \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \delta \momVec{}_{i}^{*} & &
 \end{IEEEeqnarray}
 
 In \eqref{eqn:continuitySystem02} there are six equations and six plus the number of connecting flow paths, $N_{f}$, unknowns.
@@ -495,12 +499,12 @@ Using the above matrix notation, \eqref{eqn:continuitySystem02} can be represent
 
 \begin{equation}
 \label{eqn:nlnLinearSystem}
-\left[ \vec{J}^{k}_{c} \vert \vec{K}^{k}_{c} \right] \delta \vec{C}_{c}^{k} = \left[\vec{r}^{k}_{c}\right]
+\left[ \vec{J}^{k}_{c} \vert \vec{K}^{k}_{c} \right] \delta \vec{C}_{c}^{k} = \vec{r}^{k}_{c}
 \end{equation}
 
 This rectangular linear system for the nonlinear boundary volume is then subjected to partial $\vec{LU}$ decomposition without pivoting.
 This $\vec{LU}$ decomposition is such that the lower triangular matrix has ones along the diagonal.
-The final row of the linear system in \eqref{eqn:nlnLUSystem} is then scaled by $\vec{U}^{k}_{c}[6,6]$.
+The final row of the linear system in \eqref{eqn:nlnLUSystem} is then scaled by the sixth row's sixth column, $\vec{U}^{k}_{c}[6,6]$.
 
 \begin{equation}
 \label{eqn:nlnLUSystem}
@@ -521,7 +525,7 @@ This is necessary since the momentum equations are solved for the new-time varia
 
 \begin{equation}
 \label{eqn:deltaMomenta}
-\delta \momVec{}^{k} = \momVec{}^{n+1,k + \onehalf} + \sum^{N_{c}}_{i\,=\,1} \frac{\partial \momVec{}^{k}}{\partial P_{i}} \delta P^{k}_{i} - \momVec{}^{n+1, k}
+\delta \momVec{}^{k} = \momVec{}^{n+1,k + \onehalf} + \sum_{i \, \in \, N_{c} } \frac{\partial \momVec{}^{k}}{\partial P_{i}} \delta P^{k}_{i} - \momVec{}^{n+1, k}
 \end{equation}
 
 The residuals from every volume in the active domain, both continuity and momentum, are assembled into the $\vec{F}^{k}$ vector.
@@ -623,14 +627,14 @@ This scaling creates a relative measure of the nonlinear residual when compared 
 
 \begin{IEEEeqnarray}{lCl}
 \label{eqn:nlnLiqMomentumScale}
-S^{k}_{m, l} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}} + \abs{\sum^{N_{c}}_{i\,=\,1} \left( \don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a},l} \cdot \vec{\bar{A}}\right)^{n}_{i}} +\abs{\ave{\alpha_l}^{n}_{\text{a}} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_l \rho_l}_{\text{a}}^{n}} \right.\nonumber \\
+S^{k}_{m, l} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}} + \abs{\sum_{i\, \in \, N_{c} } \left( \don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a},l} \tilde{A}\right)^{n}_{i}} +\abs{\ave{\alpha_l}^{n}_{\text{a}} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_l \rho_l}_{\text{a}}^{n}} \right.\nonumber \\
 & + & \left. \abs{K^{n}_{wl}(\dot{m}_l^{n+1, k})^2} + \abs{K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1,k}_{g})^2} + \abs{\left[(1 - \eta)\Gamma u^{'}\right]^{n}} + \abs{\left[S u^{'}\right]^{n}} \vphantom{\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}}} \right] \\
 \label{eqn:nlnGasMomentumScale}
-S^{k}_{m, g} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[ \dot{m}_{g}^{n+1,k} - \dot{m}_{g}^{n}\right]}{\dt{}}} + \abs{\sum^{N_{c}}_{i\,=\,1} \left( \don{\alpha_g \rho_g u_g}_{\text{d}} \ave{u}_{\text{a},g}  \cdot \vec{\bar{A}}\right)_{i}^{n}}  +\abs{\ave{\alpha_g}^{n}_{\text{a}} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_g \rho_g}_{\text{a}}^{n}} \right. \nonumber \\
+S^{k}_{m, g} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[ \dot{m}_{g}^{n+1,k} - \dot{m}_{g}^{n}\right]}{\dt{}}} + \abs{\sum_{i\, \in \, N_{c} } \left( \don{\alpha_g \rho_g u_g}_{\text{d}} \ave{u}_{\text{a},g}  \tilde{A}\right)_{i}^{n}}  +\abs{\ave{\alpha_g}^{n}_{\text{a}} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_g \rho_g}_{\text{a}}^{n}} \right. \nonumber \\
 & + & \abs{K^{n}_{wg}(\dot{m}_g^{n+1, k})^2} + \abs{K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1, k}_{g})^2} + \abs{K^{n}_{i,ge}(u^{n+1,k}_{e} - u^{n+1,k}_{g})^2} \nonumber \\
 & + & \left. \abs{\left[\Gamma u^{'}\right]^{n}} \vphantom{\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}}} \right]\\
 \label{eqn:nlnEntMomentumScale}
-S^{k}_{m, e} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[\dot{m}_{e}^{n+1, k} - \dot{m}_{e}^{n}\right]}{\dt{}}} + \abs{\sum^{N_{c}}_{i\,=\,1} \left( \don{\alpha_e \rho_l u_e}_{\text{d}} \ave{u}_{\text{a},e}  \cdot \vec{\bar{A}}\right)_{i}^{n}} + \abs{\ave{\alpha_{e}}^{n}_{\text{a}} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_e \rho_l}^{n}_{\text{a}}} \right. \nonumber \\
+S^{k}_{m, e} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[\dot{m}_{e}^{n+1, k} - \dot{m}_{e}^{n}\right]}{\dt{}}} + \abs{\sum_{i\, \in \, N_{c}} \left( \don{\alpha_e \rho_l u_e}_{\text{d}} \ave{u}_{\text{a},e}  \tilde{A}\right)_{i}^{n}} + \abs{\ave{\alpha_{e}}^{n}_{\text{a}} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_e \rho_l}^{n}_{\text{a}}} \right. \nonumber \\
 & + & \left. \abs{K^{n}_{we}(\dot{m}_e^{n+1, k})^2} + \abs{K^{n}_{i,ge}(u^{n+1, k}_{e} - u^{n+1, k}_{g})^2} + \abs{\left[\eta \Gamma u^{'}\right]^{n}} +\abs{\left[S u^{'}\right]^{n}} \vphantom{\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}}} \right]
 \end{IEEEeqnarray}
 
@@ -639,22 +643,22 @@ Likewise, the scale factors for the continuity equations, \eqref{eqn:nlnNcgMassE
 
 \begin{IEEEeqnarray}{lCl}
 \label{eqn:nlnNcgMassScale}
-S^{k}_{c, n} & = & \dt{}\left[\abs{\frac{V_c\left[(\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{n}\right]}{\dt{}}} + \sum^{N_{f}}_{i\,=\,1}\abs{\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1,k}_{d} u^{n+1, k}_{g}  \cdot \vec{\bar{A}}\right)}_{i} \right]\\
+S^{k}_{c, n} & = & \dt{}\left[\abs{\frac{V_c\left[(\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{n}\right]}{\dt{}}} + \sum_{i\,\in \, N_{f}}\abs{ \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1,k}_{d} u^{n+1, k}_{g}  A_{m} }_{i} \right]\\
 \label{eqn:nlnVapMassScale}
-S^{k}_{c, v} & = & \dt{}\left[\abs{\frac{V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right]}{\dt{}}} + \sum^{N_{f}}_{i\,=\,1} \abs{ \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1,k}_{d} u^{n+1, k}_{g}  \cdot \vec{\bar{A}}\right)}_{i} \right. \nonumber \\
+S^{k}_{c, v} & = & \dt{}\left[\abs{\frac{V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right]}{\dt{}}} + \sum_{i\,\in \, N_{f}} \abs{ \don{ \alpha^{n}_g \rho^{n}_v }^{n+1,k}_{d} u^{n+1, k}_{g}  A_{m} }_{i} \right. \nonumber \\
 & + & \left.  \abs{\Gamma^{n+1, k}} \vphantom{\abs{\frac{V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right]}{\dt{}}}} \right]\\
 \label{eqn:nlnGasEnergyScale}
 S^{k}_{e, g} & = & \dt{}\left[\abs{\frac{V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n}\right]}{\dt{}}} +\abs{\frac{V_c \alpha^{n}_{g} ( P^{n+1, k} - P^{n} )}{\dt{}}} + \abs{q_{wg}^{n+1, k}} \right. \nonumber \\
-& + & \left. \abs{\left[\Gamma h^{'}_v\right]^{n+1,k}} + \abs{q_{i,v}^{n+1,k}} +\abs{q^{n+1,k}_{gl}} + \sum^{N_{f}}_{i\,=\,1} \abs{\left(\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  \cdot \vec{\bar{A}}\right)}_{i} \vphantom{\abs{\frac{V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n}\right]}{\dt{}}}} \right]\\
+& + & \left. \abs{\left[\Gamma h^{'}_v\right]^{n+1,k}} + \abs{q_{i,v}^{n+1,k}} +\abs{q^{n+1,k}_{gl}} + \sum_{i\,\in \, N_{f} } \abs{\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  A_{m}}_{i} \vphantom{\abs{\frac{V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n}\right]}{\dt{}}}} \right]\\
 \label{eqn:nlnLiqEnergyScale}
 S^{k}_{e, l} & = & \dt{}\left[ \abs{\frac{V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n}\right]}{\dt{}}} + \abs{\frac{V_c \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})}{\dt{}}} + \abs{q^{n+1, k}_{wl}} \right . \nonumber \\
-& + & \abs{\left[\Gamma h^{'}_l\right]^{n+1}} + \abs{q^{n+1,k}_{i,l}} + \abs{q_{gl}^{n+1,k}} + \sum^{N_{f}}_{i\,=\,1}\abs{\left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_l \cdot \vec{\bar{A}}\right)}_{i} \nonumber \\
-& + & \left. \sum^{N_{f}}_{i\,=\,1}\abs{\left(\don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_e  \cdot \vec{\bar{A}}\right)}_{i} \vphantom{ \abs{\frac{V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n}\right]}{\dt{}}}} \right] \\
+& + & \abs{\left[\Gamma h^{'}_l\right]^{n+1}} + \abs{q^{n+1,k}_{i,l}} + \abs{q_{gl}^{n+1,k}} + \sum_{i\,\in \, N_{f} }\abs{ \don{ \alpha^{n}_l \rho^{n}_l h^{n}_l }^{n+1,k}_{d} u^{n+1,k}_l A_{m} }_{i} \nonumber \\
+& + & \left. \sum_{i\,\in \, N_{f} } \abs{ \don{ \alpha^{n}_e \rho^{n}_l h^{n}_l }^{n+1,k}_{d} u^{n+1,k}_e  A_{m} }_{i} \vphantom{ \abs{\frac{V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n}\right]}{\dt{}}}} \right] \\
 \label{eqn:nlnEntMassScale}
-S^{k}_{m, e} & = & \dt{} \left[ \abs{\frac{V_c \left[\left(\alpha_e \rho_l \right)^{n+1,k} - \left(\alpha_e \rho_l \right)^{n}\right]}{\dt{}}} + \sum^{N_{f}}_{i\,=\,1}\abs{\left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  \cdot \vec{\bar{A}}\right)}_{i} \right. \nonumber \\
+S^{k}_{m, e} & = & \dt{} \left[ \abs{\frac{V_c \left[\left(\alpha_e \rho_l \right)^{n+1,k} - \left(\alpha_e \rho_l \right)^{n}\right]}{\dt{}}} + \sum^{N_{f}}_{i\,=\,1}\abs{\left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  \tilde{A}\right)}_{i} \right. \nonumber \\
 & + & \left. \abs{S^{n+1, k}} + \abs{\left[\eta\Gamma \right]^{n+1,k}} \vphantom{\abs{\frac{V_c \left[\left(\alpha_e \rho_l \right)^{n+1,k} - \left(\alpha_e \rho_l \right)^{n}\right]}{\dt{}}}} \right] \\
 \label{eqn:nlnLiqMassScale}
-S^{k}_{m, l} & = & \dt{}\left[\abs{\frac{V_c \left[\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n}\right]}{\dt{}}} + \sum^{N_{f}}_{i\,=\,1} \abs{\left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l \cdot \vec{\bar{A}}\right)}_{i} \right. \nonumber \\
+S^{k}_{m, l} & = & \dt{}\left[\abs{\frac{V_c \left[\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n}\right]}{\dt{}}} + \sum_{i\, \in \, N_{f} } \abs{ \don{ \alpha^n_l \rho^n_l }^{n+1,k}_{d} u^{n+1, k}_l A_{m} }_{i} \right. \nonumber \\
 & + & \left. \abs{\left[(1-\eta)\Gamma\right]^{n+1,k}} + \abs{S^{n+1, k}} \vphantom{\abs{\frac{V_c \left[\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n}\right]}{\dt{}}}} \right]
 \end{IEEEeqnarray}
 
