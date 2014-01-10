@@ -13,4 +13,5 @@
 *.asv
 *.nav
 *.snm
+*.auxlock
 Makefile
