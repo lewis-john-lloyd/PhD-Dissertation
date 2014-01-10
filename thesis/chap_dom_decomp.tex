@@ -79,11 +79,11 @@ F^{k}_{c, n} & = & V_c\left[ (\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{
 F^{k}_{c, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_l \rho_l \right)^{n} + \dt{} \sum_{i\,\in \,N_{f}} \left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l A_{m}  \right)_{i} \nonumber \\
 &+& \dt{}\left[(1-\eta)\Gamma + S \right]^{n+1, k} +  \dt{} \sum_{p\,\in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{c,l} \right)_{p}  \\
 \label{eqn:nbcGasEnergyEquation}
-F^{k}_{e, g} & = & V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_{g} ( P^{\,n+1, k} - P^{\,n} ) \right] \nonumber \\
-& - & \dt{} \left[q_{wg} + \Gamma h^{'}_v + q_{i,v} + q_{gl}\right]^{n+1, k} + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{ \alpha^{n}_g \rho^{n}_g h_g^{n} }^{n+1,k}_{d} u^{n+1, k}_g  A_{m}  \right)_{i} \nonumber \\
+F^{k}_{e, g} & = & V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_{g} ( P^{\,n+1, k} - P^{\,n} ) \right] - \dt{} q_{wg}^{n} \nonumber \\
+& - & \dt{} \left[q_{i,v} + \Gamma h^{'}_v + q_{gl}\right]^{n+1, k} + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{ \alpha^{n}_g \rho^{n}_g h_g^{n} }^{n+1,k}_{d} u^{n+1, k}_g  A_{m}  \right)_{i} \nonumber \\
 & + &  \dt{} \sum_{p\, \in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{e,g} \right)_{p} \\
 \label{eqn:nbcLiqEnergyEquation}
-F^{k}_{e, l} & = & V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})\right] - \dt{} \left[q_{wl} -\Gamma h^{'}_l +  q_{i,l} - q_{gl}\right]^{n+1,k}    \nonumber \\
+F^{k}_{e, l} & = & V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})\right] - \dt{} \left[q_{i,l} -\Gamma h^{'}_l - q_{gl}\right]^{n+1,k}    \nonumber \\
 & +& \dt{} \sum_{i\,\in \, N_{f} } \left( \don{ \alpha^{n}_l \rho^{n}_l h^{n}_l }^{n+1,k}_{d} u^{n+1,k}_l A_{m} + \don{ \alpha^{n}_e \rho^{n}_l h^{n}_l }^{n+1,k}_{d} u^{n+1,k}_e A_{m} \right)_{i} \nonumber \\
 & + &  \dt{} \sum_{p \,\in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{e,l} \right)_{p} \\
 \label{eqn:nbcEntMassEquation}
@@ -128,7 +128,43 @@ Using this matrix notation, \eqref{eqn:nbcLinearSystem} can be represented as \e
 
 \begin{equation}
 \label{eqn:nbcLinSystem}
-\left[ \vec{J}_{n} \vert \vec{K}_{n} \vert \vec{Q}_{n} \right] \delta \vec{C}_{j} = \left[\vec{r}_{n} \vert -\vec{Q}_{n}\right]
+\left[ \vec{J}_{n} \vert \vec{K}_{n} \vert \vec{Q}_{n} \right] \delta \vec{C}_{n} = \left[\vec{r}_{n} \vert -\vec{Q}_{n}\right]
+\end{equation}
+
+The vector of unknowns, $\vec{C}_{n}$ is defined in \eqref{eqn:nbcUpdate}.
+
+\begin{equation}
+\label{eqn:nbcUpdate}
+\delta \vec{C}_{n} \equiv 
+\begin{bmatrix}
+\delta ( \alpha_{g} P_{n} ) \\
+\delta \alpha_{g} \\
+\delta ( \alpha_{g} h_v ) \\
+\delta ( (1 - \alpha_{g} ) h_l ) \\
+\delta \alpha_{e} \\
+\delta P \\ 
+\delta P_i \\
+\vdots \\
+\delta P_{N_{f}} \\
+\delta \vec{\Psi}_{p} \\
+\vdots \\
+\delta \vec{\Psi}_{N_{\text{NBC}}}
+\end{bmatrix}
+=
+\begin{bmatrix}
+( \alpha_{g} P_{n})^{n+1} - (\alpha_{g} P_{g} )^{n} \\
+\alpha^{n+1}_{g} - \alpha^{n}_{g} \\
+( \alpha_{g} h_{v} )^{n+1} - ( \alpha_{g} h_{v} )^{n} \\
+( ( 1 - \alpha_{g} ) h_{l} )^{n+1} - ( ( 1 - \alpha_{g} ) h_{l} )^{n} \\
+\alpha^{n+1}_{e,j} - \alpha^{n}_{e} \\
+ P^{n+1} - P^{n} \\
+ P_{o(i)}^{n+1} - P_{o(i)}^{n} \\
+ \vdots \\
+ P_{o(N_{f})}^{n+1} - P_{o(N_{f})}^{n} \\
+ \vec{\Psi}_{p}^{n+1} - \vec{\Psi}_{p}^{n} \\
+ \vdots \\
+ \vec{\Psi}_{N_{\text{NBC}}}^{n+1} - \vec{\Psi}_{N_{\text{NBC}}}^{n}
+\end{bmatrix}
 \end{equation}
 
 This rectangular linear system for the NBC volume is then subjected to partial $\vec{LU}$ decomposition without pivoting.
@@ -148,16 +184,26 @@ The linear pressure matrix, $\vec{A}_{l}$, is assembled from the sixth row of ea
 There will be $N_{l}$ rows in the system that correspond to each of the linear pressure updates.
 Let $N_{n}$ represent the total number of interfaces between the linear and the nonlinear domains.
 Since there can be multiple interfaces from a single NBC volume to the nonlinear domain, the $N_{n}$ is greater than or equal to the number of NBC volumes.
-There will be an additional $6 * N_{n}$ right-hand sides for the linear pressure matrix that correspond to the coefficient matrices, $\vec{L}^{-1}_{n}\vec{Q}_{n}$, for the unknown flow rates in each of the NBC volumes.
-The rectangular matrix of these right-hand sides will be referred to as $\vec{res}_{l}$.
+There will be an additional $6 * N_{n}$ right-hand sides for the linear pressure matrix that correspond to the coefficient matrices, $\vec{L}^{-1}_{n}\vec{Q}_{n}$, for the unknown flow rates in each of the NBC volumes, represented as $\vec{B}_{l}$.
+The portion of the right-hand side of the linear system that is from $\vec{L}^{-1}_{n} \vec{r}_{n}$ will be referred to as $\vec{res}_{l}$.
 The resulting system is shown in \eqref{eqn:linearPressureMatrix}.
 
 \begin{equation}
 \label{eqn:linearPressureMatrix}
-\vec{A}_{l} \delta \vec{P}_{l} = \vec{res}_{l}
+\vec{A}_{l} \delta \vec{P}_{l} + \vec{B}_{l} \delta \vec{\Psi}_{l} = \vec{res}_{l} - \vec{B}_{l} \vec{\Psi}_{l}
 \end{equation}
 
-Once \eqref{eqn:linearPressureMatrix} has been inverted, the resulting pressure updates, $\delta \vec{P}_{l}$, for the linear domain are functions of all of the unknown flow rates between the domains, as shown in \eqref{eqn:linearDomainPressureUpdates}.
+The linear system in \eqref{eqn:linearPressureMatrix} will be multiplied by $\vec{A}^{-1}_{l}$, resulting in \eqref{eqn:invertedLinearSystem}.
+
+\begin{IEEEeqnarray}{rcl}
+\delta \vec{P}_{l} + \vec{A}^{-1}_{l}\vec{B}_{l} \delta \vec{\Psi}_{l} & = & \vec{A}^{-1}_{l}\vec{res}_{l} - \vec{A}^{-1}_{l}\vec{B}_{l} \vec{\Psi}_{l} \nonumber \\
+\label{eqn:invertedLinearSystem}
+\delta \vec{P}_{l} + \vec{W}_{l} \delta \vec{\Psi}_{l} & = & \delta \vec{P}^{*}_{l} - \vec{W}_{l} \vec{\Psi}_{l}
+\end{IEEEeqnarray}
+
+Once \eqref{eqn:linearPressureMatrix} has been inverted, the resulting pressure updates, $\delta \vec{P}_{l}$, for the linear domain are functions of all of the unknown flow rates between the two domains and their updates.
+The constant portion of \eqref{eqn:invertedLinearSystem} is shown as $\delta \vec{P}^{*}$ represents the portion of the change in $\delta \vec{P}$ that comes from the linear domain.
+A single row of \eqref{eqn:invertedLinearSystem} is shown in \eqref{eqn:linearDomainPressureUpdates}.
 The vectors $\vec{w}_{j, i}$ represent the coupling coefficients for each NBC volume's pressure update.
 
 \begin{equation}
@@ -165,7 +211,6 @@ The vectors $\vec{w}_{j, i}$ represent the coupling coefficients for each NBC vo
 \delta P_{j} + \sum_{i\, \in \, N_{n}} \vec{w}^{T}_{j, i} \cdot \delta \vec{\Psi}_{i} = \delta P_{j}^{*} - \sum_{i\, \in \, N_{n}} \vec{w}^{T}_{j, i} \cdot{} \vec{\Psi}^{k}_{i}
 \end{equation}
 
-\comment{I need to define the deltap star.}
 In the linear domain a single Newton step is taken to be the change from the old-time solution to the new-time solution, not an iterate.
 This approach means that \eqref{eqn:linearDomainPressureUpdates} is interpreted not as an iterative solution but as a change from old-time to new-time values.
 As a result, the pressure update is taken to be $\delta P_{j} = P_{j}^{n+1} - P_{j}^{n}$, the flow rates on the right-hand side are evaluated as $\vec{\Psi}^{n}$, and the flow rate updates are defined as $\delta \vec{\Psi} = \vec{\Psi}^{n+1} - \vec{\Psi}^{n}$.
@@ -368,7 +413,7 @@ This polymorphic approach allows for domain-agnostic procedures and references w
 \subsection{Domain Decomposition Algorithm}
 \label{subsect:domDecompAlgorithm}
 
-The manner in which the domain decomposition's mathematical algorithm provided in \sect{} is implemented will now be covered.
+The manner in which the domain decomposition's mathematical algorithm provided in \sect{sec:domDecompMath} is implemented will now be covered.
 \alg{alg:domDecompAlgorithm} provides a high level overview of the software as implemented.
 The steps in this algorithm will be detailed in the following section.
 
@@ -450,8 +495,8 @@ This grouping will be known hereafter as assembling the pressure matrix for a gi
 
 Each \classname{nbcVolume} is treated slightly differently.
 The flow rate terms from the equations are not included in the residual at this point but, are instead treated as unknowns.
-These flow rates are treated as independent parameters, which decreases the number of entries in the $\vec{C}_{j}$ matrix.
-Additionally, the derivatives of the flow rate terms with respect to themselves, the identify matrix $\vec{I}$, are added to the linear system.
+These flow rates are treated as independent parameters, which decreases the number of entries in the $\vec{K}_{n}$ matrix.
+However, the derivatives of the flow rate terms with respect to themselves, $\dt{} \vec{I}$, are added to the linear system.
 If a linear continuity volume is attached through more than one surface to the nonlinear domain, then there will be multiple identity matrices in the continuity volume's linear system.
 The resulting system will be subjected to the same \vec{LU} decomposition as outlined for a regular volume.
 The last equation with the additional right-hand sides will be assembled into the linear domain's pressure matrix.

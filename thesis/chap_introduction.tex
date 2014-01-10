@@ -12,7 +12,7 @@ The diverse physical conditions experienced by the reactor during postulated acc
 Each of these physics have dedicated pieces of software that are under continual development to improve their predictive capabilities.
 The work that follows is concerned with the mathematical formulation and solution of the equations governing the thermal-hydraulic behavior within the reactor core.
 
-All commercial reactors operating within the United States are of a vertically-oriented LWR design.
+All commercial reactors operating within the United States are of an LWR design.
 The safety analyses required for licensing necessitate the modeling of water in both liquid and gaseous phases.
 This has driven the development of safety software that can model the behavior of water under an extensive range of thermodynamic states, including multiple phases.
 Several codes are widely available for simulating the thermal-hydraulic response of an NPP during postulated accidents.
@@ -22,6 +22,37 @@ The system analysis codes often have extensive models available for large compon
 Three well-known system-level safety analysis software are \relap53d{} \cite{RELAP}, TRACE \cite{TRACE}, and MELCOR \cite{Summers1994}.
 The sub-channel analysis software have extensive modeling capabilities for in-core heat transfer and fluid mechanics; COBRA \cite{Thurgood1983c} and VIPRE are two examples.
 In the work that follows the governing physics and the computational framework of interest will be taken from a variant of the aforementioned COBRA sub-channel analysis code, which shall be referred to generically as \cobra{}.
+
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+\section{Research Objectives}
+\label{sect:researchObjectives}
+
+The methods used to simulate thermal-hydraulic behavior in NPPs are characterized by the manner in which both the spatial-temporal integration of the governing conservation equations and the nonlinearities inherent in those fully discrete equations are resolved.
+Each of the methods outlined in \sect{sect:solution_techniques} has one thing in common: the nonlinear problem is solved over the global domain, either through a single linearization or through an iterative Newton procedure.
+
+\begin{figure}[ht!]
+\centering
+\input{images/my_diagram}
+\caption{Current and proposed software paradigms for thermal-hydraulic safety analysis.}
+\label{fig:my_diagram}
+\end{figure}
+
+The advantage of the single linearization is the reduction in computational costs; however, the accuracy of the single linerization at large timestep sizes in regions of highly nonlinear physics is suspect.
+This limitation has traditionally been mitigated by restrictions placed upon the maximum permissible change in the independent parameters during a given timestep.
+However, to resolve the nonlinearities within a timestep requires the use of an iterative method.
+The benefits of an iterative Newton solver is that the nonlinearities are resolved at each timestep; however, the computational cost of multiple Newton steps is high.
+If the areas with a high degree of nonlinear physics are spatially isolable, then the computational expenditure of iteratively solving the global domain's nonlinear equations iteratively may be unnecessary.
+\fig{fig:my_diagram} shows where the current work fits into this paradigm.
+
+The objectives of this research were the design, implementation, and evaluation of a novel, spatially selective, nonlinear solution method for nuclear thermal-hydraulic safety analysis.
+Isolation of a specified subdomain where nonlinearities are high was achieved by using a new variant of the code coupling algorithm discussed in \sect{sect:code_coupling}.
+For this work, the subdomains to be isolated were geometric components predetermined by the user.
+Upon isolation, the coupled subdomains were subjected to Newton's method to resolve their nonlinearities at every timestep.
+This converged solution was then communicated via coupling coefficients to the linear portion of the domain for use in calculating its single Newton step.
+This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling provides a route to obtaining nonlinearly-converged, timestep-size insensitive solutions for traditional two-phase flow methods with a lower computational cost than a fully iterative Newton method.
+This work will show that the convergence of the nonlinearities within a given subdomain allows for temporal convergence to be determined at timestep sizes larger than those required by the current single-shot linearization methods.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -74,8 +105,8 @@ The sum of all channel volumes, \eqref{eqn:domain_decomp}, is the total domain v
 \end{equation}
 
 It is also possible to model multi-dimensional flow through the definition of transverse flow paths that connect two channels within a given section.
-The transverse flow paths are considered orthogonal to the axial flow direction.
-Additionally, it is permissible to have the flow from a single channel split into multiple channels in an adjacent section.
+The transverse flow paths are orthogonal to the axial flow direction.
+Additionally, it is permissible to have the axial flow from a single channel split into multiple channels in an adjacent section.
 This flow splitting is only permitted at section boundaries.
 \cobra{} is capable of modeling complex geometries by using these two features.
 An example of a \cobra{} model that includes these different geometric characteristics is given in \fig{fig:complex_geometry}.
@@ -120,7 +151,7 @@ Since all quantities are area-averaged, the tilde in \eqref{eqn:area_average} wi
 \end{equation}
 
 The particular formulation of the two-phase flow equation used in \cobra{} is commonly referred to as a ``two-phase, three-field formulation".
-While this designation comes from the three water fields that are modeled by the software, there software also modeled dissolved \ncg{} fields.
+While this designation comes from the three water fields that are modeled by the software, the software also models \ncg{} fields mixed with the steam.
 To simulate the behavior of in-core fluid dynamics during accident scenarios more accurately, the liquid and the gaseous phases are each divided into two distinct fields.
 The two fields of the liquid phase are a continuous liquid field and an entrained liquid droplet field.
 The gaseous phase is composed of a \ncg{} field and a water-vapor field. 
@@ -159,7 +190,7 @@ The mechanical energy of the phases is neglected in the conservation of energy.
 The assumption is that in the simulations of interest the mechanical energy term is negligible.
 }
 \item{
-The effects of turbulence are neglected in this work.
+The effects of turbulence are only incorporated through the closure relationships used for wall friction and wall heat transfer.
 }
 \end{itemize}
 
@@ -289,7 +320,7 @@ The assumed mechanical equilibrium between the two gaseous fields enable the use
  -\alpha_g \nabla P + \alpha_g \rho_g \vec{g} - \vec{\tau}^{'}_{w,g} - \vec{\tau}^{'}_{i,gl} - \vec{\tau}^{'}_{i,ge} + \Gamma^{'''}\vec{u}^{'} + s_{p,g} & & \\
 \label{eqn:con_mom_ent}
 \frac{\partial \left( \alpha_e \rho_l \vec{u}_e \right) }{\partial t } + \nabla \cdot \left( \alpha_e \rho_l \vec{u}_e \vec{u}_e \right) & = & \nonumber \\
- -\alpha_e \nabla P + \alpha_e \rho_l \vec{g} - \vec{\tau}^{'}_{w,l} + \vec{\tau}^{'}_{i,ge} - \eta \Gamma^{'''}\vec{u}^{'} + S^{'''}\vec{u}^{'} + s_{p,l} & &
+ -\alpha_e \nabla P + \alpha_e \rho_l \vec{g} - \vec{\tau}^{'}_{w,e} + \vec{\tau}^{'}_{i,ge} - \eta \Gamma^{'''}\vec{u}^{'} + S^{'''}\vec{u}^{'} + s_{p,l} & &
 \end{IEEEeqnarray}
 
 The $\rho_g$ used in \eqref{eqn:con_mom_gas} is defined by \eqref{eqn:gaseous_density}.
@@ -373,7 +404,7 @@ As such, methods need to be selected to approximate its solution numerically.
 
 \subsection{Spatial Approximations}
 \label{subsect:spatial_approx}
-In the thermal-hydraulic safety analysis methods of interest the governing equation are discretized by using the finite-volume method \cite{LeVeque2002}.
+In the thermal-hydraulic safety analysis methods of interest the governing equation are discretized using the finite-volume method \cite{LeVeque2002}.
 The discussion that follows is specific to \cobra{}, but other safety analysis software use similar procedures \cite{RELAP,TRACE}.
 
 The labeling scheme for the finite volumes is shown in \fig{fig:vertical_pipe_with_cells}, which is a segment of a channel.
@@ -399,17 +430,10 @@ The assumption in these integrals is that the value of the conserved quantities 
 \label{fig:constant_value}
 \end{figure}
 
-Within a channel, a given continuity volume has a constant cross-sectional area, $A_{c_{j}}$, and a length of $\Delta x_{j}$.
+Within a channel, a given continuity volume of length $\Delta x_{j} $ has a constant cross-sectional area, $A_{c_{j}}$, over its length.
 The cross-sectional area of the boundary between two continuity volumes is given by the cross-section area of the momentum path at that boundary, $A_{m}$.
-The volume integrated equation is given by \eqref{eqn:spatially_discrete_liq_m_con}.
-For illustrative purposes, \eqref{eqn:conservation_of_liq} will be integrated over a given volume, $V_j$, as shown in \fig{fig:single_volume}.
-
-%\begin{figure}[ht!]
-%\centering
-%\input{images/single_volume}
-%\caption{Single volume over which the conservation equations are integrated.}
-%\label{fig:single_volume}
-%\end{figure}
+For illustrative purposes, \eqref{eqn:conservation_of_liq} will be integrated over a simplified volume, $V_j$, consisting of singly connected axial flow as shown in \fig{fig:single_volume}.
+This volume integrated equation is given by \eqref{eqn:spatially_discrete_liq_m_con}.
 
 \begin{figure}[ht!]
 \centering
@@ -417,7 +441,6 @@ For illustrative purposes, \eqref{eqn:conservation_of_liq} will be integrated ov
 \caption{Single volume over which the conservation equations are integrated.}
 \label{fig:single_volume}
 \end{figure}
-
 
 For the mass-flux terms evaluated on the continuity volume edge, the advected quantity is evaluated using a 1st order upwind method \cite{Tannehill1997}.
 The velocity and cross-sectional area utilized in the continuity flux terms, $u_{j \pm \onehalf}$ and $A_{m,j \pm \onehalf}$, have the values defined in the momentum path that aligns with the boundary of continuity volumes.
@@ -519,8 +542,8 @@ The averaging operator $\ave{a}_{\text{a}}$ provides the average of a quantity f
 \ave{a}_{\text{a},j + \onehalf} = \frac{a_{j} + a_{j+1}}{2}
 \end{equation}
 
-The choice of independent parameters used in \cobra{} is not the only option.
-The use of the momenta and phasic enthalpies, such as $\alpha_g h_v$, as independent parameters represents.
+The use of the momenta and the product of phasic volume fractions and phasic enthalpies, such as $\alpha_g h_v$, as independent parameters in \cobra{} represents a unique choice.
+However, these independent parameters are not the only option for safety analysis software.
 Other software, such as TRACE and \relap53d{}, use variants of these parameters.
 These variations include the use of velocities instead of momenta and temperatures or internal energies instead of enthalpies \cite{RELAP, TRACE}.
 
@@ -574,7 +597,7 @@ Time-splitting algorithms are also known as operator-splitting algorithms.
 By changing the functional dependencies of terms within $\vec{E}^{*}$ at different stages, predictor-corrector methods, also called stabilizing correction methods, are generated. 
 A single-stage method is the degenerate multi-stage case of $J = 1$.
 
-The conserved quantities within a continuity volume are nonlinear functions of the chosen independent parameters, \eqref{eqn:nonlinear_functions}, regardless of the approximation chosen for $\vec{E}^{*}$.
+The conserved quantities within a continuity volume (e.g., $\alpha_g \rho_g$, $\left(1-\alpha_g\right)\rho_l h_l$) are nonlinear functions of the chosen independent parameters, \eqref{eqn:nonlinear_functions}, regardless of the approximation chosen for $\vec{E}^{*}$.
 
 \begin{equation}
 \label{eqn:nonlinear_functions}
@@ -709,6 +732,8 @@ For the case of \eqref{eqn:explicit}, the CFL limit is given in \eqref{eqn:cfl_e
 \end{equation}
 
 In \eqref{eqn:cfl_explicit}, $c_j$ and $u_j$ are the speed of sound and the magnitude of a given phasic velocity, respectively, at a given location within the domain.
+Thse two velocities, for most applications of interest are, can be of drastically different magnitude.
+For example, in single phase gaseous flow, the ratio of the local phasic velocity to the speed of sound is typicaly much less than one for problems of interest.
 Using the local fluid conditions, $\dt{}_j$ is calculated at every point within the domain.
 The $\dt{}$ chosen for the $t^{n} \rightarrow t^{n+1}$ timestep is the most restrictive calculated value over the domain.
 While the explicit method may provide the lowest computational cost on a per-timestep basis, the number of timesteps required for a given problem will be much greater due to this restrictive CFL limitation.
@@ -1020,33 +1045,3 @@ However, these applications do not worry about consistency at the boundaries of 
 The two paradigms of discrete software coupling and domain decomposition are complementary views of the same process.
 The software coupling is the algorithmic implementation of the domain decomposition.
 Using the semi-implicit software coupling as a means of domain coupling within a single code provides a mean of isolating subdomains that provides a consistent formulation for the nonlinear problem.
-
-%-------------------------------------------------------------------------------
-%-------------------------------------------------------------------------------
-%-------------------------------------------------------------------------------
-\section{Research Objectives}
-
-The methods used to simulate thermal-hydraulic behavior in NPPs are characterized by the manner in which the temporal-integration of the governing conservation equations and the manner in which the nonlinearities inherent in those fully discrete equations are resolved.
-Each of the methods outlined in \sect{sect:solution_techniques} has one thing in common: the nonlinear problem is solved globally, either through a single-shot linearization or through an iterative Newton procedure.
-
-\begin{figure}[ht!]
-\centering
-\input{images/my_diagram}
-\caption{Current and proposed software paradigms for thermal-hydraulic safety analysis.}
-\label{fig:my_diagram}
-\end{figure}
-
-The advantage of the single-shot linearization is the reduction in computational costs; however, the accuracy at large timestep sizes in regions of highly nonlinear physics is suspect.
-This has traditionally been mitigated by limitations placed upon the maximum change in independent parameters during a timestep. 
-To resolve the nonlinearities within a timestep requires the use of an iterative method.
-The benefits of an iterative Newton solver is that the nonlinearities are resolved at each timestep; however, the computational cost of multiple global Newton steps is high.
-If nonlinear effects are spatially isolable, then the computational expenditure of iteratively solving the global nonlinear problem may be unnecessary.
-\fig{fig:my_diagram} shows where the current work will fit into this paradigm.
-
-The objectives of this research were the design, implementation, and evaluation of a novel, spatially selective, nonlinear solution method for nuclear thermal-hydraulic safety analysis.
-Isolation of a specified subdomain where nonlinearities are high was achieved by using a variant of the code coupling algorithm discussed in \sect{sect:code_coupling}.
-For this work, the subdomains to be isolated were geometric components predetermined by the user.
-Upon isolation, the coupled subdomain were subjected to a globally convergent Newton method to resolve the nonlinearities at every timestep.
-This converged solution was then communicated via the coupling coefficients to the linear portion of the domain for use in calculating its single-shot Newton step.
-This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling may provide a route to obtaining nonlinearly-converged, timestep-size insensitive solutions for traditional two-phase flow methods with a lower computational cost than fully iterative Newton methods.
-The convergence of the nonlinearities within a given subdomain may allow for temporal convergence to be determined at timestep sizes larger than those required by the current single-shot linearization methods.

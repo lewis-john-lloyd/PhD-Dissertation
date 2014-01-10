@@ -7,7 +7,10 @@
 \pgfplotsset{plot coordinates/math parser=false}
 \newlength\figureheight
 \newlength\figurewidth
-\usetikzlibrary{shapes, arrows, patterns, external}
+\usetikzlibrary{shapes, arrows, patterns}
+\usetikzlibrary{external}
+\tikzexternalize[shell escape=-enable-write18]
+\tikzset{external/system call={latex \tikzexternalcheckshellescape -halt-on-error -interaction=batchmode -jobname "\image" "\texsource" && dvips -o "\image".ps "\image".dvi && ps2eps "\image".ps }}
 
 \input{../commands/commandsgeneral}
 \input{../commands/commandsmath}
@@ -16,7 +19,7 @@
 
 \begin{figure}
 \centering
-\input{kidney_coupling}
+\input{isoparametric_volume}
 \end{figure}
 
 \end{document}

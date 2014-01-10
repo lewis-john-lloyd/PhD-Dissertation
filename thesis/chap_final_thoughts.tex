@@ -1,5 +1,7 @@
 \chapter{Concluding Remarks}
 \label{chap:end}
+This dissertation has focused upon developing a novel method to solve the nonlinear partial differential equations associated with thermal-hydraulic safety analysis software.
+The two-fluid, three-field software \cobra{} was converted from a linearized semi-implicit solver.
 In review, the single-shot semi-implicit \cobra{} software was converted to a nonlinearly convergent, semi-implicit algorithm.
 An operator-based scaling that provides a physically meaningful convergence measure was developed and implemented.
 The nonlinear solver produced results that were qualitatively different than those obtained from the legacy solver for the problem with high nonlinearities.
@@ -20,31 +22,11 @@ The research conducted here developed, tested, and implemented a novel domain de
 This domain decomposition as currently implemented utilizes engineering judgment to determine portions of the domain where nonlinear convergence may require multiple Newton steps.
 A possible extension of this work would be the development of a method to identify areas where additional Newton steps would would be advantageous.
 Once a viable determination of when and where additional nonlinear iterates might be advantageous, an efficient method of decomposing the domain would need to be developed.
-\comment{
-The following areas are places that need additional work.
-I am going to fill in the topics.
-They are mostly placeholders at the moment.
-}
-
-\subsection{General Topics}
-\label{sect:futureWorkGeneralTopics}
 The different interpretations of the scale factor for the flux divergence terms between the momentum equations and the mass and energy equations needs to be investigated.
-
-\subsection{Investigation of Computational Costs}
-\label{sect:futureWorkComputationalCosts}
 Additionally, there would need to be an investigation into the computational costs of solving the dual-domain problem as opposed to solving the entire domain using the nonlinear solver.
 There is computational overhead in setting up the infrastructure for the dual-domains.
 There is additional costs associated with the additional flux terms.
 There would need to be a detailed study of the computational costs.
-
-\subsection{Heat Structures}
-\label{sect:futureWorkHeatStructures}
 The interaction of the nonlinearly converged solution with the linearized heat transfer from solid components needs to be investigated.
-
-\subsection{Counter-Current Flow Limit}
-\label{sect:futureWorkCCFL}
 The interaction of the nonlinear solver with the Counter-Current Flow Limit Boundary Condition needs to be examined.
-
-\subsection{Phase Transition Considerations}
-\label{sect:futureWorkPhaseTransition}
 The choice of cutting off the volume fraction as opposed to limiting the entire Newton step needs to be evaluated.

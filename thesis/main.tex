@@ -28,8 +28,11 @@
 % Packageges
 %=====================================================================
 \usepackage[T1]{fontenc}
+
 \usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
 \usepackage{epsfig}
+
+\usepackage{subfig}
 
 \usepackage[normalem]{ulem}
 
@@ -43,16 +46,26 @@
 \usetikzlibrary{shapes}
 \usetikzlibrary{arrows}
 \usetikzlibrary{patterns}
+
+\usetikzlibrary{external}
+\tikzexternalize[shell escape=-enable-write18]
+\tikzset{external/system call={latex \tikzexternalcheckshellescape -halt-on-error -interaction=batchmode -jobname "\image" "\texsource" && dvips -o "\image".ps "\image".dvi && ps2eps "\image".ps }}
+
 \usepackage{pgfplots}
 \pgfplotsset{compat=newest}
 \pgfplotsset{plot coordinates/math parser=false}
+
 \usepackage{pgfplotstable}
 \pgfplotstableset{set thousands separator ={}}
+
+\usepackage[simplified,nocolor]{pgf-umlcd}
+
+
 \usepackage{longtable}
 \usepackage{booktabs}
 \usepackage{colortbl}
+
 \usepackage{multirow}
-\usepackage[simplified,nocolor]{pgf-umlcd}
 
 \usepackage{times}
 \renewcommand{\ttdefault}{cmtt}
@@ -69,7 +82,6 @@
 \renewcommand{\bibname}{List of References}
 \let\oldbibsection\bibsection
 \renewcommand{\bibsection}{\oldbibsection\addcontentsline{toc}{chapter}{List of References}\singlespace\raggedright}
-
 
 \usepackage[bookmarks,
 	bookmarksdepth=2,
@@ -91,19 +103,6 @@
 %=======================================================================
 % Start Document
 %=======================================================================
-% Chapter 1
-%\includeonly{chap_introduction}
-% Chapters 1 and 2
-%\includeonly{chap_introduction,chap_nonlinear_solver}
-% Chapter 2
-%\includeonly{chap_nonlinear_solver}
-% Chapter 3
-%\includeonly{chap_dom_decomp}
-% Chapters 2 and 3
-%\includeonly{chap_nonlinear_solver,chap_dom_decomp}
-% Chapters 1 through 3
-\includeonly{chap_introduction,chap_nonlinear_solver,chap_dom_decomp}
-% Chapters 1 through 3 and 5
 %\includeonly{chap_introduction,chap_nonlinear_solver,chap_dom_decomp,chap_final_thoughts}
 %=======================================================================
 % Start Document
@@ -113,17 +112,17 @@
 % Preface
 %=======================================================================
 % Make the page numbers Roman (i, ii, etc)
-%\clearpage\pagenumbering{roman}  
+\clearpage\pagenumbering{roman}  
 
 % ============================================================================
 % Title Page
 % ============================================================================
-%\title{Investigation of a Spatially Selective Nonlinear Solver for Thermal-Hydraulic Safety Analysis Codes}
-%\author{Lewis John Lloyd}
-%\date{2012}
-%\department{Nuclear Engineering and Engineering Physics}
-%\advisorname{Michael Corradini}
-%\advisortitle{Professor}
+\title{Investigation of a Spatially Selective Nonlinear Solver for Thermal-Hydraulic Safety Analysis Codes}
+\author{Lewis John Lloyd}
+\date{2014}
+\department{Nuclear Engineering and Engineering Physics}
+\advisorname{Michael Corradini}
+\advisortitle{Professor}
 %\maketitle
 
 %============================================================================
@@ -150,12 +149,12 @@
 %============================================================================
 % Auto-generated Tables
 %============================================================================
-%\tableofcontents  % Table of contents
-%\listoftables     % List of tables
-%\listoffigures    % List of figures
-%\listofalgorithms % List of algorithms
+\tableofcontents  % Table of contents
+\listoftables     % List of tables
+\listoffigures    % List of figures
+\listofalgorithms % List of algorithms
 
-% ============================================================================
+%============================================================================
 % Nomenclature Page
 %============================================================================
 %\input{nomenclature}
@@ -181,12 +180,12 @@
 %=======================================================================
 % Appendices
 %=======================================================================
-\noappendixtables
-\noappendixfigures
-\begin{appendices}
-\include{app_input_decks}         % Appendix: Input Decks
-\include{app_dom_testing}         % Appendix: Domain Decomposition Testing Procedure
-\end{appendices}
+%\noappendixtables
+%\noappendixfigures
+%\begin{appendices}
+%\include{app_input_decks}         % Appendix: Input Decks
+%\include{app_dom_testing}         % Appendix: Domain Decomposition Testing Procedure
+%\end{appendices}
 
 %=======================================================================
 % End Document

@@ -1,0 +1,14 @@
+\pgfplotstabletypeset[sci zerofill,sci E, col sep=comma,
+	columns/0/.style={ column name= $[ \text{s} ]$, precision=1},
+	columns/1/.style={ column name= $[ - ]$, int detect},
+	columns/2/.style={ column name= $[ \text{s} ]$, precision=3},
+	columns/3/.style={ column name= $[ \text{s} ]$, precision=3},
+	every head row/.style={
+		before row={
+			\toprule
+			\dtmax{} & $N_{t}$ & $T_{\text{CPU}}$& $\frac{T_{\text{CPU}}}{N_{t}}$ \\
+		},
+		after row=\midrule
+	},
+	every last row/.style={
+after row=\bottomrule}]{tables/valveLinData.tex}

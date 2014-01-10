@@ -1,0 +1,53 @@
+% This file was created by matlab2tikz v0.4.3.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+\tikzsetnextfilename{plots/valveRunTime_eps}
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.9\textwidth,
+height=0.572417241865051\textwidth,
+scale only axis,
+xmin=0,
+xmax=0.07,
+xlabel={$\dtmax{} [\text{s}]$},
+ymin=0.002,
+ymax=0.008,
+ylabel={$ \frac{N_{\text{CPU}}}{N_{t}} [ \text{s} ]$},
+legend style={at={(0.03,0.97)},anchor=north west,draw=black,fill=white,legend cell align=left}
+]
+\addplot [
+color=black,
+solid,
+mark=o,
+mark options={solid}
+]
+table[row sep=crcr]{
+0.0625 0.00729896267876029\\
+0.03125 0.006488639395684\\
+0.015625 0.00538285402581096\\
+0.0078125 0.00487093022093177\\
+0.0039062 0.00397895043715835\\
+0.0019531 0.0035046327393502\\
+};
+\addlegendentry{Nonlinear};
+
+\addplot [
+color=green,
+solid,
+mark=o,
+mark options={solid}
+]
+table[row sep=crcr]{
+0.0625 0.00315691251307726\\
+0.03125 0.00284723681397736\\
+0.015625 0.00306033506058156\\
+0.0078125 0.00278455135412514\\
+0.0039062 0.00270342500880361\\
+0.0019531 0.00240006786771119\\
+};
+\addlegendentry{Domain Decomposition};
+
+\end{axis}
+\end{tikzpicture}%

@@ -1,6 +1,6 @@
 \chapter{Nonlinear \cobra{}}
 \label{chap:nln_solver}
-The original \cobra{} software utilized the single timestep of the traditional semi-implicit method.
+The original \cobra{} software utilized the single step of the traditional semi-implicit method.
 In order to investigate the effects of nonlinear convergence upon the determination of the temporal convergence for a given solution, \cobra{} was modified to enable an iterative global Newton's method.
 Then, for effective use of the nonlinear solver, a operator-based scaling method was developed to provide a physically meaningful measure of convergence.
 A metric was then developed and tested to aid in the identification of solutions that may not be temporally converged.
@@ -13,13 +13,31 @@ This chapter will discuss each of these phases of development as well several im
 \label{sect:linCobraAlg}
 
 \cobra{} utilizes the semi-implicit method as outlined in \sect{subsect:semi_implicit}.
-A detailed description of the solution algorithm as implemented will be presented in the following section.
 The linearized semi-implicit method is not traditionally cast as a system of nonlinear equations.
 The governing equations in the traditional semi-implicit method are not viewed through the lens of a single Newton step for a system of nonlinear equations.
 Instead, the view that the linearization is from $\vec{x}^{n}$ to $\vec{x}^{n+1}$, as opposed to $\vec{x}^{n+1, k}$ to $\vec{x}^{n+1, k+1}$, is standard in the literature of linearized system analysis software.
 For that reason, the following discussion will present the algorithm from the point of view of a single-shot linearization.
+An outline of the solution algorithm is given in \alg{alg:linCobraAlgorithm}.
+This section will outline the different steps within a single timestep of the linear solver.
 
-Assuming that all data has been initialized properly, the first step in \cobra{} is a loop over all momentum equations in the domain.
+\begin{algo}[ht!]
+\setlength{\baselineskip}{0.625\baselineskip}
+\begin{algorithmic}[1]
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \Set $t^{n+1} : = t^{n} + \dt{}$
+	\Algorithm Assemble Linear Pressure Matrix \Comment{\alg{alg:xschem}}
+   	\Solve $\vec{A}_{l} \delta \vec{P}_{l} = \vec{res}_{l}$
+	\Algorithm Update Linear Variables \Comment{\alg{alg:updateVariables}}
+	\Set $n \pluseq 1$
+\EndLoop
+\end{algorithmic}
+\caption{Linear \cobra{} algorithm.}
+\label{alg:linCobraAlgorithm}
+\end{algo}
+
+Following the initialization of data, the first step in \cobra{} is a loop over all momentum equations in the domain.
 The nonlinear momentum equations, neglecting spatial discretization notation and external sources, are given in \eqref{eqn:nlnLiqMomentumEquation} -- \eqref{eqn:nlnEntMomentumEquation}.
 
 \begin{IEEEeqnarray}{rCl}
@@ -35,8 +53,8 @@ The nonlinear momentum equations, neglecting spatial discretization notation and
 &+& \left. K^{n}_{i,ge}(\dot{m}^{n+1}_e - \dot{m}_g^{n+1})^2 - \left[ \eta \Gamma u^{'} - S u^{'}\right]^{n}\vphantom{\sum_{N_{k}}}\right)
 \end{IEEEeqnarray}
 
-In the above equations the flux terms are summed over $N_{c}$, which indicates the number of continuity volumes to which a given momentum flow path connects.
-The coefficients $K$ represent effective wall and interfacial friction factors calculated using parameters only from time $n$.
+In the above equations the flux terms are summed over $N_{c}$, which indicates the set of continuity volumes to which a given momentum flow path connects.
+The coefficients $K$ represent effective wall and interfacial friction coefficients calculated using parameters only from time $n$.
 The transfer of momentum associated with the interfacial transfer of mass is also explicitly evaluated.
 The vector notation for the three momenta, \momVec{}, is defined by \eqref{eqn:momentumVector}.
 
@@ -73,7 +91,8 @@ This includes the momenta, $\momVec{}^{n}$, and the pressure, $P^{n}$, giving \e
 
 The momentum equations, \eqref{eqn:linLiqMomentumEquation} - \eqref{eqn:linEntMomentumEquation}, are now linear in the unknown variables $\momVec{}^{n+1}$.
 These three equations are then simultaneously solved for the three unknown new time momenta, $\momVec{}^{n+1}$.
-The $\delta P$ is left as an unknown, creating an additional unknown on the right-hand side of the linear system.
+The differential of the pressure gradient , $\delta \left( \nabla P \right)$, should be read as the difference between the pressure updates, $\delta P_{a} - \delta P_{b}$, for the two continuity volumes attached to this flow path.
+The $\delta P$ terms are left as unknowns, creating additional unknowns on the right-hand side of the linear system.
 The resulting system is of the form $\displaystyle \vec{A}_{j} \momVec{}_{j}^{n+1} = \vec{a}_{j} + \sum_{i\, \in \, N_{c}} \vec{b}_{j, i}\, \delta P_{i}$.
 The solution of this linear system is expressed in \eqref{eqn:momStar}.
 
@@ -86,7 +105,8 @@ The definition for the new-time momenta is a function of the as of yet unknown c
 The $\momVec{}^{*}$ vector on the right-hand side of \eqref{eqn:momStar} contains the tentative new time momenta.
 Once all of the momentum equations have been solved in the above manner, providing estimated new-time momenta for each momentum flow path, the domain's continuity volumes are then looped over.
 The continuity equations used in this work, omitting external sources, are shown in \eqref{eqn:nlnNcgMassEquation} -- \eqref{eqn:nlnLiqMassEquation}. 
-The new-time velocities used for advection in the continuity equations are defined with the new-time momenta, \eqref{eqn:momStar}, in conjunction with \eqref{eqn:si_vel}.
+The new-time velocities used for the $N_{f}$ advection terms in the continuity equations are defined with the new-time momenta, \eqref{eqn:momStar}, in conjunction with \eqref{eqn:si_vel}.
+$N_{f}$ represents the set of momentum flow paths that connect to a given continuity volume, and the summation index, $i$, represents the index of a given flow path.
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:nlnNcgMassEquation}
@@ -95,11 +115,11 @@ V_c \left[(\alpha_g \rho_{n})^{n+1}\right. & - & \left. (\alpha_g \rho_{n})^{n}\
 V_c\left[ \left(\alpha_g \rho_v \right)^{n+1}\right. &-& \left. \left(\alpha_g \rho_v \right)^{n}\right] = - \dt{} \sum_{i \, \in \, N_{f}} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1}_{d} u^{n+1}_g  A_{m} \right)_{i} + 
 \dt{} \Gamma^{n+1} \\
 \label{eqn:nlnGasEnergyEquation}
-V_c \left[ \left( \alpha_g \rho_g h_g \right)^{n+1} \right. & - & \left. \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_g ( P^{\,n+1} - P^{n} )\right ] = \dt{} \left[q_{wg} + \Gamma h^{'}_v + q_{i,v} + q_{gl}\right]^{n+1} \nonumber \\
-&- &\dt{} \sum_{i\, \in \, N_{f}} \left(  \don{\alpha^{n}_g \rho^{n}_g h^{n}_{g}}^{n+1}_{d} u^{n+1}_g  A_{m} \right)_{i} \\
+V_c \left[ \left( \alpha_g \rho_g h_g \right)^{n+1} \right. & - & \left. \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_g ( P^{\,n+1} - P^{n} )\right ] = \dt{} \left[q_{i,v} + \Gamma h^{'}_v + q_{gl}\right]^{n+1} \nonumber \\
+&- &\dt{} \sum_{i\, \in \, N_{f}} \left(  \don{\alpha^{n}_g \rho^{n}_g h^{n}_{g}}^{n+1}_{d} u^{n+1}_g  A_{m} \right)_{i} + \dt{} q^{n}_{wg} \\ 
 \label{eqn:nlnLiqEnergyEquation}
-V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1} \right. & - & \left. \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1} - P^{\,n}) \right] = \dt{} \left[q_{wl} -\Gamma h^{'}_l +  q_{i,l} - q_{gl}\right]^{n+1} \nonumber \\
-& -& \dt{} \sum_{i\, \in \, N_{f} } \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1}_{d} u^{n+1}_l A_{m} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1}_{d} u^{n+1}_e  A_{m} \right)_{i} \\
+V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1} \right. & - & \left. \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1} - P^{\,n}) \right] = \dt{} \left[q_{i,l} -\Gamma h^{'}_l - q_{gl}\right]^{n+1} \nonumber \\
+& -& \dt{} \sum_{i\, \in \, N_{f} } \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1}_{d} u^{n+1}_l A_{m} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1}_{d} u^{n+1}_e  A_{m} \right)_{i} + \dt{} q^{n}_{wl} \\
 \label{eqn:nlnEntMassEquation}
 V_c \left[ \left(\alpha_e \rho_l \right)^{n+1}\right. & - & \left. \left(\alpha_e \rho_l \right)^{n} \right]= -\dt{} \sum_{i\,\in \,N_{f}} \left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1}_{d} u^{n+1}_e  A_{m} \right)_{i}+ \dt{}\left[ S -\eta\Gamma \right]^{n+1} \\
 \label{eqn:nlnLiqMassEquation}
@@ -114,7 +134,7 @@ The use of \eqref{eqn:momStar} in defining the new-time velocities introduces in
 
 \begin{equation}
 \label{eqn:linSystem}
-\underbrace{\left[\vec{Z}_{c, j}\right]}_{6\, \text{x}\, 6 + N_{f}} \delta \vec{C}_{j} = \vec{r}_{c,j}
+\underbrace{\left[\vec{Z}_{c}\right]}_{\left[6\, \text{x}\, 6 + N_{f}\right]} \delta \vec{C}_{c} = \vec{r}_{c}
 \end{equation}
 
 With the addition of the unknown pressure updates via the momenta, the six linearized continuity equations now form the linear system \eqref{eqn:linSystem}.
@@ -122,26 +142,26 @@ Additionally, while the momentum equations were fully expanded to solve for the 
 
 \begin{equation}
 \label{eqn:linearUpdate}
-\delta \vec{C}_{j} \equiv 
+\delta \vec{C}_{c} \equiv 
 \begin{bmatrix}
-\delta ( \alpha_{g} P_{n} )_j \\
-\delta \alpha_{g, j} \\
-\delta ( \alpha_{g} h_v )_j \\
-\delta ( (1 - \alpha_{g} ) h_l )_j \\
-\delta \alpha_{e,j} \\
-\delta P_j \\ 
+\delta ( \alpha_{g} P_{n} ) \\
+\delta \alpha_{g} \\
+\delta ( \alpha_{g} h_v ) \\
+\delta ( (1 - \alpha_{g} ) h_l ) \\
+\delta \alpha_{e} \\
+\delta P \\ 
 \delta P_i \\
 \vdots \\
 \delta P_{N_{f}}
 \end{bmatrix}
 =
 \begin{bmatrix}
-( \alpha_{g} P_{n})_{j}^{n+1} - (\alpha_{g} P_{g} )_{j}^{n} \\
-\alpha^{n+1}_{g,j} - \alpha^{n}_{g,j} \\
-( \alpha_{g} h_{v} )_{j}^{n+1} - ( \alpha_{g} h_{v} )_{j}^{n} \\
-( ( 1 - \alpha_{g} ) h_{l} )_{j}^{n+1} - ( ( 1 - \alpha_{g} ) h_{l} )_{j}^{n} \\
-\alpha^{n+1}_{e,j} - \alpha^{n}_{e,j} \\
- P_{j}^{n+1} - P_{j}^{n} \\
+( \alpha_{g} P_{n})^{n+1} - (\alpha_{g} P_{g} )^{n} \\
+\alpha^{n+1}_{g} - \alpha^{n}_{g} \\
+( \alpha_{g} h_{v} )^{n+1} - ( \alpha_{g} h_{v} )^{n} \\
+( ( 1 - \alpha_{g} ) h_{l} )^{n+1} - ( ( 1 - \alpha_{g} ) h_{l} )^{n} \\
+\alpha^{n+1}_{e} - \alpha^{n}_{e} \\
+ P^{n+1} - P^{n} \\
  P_{i}^{n+1} - P_{i}^{n} \\
  \vdots \\
  P_{N_{f}}^{n+1} - P_{N_{f}}^{n}
@@ -153,11 +173,12 @@ The lower triangular matrix has a unit diagonal.
 The sixth equation in the upper-triangular system is then scaled by its diagonal.
 This upper-triangular rectangular system for each continuity volume is then stored for later back-substitution.
 Since the pressure update corresponds to the last row in the system of equations, this allows for the isolation of the pressure updates.
-The last row of each continuity volume's \eqref{eqn:linSystem} is then formed into a global pressure matrix, $\vec{A}_{N,N}$, and its associated right-hand side, $\vec{r}$.
+The last row of each continuity volume's \eqref{eqn:linSystem} is then formed into a global, linear pressure matrix, $\vec{A}_{l}$, and its associated right-hand side, $\vec{res}_{l}$.
 
 The two loops, one over the momentum flow paths and one over the continuity volumes, form a single group of operations that act upon a given domain.
 This grouping will be known hereafter as assembling the pressure matrix for a given domain.
 \alg{alg:xschem} shows the two loops and their associated actions.
+Note that a discussion of vectors $\vec{F}_{m}$ and $\vec{F}_{c}$ will be in \sect{subsect:nlnCobraAlgo}, and one of vectors $\vec{S}_{m}$ and $\vec{S}_{c}$ will be in \sect{sect:nlnScaling}.
 
 \begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
@@ -185,48 +206,31 @@ This grouping will be known hereafter as assembling the pressure matrix for a gi
 
 \begin{equation}
 \label{eqn:pressureUpdateSystem}
-\vec{A} \vec{\delta P} = \vec{res}
+\vec{A}_{l} \delta \vec{P}_{l} = \vec{res}_{l}
 \end{equation}
 
 The system, \eqref{eqn:pressureUpdateSystem}, is then solved to determine the pressure updates for the whole domain.
 A loop over each continuity volume is then performed so that the pressure update can be used in solving its associated upper triangular system for the updates to the other five continuity variables in \eqref{eqn:linearUpdate}.
 As the loop over the continuity volume is progressing, any momentum flow path connected to the given continuity volume will have its momenta updated according to \eqref{eqn:momStar} to include the contribution from that continuity volumes' change in pressure. 
+After the continuity volume loop has been completed the $\momVec{}^{*}$ variables are assigned $\momVec{}^{n+1}$. 
 This update loop is shown in \alg{alg:updateVariables}.
 
 \begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Loop \; Continuity Volumes
-	\Solve $\vec{U}_{c, j} \delta \vec{C}_{c, j} = \vec{r}^{*}_{c, j}$ using $\vec{\delta P}$		
+	\Solve $\vec{U}_{c, j} \delta \vec{C}_{c, j} = \vec{r}^{*}_{c, j}$ using $\delta\vec{P}_{l}$		
 	\Loop \; Connected Flow Paths
-		\Set $\momVec{}^{*}_{j} \pluseq  \frac{\partial \momVec{}_{i}}{\partial P_{j}} \delta P_{j}$
+		\Set $\momVec{}^{*}_{i} \pluseq  \frac{\partial \momVec{}_{i}}{\partial P_{j}} \delta P_{j}$
 	\EndLoop
 \EndLoop
+\Set $\momVec{}^{n+1} \Leftarrow \momVec{}^{*}$
 \end{algorithmic}
 \caption{Updating Continuity and Momentum Variables}
 \label{alg:updateVariables}
 \end{algo}
 
 Upon completion of this process, a single timestep is considered to have been taken.
-The complete linear process is outlined in \alg{alg:linCobraAlgorithm}.
-
-\begin{algo}[ht!]
-\setlength{\baselineskip}{0.625\baselineskip}
-\begin{algorithmic}[1]
-\Require $\vec{x}^{0}$ and $t^{0}$
-\Set $n = 0$
-\Loop \; Transient Loop
-    \Set $t^{n+1} : = t^{n} + \dt{}$
-	\Algorithm Assemble Linear Pressure Matrix \Comment{\alg{alg:xschem}}
-   	\Solve $\vec{A} \vec{\delta P} = \vec{res}$
-	\Algorithm Update Linear Variables \Comment{\alg{alg:updateVariables}}
-	\Set $n \pluseq 1$
-\EndLoop
-\end{algorithmic}
-\caption{Linear \cobra{} algorithm.}
-\label{alg:linCobraAlgorithm}
-\end{algo}
-
 The solution obtained via this process is subjected to several physical and computational limits discussed in \sect{sect:miscConcerns}.
 
 %-------------------------------------------------------------------------------
@@ -274,7 +278,7 @@ This constraint is known as a no-flow boundary condition, and it allows more com
 If an isolated domain is not connected to an external boundary condition, then it is marked as an inactive region.
 The inactive regions are thermodynamically isolated and form a closed system.
 These areas of the domain do not impact the solution in the portion of the domain that has boundary values, known as the active region.
-After evaluating several prototypical models, it was determined that a large portion of the domain of these problems were thermodynamically isolable.
+After evaluating several prototypical models, it was determined that a non-trivial portion of the domain of these problems were thermodynamically isolable.
 \fig{fig:activeDomain} shows an example of a domain with inactive regions.
 The inactive portions of the domain are marked with grey, the active with white, and the external boundary conditions with black.
 Inter-channel flow paths are marked with dashed lines.
@@ -431,11 +435,11 @@ F^{k}_{c, n} & = & V_c\left[ (\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{
 F^{k}_{c, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_l \rho_l \right)^{n} + \dt{} \sum_{i\,\in\,N_{f}} \left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l A_{m} \right)_{i}   \nonumber \\
 &+& \dt{}\left[(1-\eta)\Gamma + S \right]^{n+1, k} \\
 \label{eqn:nlnGasEnergyResidual}
-F^{k}_{e, g} & = & V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_{g} ( P^{\,n+1, k} - P^{\,n} ) \right] \nonumber \\
-& - & \dt{} \left[q_{wg} + \Gamma h^{'}_v + q_{i,v} + q_{gl}\right]^{n+1, k} + \dt{} \sum_{i\,\in\,N_{f}} \left(\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  A_{m} \right)_{i} \\
+F^{k}_{e, g} & = & V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_{g} ( P^{\,n+1, k} - P^{\,n} ) \right] - \dt{} q^{n}_{wg} \nonumber \\
+& - & \dt{} \left[q_{i,v} + \Gamma h^{'}_v + q_{gl}\right]^{n+1, k} + \dt{} \sum_{i\,\in\,N_{f}} \left(\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  A_{m} \right)_{i} \\
 \label{eqn:nlnLiqEnergyResidual}
-F^{k}_{e, l} & = & V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})\right] - \dt{} \left[q_{wl} -\Gamma h^{'}_l +  q_{i,l} - q_{gl}\right]^{n+1,k}    \nonumber \\
-& +& \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_l A_{m} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} \\
+F^{k}_{e, l} & = & V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})\right] - \dt{} \left[q_{i,l} - \Gamma h^{'}_l - q_{gl}\right]^{n+1,k}    \nonumber \\
+& +& \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_l A_{m} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} -\dt{} q^{n}_{wl}\\
 \label{eqn:nlnEntMassResidual}
 F^{k}_{c, e} & = & V_c \left(\alpha_e \rho_l \right)^{n+1,k} - V_c \left(\alpha_e \rho_l \right)^{n} + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} \nonumber \\
 &-& \dt{} \left[ S - \eta \Gamma \right]^{n+1, k} \\
@@ -490,11 +494,12 @@ By rearranging \eqref{eqn:continuitySystem}, \eqref{eqn:continuitySystem02} is o
 
 In \eqref{eqn:continuitySystem02} there are six equations and six plus the number of connecting flow paths, $N_{f}$, unknowns.
 The first six columns of \eqref{eqn:continuitySystem02} will be represented by $\vec{J}^{k}_{c}$.
-The next $N_{f}$ columns, representing the inter-continuity coupling, will be denoted  by $\vec{K}^{k}_{c}$.
+The next $N_{f}$ columns, representing the inter-continuity volume coupling, will be denoted  by $\vec{K}^{k}_{c}$.
 Notice that the right-hand side of \eqref{eqn:continuitySystem02} is the residual evaluated at the tentative new-time values plus the change in the momentum vector multiplied by $\vec{\Xi}$.
 Since the continuity equations are linear functions of their flow paths' momentum vectors, this combination is the equivalent of using $\momVec{}^{n+1, k + \onehalf}$ for the advecting velocity in the evaluation of the continuity residuals.
 Due to the use of the tentative new-time momenta in the advection terms, there is now a discrepancy between the residuals, $\vec{F}^{k}_{c}$, for the continuity volume and the right-hand side of the linear system, $\vec{r}^{k}_{c}$.
 Note that for convergence determination, the residual, $\vec{F}^{k}_{c}$, is used, not the modified right-hand side in \eqref{eqn:continuitySystem02}.
+The vector of unknowns is $\delta \vec{C}^{k}_{c}$, which is the iterative analog of \eqref{eqn:linearUpdate}.
 Using the above matrix notation, \eqref{eqn:continuitySystem02} can be represented as \eqref{eqn:nlnLinearSystem}.
 
 \begin{equation}
@@ -514,7 +519,7 @@ The final row of the linear system in \eqref{eqn:nlnLUSystem} is then scaled by 
 This scaled row of \eqref{eqn:nlnLUSystem} is referred to as the pressure equation for a given continuity volume.
 The pressure equations for all continuity volumes are collated into the global pressure matrix according to the continuity volumes' ordinal.
 This pressure matrix is then inverted to solve for the pressure update for all continuity volumes.
-At this point all continuity volumes are traversed to solve their linear systems, \eqref{eqn:nlnLUSystem}, for their update vectors.
+At this point all continuity volumes are traversed to solve their linear systems, \eqref{eqn:nlnLUSystem}, for the non pressure portion of their update vectors, $\delta \vec{C}_{c}^{k}$.
 
 The above discussion expounds upon the algorithm for a single Newton step that is given by \alg{alg:xschem}.
 It is during this process that both the residuals and the scale factors, $\vec{F}^{k}$ and $\vec{S}^{k}$, are evaluated and stored.
@@ -602,6 +607,7 @@ These residuals have the units of the conserved quantities for their correspondi
 
 \begin{table}[ht!]
 \centering
+\singlespace
 \input{tables/residuals_and_units}
 \caption{Residuals and their units.}
 \label{tab:scaling_units_scales}
@@ -648,10 +654,10 @@ S^{k}_{c, n} & = & \dt{}\left[\abs{\frac{V_c\left[(\alpha_g \rho_{n})^{n+1, k} -
 S^{k}_{c, v} & = & \dt{}\left[\abs{\frac{V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right]}{\dt{}}} + \sum_{i\,\in \, N_{f}} \abs{ \don{ \alpha^{n}_g \rho^{n}_v }^{n+1,k}_{d} u^{n+1, k}_{g}  A_{m} }_{i} \right. \nonumber \\
 & + & \left.  \abs{\Gamma^{n+1, k}} \vphantom{\abs{\frac{V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right]}{\dt{}}}} \right]\\
 \label{eqn:nlnGasEnergyScale}
-S^{k}_{e, g} & = & \dt{}\left[\abs{\frac{V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n}\right]}{\dt{}}} +\abs{\frac{V_c \alpha^{n}_{g} ( P^{n+1, k} - P^{n} )}{\dt{}}} + \abs{q_{wg}^{n+1, k}} \right. \nonumber \\
+S^{k}_{e, g} & = & \dt{}\left[\abs{\frac{V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n}\right]}{\dt{}}} +\abs{\frac{V_c \alpha^{n}_{g} ( P^{n+1, k} - P^{n} )}{\dt{}}} + \abs{q_{wg}^{n}} \right. \nonumber \\
 & + & \left. \abs{\left[\Gamma h^{'}_v\right]^{n+1,k}} + \abs{q_{i,v}^{n+1,k}} +\abs{q^{n+1,k}_{gl}} + \sum_{i\,\in \, N_{f} } \abs{\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  A_{m}}_{i} \vphantom{\abs{\frac{V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n}\right]}{\dt{}}}} \right]\\
 \label{eqn:nlnLiqEnergyScale}
-S^{k}_{e, l} & = & \dt{}\left[ \abs{\frac{V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n}\right]}{\dt{}}} + \abs{\frac{V_c \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})}{\dt{}}} + \abs{q^{n+1, k}_{wl}} \right . \nonumber \\
+S^{k}_{e, l} & = & \dt{}\left[ \abs{\frac{V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n}\right]}{\dt{}}} + \abs{\frac{V_c \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})}{\dt{}}} + \abs{q_{wl}^{n}} \right . \nonumber \\
 & + & \abs{\left[\Gamma h^{'}_l\right]^{n+1}} + \abs{q^{n+1,k}_{i,l}} + \abs{q_{gl}^{n+1,k}} + \sum_{i\,\in \, N_{f} }\abs{ \don{ \alpha^{n}_l \rho^{n}_l h^{n}_l }^{n+1,k}_{d} u^{n+1,k}_l A_{m} }_{i} \nonumber \\
 & + & \left. \sum_{i\,\in \, N_{f} } \abs{ \don{ \alpha^{n}_e \rho^{n}_l h^{n}_l }^{n+1,k}_{d} u^{n+1,k}_e  A_{m} }_{i} \vphantom{ \abs{\frac{V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n}\right]}{\dt{}}}} \right] \\
 \label{eqn:nlnEntMassScale}
@@ -689,6 +695,7 @@ For the mass equations it would be the minimum macroscopic density of the given 
 
 \begin{table}[ht]
 \centering
+\singlespace
 \input{tables/minimum_conserved_values}
 \caption{Minimum conserved quantities for conservation equations.}
 \label{tab:minimumConservedValues}
