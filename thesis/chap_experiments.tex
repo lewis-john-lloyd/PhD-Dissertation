@@ -729,36 +729,36 @@ Isolating places where the nonlinearities are present and solving those regions 
 %============================================================================
 % Capstone problem that how the domain decomposition is useful in a quasi-realistic model.
 %============================================================================
-\section{Reflood Problem}
-\label{sect:refloodProblem}
-
-The intent of this model reflood problem is to bring together the individual assertions from the previous test problems.
-If there are localized nonlinearities, then the use of the domain decomposition algorithm can produce results that are not only more accurate than those produced by the linear solver but are also less computationally expensive than those produced by the nonlinear solver.
-
-\subsection{Model}
-\label{sect:refloodModel}
-
-This problem is a rough model of a nuclear reactor.
-There are three sections in the problem.
-The components can be viewed as concentric annulii.
-The outer annulus represents the downcomer.
-Inside the downcomer is the reflector.
-
-The 
-
-\subsection{Results}
-\label{sect:refloodResults}
-
-Like previous problems, this simulation was subject to timestep sensitivity studies.
-The set of timestep sizes analyzed is is given by \eqref{eqn:timeStepAlgo}.
-For this problem, $\dtmax{}_{o}$, $r_{f}$, and ${n}$ were 0.02, 2.0, and 4 respectively.
-Additionally, the nonlinear convergence parameters \kmax{}, $f_{tol}$, and $d_{tol}$ were 10, \expneg{1.0}{6}, and \expneg{1.0}{8}.
-
-
-The two channels in section two that represent the core region and the four channels in section three above the core region comprise the nonlinear domain in this problem.
-
-There are several items that are of interest in this simulation.
-Since this model was intended to model a reflood, the parameters of interest are safety related.
-Included in these items are the condensation occurring in the channel above the core that contains the safety injection mass source.
-The 
+%\section{Reflood Problem}
+%\label{sect:refloodProblem}
+%
+%The intent of this model reflood problem is to bring together the individual assertions from the previous test problems.
+%If there are localized nonlinearities, then the use of the domain decomposition algorithm can produce results that are not only more accurate than those produced by the linear solver but are also less computationally expensive than those produced by the nonlinear solver.
+%
+%\subsection{Model}
+%\label{sect:refloodModel}
+%
+%This problem is a rough model of a nuclear reactor.
+%There are three sections in the problem.
+%The components can be viewed as concentric annulii.
+%The outer annulus represents the downcomer.
+%Inside the downcomer is the reflector.
+%
+%The 
+%
+%\subsection{Results}
+%\label{sect:refloodResults}
+%
+%Like previous problems, this simulation was subject to timestep sensitivity studies.
+%The set of timestep sizes analyzed is is given by \eqref{eqn:timeStepAlgo}.
+%For this problem, $\dtmax{}_{o}$, $r_{f}$, and ${n}$ were 0.02, 2.0, and 4 respectively.
+%Additionally, the nonlinear convergence parameters \kmax{}, $f_{tol}$, and $d_{tol}$ were 10, \expneg{1.0}{6}, and \expneg{1.0}{8}.
+%
+%
+%The two channels in section two that represent the core region and the four channels in section three above the core region comprise the nonlinear domain in this problem.
+%
+%There are several items that are of interest in this simulation.
+%Since this model was intended to model a reflood, the parameters of interest are safety related.
+%Included in these items are the condensation occurring in the channel above the core that contains the safety injection mass source.
+%The 
 
