@@ -32,22 +32,23 @@ However, in an NBC volume, the $N_{\text{NBC}}$ flow paths that connect linear c
 
 \begin{equation}
 \label{eqn:massAndEnergyFluxes}
-\vec{\Psi}^{n+1, k}_{j \pm \onehalf} = \begin{bmatrix}
+\vec{\Psi}^{n+1, k}_{i} = \begin{bmatrix}
 \Psi_{c, n} \\
 \Psi_{c, l} \\
 \Psi_{e, g} \\
 \Psi_{e, l} \\
 \Psi_{c, e} \\
 \Psi_{c, v} \\
-\end{bmatrix}^{n+1, k}_{j \pm \onehalf}
+\end{bmatrix}^{n+1, k}_{i}
 \end{equation}
 
+The index $i$ represents the spatial coordinate of the flow rate.
 This formulation introduces six new unknowns per domain connection, the flow rates.
-The definition of the six unknown flow rates are shown in \eqref{eqn:nbcFluxDefinition}.
+The definition of the six unknown flow rates for a given location are shown in \eqref{eqn:nbcFluxDefinition}.
 
 \begin{equation}
 \label{eqn:nbcFluxDefinition}
-\vec{\Psi}^{n+1, k}_{j \pm \onehalf} = \begin{bmatrix}
+\vec{\Psi}^{n+1, k}_{i} = \begin{bmatrix}
 \frac{\don{\alpha^{n}_{g} \rho^{n}_{n}}^{n+1,k}_{d}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a}}\dot{m}^{n+1,k}_{g} \\
 %
 \frac{\don{\alpha^{n}_{l}\rho^{n}_{l}}^{n+1,k}_{d}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a}}\dot{m}^{n+1,k}_{l}\\
@@ -59,17 +60,21 @@ The definition of the six unknown flow rates are shown in \eqref{eqn:nbcFluxDefi
 \frac{ \don{\alpha^{n}_{e} \rho^{n}_{l}}^{n+1, k}_{d}}{ \ave{\alpha_{e} \rho_{l}}^{n}_{a}} \dot{m}^{n+1, k}_{e} \\
 %
 \frac{ \don{\alpha^{n}_{g} \rho^{n}_{v}}^{n+1, k}_{d}}{ \ave{\alpha_{g} \rho_{g}}^{n}_{a}} \dot{m}^{n+1, k}_{g}
-\end{bmatrix}_{j \pm \onehalf}
+\end{bmatrix}_{i}
 \end{equation}
 
 Using \eqref{eqn:momentumToFlowRates} and \eqref{eqn:momentumVector}, the flow rate vector, $\vec{\Psi}$, can be expressed in matrix form as \eqref{eqn:nbcFluxMatrixStyle}.
 
 \begin{equation}
 \label{eqn:nbcFluxMatrixStyle}
-\vec{\Psi}^{n+1, k}_{j \pm \onehalf} = \vec{\Xi}^{n+1, k}_{j \pm \onehalf} \cdot \vec{\dot{m}}^{n+1, k}_{j \pm \onehalf}
+\vec{\Psi}^{n+1, k}_{i} = \vec{\Xi}^{n+1, k}_{i} \cdot \vec{\dot{m}}^{n+1, k}_{i}
 \end{equation}
 
 The corresponding continuity equations for a given NBC volume in residual formulation are given by \eqref{eqn:nbcNcgMassEquation} -- \eqref{eqn:nbcVapMassEquation}.
+In these equations, the set of flow paths connecting an NBC volume to other continuity volumes within the linear domain is given by $N_{f}$.
+The index $i$ corresponds to the coordinates of the flow paths in $N_{f}$.
+The set of flow paths connecting an NBC volume to the nonlinear domain is given by $N_{\text{NBC}}$.
+The index $p$ corresponds to the coordinate of a given flow path in the set of flow paths $N_{\text{NBC}}$.
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:nbcNcgMassEquation}
@@ -93,11 +98,6 @@ F^{k}_{c, e} & = & V_c \left(\alpha_e \rho_l \right)^{n+1,k} - V_c \left(\alpha_
 F^{k}_{c, v} & = & V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right] + \dt{} \sum_{i\, \in \, N_{f} } \left( \don{ \alpha^{n}_g \rho^{n}_v }^{n+1,k}_{d} u^{n+1, k}_{g}  A_{m} \right)_{i} - \dt{} \Gamma^{n+1, k} \nonumber \\
 & + & \dt{} \sum_{p \, \in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{c,v} \right)_{p}
 \end{IEEEeqnarray}
-
-In the above equations, the set of flow paths connecting an NBC volume to other continuity volumes within the linear domain is given by $N_{f}$.
-The index $i$ corresponds to the coordinates of the flow paths in $N_{f}$.
-The set of flow paths connecting an NBC volume to the nonlinear domain is given by $N_{\text{NBC}}$.
-The index $p$ corresponds to the coordinates of the flow paths in $N_{\text{NBC}}$.
 
 By treating the boundary flow rates as independent parameters, the linearized system given in \eqref{eqn:nlnContinuitySystem} is modified to be \eqref{eqn:nbcContinuitySystem}.
 
@@ -323,7 +323,7 @@ Both \classname{fullMatrix} and \classname{sparseMatrix} contain procedural impl
 There are three concrete classes that correspond to the three supported solvers: \classname{dsolveMatrix}, \classname{superluMatrix}, and \classname{pardisoMatrix}; all three implement their own linear system solving routines under the invert interface.
 \classname{dsolveMatrix} is a concrete class inheriting from \classname{fullMatrix} that includes pivoting information.
 \classname{superluMatrix} and \classname{pardisoMatrix} are concrete classes inheriting from \classname{sparseMatrix} that implement the matrix storage schemes for their respective solvers.
-\fig{fig:matrixClassDiagram} shows the class diagram for the \classname{matrix} ecosystem.
+\fig{fig:matrixClassDiagram} shows the class diagram for the \classname{matrix} \comment{ecosystem}.
 
 \begin{figure}[ht!]
 \singlespace\centering
@@ -332,7 +332,7 @@ There are three concrete classes that correspond to the three supported solvers:
 \label{fig:solverClassDiagram}
 \end{figure}
 
-Once the \classname{matrix} ecosystem was developed, an abstract \classname{solver} class was designed.
+Once the \classname{matrix} \comment{ecosystem} was developed, an abstract \classname{solver} class was designed.
 The \classname{solver} class contains the size of the system, $N_{a}$; a pointer to a \classname{matrix} object, $\vec{A}$; and the right-hand side of the linear system, \classname{res}.
 Within the \classname{solver} class there is an interface for the initialization routine, \classname{init}.
 Additionally, there is a procedure named \classname{insert} that will take the sixth row of a continuity volume's linear system and properly insert it into the the correct row of the domain's pressure matrix, $\vec{A}_{j,:}$, as outlined in \sect{sec:domDecompMath}.
@@ -347,7 +347,7 @@ The following procedures for manipulating the linear system are also defined wit
 There are three concrete classes that inherit from the abstract solver class: \classname{dsolveSolver}, \classname{superluSolver}, and \classname{pardisoSolver}.
 Each of these concrete classes specifies an initialization routine that takes an adjacency list data structure, instantiates the \classname{matrix} pointer to the appropriate concrete subtype, and sets the appropriate parameters.
 By abstracting the matrix storage strategies and the solvers in this way, a consistent interface is provided to the rest of the software.
-\fig{fig:solverClassDiagram} shows the class diagram for the \classname{solver} ecosystem.
+\fig{fig:solverClassDiagram} shows the class diagram for the \classname{solver} \comment{ecosystem}.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -468,6 +468,7 @@ The lower triangular matrix has a unit diagonal.
 The sixth equation in the upper-triangular system is then scaled by its diagonal.
 This upper-triangular, rectangular system for each continuity volume is then stored for later back-substitution.
 Since the pressure update, $\delta P$, corresponds to the last row in the linear system, the reduction of the linear system to its upper-triangular form allows for the isolation of the pressure update.
+This isolated equation represents the relationship of a given continuity volume's pressure change to the pressure change in the other continuity volume's to which it is attached.
 The last row of each continuity volume's \eqref{eqn:linSystem} is then formed into the linear pressure matrix, $\vec{A}_{l}$, and its associated right-hand side, $\vec{r}$.
 
 The two loops, one over the momentum flow paths and one over the continuity volumes, form a single group of operations that act upon a given domain.
@@ -534,7 +535,7 @@ This is shown in \alg{alg:domDecompGetCoef}.
 Once the pressure coefficients have been collected, and the linear domain has been inverted, the additional entries in the nonlinear pressure matrix that represent the NBC volume's pressure equations are populated.
 This procedure is shown in detail in \alg{alg:domDecompSetMat}.
 This process is a system of three nested loops.
-The first loop is over all the NBC volumes in the domain.
+The first loop is over all the NBC volumes in the domain, $N_{\text{nln}}$.
 From \sect{sec:domDecompMath} and \eqref{eqn:linearDomainPressureUpdates}, each NBC volume has an associated pressure equation, \eqref{eqn:nbcPressureEquation}.
 This equation represents the inter-dependency of the NBC volumes upon each other.
 Evaluating \eqref{eqn:nbcPressureEquation} requires a second, inner, loop over all of the NBC volumes for each outer NBC volume.

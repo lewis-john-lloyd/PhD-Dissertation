@@ -39,7 +39,7 @@ Each of the methods outlined in \sect{sect:solution_techniques} has one thing in
 \label{fig:my_diagram}
 \end{figure}
 
-The advantage of the single linearization is the reduction in computational costs; however, the accuracy of the single linerization at large timestep sizes in regions of highly nonlinear physics is suspect.
+The advantage of the single linearization is the reduction in computational costs; however, the accuracy of the single linearization at large timestep sizes in regions of highly nonlinear physics is suspect.
 This limitation has traditionally been mitigated by restrictions placed upon the maximum permissible change in the independent parameters during a given timestep.
 However, to resolve the nonlinearities within a timestep requires the use of an iterative method.
 The benefits of an iterative Newton solver is that the nonlinearities are resolved at each timestep; however, the computational cost of multiple Newton steps is high.
@@ -151,7 +151,7 @@ Since all quantities are area-averaged, the tilde in \eqref{eqn:area_average} wi
 \end{equation}
 
 The particular formulation of the two-phase flow equation used in \cobra{} is commonly referred to as a ``two-phase, three-field formulation".
-While this designation comes from the three water fields that are modeled by the software, the software also models \ncg{} fields mixed with the steam.
+While this designation comes from the three water fields that are modeled by the software, the software also models \ncg{} fields that are mixed with the steam.
 To simulate the behavior of in-core fluid dynamics during accident scenarios more accurately, the liquid and the gaseous phases are each divided into two distinct fields.
 The two fields of the liquid phase are a continuous liquid field and an entrained liquid droplet field.
 The gaseous phase is composed of a \ncg{} field and a water-vapor field. 
@@ -236,7 +236,7 @@ The inter-field transfer of mass occurs only between the continuous and entraine
 
 \begin{equation}
 \label{eqn:entrainment_deentrainment}
-S^{'''}_l + S^{'''}_e = 0
+\Upsilon^{'''}_l + \Upsilon^{'''}_e = 0
 \end{equation}
 
 Within the conservation of mass equations several assumptions from \sect{subsect:assumptions} are evident.
@@ -314,13 +314,13 @@ The assumed mechanical equilibrium between the two gaseous fields enable the use
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:con_mom_liq}
 \frac{\partial \left( \alpha_l \rho_l \vec{u}_l \right )}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \vec{u}_l \right) & = & \nonumber \\
- -\alpha_l \nabla P + \alpha_l \rho_l \vec{g} - \vec{\tau}^{'}_{w,l} + \vec{\tau}^{'}_{i,gl} - (1 - \eta)\Gamma^{'''}\vec{u}^{'} - S^{'''}\vec{u}^{'} + s_{p,l} & & \\
+ -\alpha_l \nabla P + \alpha_l \rho_l \vec{g} - \vec{\tau}^{'}_{w,l} + \vec{\tau}^{'}_{i,gl} - (1 - \eta)\Gamma^{'''}\vec{u}^{'} - \Upsilon^{'''}\vec{u}^{'} + s_{p,l} & & \\
 \label{eqn:con_mom_gas}
 \frac{\partial \left( \alpha_g \rho_g \vec{u}_g \right) }{\partial t } + \nabla \cdot \left( \alpha_g \rho_g \vec{u}_g \vec{u}_g \right) & = & \nonumber \\
  -\alpha_g \nabla P + \alpha_g \rho_g \vec{g} - \vec{\tau}^{'}_{w,g} - \vec{\tau}^{'}_{i,gl} - \vec{\tau}^{'}_{i,ge} + \Gamma^{'''}\vec{u}^{'} + s_{p,g} & & \\
 \label{eqn:con_mom_ent}
 \frac{\partial \left( \alpha_e \rho_l \vec{u}_e \right) }{\partial t } + \nabla \cdot \left( \alpha_e \rho_l \vec{u}_e \vec{u}_e \right) & = & \nonumber \\
- -\alpha_e \nabla P + \alpha_e \rho_l \vec{g} - \vec{\tau}^{'}_{w,e} + \vec{\tau}^{'}_{i,ge} - \eta \Gamma^{'''}\vec{u}^{'} + S^{'''}\vec{u}^{'} + s_{p,l} & &
+ -\alpha_e \nabla P + \alpha_e \rho_l \vec{g} - \vec{\tau}^{'}_{w,e} + \vec{\tau}^{'}_{i,ge} - \eta \Gamma^{'''}\vec{u}^{'} + \Upsilon^{'''}\vec{u}^{'} + s_{p,l} & &
 \end{IEEEeqnarray}
 
 The $\rho_g$ used in \eqref{eqn:con_mom_gas} is defined by \eqref{eqn:gaseous_density}.
@@ -732,8 +732,8 @@ For the case of \eqref{eqn:explicit}, the CFL limit is given in \eqref{eqn:cfl_e
 \end{equation}
 
 In \eqref{eqn:cfl_explicit}, $c_j$ and $u_j$ are the speed of sound and the magnitude of a given phasic velocity, respectively, at a given location within the domain.
-Thse two velocities, for most applications of interest are, can be of drastically different magnitude.
-For example, in single phase gaseous flow, the ratio of the local phasic velocity to the speed of sound is typicaly much less than one for problems of interest.
+These two velocities, for most applications of interest are, can be of drastically different magnitude.
+For example, in single phase gaseous flow, the ratio of the local phasic velocity to the speed of sound is typically much less than one ($\approx 0.01$) for problems of interest.
 Using the local fluid conditions, $\dt{}_j$ is calculated at every point within the domain.
 The $\dt{}$ chosen for the $t^{n} \rightarrow t^{n+1}$ timestep is the most restrictive calculated value over the domain.
 While the explicit method may provide the lowest computational cost on a per-timestep basis, the number of timesteps required for a given problem will be much greater due to this restrictive CFL limitation.

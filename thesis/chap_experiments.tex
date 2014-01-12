@@ -287,6 +287,22 @@ First, it should be noted that the traditional output file of variables for \cob
 This is important because the results obtained via this test were identical to single precision.
 This required modifications of the software to generate additional double precision numbers to compare.
 
+\comment{machine precision}
+
+\begin{figure}[h!t]
+\centering
+\input{plots/complexBot}
+\caption{Error at bottom.}
+\label{fig:complexBot}
+\end{figure}
+
+\begin{figure}[h!t]
+\centering
+\input{plots/complexTop}
+\caption{Error at top.}
+\label{fig:complexTop}
+\end{figure}
+
 These results indicate that the domain decomposition algorithm was implemented as intended.
 
 %============================================================================
@@ -294,6 +310,8 @@ These results indicate that the domain decomposition algorithm was implemented a
 %============================================================================
 \section{Valve Type Problem}
 \label{sect:valveProblem}
+
+\comment{name needs to be adjusted to valve-type problem or somesuch.}
 This problem is designed to demonstrate the ability of the domain decomposition algorithm to resolve isolated nonlinearities at a lower computational cost than the fully nonlinear solver. 
 First, the model will be discussed and initial and boundary conditions provided.
 Second, a timestep sensitivity study of the solution for both the linear and the nonlinear solver will be conducted.
@@ -405,7 +423,7 @@ Instead \tab{tab:valveLinDataTable} shows the run time statistics for the linear
 \centering
 \singlespace
 \input{tables/valveLinDataTable}
-\caption{Rum time data for the valve problem using the linear solver.}
+\caption{Run time data for the valve problem using the linear solver.}
 \label{tab:valveLinDataTable}
 \end{table}
 
@@ -446,7 +464,7 @@ However, \tab{tab:valveNlnDataTable} shows that the nonlinear solver takes more 
 \centering
 \singlespace
 \input{tables/valveNlnDataTable}
-\caption{Rum time data for the valve problem using the nonlinear solver.}
+\caption{Run time data for the valve problem using the nonlinear solver.}
 \label{tab:valveNlnDataTable}
 \end{table}
 
@@ -618,8 +636,14 @@ The pressure at the center of the bottom six continuity volumes in the problem a
 \label{fig:linFill1em1}
 \end{figure}
 
+\comment{Move analytic solution to the front.}\
+
+\comment{Shift graphs so that the 14.7 is visible.}
+
+\comment{Remove one of the two graphs below. Redundant.}
+
 The solution at this \dtmax{} is rather noisy and when the actual timestep sizes are examined, \dtmax{} is infrequently reached due to restrictive \dtcrnt{} limits.
-The measure of error, $e_{p}$, for this simulation was \expneg{7.5}{2}{[s]}.
+The measure of error, $e_{p}$, for this simulation was \expneg{7.5}{2}{[psia]}.
 
 \begin{figure}[h!t]
 \subfloat[\dtmax{} = \expneg{5.0}{2}{[s]}]{
@@ -656,7 +680,7 @@ Looking at the solutions from smaller timestep sizes, \fig{fig:vmpLinFill5em2} a
 
 With the nonlinear solver active, the same three timestep sizes were run.
 The pressures from the \dtmax{} = \expneg{1.0}{1}{[s]} case is shown in \fig{fig:nlnFill1em1}.
-The measure of error, $e_{p}$, for this simulation was \expneg{3.5}{2}{[s]}.
+The measure of error, $e_{p}$, for this simulation was \expneg{3.5}{2}{[psia]}.
 This error measure was half that of the linear case at the same \dtmax{}.
 
 \begin{figure}[h!t]
@@ -718,6 +742,8 @@ This result is mirrored in the case where the top channel is in the nonlinear do
 \caption{Filling problem with the top channel in the nonlinear domain.}
 \label{fig:vmpDDTopChan}
 \end{figure}
+
+\comment{Show that the nonlinear solution is impact by the nonlinearities in the linear domain.}
 
 \fig{fig:vmpDDTopChan} shows that when the water level is in the bottom channel, the nonphysical solution propagates globally.
 In addition, once the water level enters the nonlinear domain, the solution is out of sync with the analytic solution.
