@@ -29,8 +29,8 @@ In the work that follows the governing physics and the computational framework o
 \section{Research Objectives}
 \label{sect:researchObjectives}
 
-The methods used to simulate thermal-hydraulic behavior in NPPs are characterized by the manner in which both the spatial-temporal integration of the governing conservation equations and the nonlinearities inherent in those fully discrete equations are resolved.
-Each of the methods outlined in \sect{sect:solution_techniques} has one thing in common: the nonlinear problem is solved over the global domain, either through a single linearization or through an iterative Newton procedure.
+The methods used to simulate thermal-hydraulic behavior in NPPs are characterized by the manner in which the governing conservation equations are integrated over space and time and how their nonlinearities are resolved.
+Each of the methods outlined in \sect{sect:solution_techniques} has one thing in common: the governing equations are solved over the global domain, either through a single linear approximation or through iterative convergence.
 
 \begin{figure}[ht!]
 \centering
@@ -39,20 +39,21 @@ Each of the methods outlined in \sect{sect:solution_techniques} has one thing in
 \label{fig:my_diagram}
 \end{figure}
 
-The advantage of the single linearization is the reduction in computational costs; however, the accuracy of the single linearization at large timestep sizes in regions of highly nonlinear physics is suspect.
-This limitation has traditionally been mitigated by restrictions placed upon the maximum permissible change in the independent parameters during a given timestep.
-However, to resolve the nonlinearities within a timestep requires the use of an iterative method.
-The benefits of an iterative Newton solver is that the nonlinearities are resolved at each timestep; however, the computational cost of multiple Newton steps is high.
-If the areas with a high degree of nonlinear physics are spatially isolable, then the computational expenditure of iteratively solving the global domain's nonlinear equations iteratively may be unnecessary.
-\fig{fig:my_diagram} shows where the current work fits into this paradigm.
+The advantage of the linear approximation is the reduction in computational costs; however, the accuracy of this approximation at large timestep sizes in regions of highly nonlinear physics is suspect.
+This limitation has traditionally been mitigated by restrictions placed upon the maximum permissible change in the independent parameters during a given timestep, which can in turn lead to excessively small timestep sizes.
+The benefit of an iterative solver is that the nonlinear physics are resolved at each timestep.
+In trade, the computational cost of multiple iterations is high.
+This research hopes to find a balance between these competing incentives: computational costs and accuracy.
+Specifically, if the parts of the domain with a high degree of nonlinear physics are spatially isolable, then the computational costs of solving the entire domain's governing equations iteratively may be unnecessary.
+\fig{fig:my_diagram} shows how this work will attempt to strike a balance between the two methods.
 
 The objectives of this research were the design, implementation, and evaluation of a novel, spatially selective, nonlinear solution method for nuclear thermal-hydraulic safety analysis.
 Isolation of a specified subdomain where nonlinearities are high was achieved by using a new variant of the code coupling algorithm discussed in \sect{sect:code_coupling}.
-For this work, the subdomains to be isolated were geometric components predetermined by the user.
-Upon isolation, the coupled subdomains were subjected to Newton's method to resolve their nonlinearities at every timestep.
-This converged solution was then communicated via coupling coefficients to the linear portion of the domain for use in calculating its single Newton step.
+For this work, the subdomain to be isolated was comprised of geometric components predetermined by the user.
+Upon isolation, the coupled nonlinear subdomain was subjected to Newton's method to resolve any nonlinearities at every timestep.
+This converged solution was then communicated via coupling coefficients to the linear portion of the domain for use in finishing its single Newton step.
 This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling provides a route to obtaining nonlinearly-converged, timestep-size insensitive solutions for traditional two-phase flow methods with a lower computational cost than a fully iterative Newton method.
-This work will show that the convergence of the nonlinearities within a given subdomain allows for temporal convergence to be determined at timestep sizes larger than those required by the current single-shot linearization methods.
+This work will show that the convergence of the nonlinearities within a given subdomain allows for temporal convergence to be determined with a lower cost at larger timestep sizes than those required by current methods.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
