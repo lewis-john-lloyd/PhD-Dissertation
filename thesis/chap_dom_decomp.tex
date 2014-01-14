@@ -82,7 +82,7 @@ F^{k}_{c, n} & = & V_c\left[ (\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{
 & + & \dt{} \sum_{p\, \in \, N_{\text{NBC}}} \left( \Psi^{n+1, k}_{c,n} \right)_{p} \\
 \label{eqn:nbcLiqMassEquation}
 F^{k}_{c, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_l \rho_l \right)^{n} + \dt{} \sum_{i\,\in \,N_{f}} \left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l A_{m}  \right)_{i} \nonumber \\
-&+& \dt{}\left[(1-\eta)\Gamma + S \right]^{n+1, k} +  \dt{} \sum_{p\,\in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{c,l} \right)_{p}  \\
+&+& \dt{}\left[(1-\eta)\Gamma + \Upsilon \right]^{n+1, k} +  \dt{} \sum_{p\,\in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{c,l} \right)_{p}  \\
 \label{eqn:nbcGasEnergyEquation}
 F^{k}_{e, g} & = & V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_{g} ( P^{\,n+1, k} - P^{\,n} ) \right] - \dt{} q_{wg}^{n} \nonumber \\
 & - & \dt{} \left[q_{i,v} + \Gamma h^{'}_v + q_{gl}\right]^{n+1, k} + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{ \alpha^{n}_g \rho^{n}_g h_g^{n} }^{n+1,k}_{d} u^{n+1, k}_g  A_{m}  \right)_{i} \nonumber \\
@@ -93,7 +93,7 @@ F^{k}_{e, l} & = & V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( 
 & + &  \dt{} \sum_{p \,\in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{e,l} \right)_{p} \\
 \label{eqn:nbcEntMassEquation}
 F^{k}_{c, e} & = & V_c \left(\alpha_e \rho_l \right)^{n+1,k} - V_c \left(\alpha_e \rho_l \right)^{n} + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{ \alpha^{n}_e \rho^{n}_l }^{n+1, k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} \nonumber \\
-&-& \dt{}\left[ S -\eta\Gamma \right]^{n+1,k} +  \dt{} \sum_{p \, \in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{c,e} \right)_{p}\\
+&-& \dt{}\left[ \Upsilon -\eta\Gamma \right]^{n+1,k} +  \dt{} \sum_{p \, \in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{c,e} \right)_{p}\\
 \label{eqn:nbcVapMassEquation}
 F^{k}_{c, v} & = & V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right] + \dt{} \sum_{i\, \in \, N_{f} } \left( \don{ \alpha^{n}_g \rho^{n}_v }^{n+1,k}_{d} u^{n+1, k}_{g}  A_{m} \right)_{i} - \dt{} \Gamma^{n+1, k} \nonumber \\
 & + & \dt{} \sum_{p \, \in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{c,v} \right)_{p}
@@ -121,14 +121,14 @@ Utilizing \eqref{eqn:momentumToFlowRates} and \eqref{eqn:momentumUpdate}, the li
 
 As outlined in \sect{sect:nlnCobraSolver}, the advection terms in the residuals on the right-hand side of \eqref{eqn:nbcLinearSystem} are evaluated using $\momVec{}^{n+1, k + \onehalf}$.
 The first six columns of \eqref{eqn:nbcLinearSystem} will be represented by $\vec{J}_{n}$.
-The next $N_{f}$ columns, the inter-continuity coupling columns, will be represented by $\vec{K}_{n}$.
-The final $6 * N_{\text{NBC}}$ columns, representing the inter-domain flow rate coefficients, will be collectively referred to as $\vec{Q}_{n}$.
+The next $N_{f}$ inter-continuity coupling columns multipiying their respective pressure changes, $\delta P_{o(i)}$, will be represented by $\vec{K}_{n}$.
+The final $6 * N_{\text{NBC}}$ inter-domain coupling coefficient columns multiplying the change in flow rates, $\delta \vec{\Psi}_{p}$, will be collectively referred to as $\vec{Q}_{n}$.
 This matrix, $\vec{Q}_{n}$, is also present with the opposite sign on the right-hand side of \eqref{eqn:nbcLinearSystem}.
 Using this matrix notation, \eqref{eqn:nbcLinearSystem} can be represented as \eqref{eqn:nbcLinSystem}.
 
 \begin{equation}
 \label{eqn:nbcLinSystem}
-\left[ \vec{J}_{n} \vert \vec{K}_{n} \vert \vec{Q}_{n} \right] \delta \vec{C}_{n} = \left[\vec{r}_{n} \vert -\vec{Q}_{n}\right]
+\left[ \vec{J}_{n} \vert \vec{K}_{n} \vert \vec{Q}_{n} \right] \delta \vec{C}_{n} = \vec{r}_{n} - \vec{Q}_{n} \vec{\Psi}_{n}
 \end{equation}
 
 The vector of unknowns, $\vec{C}_{n}$ is defined in \eqref{eqn:nbcUpdate}.
@@ -171,10 +171,10 @@ This rectangular linear system for the NBC volume is then subjected to partial $
 
 \begin{equation}
 \label{eqn:nbcLUSystem}
-\left[ \vec{U}_{n} \vert \vec{L}^{-1}_{n}\vec{K}_{n} \vert \vec{L}^{-1}_{n}\vec{Q}_{n} \right] \delta \vec{C}_{j} = \left[\vec{L}^{-1}_{n}\vec{r}_{n} \vert -\vec{L}^{-1}_{n}\vec{Q}_{n}\right]
+\left[ \vec{U}_{n} \vert \vec{L}^{-1}_{n}\vec{K}_{n} \vert \vec{L}^{-1}_{n}\vec{Q}_{n} \right] \delta \vec{C}_{j} = \vec{L}^{-1}_{n}\vec{r}_{n}  -\vec{L}^{-1}_{n}\vec{Q}_{n}\vec{\Psi}_{n}
 \end{equation}
 
-However, since product of $\vec{L}_{n}^{-1}\vec{Q}_{n}$ occurs twice in the resulting system, only a single instance is included in the solution of this system.
+However, since the matrix product $\vec{L}_{n}^{-1}\vec{Q}_{n}$ occurs twice in the resulting system, only a single instance is included in the solution of this system.
 The $\vec{Q}_{n}$ is omitted from the right-hand side of \eqref{eqn:nbcLinSystem} during the $\vec{LU}$ decomposition.
 This $\vec{LU}$ decomposition is such that the lower triangular matrix has ones along the diagonal.
 The $N_{\text{NBC}}$ identity matrices that comprise $\vec{Q}_{n}$ are now themselves the inverse of the lower triangular matrix times \dt{}.
@@ -323,7 +323,7 @@ Both \classname{fullMatrix} and \classname{sparseMatrix} contain procedural impl
 There are three concrete classes that correspond to the three supported solvers: \classname{dsolveMatrix}, \classname{superluMatrix}, and \classname{pardisoMatrix}; all three implement their own linear system solving routines under the invert interface.
 \classname{dsolveMatrix} is a concrete class inheriting from \classname{fullMatrix} that includes pivoting information.
 \classname{superluMatrix} and \classname{pardisoMatrix} are concrete classes inheriting from \classname{sparseMatrix} that implement the matrix storage schemes for their respective solvers.
-\fig{fig:matrixClassDiagram} shows the class diagram for the \classname{matrix} \comment{ecosystem}.
+\fig{fig:matrixClassDiagram} shows the class diagram for the \classname{matrix} heirachy.
 
 \begin{figure}[ht!]
 \singlespace\centering
@@ -332,7 +332,7 @@ There are three concrete classes that correspond to the three supported solvers:
 \label{fig:solverClassDiagram}
 \end{figure}
 
-Once the \classname{matrix} \comment{ecosystem} was developed, an abstract \classname{solver} class was designed.
+Once the \classname{matrix} heirachy was developed, an abstract \classname{solver} class was designed.
 The \classname{solver} class contains the size of the system, $N_{a}$; a pointer to a \classname{matrix} object, $\vec{A}$; and the right-hand side of the linear system, \classname{res}.
 Within the \classname{solver} class there is an interface for the initialization routine, \classname{init}.
 Additionally, there is a procedure named \classname{insert} that will take the sixth row of a continuity volume's linear system and properly insert it into the the correct row of the domain's pressure matrix, $\vec{A}_{j,:}$, as outlined in \sect{sec:domDecompMath}.
@@ -347,7 +347,7 @@ The following procedures for manipulating the linear system are also defined wit
 There are three concrete classes that inherit from the abstract solver class: \classname{dsolveSolver}, \classname{superluSolver}, and \classname{pardisoSolver}.
 Each of these concrete classes specifies an initialization routine that takes an adjacency list data structure, instantiates the \classname{matrix} pointer to the appropriate concrete subtype, and sets the appropriate parameters.
 By abstracting the matrix storage strategies and the solvers in this way, a consistent interface is provided to the rest of the software.
-\fig{fig:solverClassDiagram} shows the class diagram for the \classname{solver} \comment{ecosystem}.
+\fig{fig:solverClassDiagram} shows the class diagram for the \classname{solver} heirachy.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------

@@ -358,7 +358,7 @@ $\Gamma^{'''}\vec{u}^{'}$:
  The $\vec{u}^{'}$ term depends upon the net inter-phase transfer of mass.
 }
 \item{
-$S^{'''}\vec{u}^{'}$:
+$\Upsilon^{'''}\vec{u}^{'}$:
  momentum contribution from the exchange of mass between the two liquid fields.
  The $\vec{u}^{'}$ term depends upon the net inter-field transfer of mass.
 }
@@ -433,8 +433,6 @@ The assumption in these integrals is that the value of the conserved quantities 
 
 Within a channel, a given continuity volume of length $\Delta x_{j} $ has a constant cross-sectional area, $A_{c_{j}}$, over its length.
 The cross-sectional area of the boundary between two continuity volumes is given by the cross-section area of the momentum path at that boundary, $A_{m}$.
-For illustrative purposes, \eqref{eqn:conservation_of_liq} will be integrated over a simplified volume, $V_j$, consisting of singly connected axial flow as shown in \fig{fig:single_volume}.
-This volume integrated equation is given by \eqref{eqn:spatially_discrete_liq_m_con}.
 
 \begin{figure}[ht!]
 \centering
@@ -443,24 +441,29 @@ This volume integrated equation is given by \eqref{eqn:spatially_discrete_liq_m_
 \label{fig:single_volume}
 \end{figure}
 
-For the mass-flux terms evaluated on the continuity volume edge, the advected quantity is evaluated using a 1st order upwind method \cite{Tannehill1997}.
-The velocity and cross-sectional area utilized in the continuity flux terms, $u_{j \pm \onehalf}$ and $A_{m,j \pm \onehalf}$, have the values defined in the momentum path that aligns with the boundary of continuity volumes.
-The sign of the velocity at the volume boundary determines the value of the donored quantity, $\don{a}_{\text{d},j \pm \onehalf}$.
-A generic formulation for this scheme is given by \eqref{eqn:upwind_donoring}.
+For illustrative purposes, \eqref{eqn:conservation_of_liq} will be integrated over a simplified volume, $V_j$, consisting of singly connected axial flow as shown in \fig{fig:single_volume}.
+This volume integrated equation is given by \eqref{eqn:spatially_discrete_liq_m_con}.
 The same general procedure is used for the other five scalar conservation equations.
 
 \begin{IEEEeqnarray}{lcl}
-\int_{V_j}\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } & + & \nabla \cdot \left( \alpha_l \rho_l u_l \right) \mathrm{d}V = \int_{V_j} \left(-(1-\eta)\Gamma^{'''} - S^{'''} + s_{m,l}\right) \mathrm{d}V \nonumber \\
-V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\int_{V_j}\nabla \cdot \left( \alpha_l \rho_l u_l \right) \mathrm{d}V -(1-\eta_j)\Gamma_j - S_j + s_{m,l,j}V_j \nonumber \\
-V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left[\alpha_l \rho_l u_l A_{m}\right]_{x_{j-\onehalf}}^{x_{j+\onehalf}} -(1-\eta_j)\Gamma_j - S_j + s_{m,l,j}V_j \nonumber \\
+\int_{V_j}\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } & + & \nabla \cdot \left( \alpha_l \rho_l u_l \right) \mathrm{d}V = \int_{V_j} \left(-(1-\eta)\Gamma^{'''} - \Upsilon^{'''} + s_{m,l}\right) \mathrm{d}V \nonumber \\
+V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\int_{V_j}\nabla \cdot \left( \alpha_l \rho_l u_l \right) \mathrm{d}V -(1-\eta_j)\Gamma_j - \Upsilon_j + s_{m,l,j}V_j \nonumber \\
+V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left[\alpha_l \rho_l u_l A_{m}\right]_{x_{j-\onehalf}}^{x_{j+\onehalf}} -(1-\eta_j)\Gamma_j - \Upsilon_j + s_{m,l,j}V_j \nonumber \\
 \label{eqn:spatially_discrete_liq_m_con}
 V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left( \don{\alpha_l \rho_l}_{\text{d},j+\onehalf} u_{l,j+\onehalf} A_{m,j+\onehalf} - \don{\alpha_l \rho_l}_{\text{d},j-\onehalf} u_{l,j - \onehalf} A_{m,j - \onehalf}\right) \nonumber \\
-& & -(1-\eta)\Gamma_j - S_j + s_{m,l,j}V_j
+& & -(1-\eta)\Gamma_j - \Upsilon_j + s_{m,l,j}V_j
 \end{IEEEeqnarray}
+
+For the mass-flux terms evaluated on the continuity volume edge, the advected quantity is evaluated using a 1st order upwind method \cite{Tannehill1997}.
+The velocity and cross-sectional area utilized in the continuity flux terms, $u_{j \pm \onehalf}$ and $A_{m,j \pm \onehalf}$, have the values defined in the momentum path that aligns with the boundary of continuity volumes.
+The sign of the velocity at the volume boundary determines the value of the donored quantity, $\don{a}_{\text{d},j \pm \onehalf}$.
+A more generic formulation for this scheme is given by \eqref{eqn:upwind_donoring}.
+The superscripts, $^{b}$ and $^{c}$, denote the discrete points in time at which the variables are evaluated.
+The particular time superscripts in \eqref{eqn:upwind_donoring} are for illustrative purposes and are not fixed.
 
 \begin{equation}
 \label{eqn:upwind_donoring}
-\don{a}_{\text{d}, j - \onehalf} = \begin{cases} a_{j-1} &  u_{j - \onehalf} \geq 0 \\ a_{j} & u_{j - \onehalf} < 0 \end{cases}
+\don{a^{b}}^{c}_{\text{d}, j - \onehalf} = \begin{cases} a^{b}_{j-1} &  u^{c}_{j - \onehalf} \geq 0 \\ a^{b}_{j} & u^{c}_{j - \onehalf} < 0 \end{cases}
 \end{equation}
 
 The three momentum conservation equations, \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent}, are integrated over their momentum path.
@@ -1046,3 +1049,13 @@ However, these applications do not worry about consistency at the boundaries of 
 The two paradigms of discrete software coupling and domain decomposition are complementary views of the same process.
 The software coupling is the algorithmic implementation of the domain decomposition.
 Using the semi-implicit software coupling as a means of domain coupling within a single code provides a mean of isolating subdomains that provides a consistent formulation for the nonlinear problem.
+
+\section{}
+\label{}
+
+Next chapter.
+
+
+
+
+

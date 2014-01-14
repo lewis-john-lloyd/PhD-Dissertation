@@ -130,14 +130,14 @@ V_c\left[ \left(\alpha_g \rho_v \right)^{n+1}\right. &-& \left. \left(\alpha_g \
 Unlike the momentum equations, the continuity equations are linearized with variables other than their conserved quantities, \eqref{eqn:independentVariables}.
 This creates a more complicated linearization than that used for the momentum equations.
 The new-time variables in \eqref{eqn:nlnNcgMassEquation} -- \eqref{eqn:nlnLiqMassEquation} are linearized about the old-time variables with respect to the continuity variables in \eqref{eqn:independentVariables}.
-The use of \eqref{eqn:momStar} in defining the new-time velocities introduces inter-continuity volume coupling through the momentum equations' dependency upon changes in pressure, $\delta P$.
+The use of \eqref{eqn:momStar} in defining the new-time velocities introduces inter-continuity volume coupling through the momentum equations' dependency upon the changes in pressure of both the continuity volume being solved, $\delta P$, and those of the continuity volumes to which the $N_{f}$ flow paths connect , $\delta P_{o(i)}$.
 
 \begin{equation}
 \label{eqn:linSystem}
 \underbrace{\left[\vec{Z}_{c}\right]}_{\left[6\, \text{x}\, 6 + N_{f}\right]} \delta \vec{C}_{c} = \vec{r}_{c}
 \end{equation}
 
-With the addition of the unknown pressure updates via the momenta, the six linearized continuity equations now form the linear system \eqref{eqn:linSystem}.
+With the addition of the unknown pressure updates from the connected flow paths, $\delta P_{o(i)}$,  the six linearized continuity equations now form the linear system \eqref{eqn:linSystem}.
 Additionally, while the momentum equations were fully expanded to solve for the new-time conserved quantities directly, the continuity equations instead solve for their associated updates, \eqref{eqn:linearUpdate}.
 
 \begin{equation}
@@ -150,9 +150,9 @@ Additionally, while the momentum equations were fully expanded to solve for the 
 \delta ( (1 - \alpha_{g} ) h_l ) \\
 \delta \alpha_{e} \\
 \delta P \\ 
-\delta P_i \\
+\delta P_{o(i)} \\
 \vdots \\
-\delta P_{N_{f}}
+\delta P_{o(N_{f})}
 \end{bmatrix}
 =
 \begin{bmatrix}
@@ -545,14 +545,14 @@ Using the two residuals, $\vec{F}^{k}$ and $\vec{F}^{k+1}$, the comparative accu
 
 There are three ways in which the iterative Newton loop can be terminated.
 One way is to have the number of Newton iterates, $k$, exceed a specified threshold, $\kmax{}$.
-Another way is to have the relative update vector, \eqref{eqn:nlnUpdateVector}, drop below a specified threshold $\dtol{}$.
+Another way is to have the $\mathcal{L}_{2}$ norm of the relative update vector, \eqref{eqn:nlnUpdateVector}, divided by the square root of the number of entries in the update vector, $N_{u}$, drop below a specified threshold $\dtol{}$.
 
 \begin{equation}
 \label{eqn:nlnUpdateVector}
 \delta \tilde{\vec{x}}^{k} = \frac{\delta \vec{x}^{k}}{\vec{x}^{n+1, k}} = \frac{ \vec{x}^{n+1, k+1} - \vec{x}^{n+1, k}}{\vec{x}^{n+1,k}}
 \end{equation}
 
-Finally, the Newton loop will terminate if the scaled residual vector, \eqref{eqn:nlnScaledResidual} drops below a specified threshold, $\ftol{}$.
+Finally, the Newton loop will terminate if the $\mathcal{L}_{2}$ norm of the scaled residual vector, \eqref{eqn:nlnScaledResidual}, divided by the square root of the number of unknowns, $N_{u}$, drops below a specified threshold, $\ftol{}$.
 
 \begin{equation}
 \label{eqn:nlnScaledResidual}
@@ -566,9 +566,9 @@ The convergence determination logic for when to end the Newton loop is given in 
 \begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
-\If{ $||\tilde{\vec{F}}^{k+1}||_{2} \leq \ftol{}$}
+\If{ $\displaystyle \frac{||\tilde{\vec{F}}^{k+1}||_{2}}{\sqrt{N_{u}}} \leq \ftol{}$}
 	\State \textbf{end} Newton Loop
-\ElsIf{ $||\delta \tilde{\vec{x}}^{k}||_{2} \leq \dtol{}$}
+\ElsIf{ $\displaystyle \frac{||\delta \tilde{\vec{x}}^{k}||_{2}}{\sqrt{N_{u}}} \leq \dtol{}$}
 	\State \textbf{end} Newton Loop
 \ElsIf{ $k > \kmax{}$}
 	\State \textbf{end} Newton Loop
@@ -599,6 +599,7 @@ Without proper scaling the residual has several negative characteristics \cite{F
 The different conservation equations will have different orders of magnitude at a given point in time because of the physical quantities that they represent.
 Over the course of the transient the phasic composition of a volume can vary dramatically as phases appear and disappear.
 When norms are taken of the unscaled residual those equations whose terms are the largest may have a residual that is orders of magnitude greater than the others.
+\comment{Explain why this is bad, mmmkay?}
 This will create a situation where any norm taken of the residual will be biased towards certain equations due to the their units or phasic composition.
 
 For a given continuity volume, the nonlinear residual will have six components: four for the conservation of mass and two for the conservation of energy.
@@ -899,8 +900,8 @@ The \dt{} for any timestep is given by \eqref{eqn:time_step}.
 
 \begin{equation}
 \label{eqn:time_step}
-\dt{}^{n \rightarrow n+1} = \max\left[ \dt{}_{\text{MIN}}, \min\left[1.2 \dt{}^{n-1 \rightarrow n}, 0.85 \dt{}_{\text{CRNT}}, \dt{}_{\text{MAX}} \right]\right]
+\dt{}^{n \rightarrow n+1} = \max\left[ \dt{}_{\text{MIN}}, \min\left[1.2 \dt{}^{n-1 \rightarrow n}, 0.85 \dtcrnt{}, \dtmax{}, \dt{}_{\text{vol}} \right]\right]
 \end{equation}
 
-$\dt{}_{\text{CRNT}}$ is the most restrictive Courant number calculated for both axial and transverse flow, and a \dt{} that is based upon the time calculated to empty a given volume of the mass of a given field.
-The most restrictive of the Courant timestep is used as $\dt{}^{n \rightarrow n+1}$.
+\dtcrnt{} is the most restrictive timestep size as calculated by used the Courant number for both axial and transverse flows, and $\dt{}_{\text{vol}}$ is the most restrictive timestep based upon an estimation of the time required to empty a given continuity volume of all of the mass from any given field.
+The most restrictive timestep is used as $\dt{}^{n \rightarrow n+1}$.
