@@ -15,4 +15,8 @@
 *.snm
 *.auxlock
 *.dpth
-Makefile
+*.nlo
+*.nls
+*.ilg
+*_eps.eps
+*_eps.ps

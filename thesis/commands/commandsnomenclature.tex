@@ -1,0 +1,33 @@
+
+\newcommand{\UnitsCol}[1]{\hfill\makebox[4em]{#1\hfill}\ignorespaces}
+
+\newcommand{\nomsubtitle}[1]{\item[\large\bfseries #1]}
+
+\renewcommand\nomgroup[1]{\def\nomtemp{\csname nomstart#1\endcsname}\nomtemp}
+
+\newcommand{\nomstartR}{\nomsubtitle{Roman Symbols}%
+	\item[\bfseries Symbol]%
+	\textbf{Description}%
+	\UnitsCol{\textbf{Units}}}
+
+\newcommand{\nomstartG}{\nomsubtitle{Greek Symbols}%
+	\item[\bfseries Symbol]%
+	\textbf{Description}%
+	\UnitsCol{\textbf{Units}}}
+
+\newcommand{\nomstartA}{\nomsubtitle{Acronyms}}
+
+\renewcommand*{\nompreamble}{\markboth{\nomname}{\nomname}}
+
+\newcommand{\nomdescr}[1]{\parbox[t]{11cm}{\singlespace \RaggedRight #1}}
+\newcommand{\nomwithunits}[4]{\nomenclature[#1]{#2}{\nomdescr{#3}\UnitsCol{#4}}}
+
+\newcommand{\nomtypeR}[4][]{\nomwithunits{R#1}{#2}{#3}{#4}}
+%\nomtypeR[A]{\(A\)}{a dimensionless coefficient}{--}{1}
+\newcommand{\nomtypeG}[4][]{\nomwithunits{G#1}{#2}{#3}{#4}}
+
+\newcommand{\nomtypeA}[3][]{\nomenclature[A#1]{#2}{\nomdescr{#3}}}
+%\newcommand{\nomtypeD}[4][]{\nomenclature[D#1]{#2}{\nomdescr{#3}\DefinitionCol{#4}}}
+
+\setlength{\nomitemsep}{-\parsep}
+

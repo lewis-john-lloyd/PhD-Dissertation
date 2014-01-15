@@ -1062,20 +1062,6 @@
 	}
 
 %=============================================================================
-% NOMENCLATURE
-%=============================================================================
-% The nomenclature environment must do the following:
-% - produce the table of contents entry for the nomenclature section
-% - start a new page with NOMENCLATURE centered two inches from the top
-%=============================================================================
-\newenvironment{nomenclature}{
-	\chapter*{Nomenclature}
-	\addcontentsline{toc}{chapter}{Nomenclature}
-	}{
-	\par\newpage
-	}
-
-%=============================================================================
 % LIST OF SYMBOLS
 %=============================================================================
 % The list of symbols environment must do the following:

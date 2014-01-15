@@ -323,7 +323,7 @@ Both \classname{fullMatrix} and \classname{sparseMatrix} contain procedural impl
 There are three concrete classes that correspond to the three supported solvers: \classname{dsolveMatrix}, \classname{superluMatrix}, and \classname{pardisoMatrix}; all three implement their own linear system solving routines under the invert interface.
 \classname{dsolveMatrix} is a concrete class inheriting from \classname{fullMatrix} that includes pivoting information.
 \classname{superluMatrix} and \classname{pardisoMatrix} are concrete classes inheriting from \classname{sparseMatrix} that implement the matrix storage schemes for their respective solvers.
-\fig{fig:matrixClassDiagram} shows the class diagram for the \classname{matrix} heirachy.
+\fig{fig:matrixClassDiagram} shows the class diagram for the \classname{matrix} hierarchy.
 
 \begin{figure}[ht!]
 \singlespace\centering
@@ -332,7 +332,7 @@ There are three concrete classes that correspond to the three supported solvers:
 \label{fig:solverClassDiagram}
 \end{figure}
 
-Once the \classname{matrix} heirachy was developed, an abstract \classname{solver} class was designed.
+Once the \classname{matrix} hierarchy was developed, an abstract \classname{solver} class was designed.
 The \classname{solver} class contains the size of the system, $N_{a}$; a pointer to a \classname{matrix} object, $\vec{A}$; and the right-hand side of the linear system, \classname{res}.
 Within the \classname{solver} class there is an interface for the initialization routine, \classname{init}.
 Additionally, there is a procedure named \classname{insert} that will take the sixth row of a continuity volume's linear system and properly insert it into the the correct row of the domain's pressure matrix, $\vec{A}_{j,:}$, as outlined in \sect{sec:domDecompMath}.
@@ -347,7 +347,7 @@ The following procedures for manipulating the linear system are also defined wit
 There are three concrete classes that inherit from the abstract solver class: \classname{dsolveSolver}, \classname{superluSolver}, and \classname{pardisoSolver}.
 Each of these concrete classes specifies an initialization routine that takes an adjacency list data structure, instantiates the \classname{matrix} pointer to the appropriate concrete subtype, and sets the appropriate parameters.
 By abstracting the matrix storage strategies and the solvers in this way, a consistent interface is provided to the rest of the software.
-\fig{fig:solverClassDiagram} shows the class diagram for the \classname{solver} heirachy.
+\fig{fig:solverClassDiagram} shows the class diagram for the \classname{solver} hierarchy.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------

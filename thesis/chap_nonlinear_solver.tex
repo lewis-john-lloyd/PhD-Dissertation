@@ -683,11 +683,11 @@ This scaling function is shown by \eqref{eqn:scaling_factor_small}.
 
 \begin{equation}
 \label{eqn:scaling_factor_small}
-S_k = \max\left[1.0, \left(C_1 \frac{\alpha_{k,\text{MIN}}}{\alpha_k}\right)^{C_2} \right] S_k
+S_{\phi} = \max\left[1.0, \left(C_1 \frac{\alpha_{\phi,\text{MIN}}}{\alpha_{\phi}}\right)^{C_2} \right] S_{\phi}
 \end{equation}
 
 For this work, the constant $C_1$ was set equal to 100, and the exponent $C_2$ was set equal to 10.
-This particular phase transition scaling produced the regular operator scaling factor when the volume fraction of a phase is at least two orders of magnitude greater than the minimum volume fraction for that phase.
+This particular phase transition scaling produced the regular scaling factor when the volume fraction of a phase is at least two orders of magnitude greater than the minimum volume fraction for that phase or field, which is on the order of \expneg{1.0}{6}{[-]}.
 This drove the scaled residuals for phases that were nominally not present to well below those residuals for equations of the phases that were present.
 
 Another phase depletion limit was a floor placed upon the scale factor.
@@ -759,12 +759,14 @@ To remove this dependence, a temporal average was instead investigated, \eqref{e
 
 This metric possesses the desirable bounds $0 \leq R \leq 1$.
 Other weighted temporal integrals were considered, such as a simple moment about $t^{0}$, \eqref{eqn:metricResidualMoment}.
-However, this moment has the disadvantage of weighting the latter portion of the transient greater than the early portion.
 
 \begin{equation}
 \label{eqn:metricResidualMoment}
 \tilde{R}_{\text{M}} = \frac{\int_{t^{0}}^{t^{N}} \,\tau\,||\vec{F}(\tau)||_2 \,\mathrm{d} \tau}{\int_{t^{0}}^{t^{N}} \,\tau \,\mathrm{d} \tau}
 \end{equation}
+
+The metric in \eqref{eqn:metricResidualMoment} has the disadvantage of arbitrarily setting the moment about the beginning of the transient, resulting in the end of the simulation being more important.
+Since different simulations may different transient behavior, fixing the moment arm at $t^{0}$ is too strict.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------

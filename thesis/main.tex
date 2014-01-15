@@ -32,7 +32,8 @@
 \usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
 \usepackage{epsfig}
 
-\usepackage{subfig}
+\usepackage{etoolbox}
+\usepackage{ragged2e}
 
 \usepackage[normalem]{ulem}
 
@@ -92,12 +93,16 @@
 	linkcolor=black, %
 	urlcolor=black]{hyperref}
 
+\usepackage[intoc]{nomencl}
+\makenomenclature
+
 \pagestyle{thesis}
 \setcounter{errorcontextlines}{999}
 
 \input{commands/commandsmath}
 \input{commands/commandstikz}
 \input{commands/commandsgeneral}
+\input{commands/commandsnomenclature}
 
 \numberwithin{figure}{chapter}
 %=======================================================================
@@ -157,7 +162,7 @@
 %============================================================================
 % Nomenclature Page
 %============================================================================
-%\input{nomenclature}
+\include{nomenclature}
 
 %=======================================================================
 % Chapters
@@ -183,8 +188,6 @@
 %\noappendixtables
 %\noappendixfigures
 %\begin{appendices}
-%\include{app_input_decks}         % Appendix: Input Decks
-%\include{app_dom_testing}         % Appendix: Domain Decomposition Testing Procedure
 %\end{appendices}
 
 %=======================================================================

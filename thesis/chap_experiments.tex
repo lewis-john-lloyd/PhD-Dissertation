@@ -13,30 +13,30 @@ The goal of the tests, the methods used, and the models will be discussed in eac
 \section{Single Phase Flow and Flashing Problems}
 \label{sect:single_phase_and_flashing}
 
-Two test problems were developed to illustrate the effectiveness of the nonlinear solver and the operator based scaling.
+Two test problems were developed to illustrate the effectiveness of the nonlinear solver, the operator based scaling, and the convergence metric.
 These two problems were set up so that the maximum allowable timestep was varied.
 Each problem was run with the following maximum allowable timesteps: 1 [s], 0.1 [s], 0.01 [s], 0.001 [s], 0.0001 [s], and 0.00001 [s]. 
-For the linear runs, the scaled residuals were evaluated after a single Newton step, $\vec{F}(\vec{x}^{1})$.
+For the linear runs, the scaled residuals were evaluated after the single Newton step, $\vec{F}(\vec{x}^{1})$.
 For the nonlinear runs, the scaled nonlinear residuals were evaluated at the end of the Newton-loop.
-The nonlinear convergence criteria used in the nonlinear solver are described in \sect{subsect:nlnCobraAlgo}.
-The temporal convergence metric was evaluated during post-processing.
+The nonlinear convergence criteria used for the nonlinear simulations are $\kmax$ = 35, $F_{\text{tol}}$ = \expneg{1.0}{6}, and $\delta_{\text{tol}}$ = \expneg{1.0}{8}.
+The convergence metrics were evaluated during post-processing.
 In total, there were twenty-four simulations run.
-The two different problems were each run at six different maximum timestep sizes on each of the two versions of \cobra{}.
+Each of the two problems were run at six different \dtmax{} with both the linear and the nonlinear solver.
 
 \subsection{Model}
 \label{subsect:single_model}
-For both of the test problems, the same computational geometry was used;  \fig{fig:exp_geometry} represents the experimental geometry.
-Each block represents a single continuity cell with a height of 4 [in].
+For both of these test problems, the same computational geometry was used;  \fig{fig:exp_geometry} represents the experimental geometry.
+Each block represents a single continuity volume with a fixed \dx{} of 4 [in].
 The total height of the channel is 48 [in].
 Each continuity cell has a cross-sectional area of 4 [in$^2$].
 The red block at the top of the channel represents a boundary cell where the pressure and enthalpy are specified.
 It represents an infinite reservoir filled with a fluid at a specified thermodynamic state.
-The red triangle represents a specified flow at the bottom edge of the first continuity cell. 
+The red triangle represents a specified flow at the bottom edge of the first continuity volume. 
 
 \begin{figure}[h!t]
 \centering
 \input{images/scaling_test_problem_geometry}
-\caption{Geometry for test problems.}
+\caption{Geometry for single-phase and flashing problems.}
 \label{fig:exp_geometry}
 \end{figure}
 
@@ -47,13 +47,13 @@ The second problem was designed such that high-pressure liquid flashes into stea
 
 \tab{tab:ic} provides the initial conditions for the two problems.
 The pressure, enthalpy, and volume-fractions for the different fields allow for a complete description of the continuity variables.
-The initial velocities are set to zero.
+The initial velocities for both problems are set to zero.
 
 \begin{table}[ht]
 \centering
 \singlespace
 \input{tables/nln_ic}
-\caption{Initial conditions for test problems.}
+\caption{Initial conditions for the single-phase and flashing problems.}
 \label{tab:ic}
 \end{table}
 
@@ -64,7 +64,7 @@ Each of the problems has a specified pressure-enthalpy boundary condition at the
 \centering
 \singlespace
 \input{tables/nln_bc_outflow}
-\caption{The pressure-enthalpy outlet boundary conditions for test problems.}
+\caption{The outlet boundary conditions for single-phase and flashing problems.}
 \label{tab:bc_pe}
 \end{table}
 
@@ -97,8 +97,8 @@ Both problems adjust their initial pressure distribution to account for hydrosta
 \subsection{Results}
 \label{subsect:single_results}
 
-The results from the simulation runs will now be analyzed to determine the impact of nonlinear convergence upon time-step size sensitivity.
-The solutions produced by both solvers will be compared to determine the efficacy of the residual metric in determining the validity of the nonlinear solution.  
+The results from the simulations will now be analyzed to determine the impact of nonlinear convergence upon time-step size sensitivity.
+The solutions produced by both solvers will be compared to determine the efficacy of the convergence metric in determining the validity of the nonlinear solution.
 
 For the flashing problem, the parameter of interest for temporal convergence testing is $\alpha_g$ at 2 [in] from the inlet of the stand pipe.
 \fig{fig:flashing_1em1} shows the gaseous volume fraction 2 [in] from the inlet of the stand pipe as a function of time for a \dtmax{} of \expneg{1.0}{1} [s] for both the linear and the nonlinear solvers.
@@ -119,8 +119,8 @@ For the flashing problem, the parameter of interest for temporal convergence tes
 
 Note that the nonlinearly resolved solution is qualitatively different than the linear single-shot solution, \fig{fig:flashing_1em1}.
 Even as the \dtmax{} is reduced, this discrepancy does not disappear, \fig{fig:flashing_1em5}.
-The two solutions do not converge to the same solution as the timestep size was reduced.
-However, the solution to the flashing problem produced by the nonlinear solver, \fig{fig:nl_mode_flashing}, qualitatively varies less as the timestep size is reduced than that produced by the linear solver, \fig{fig:cobra_mode_flashing}.
+The two solutions do not converge to the same solution as the timestep size is reduced.
+However, the solution to the flashing problem produced by the nonlinear solver, \fig{fig:nl_mode_flashing}, qualitatively varies less as the \dtmax{} is reduced than that produced by the linear solver, \fig{fig:cobra_mode_flashing}.
 However, both \fig{fig:cobra_mode_flashing} and \fig{fig:nl_mode_flashing} show that as the timestep size is reduced the two different solutions become more timestep size insensitive.
 
 \begin{figure}[h!tb]
@@ -232,7 +232,6 @@ The two different nonlinear convergence metrics will now be examined for the fla
 \label{tab:single_criteria}
 \end{table}
 
-
 %============================================================================
 % Problem that shows that the domain decomposition algorithm is implemented correctly.
 %============================================================================
@@ -269,8 +268,6 @@ The rod-bundle is approximated by sixteen channels.
 There are four corner subchannels, eight side subchannels, and four center subchannels in the model.
 The dimensions for the various channels are shown in \fig{fig:channel_layout} is given.
 
-There were a diverse collection of simulations run in this facility.
-The run known as 2B-3 was chosen as the basis for this simulation.
 Since the primary purpose of this problem is to test the ability of the domain decomposition algorithm to accurately recover the linear solution when the nonlinear domain is restricted to a single Newton step, the details of the boundary and initial conditions are omitted here.
 The exact geometric details can be found in the technical report \cite{Lahey1970}.
 
@@ -278,18 +275,27 @@ There eighteen channels in this model.
 That means that there are $2^{18}$ possible ways to decompose this problem with the domain decomposition algorithm.
 The time required to run that many simulations is prohibitive, so only a subset are simulated here.
 To test if the domain decomposition algorithm was implemented correctly, two-hundred and fifty-six different permutations were selected at random and run.
-Of these 256, one was the purely linear case, and one was the purely nonlinear case.
-The other 254 cases were generated by selecting a random number of random channel ids.
 
 \subsection{Results}
 \label{sect:complexResults}
 
 As stated earlier, the intent of this problem is to show that the algorithm is implemented correctly.
-The traditional \cobra{} graphics file is 
-First, it should be noted that the traditional output file of variables for \cobra{} is a single precision file.
-This required modifications of the software to generate additional double precision numbers to compare.
+The traditional \cobra{} graphics file is created with single precision variables.
+These single precision variables were inaccurate to capture the error present in the simulation.
+A special version of \cobra{} was compiled that produced the variables of interest in double precision.
 
-\comment{machine precision}
+The intent of this problem is to determine if the domain decomposition algorithm is properly implemented.
+First, recognize that the use of the domain decomposition algorithm with only a single Newton step permitted in the nonlinear domain results a single Newton step being taken over the entire domain.
+This provided the basis for the following comparison.
+Regardless of how the $2^{18}$ channels of the problem are allocated between a linear and nonlinear domain, the solutions produced by the domain decomposition algorithm should be almost identical to that produced by the single domain linear solver.
+The caveat is that the different linear algebra involved with the domain decomposition will shift the solution away from the simple linear one.
+This is due to the floating point arithmetic.
+
+There were 256 different simulations run: one where the entire domain is linear, one where the entire domain is nonlinear solver, and 254 where a random number of random channels are nonlinear.
+This collection is a representative subset of the $2^{18}$ possible decompositions.
+For each of these simulations, the pressure at two locations were recorded: the pressures near the top and near the bottom of the upper left corner channel of \fig{fig:channel_layout} were chosen.
+The differences between these pressures and those produced by the linear solver were squared and integrated over the course of the transient.
+The bar graph in \fig{fig:complexBar} shows the distribution of these error integrals at the both the top and bottom of the channel.
 
 \begin{figure}[h!t]
 \centering
@@ -738,36 +744,35 @@ Isolating places where the nonlinearities are present and solving those regions 
 %============================================================================
 % Capstone problem that how the domain decomposition is useful in a quasi-realistic model.
 %============================================================================
-%\section{Reflood Problem}
-%\label{sect:refloodProblem}
-%
-%The intent of this model reflood problem is to bring together the individual assertions from the previous test problems.
-%If there are localized nonlinearities, then the use of the domain decomposition algorithm can produce results that are not only more accurate than those produced by the linear solver but are also less computationally expensive than those produced by the nonlinear solver.
-%
-%\subsection{Model}
-%\label{sect:refloodModel}
-%
-%This problem is a rough model of a nuclear reactor.
-%There are three sections in the problem.
-%The components can be viewed as concentric annulii.
-%The outer annulus represents the downcomer.
-%Inside the downcomer is the reflector.
-%
-%The 
-%
-%\subsection{Results}
-%\label{sect:refloodResults}
-%
-%Like previous problems, this simulation was subject to timestep sensitivity studies.
-%The set of timestep sizes analyzed is is given by \eqref{eqn:timeStepAlgo}.
-%For this problem, $\dtmax{}_{o}$, $r_{f}$, and ${n}$ were 0.02, 2.0, and 4 respectively.
-%Additionally, the nonlinear convergence parameters \kmax{}, $f_{tol}$, and $d_{tol}$ were 10, \expneg{1.0}{6}, and \expneg{1.0}{8}.
-%
-%
-%The two channels in section two that represent the core region and the four channels in section three above the core region comprise the nonlinear domain in this problem.
-%
-%There are several items that are of interest in this simulation.
-%Since this model was intended to model a reflood, the parameters of interest are safety related.
-%Included in these items are the condensation occurring in the channel above the core that contains the safety injection mass source.
-%The 
+\section{Reflood Problem}
+\label{sect:refloodProblem}
 
+The intent of this model reflood problem is to bring together the individual assertions from the previous test problems.
+If there are localized nonlinearities, then the use of the domain decomposition algorithm can produce results that are not only more accurate than hose produced by the linear solver but are also less computationally expensive than those produced by the nonlinear solver.
+
+\subsection{Model}
+\label{sect:refloodModel}
+
+This problem is a rough model of a nuclear reactor.
+There are three sections in the problem.
+The components can be viewed as concentric annulii.
+The outer annulus represents the downcomer.
+Inside the downcomer is the reflector.
+
+The 
+
+\subsection{Results}
+\label{sect:refloodResults}
+
+Like previous problems, this simulation was subject to timestep sensitivity studies.
+The set of timestep sizes analyzed is is given by \eqref{eqn:timeStepAlgo}.
+For this problem, $\dtmax{}_{o}$, $r_{f}$, and ${n}$ were 0.02, 2.0, and 4 respectively.
+Additionally, the nonlinear convergence parameters \kmax{}, $f_{tol}$, and $d_{tol}$ were 10, \expneg{1.0}{6}, and \expneg{1.0}{8}.
+
+
+The two channels in section two that represent the core region and the four channels in section three above the core region comprise the nonlinear domain in this problem.
+
+There are several items that are of interest in this simulation.
+Since this model was intended to model a reflood, the parameters of interest are safety related.
+Included in these items are the condensation occurring in the channel above the core that contains the safety injection mass source.
+The 
