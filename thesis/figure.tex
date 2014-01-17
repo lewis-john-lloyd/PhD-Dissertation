@@ -10,7 +10,9 @@
 \usetikzlibrary{shapes, arrows, patterns}
 \usetikzlibrary{external}
 \tikzexternalize[shell escape=-enable-write18]
-\tikzset{external/system call={latex \tikzexternalcheckshellescape -halt-on-error -interaction=batchmode -jobname "\image" "\texsource" && dvips -o "\image".ps "\image".dvi && ps2eps "\image".ps }}
+%\tikzset{external/system call={lualatex \tikzexternalcheckshellescape -halt-on-error -interaction=batchmode -jobname "\image" "\texsource" && dvips -o "\image".ps "\image".dvi && ps2eps -f "\image".ps }}
+%\tikzset{external/system call={lualatex \tikzexternalcheckshellescape -halt-on-error -interaction=batchmode -jobname "\image" "\texsource"}}
+%\tikzset{external/force remake}
 
 \input{commands/commandsgeneral}
 \input{commands/commandsmath}
@@ -20,7 +22,7 @@
 
 \begin{figure}
 \centering
-\input{plots/complexBar}
+\input{plots/vmpBotNLN1em1}
 \caption{Error at top.}
 \end{figure}
 

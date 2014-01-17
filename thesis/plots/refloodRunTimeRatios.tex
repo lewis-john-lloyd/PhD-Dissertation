@@ -1,0 +1,52 @@
+% This file was created by matlab2tikz v0.4.3.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+\tikzsetnextfilename{plots/refloodRunTimeRatios_eps}
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.8\textwidth,
+height=0.630967741935484\textwidth,
+scale only axis,
+x dir=reverse,
+xmode=log,
+xmin=0.00125,
+xmax=0.01,
+xminorticks=true,
+xlabel={$\dtmax{} [\text{s}]$},
+ymin=3,
+ymax=9,
+ylabel={Runtime Ratio [-]},
+legend style={at={(0.03,0.97)},anchor=north west,draw=black,fill=white,legend cell align=left}
+]
+\addplot [
+color=black,
+solid,
+mark=square,
+mark options={solid}
+]
+table[row sep=crcr]{
+0.01 8.02093887329102\\
+0.005 8.30350589752197\\
+0.0025 8.6132984161377\\
+0.00125 8.62719058990479\\
+};
+\addlegendentry{Nonlinear/Linear};
+
+\addplot [
+color=black,
+solid,
+mark=o,
+mark options={solid}
+]
+table[row sep=crcr]{
+0.01 3.08566451072693\\
+0.005 3.11905431747437\\
+0.0025 3.22687935829163\\
+0.00125 3.19046020507813\\
+};
+\addlegendentry{Dual Domains/Linear};
+
+\end{axis}
+\end{tikzpicture}%

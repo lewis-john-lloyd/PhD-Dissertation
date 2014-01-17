@@ -599,7 +599,7 @@ Without proper scaling the residual has several negative characteristics \cite{F
 The different conservation equations will have different orders of magnitude at a given point in time because of the physical quantities that they represent.
 Over the course of the transient the phasic composition of a volume can vary dramatically as phases appear and disappear.
 When norms are taken of the unscaled residual those equations whose terms are the largest may have a residual that is orders of magnitude greater than the others.
-\comment{Explain why this is bad, mmmkay?}
+For convergence criteria that are based upon relative convergence, then the reduction of those equations with larger magnitudes will result in apparent convergence without any consideration given to those equations whose scale is orders of magnitude smaller.
 This will create a situation where any norm taken of the residual will be biased towards certain equations due to the their units or phasic composition.
 
 For a given continuity volume, the nonlinear residual will have six components: four for the conservation of mass and two for the conservation of energy.
@@ -785,7 +785,8 @@ Among these are the treatment of phase transition and timestep selection and acc
 %-------------------------------------------------------------------------------
 \subsection{Quality Control}
 \label{subsect:nlnDevelopment}
-The development of the nonlinear solver within \cobra{} took place under strict quality assurance guidelines \cite{Aumiller2013}.
+The development of the nonlinear solver within \cobra{} took place under strict quality assurance guidelines.
+These guidelines have been documented in extensive detail \cite{Aumiller2013} and represent the current best practices for thermal-hydraulic safety analysis. 
 At every step of the development, the linear solver was required to maintain the same solution.
 This verification was dependent upon a larger number of verification and assessment problems.
 The output of the unmodified \cobra{} and the modified \cobra{} software was compared to machine precision.
@@ -831,10 +832,23 @@ The following list shows how the velocities are required to behave as their resp
 \item{ $\alpha_g \rightarrow 0$ : $u_g \rightarrow u_l$}
 \item{ $\alpha_l \rightarrow 0$ : $u_l \rightarrow u_g$}
 \end{itemize}
-These velocity equilibrium constraints are imposed by artificially increasing the interfacial drag between the two phases.
+These velocity equilibrium constraints are imposed by artificially increasing the interfacial drag between the two phases to force equilibrium between the new-time velocities.
 However, there is a subtle issue created by this increase in the the interfacial drag.
 If the new-time velocities are not equal, then the increased interfacial drag will dominate the residual for the momentum equation of the phase that is not disappearing.
-Since \cobra{} uses conservation of momentum equations with momentum as an independent parameter as well as a semi-implicit discretization, the velocities are poorly defined.
+For example, \tab{tab:gasMomentumResidual} contains the magnitudes of the various terms in the gaseous momentum equation from a nominally single-phase gaseous flow simulation.
+
+\begin{table}[ht]
+\centering
+\singlespace
+\input{tables/gasMomentumResidual}
+\caption{Relative magnitude of terms in a gaseous momentum equation.}
+\label{tab:gasMomentumResidual}
+\end{table}
+
+The term of interest is the interfacial shear, $\tau_{g,e}$, between the gaseous phase and the entrained liquid phase.
+This term is an order of magnitude greater than the other terms.
+This is due to the combination of the artificially increased interfacial drag coefficient and definition of velocities in \cobra{}.
+Since \cobra{} uses conservation of momentum equations with momentum as an independent parameter in a semi-implicit discretization, the velocities are poorly defined.
 Compare the old-time velocity, as defined by \eqref{eqn:oldTimeVelocity}, with the new-time velocity as defined by \eqref{eqn:si_vel}.
 
 \begin{equation}

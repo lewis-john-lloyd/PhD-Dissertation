@@ -1,14 +1,7 @@
-\pgfplotstabletypeset[sci zerofill,sci E, col sep=comma,
-	columns/0/.style={ column name= $[ \text{s} ]$, precision=1},
-	columns/1/.style={ column name= $[ - ]$, int detect},
-	columns/2/.style={ column name= $[ \text{s} ]$, precision=3},
-	columns/3/.style={ column name= $[ \text{s} ]$, precision=3},
-	every head row/.style={
-		before row={
-			\toprule
-			\dtmax{} & $N_{t}$ & $T_{\text{CPU}}$& $\frac{T_{\text{CPU}}}{N_{t}}$\\
-		},
-		after row=\midrule
-	},
-	every last row/.style={
-after row=\bottomrule}]{tables/vmpNlnRunData.tex}
+1.0000e-01,   830, 4.9523e+00, 5.9666e-03
+5.0000e-02,  1565, 9.0006e+00, 5.7512e-03
+2.5000e-02,  3058, 1.6685e+01, 5.4562e-03
+1.2500e-02,  6051, 3.0550e+01, 5.0487e-03
+6.2500e-03, 12046, 5.6932e+01, 4.7262e-03
+3.1250e-03, 24039, 1.0341e+02, 4.3019e-03
+1.5625e-03, 48036, 1.9271e+02, 4.0117e-03

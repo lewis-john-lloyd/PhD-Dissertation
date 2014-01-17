@@ -1,0 +1,66 @@
+% This file was created by matlab2tikz v0.4.3.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+\tikzsetnextfilename{plots/refloodMaxGamma_eps}
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.8\textwidth,
+height=0.630967741935484\textwidth,
+scale only axis,
+x dir=reverse,
+xmode=log,
+xmin=0.00125,
+xmax=0.01,
+xminorticks=true,
+xlabel={$\dtmax{} [\text{s}]$},
+ymin=-30,
+ymax=-10,
+ylabel={Total Integrated Condensation $[\lbm{}]$},
+legend style={at={(0.97,0.03)},anchor=south east,draw=black,fill=white,legend cell align=left}
+]
+\addplot [
+color=black,
+solid,
+mark=o,
+mark options={solid}
+]
+table[row sep=crcr]{
+0.01 -29.6177730560303\\
+0.005 -22.8581886291504\\
+0.0025 -20.1671562194824\\
+0.00125 -20.2451515197754\\
+};
+\addlegendentry{Linear};
+
+\addplot [
+color=black,
+solid,
+mark=square,
+mark options={solid}
+]
+table[row sep=crcr]{
+0.01 -11.5944890975952\\
+0.005 -11.6384372711182\\
+0.0025 -11.5849742889404\\
+0.00125 -11.6548013687134\\
+};
+\addlegendentry{Nonlinear};
+
+\addplot [
+color=black,
+solid,
+mark=diamond,
+mark options={solid}
+]
+table[row sep=crcr]{
+0.01 -12.8674726486206\\
+0.005 -12.7719497680664\\
+0.0025 -12.1526460647583\\
+0.00125 -11.412148475647\\
+};
+\addlegendentry{Dual Domains};
+
+\end{axis}
+\end{tikzpicture}%

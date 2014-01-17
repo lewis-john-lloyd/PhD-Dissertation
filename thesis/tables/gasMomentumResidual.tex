@@ -1,0 +1,16 @@
+\pgfplotstabletypeset[sci zerofill, sci E, precision=2, col sep=&,row sep=\\,
+	columns/0/.style={ column name=$\Delta m_{g}$},
+	columns/1/.style={ column name=$\ave{\alpha_g}^{n}_{a}\nabla P$},
+	columns/2/.style={ column name=$\tau_{g,l}$},
+	columns/3/.style={ column name=$\tau_{g,e}$},
+	columns/4/.style={ column name=$\tau_{w}$},
+	columns/5/.style={ column name=$\nabla\left(\alpha_{g} \rho_{g} u_{g} u_{g}\right)$},
+	columns/6/.style={ column name=$g \ave{\alpha_g \rho_g}^{n}_{a}$},
+	every head row/.style={
+		before row=\toprule,
+		after row=\midrule
+	},
+	every last row/.style={
+		after row=\bottomrule}]{
+3.7616122e-02 & 1.238438e-01 & -2.71654356e-5 & -3.21746 & -7.22740678e-3 & -4.21611e-02 & -1.14449452e-1 \\
+}

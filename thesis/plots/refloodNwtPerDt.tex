@@ -1,0 +1,50 @@
+% This file was created by matlab2tikz v0.4.3.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+\tikzsetnextfilename{plots/refloodNwtPerDt_eps}
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.8\textwidth,
+height=0.630967741935484\textwidth,
+scale only axis,
+x dir=reverse,
+xmin=0.001,
+xmax=0.01,
+xlabel={$\dtmax{} [\text{s}]$},
+ymin=17,
+ymax=23,
+ylabel={$\frac{\sum_{i\,=\,1}^{N_{t}}k_{i}}{N_{t}} [-]$},
+legend style={at={(0.03,0.97)},anchor=north west,draw=black,fill=white,legend cell align=left}
+]
+\addplot [
+color=black,
+solid,
+mark=o,
+mark options={solid}
+]
+table[row sep=crcr]{
+0.01 21.5146007537842\\
+0.005 21.4209060668945\\
+0.0025 21.9510841369629\\
+0.00125 22.5086059570313\\
+};
+\addlegendentry{Nonlinear};
+
+\addplot [
+color=black,
+dotted,
+mark=o,
+mark options={solid}
+]
+table[row sep=crcr]{
+0.01 19.2084121704102\\
+0.005 18.1128673553467\\
+0.0025 17.8526344299316\\
+0.00125 18.196907043457\\
+};
+\addlegendentry{Dual Domains};
+
+\end{axis}
+\end{tikzpicture}%
