@@ -110,20 +110,6 @@ For the flashing problem, the parameter of interest for temporal convergence tes
 \label{fig:flashing1pt0000em0}
 \end{figure}
 
-%\begin{figure}[h!tb]
-%\centering
-%\includegraphics[width=0.6\textwidth]{plots/flashing_1em1.eps}
-%\caption{Flashing solution at \dtmax{} = \expneg{1.0}{1} {[s]}}
-%\label{fig:flashing_1em1}
-%\end{figure}
-
-%\begin{figure}[h!tb]
-%\centering
-%\includegraphics[width=.6\textwidth]{plots/flashing_1em5.eps}
-%\caption{Flashing solution at \dtmax{} = \expneg{1.0}{5} {[s]}.}
-%\label{fig:flashing_1em5}
-%\end{figure}
-
 \begin{figure}[h!t]
 \centering
 \input{plots/flashing1pt0000em5}
@@ -144,20 +130,6 @@ However, both \fig{fig:flashingAlphaLin} and \fig{fig:flashingAlphaNln} show tha
 \label{fig:flashingAlphaLin}
 \end{figure}
 
-%\begin{figure}[h!tb]
-%\centering
-%\includegraphics[width=.6\textwidth]{plots/lin_flashing_al_2in.eps}
-%\caption{Linear solver flashing solution.}
-%\label{fig:cobra_mode_flashing}
-%\end{figure}
-%
-%\begin{figure}[h!bt]
-%\centering
-%\includegraphics[width=.6\textwidth]{plots/nln_flashing_al_2in.eps}
-%\caption{Nonlinear solver flashing solution.}
-%\label{fig:nl_mode_flashing}
-%\end{figure}
-
 \begin{figure}[h!t]
 \centering
 \input{plots/flashingAlphaNln}
@@ -177,20 +149,6 @@ The same level of qualitative timestep size invariance is achieved in the linear
 \label{fig:flashingDtInsensitiveNln}
 \end{figure}
 
-%\begin{figure}[h!bt]
-%\centering
-%\includegraphics[width=.6\textwidth]{plots/nln_flashing_1em0_1em1.eps}
-%\caption{Nonlinear solver timestep size insensitive flashing solution.}
-%\label{fig:nl_flashing_compare}
-%\end{figure}
-%
-%\begin{figure}[h!tb]
-%\centering
-%\includegraphics[width=.6\textwidth]{plots/lin_flashing_1em1_1em4.eps}
-%\caption{Linear solver timestep size insensitive flashing solution.}
-%\label{fig:cobra_flashing_compare}
-%\end{figure}
-
 \begin{figure}[h!t]
 \centering
 \input{plots/flashingDtInsensitiveLin}
@@ -206,23 +164,10 @@ This is in contrast to the nonlinear flashing problem, which shows a lower resid
 \begin{figure}[h!t]
 \centering
 \input{plots/flashingResidualLin}
-\caption{Residual of the flashing solution for the linear solver. solver timestep size insensitive flashing solution.}
+\caption{Residual of the flashing solution for the linear solver.}
 \label{fig:flashingResidualLin}
 \end{figure}
 
-%\begin{figure}[h!tb]
-%\centering
-%\includegraphics[width=0.6\textwidth]{plots/lin_flashing_res_compare.eps}
-%\caption{Residual of the flashing solution for the linear solver.}
-%\label{fig:linear_flashing_residual}
-%\end{figure}
-%
-%\begin{figure}[h!tb]
-%\centering
-%\includegraphics[width=0.6\textwidth]{plots/nln_flashing_res_compare.eps}
-%\caption{Residual of the flashing solution for the nonlinear solver.}
-%\label{fig:nonlinear_flashing_residual}
-%\end{figure}
 
 \begin{figure}[h!t]
 \centering
@@ -243,20 +188,6 @@ Therefore, in the nonlinear solver the reduction of the maximum timestep size pr
 \caption{Single-phase solution with \dtmax{} = 1.0 {[s]}.}
 \label{fig:single1pt000em0}
 \end{figure}
-
-% \begin{figure}[h!tb]
-% \centering
-% \includegraphics[width=0.6\textwidth]{plots/single_1em0.eps}
-% \caption{Single-phase solution with \dtmax{} = 1.0 {[s]}.}
-% \label{fig:single_1em1}
-% \end{figure}
-
-% \begin{figure}[h!tb]
-% \centering
-% \includegraphics[width=0.6\textwidth]{plots/single_1em5.eps}
-% \caption{Single-phase solution with \dtmax{} = \expneg{1.0}{5} {[s]}.}
-% \label{fig:single_1em5}
-% \end{figure}
 
 \begin{figure}[h!t]
 \centering
@@ -370,7 +301,7 @@ The bar graph in \fig{fig:complexBar} shows the distribution of these error inte
 \begin{figure}[h!t]
 \centering
 \input{plots/complexBar}
-\caption{Error at bottom.}
+\caption{Histogram of pressure error at two locations.}
 \label{fig:complexBar}
 \end{figure}
 
@@ -755,7 +686,7 @@ Examining the actual timestep sizes shows that the nonlinear simulation with \dt
 \begin{figure}[h!t]
 \centering
 \input{plots/vmpDeltaTNln1em1}
-\caption{Comparison of \dt{} and \dtcrnt{} for the nonlinear filling problem with \dtmax{} = \expneg{1.0}{1}{[s]}.}
+\caption{Comparison of \dt{} to \dtcrnt{} for the nonlinear solver with \dtmax{} = \expneg{1.0}{1}{[s]}.}
 \label{fig:vmpDeltaTNln1em1}
 \end{figure}
 
