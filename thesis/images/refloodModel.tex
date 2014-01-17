@@ -1,0 +1,68 @@
+\tikzsetnextfilename{images/refloodModel_eps}
+\begin{tikzpicture}
+
+%Boundary Lines
+\draw (0,12) circle (2 and 1);
+\draw (-2,7) arc (180:360:2 and 1);
+\draw [dashed] (2,7) arc (0:180:2 and 1);
+\draw (-2,2) arc (180:360:2 and 1);
+\draw [dashed] (2,2) arc (0:180:2 and 1);
+\draw (-2,-3) arc (180:360:2 and 1);
+\draw [dashed] (2,-3) arc (0:180:2 and 1);
+
+%Vertical Lines
+\draw (-2,-3) -- (-2,12);
+\draw (2,-3) -- (2,12);
+
+%Section 1 Flow Pattern
+%\draw (0,9.5) circle (2 and 1);
+%\draw [dotted] (0,9.5) circle (1.6 and 0.8);
+%\draw (0,9) circle (0.4 and 0.2);
+%\filldraw [gray!75] (0.5,9.5) circle (2pt);
+%\filldraw [black] (-1.8,9.5) circle (2pt);
+
+\draw (7,9.5) circle (2);
+\draw [dotted] (7,9.5) circle (1.6);
+\draw [dotted] (7,9.5) circle (0.9 and 0.9);
+\draw [dotted] (7,11.5)--(7,7.5);
+\filldraw [gray!50] (7,8.5) circle (0.4);
+\filldraw [gray!75] (7.5,9.5) circle (2pt);
+\filldraw [black] (5.2,9.5) circle (2pt);
+
+%Section 2 Flow Pattern
+%\draw (0,4.5) circle (2 and 1);
+%\draw (0,4.5) circle (1.6 and 0.8);
+%\draw [dotted] (0,4.5) circle (1 and 0.5);
+%\filldraw [gray!50] (0,4) circle (0.4 and 0.2);
+
+\draw (7,4.5) circle (2 and 2);
+\draw (7,4.5) circle (1.6 and 1.6);
+\draw [dotted] (7,4.5) circle (0.9 and 0.9);
+\filldraw [gray!50] (7,3.5) circle (0.4 and 0.4);
+\draw [dotted] (7,6.5)--(7,6.1);
+\draw [dotted] (7,2.5)--(7,2.9);
+
+%Section 3 Flow Pattern
+%\draw (0,-0.5) circle (2 and 1);
+%\draw [dotted] (0,-0.5) circle (1.6 and 0.8);
+
+\draw (7,-0.5) circle (2);
+\draw [dotted] (7,-0.5) circle (1.6);
+\draw [dotted] (7,1.5)--(7,1.1);
+\draw [dotted] (7,-2.5)--(7,-2.1);
+
+%Arrows & Labels
+\draw (2.5,12) -- (3,12);
+\draw [<->] (2.75,12) -- (2.75,7);
+\draw (2.5,7) -- (3,7);
+\draw [<->] (2.75,7) -- (2.75,2);
+\draw (2.5,2) -- (3,2);
+\draw [<->] (2.75,2) -- (2.75,-3);
+\draw (2.5,-3) -- (3,-3);
+\foreach \y/\ytext in {-0.5/Section 3,4.5/Section 2,9.5/Section 1}
+	\draw (3,\y) node [anchor=west] {\ytext};
+
+%Extras
+\draw (5.6,9.5) node {A};	
+\draw (8.1,9.5) node {B};
+\end{tikzpicture}
