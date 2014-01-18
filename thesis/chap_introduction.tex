@@ -41,7 +41,8 @@ The use of subchannel analysis software stems from physical arguments about domi
 To motivate these arguments, a brief discussion of the geometry within the nuclear reactor is presented.
 The geometry of nuclear reactor core's in the united states is predominately a cylindrical array of fuel bundles, control rods, and instrumentation.
 Within a fuel bundle the cylindrical fuel rods are arranged into a lattice.
-This structure creates natural channels for coolant flow, as shown in figure \fig{fig:fuelArray}.
+Each grouping of fuel rods creates a subchannel of coolant flow.
+The presence of concentric geometric structures of axially aligned units creates natural subchannel for coolant flow.
 One of the underlying assumptions of subchannel analysis software is that the axial flow is the dominant flow.
 This assumptions allows for reduced complexity when modeling the inter-subchannel transverse flow.
 In the work that follows the governing physics and the computational framework of interest will be taken from a variant of the aforementioned COBRA subchannel analysis code, which shall be referred to generically as \cobra{}.
@@ -77,12 +78,4 @@ Upon isolation, the coupled nonlinear subdomain was subjected to Newton's method
 This converged solution was then communicated via coupling coefficients to the linear portion of the domain for use in finishing its single Newton step.
 This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling provides a route to obtaining nonlinearly-converged, timestep-size insensitive solutions for traditional two-phase flow methods with a lower computational cost than an iterative Newton method.
 This work will show that the convergence of the nonlinearities within a given subdomain allows for temporal convergence to be achieved with a lower computational cost at larger timestep sizes than those required by current methods.
-
-%-------------------------------------------------------------------------------
-%-------------------------------------------------------------------------------
-%-------------------------------------------------------------------------------
-\section{Overview}
-\label{sect:overview}
-
-
-\comment{Here is an overview?}
+The following chapters will provide an overview of relevant background and research, \chap{chap:background}; the work that was done to allows this research to be carried out, \chap{chap:nonlinear}; the domain decomposition algorithm, \chap{chap:domDecomposition}; and the results of numerical experiments, \chap{chap:results}.

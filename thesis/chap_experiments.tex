@@ -762,17 +762,32 @@ In particular, if there are localized nonlinearities, then the use of the domain
 \subsection{Model}
 \label{sect:refloodModel}
 
-This problem is a rough model of an nuclear reactor core.
-There is a downcomer
+The physical basis for the problem is a model of a nuclear reactor vessel.
+\fig{fig:refloodModel} contains a schematic of the discrete representation of this problem.
 There are three sections in the problem.
-The components can be viewed as concentric annulii.
-The outer annulus represents the downcomer.
-Inside the downcomer is the reflector.
+In section first section, there is the inlet pleneum to core and two hemispheres of the downcomer.
+The donwcomers are connected to each other and the inlet plenum.
+The second section contains a three subchannel representation of the reactor core.
+One subchannel represents the inner ring of the core, another the outer ring, and a third represents the control rod channels.
+There is no hydrodynamic communication between the core subchannels and the two downcomer subchannels.
+The third section represents the upper head of the reactor.
+In this model, there are transverse flow paths between all adjacent subchannels in the upper head.
+In the third section there is also a safety injection system, point B.
+There is a pressure connection to the outside world at point A.
 
-The lower plenum and the downcomer are initially full of saturated water while the core region is full of saturated steam.
+\begin{figure}[h!t]
+\centering
+\input{images/refloodModel}
+\caption{\cobra{} model for the reflood problem.}
+\label{fig:refloodModel}
+\end{figure}
+
+The lower plenum and the bottom of the downcomer are initially full of saturated water while both the core region and the upper head above the core are full of saturated steam.
 The water injection is located above one side of the outer ring of the reactor core.
-To simulate the production of steam within the reactor core, a source of steam is introduced int the reactor core near the top of the heated region of the core.
-This steam will rise into the upper head and condensation will occur as a result of the injection.
+Of note, this model does not have solid fuel structures to produce heat in the reactor core.
+To simulate the presence of the fuel rods, a mass source produces steam within the reactor core.
+This source is located in the outer core ring near the top of the middle section.
+This steam rises into the upper head and condensation on the safety injection will occur.
 The total amount of this condensation will be of interest for this problem.
 
 \subsection{Results}
