@@ -12,16 +12,17 @@ height=0.491294629700995\textwidth,
 scale only axis,
 xmin=0,
 xmax=0.07,
+xtick={0,0.01,...,0.07},
 xlabel={$\dtmax{} [\text{s}]$},
 ymin=0.002,
-ymax=0.008,
+ymax=0.01,
 ylabel={$ \frac{N_{\text{CPU}}}{N_{t}} [ \text{s} ]$},
 legend style={at={(0.03,0.97)},anchor=north west,draw=black,fill=white,legend cell align=left}
 ]
 \addplot [
 color=black,
 solid,
-mark=o,
+mark=*,
 mark options={solid}
 ]
 table[row sep=crcr]{
@@ -55,7 +56,6 @@ color=black,
 solid,
 mark=diamond,
 mark options={solid},
-forget plot
 ]
 table[row sep=crcr]{
 0.0625 0.00257529853843153\\
@@ -65,5 +65,7 @@ table[row sep=crcr]{
 0.0039062 0.0026698368601501\\
 0.0019531 0.00252284295856953\\
 };
+\addlegendentry{Linear Solver};
+
 \end{axis}
 \end{tikzpicture}%

@@ -12,13 +12,13 @@ width=0.8\textwidth,
 height=0.491294629700995\textwidth,
 scale only axis,
 x dir=reverse,
-xmode=log,
+%xmode=log,
 xmin=0.00125,
 xmax=0.01,
 xminorticks=true,
 xlabel={$\dtmax{} [\text{s}]$},
-ymin=3,
-ymax=9,
+ymin=0,
+ymax=10,
 ylabel={Runtime Ratio [-]},
 legend style={at={(0.03,0.5)},anchor=west,draw=black,fill=white,legend cell align=left}
 ]
@@ -39,7 +39,7 @@ table[row sep=crcr]{
 \addplot [
 color=black,
 solid,
-mark=o,
+mark=*,
 mark options={solid}
 ]
 table[row sep=crcr]{
