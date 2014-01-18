@@ -22,7 +22,7 @@ The boundaries of the continuity volumes align with the center of the momentum f
 \begin{figure}[ht!]
 \centering
 \input{images/staggered_mesh}
-\caption{A staggered mesh.}
+\caption{A representation of the staggered mesh.}
 \label{fig:staggered_mesh}
 \end{figure}
 
@@ -424,7 +424,7 @@ The momentum flux terms, \eqref{eqn:momentum_flux_terms}, are treated similarly 
 
 \begin{equation}
 \label{eqn:momentum_flux_terms}
--\left[\don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a},l} \tilde{A}\right]_{x_{j }}^{x_{j + 1}}
+-\left[\don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u_{l}}_{\text{a}} \tilde{A}\right]_{x_{j }}^{x_{j + 1}}
 \end{equation}
 
 There are two primary differences.
@@ -684,19 +684,19 @@ For the case of \eqref{eqn:explicit}, the CFL limit is given in \eqref{eqn:cfl_e
 
 \begin{equation}
 \label{eqn:cfl_explicit}
-\dt{}_j \lesssim \frac{\dx{}_j}{|u_{\phi,j}|+|c_j|}
+\dt{}_i \lesssim \frac{\dx{}_i}{|u_{\phi,i}|+|c_i|}
 \end{equation}
 
-In \eqref{eqn:cfl_explicit}, $c_j$ and $u_j$ are the speed of sound and the magnitude of a given phasic velocity, respectively, at a given location within the domain.
+In \eqref{eqn:cfl_explicit}, $c_i$ and $u_i$ are the speed of sound and the magnitude of a given phasic velocity, respectively, at a given location within the domain.
 These two velocities, for most applications of interest are, can be of drastically different magnitude.
 For example, in single phase gaseous flow, the ratio of the local phasic velocity to the speed of sound is typically much less than one ($\approx 0.01$) for problems of interest.
-Using the local fluid conditions, $\dt{}_j$ is calculated at every point within the domain.
+Using the local fluid conditions, $\dt{}_i$ is calculated at every point within the domain.
 The $\dt{}$ chosen for the $t^{n} \rightarrow t^{n+1}$ timestep is the most restrictive calculated value over the domain.
 While the explicit method may provide the lowest computational cost on a per-timestep basis, the number of timesteps required for a given problem will be much greater due to this restrictive CFL limitation.
 
 \begin{equation}
 \label{eqn:global_cfl}
-\dt{} = \min_{j \in \Omega} \dt{}_j
+\dt{} = \min_{i \in \Omega} \dt{}_i
 \end{equation}
 
 Put another way, the maximum permissible timestep size is determined by the most restrictive CFL limit within the domain.
@@ -760,7 +760,7 @@ In this method the Courant limit is given by \eqref{eqn:si_cfl}.
 
 \begin{equation}
 \label{eqn:si_cfl}
-\dt{}_j \lesssim \frac{\dx{}_j}{|u_{\phi,j}|}
+\dt{}_i \lesssim \frac{\dx{}_i}{|u_{\phi,i}|}
 \end{equation}
 
 The characteristic velocity used in the calculation of the Courant limit is based on the phasic velocity only.
@@ -823,7 +823,7 @@ In the third stage the mass and energy equations are solved such that all contin
 The only results from stage two that are used in stage three are the velocities, $\vec{u}^{n+1}$.
 The resulting system of coupled continuity equations is then solved.
 This final stage allows timestep sizes that exceed the material Courant limit.
-For each stage the residual and Jacobian matrix will be denoted by $\vec{F}_k$ and $\vec{J}_k$, with $k = 1 \to 3$.
+For each stage the residual and Jacobian matrix will be denoted by $\vec{F}_s$ and $\vec{J}_s$, with $s = 1 \to 3$.
 
 \begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
@@ -850,7 +850,7 @@ For each stage the residual and Jacobian matrix will be denoted by $\vec{F}_k$ a
 
 This algorithm was designed to allow existing software utilizing the semi-implicit method to be embedded within a larger framework.
 The loop termination criteria is an implementation-specific choice.
-The TRACE code uses an $L_{\infty}$ norm of the unscaled Newton updates for the continuity variables to determine convergence.
+The TRACE code uses an $\mathcal{L}_{\infty}$ norm of the unscaled Newton updates for the continuity variables to determine convergence.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -899,10 +899,10 @@ In stage three, the nonlinear relation between the conserved quantities and the 
 \Loop \; Transient Loop
     \Set $t^{n+1} : = t^{n} + \Delta t$
 	\Calculate $\vec{F}_1$ and $\vec{J}_1$
-	\Calculate $\vec{c}^{*}$ and $\vec{u}^{n+1}$ from $\vec{\delta x}^{*} = -\vec{J}^{-1}_1\vec{F}_1$
+	\Calculate $\vec{x}^{*}$ and $\vec{u}^{n+1}$ from $\vec{\delta x}^{*} = -\vec{J}^{-1}_1\vec{F}_1$
 	\Calculate $\vec{F}_2$
-	\Calculate $\vec{c}^{**}$ from $\vec{F}_2$
-	\Calculate $\vec{c}^{n+1}$ from $\vec{F}_3$.
+	\Calculate $\vec{x}^{**}$ from $\vec{F}_2$
+	\Calculate $\vec{x}^{n+1}$ from $\vec{F}_3$.
 	\Set $n \pluseq 1$
 \EndLoop
 \end{algorithmic}

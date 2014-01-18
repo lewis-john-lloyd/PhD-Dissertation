@@ -173,7 +173,7 @@ The lower triangular matrix has a unit diagonal.
 The sixth equation in the upper-triangular system is then scaled by its diagonal.
 This upper-triangular rectangular system for each continuity volume is then stored for later back-substitution.
 Since the pressure update corresponds to the last row in the system of equations, this allows for the isolation of the pressure updates.
-The last row of each continuity volume's \eqref{eqn:linSystem} is then formed into a global, linear pressure matrix, $\vec{A}_{l}$, and its associated right-hand side, $\vec{res}_{l}$.
+The last row of each continuity volume's \eqref{eqn:linSystem} is then formed into a global, linear pressure matrix, $\vec{A}_{\text{lin}}$, and its associated right-hand side, $\vec{res}_{\text{lin}}$.
 
 The two loops, one over the momentum flow paths and one over the continuity volumes, form a single group of operations that act upon a given domain.
 This grouping will be known hereafter as assembling the pressure matrix for a given domain.
@@ -196,8 +196,8 @@ Note that a discussion of vectors $\vec{F}_{m}$ and $\vec{F}_{c}$ will be in \se
    	\Calculate $\vec{U}_{c, j} = \vec{L}_{c, j}^{-1} \vec{Z}_{c, j}$
    	\Calculate $\vec{r}^{*}_{c, j} = \vec{L}_{c, j}^{-1} \vec{r}_{c, j}$
    	\Set Scale $\vec{U}[6, :]_{c, j}$ and $\vec{r}[6]^{*}_{c, j}$ by $\vec{U}[6,6]_{c, j}$
-   	\Set $\vec{A}_{i, :} = \vec{U}[6,:]_{c, j}$
-   	\Set $\vec{res}_{i} = \vec{r}[6]^{*}_{c, j}$
+   	\Set $\vec{A}_{\text{lin},i, :} = \vec{U}[6,:]_{c, j}$
+   	\Set $\vec{res}_{\text{lin},i} = \vec{r}[6]^{*}_{c, j}$
 \EndLoop
 \end{algorithmic}
 \caption{Assembling Pressure Matrix}
@@ -206,7 +206,7 @@ Note that a discussion of vectors $\vec{F}_{m}$ and $\vec{F}_{c}$ will be in \se
 
 \begin{equation}
 \label{eqn:pressureUpdateSystem}
-\vec{A}_{l} \delta \vec{P}_{l} = \vec{res}_{l}
+\vec{A}_{\text{lin}} \delta \vec{P}_{\text{lin}} = \vec{res}_{\text{lin}}
 \end{equation}
 
 The system, \eqref{eqn:pressureUpdateSystem}, is then solved to determine the pressure updates for the whole domain.
@@ -219,7 +219,7 @@ This update loop is shown in \alg{alg:updateVariables}.
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Loop \; Continuity Volumes
-	\Solve $\vec{U}_{c, j} \delta \vec{C}_{c, j} = \vec{r}^{*}_{c, j}$ using $\delta\vec{P}_{l}$		
+	\Solve $\vec{U}_{c, j} \delta \vec{C}_{c, j} = \vec{r}^{*}_{c, j}$ using $\delta\vec{P}_{\text{lin}}$		
 	\Loop \; Connected Flow Paths
 		\Set $\momVec{}^{*}_{i} \pluseq  \frac{\partial \momVec{}_{i}}{\partial P_{j}} \delta P_{j}$
 	\EndLoop
