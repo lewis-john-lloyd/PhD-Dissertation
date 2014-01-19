@@ -616,6 +616,7 @@ The \dtmax{} was reduced several times over two orders of magnitude to determine
 For each simulation, a time-averaged error measure was calculated.
 The error at a given point was determined by taking the square root of the the integral of the squared difference between the analytic pressure, $P_{a}$, and that calculated by \cobra{}, $P_{c}$, divided by the total simulation run time, $T$.
 This error at the center of the lower six continuity volumes was summed to produce a measure of the error in the calculated result, \eqref{eqn:vpmPressureError}.
+The bottom six continuity volumes were selected since the simulation was run only until they were filled.
 
 \begin{equation}
 \label{eqn:vpmPressureError}
