@@ -1,27 +1,26 @@
 \chapter{Numerical Results}
 \label{chap:results}
 
-Six test problems have been developed for evaluating the nonlinear solver, the operator based scaling, the convergence metric, the implementation of the domain decomposition algorithm, and the efficacy of the selective nonlinear refinement.
-Two problems were developed to evaluate the nonlinear solver, the operator based scale factor, and the temporal convergence metric.
-The next problem has extensive geometric complexity and was used to evaluate the correct implementation of the domain decomposition algorithm.
-Another problem was designed to show that the selective nonlinear refinement can produce the nonlinear solver's solution with less computational effort.
-The next problem shows that by resolving local nonlinearities, the global solution more accurately reflected the correct solution.
-The last problem is a simple model of a core reflood event.
-This problem shows that results more reflective of the nonlinear solver can be obtained with with less computational time.
+A total of six test problems were developed for evaluating the nonlinear solver, the operator-based scaling, the convergence metric, the implementation of the domain decomposition algorithm, and the efficacy of the selective nonlinear refinement.
+Two of these problems were developed to evaluate the nonlinear solver, the operator-based scale factor, and the temporal convergence metric.
+A third problem with extensive geometric complexity was used to evaluate the correct implementation of the domain decomposition algorithm.
+The fourth problem was designed to show that the selective nonlinear refinement can produce the nonlinear solver's solution with less computational effort.
+The fifth problem shows that by resolving local nonlinearities, the global solution more accurately reflected the correct solution.
+And, the last problem is a simple model of a core reflood event.
+This problem shows that use of the domain decomposition algorithm can obtain results that are more reflective of the nonlinear solver, with less computational time.
 The goal of the tests, the methods used, and the models will be discussed in each section.
 
-\section{Single Phase Flow and Flashing Problems}
+\section{Single-Phase Flow and Flashing Problems}
 \label{sect:single_phase_and_flashing}
 
-Two test problems were developed to illustrate the effectiveness of the nonlinear solver, the operator based scaling, and the convergence metric.
-These two problems were set up so that the maximum allowable timestep was varied.
-Each problem was run with the following maximum allowable timesteps: 1 [s], 0.1 [s], 0.01 [s], 0.001 [s], 0.0001 [s], and 0.00001 [s]. 
+Two test problems were developed to illustrate the effectiveness of the nonlinear solver, the operator-based scaling, and the convergence metric.
 For the linear runs, the scaled residuals were evaluated after the single Newton step, $\vec{F}(\vec{x}^{1})$.
 For the nonlinear runs, the scaled nonlinear residuals were evaluated at the end of the Newton-loop.
-The nonlinear convergence criteria used for the nonlinear simulations are $\kmax$ = 35, $F_{\text{tol}}$ = \expneg{1.0}{6}, and $\delta_{\text{tol}}$ = \expneg{1.0}{8}.
+The nonlinear convergence criteria used for the nonlinear simulations were $\kmax$ = 35, $F_{\text{tol}}$ = \expneg{1.0}{6}, and $\delta_{\text{tol}}$ = \expneg{1.0}{8}.
 The convergence metrics were evaluated during post-processing.
-In total, there were twenty-four simulations run.
-Each of the two problems were run at six different \dtmax{} with both the linear and the nonlinear solver.
+These two problems were set up so that the maximum allowable timestep was varied.
+Each of the two problems were run with both the linear and the nonlinear solver at six different \dtmax{}:  \expneg{1.0}{0}{[s]}, \expneg{1.0}{1}{[s]}, \expneg{1.0}{2}{[s]}, \expneg{1.0}{3}{[s]}, \expneg{1.0}{4}{[s]}, and \expneg{1.0}{5}{[s]}.
+In total, there were 24 simulations run.
 
 \subsection{Model}
 \label{subsect:single_model}
@@ -33,7 +32,7 @@ The red block at the top of the channel represents a boundary cell where the pre
 It represents an infinite reservoir filled with a fluid at a specified thermodynamic state.
 The red triangle represents a specified flow at the bottom edge of the first continuity volume. 
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{images/scaling_test_problem_geometry}
 \caption{Geometry for single-phase and flashing problems.}
@@ -49,7 +48,7 @@ The second problem was designed such that high-pressure liquid flashes into stea
 The pressure, enthalpy, and volume-fractions for the different fields allow for a complete description of the continuity variables.
 The initial velocities for both problems are set to zero.
 
-\begin{table}[ht]
+\begin{table}[h!tb]
 \centering
 \singlespace
 \input{tables/dualInitialConditionsTable}
@@ -60,22 +59,22 @@ The initial velocities for both problems are set to zero.
 Each of the problems has a specified pressure-enthalpy boundary condition at the top of the stand pipe and a flow-enthalpy boundary condition at the inlet of the domain.
 \tab{tab:dualOutlet} contains the pressure, enthalpy, and composition of the pressure-enthalpy reservoir. 
 
-\begin{table}[h!t]
+\begin{table}[h!tb]
 \centering
 \singlespace
 \input{tables/dualOutletTable}
-\caption{The outlet boundary conditions for single-phase and flashing problems.}
+\caption{The outlet boundary conditions for the single-phase and flashing problems.}
 \label{tab:dualOutlet}
 \end{table}
 
 The flow-enthalpy boundary condition describes the thermodynamic state of the in-flowing fluid and its flow rate.
-\tab{tab:dualInlet} describes the inlet boundary condition for the two problems.
+\tab{tab:dualInlet} describes the inlet boundary conditions for the two problems.
 
-\begin{table}[ht]
+\begin{table}[h!tb]
 \centering
 \singlespace
 \input{tables/dualInletTable}
-\caption{The flow-enthalpy inlet boundary conditions for test problems.}
+\caption{The flow-enthalpy boundary conditions for the single-phase and flashing problems.}
 \label{tab:dualInlet}
 \end{table}
 
@@ -103,14 +102,14 @@ The solutions produced by both solvers will be compared to determine the efficac
 For the flashing problem, the parameter of interest for temporal convergence testing is $\alpha_g$ at 2 [in] from the inlet of the stand pipe.
 \fig{fig:flashing1pt0000em0} shows the gaseous volume fraction 2 [in] from the inlet of the stand pipe as a function of time for a \dtmax{} of \expneg{1.0}{1} [s] for both the linear and the nonlinear solvers.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/flashing1pt0000em0}
 \caption{Flashing solution at \dtmax{} = \expneg{1.0}{1} {[s]}.}
 \label{fig:flashing1pt0000em0}
 \end{figure}
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/flashing1pt0000em5}
 \caption{Flashing solution at \dtmax{} = \expneg{1.0}{5}{[s]}.}
@@ -121,47 +120,47 @@ Note that the nonlinearly resolved solution is qualitatively different than the 
 Even as the \dtmax{} is reduced, this discrepancy does not disappear, \fig{fig:flashing1pt0000em5}.
 The two solutions do not converge to the same solution as the timestep size is reduced.
 However, the solution to the flashing problem produced by the nonlinear solver, \fig{fig:flashingAlphaNln}, qualitatively varies less as the \dtmax{} is reduced than that produced by the linear solver, \fig{fig:flashingAlphaLin}.
-However, both \fig{fig:flashingAlphaLin} and \fig{fig:flashingAlphaNln} show that as the timestep size is reduced the two different solutions become more timestep size insensitive.
+However, both \fig{fig:flashingAlphaLin} and \fig{fig:flashingAlphaNln} show that as the timestep size is reduced the two different solutions become more timestep-size insensitive.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/flashingAlphaLin}
 \caption{Linear solver flashing solutions.}
 \label{fig:flashingAlphaLin}
 \end{figure}
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/flashingAlphaNln}
 \caption{Nonlinear solver flashing solutions.}
 \label{fig:flashingAlphaNln}
 \end{figure}
 
-The two solvers, when applied to the same problem that contains highly nonlinear physics, produce two different timestep size invariant solutions.
-These two solutions achieve qualitative timestep size invariance at different timestep sizes.
+The two solvers, when applied to the same problem that contains highly nonlinear physics, produce two different timestep-size invariant solutions.
+These two solutions achieve qualitative timestep-size invariance at different timestep sizes.
 The parameter of interest in the solution produced by the nonlinear solver with a 1 [s] \dtmax{} is qualitatively close to that produced with a 0.1 [s] \dtmax{}, \fig{fig:flashingDtInsensitiveNln}.
-The same level of qualitative timestep size invariance is achieved in the linear solver solutions between a \dtmax{} of \expneg{1.0}{3} [s] and \expneg{1.0}{4} [s], \fig{fig:flashingDtInsensitiveLin}.
+The same level of qualitative timestep-size invariance is achieved in the linear solver solutions between a \dtmax{} of \expneg{1.0}{3} [s] and \expneg{1.0}{4} [s], \fig{fig:flashingDtInsensitiveLin}.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/flashingDtInsensitiveNln}
-\caption{Nonlinear solver timestep size insensitive flashing solution.}
+\caption{Nonlinear solver timestep-size insensitive flashing solution.}
 \label{fig:flashingDtInsensitiveNln}
 \end{figure}
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/flashingDtInsensitiveLin}
-\caption{Linear solver timestep size insensitive flashing solution.}
+\caption{Linear solver timestep-size insensitive flashing solution.}
 \label{fig:flashingDtInsensitiveLin}
 \end{figure}
 
-The timestep size insensitive solution produced by the nonlinear solver occurs at a maximum timestep size three orders of magnitude greater than that achieved by the linear solver in \cobra{}.
+The timestep-size insensitive solution produced by the nonlinear solver occurs at a maximum timestep size three orders of magnitude greater than that achieved by the linear solver in \cobra{}.
 An examination of the nonlinear residual over the course of the transient provides insight into why this behavior is observed.
 The scaled residual for the linear flashing problem indicates that, even for small timestep sizes, the solution obtained still does not satisfy the discrete nonlinear equations, \fig{fig:flashingResidualLin}.
 This is in contrast to the nonlinear flashing problem, which shows a lower residual over the course of the simulation, \fig{fig:flashingResidualNln}.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/flashingResidualLin}
 \caption{Residual of the flashing solution for the linear solver.}
@@ -169,27 +168,27 @@ This is in contrast to the nonlinear flashing problem, which shows a lower resid
 \end{figure}
 
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/flashingResidualNln}
 \caption{Residual of the flashing solution for the nonlinear solver.}
 \label{fig:flashingResidualNln}
 \end{figure}
 
-The reduction in the residual exhibited by the solution produced by the linear solver, \fig{fig:flashingResidualLin}, shows that the reduction of the maximum allowable timestep size now serves two purposes.
+The reduction in the residual produced by the linear solver, \fig{fig:flashingResidualLin}, shows that the reduction of the maximum allowable timestep size now serves two purposes.
 The first is that as \dtmax{} is reduced the nonlinear physics are being better resolved; however, even for small \dtmax{}, the residuals are still large compared to those of the nonlinear solution, \fig{fig:flashingResidualNln}.
 The second purpose in reducing \dtmax{} is to decrease the error due to the discrete approximation of the temporal integral of the governing equations.
 While the reduction of the maximum timestep size in the linear solver serves the purpose of reducing the residual, the nonlinear solver performs this task naturally.
 Therefore, in the nonlinear solver the reduction of the maximum timestep size primarily serves to reduce the error from the approximate discrete temporal integral.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/single1pt000em0}
 \caption{Single-phase solution with \dtmax{} = 1.0 {[s]}.}
 \label{fig:single1pt000em0}
 \end{figure}
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/single1pt000em5}
 \caption{Single-phase solution with \dtmax{} = 5.0 {[s]}.}
@@ -209,13 +208,13 @@ The resolution of the residual allows for a solution that is less sensitive to t
 The convergence metrics will be used to determine if a qualitative temporal-convergence determination can lead to the acceptance of a solution that is not nonlinearly converged.
 
 For each of the test cases, the two different metrics were compared at the different \dtmax{}.
-To examine efficacy of the the temporal convergence criteria, both the average and moment based temporal convergence criteria were evaluated for each of the twenty-three successful simulations.
+To examine efficacy of the the temporal convergence criteria, both the average and moment-based temporal convergence criteria were evaluated for each of the 24 simulations.
 The values of these metrics will be compared between different solvers for the same test problem. 
 
 The two different nonlinear convergence metrics will now be examined for the flashing problem.
-\tab{tab:flashingMetric} shows both the average metric, $\tilde{R}$, and the moment based metric, $\tilde{R}_{\text{M}}$.
+\tab{tab:flashingMetric} shows both the average metric, $\tilde{R}$, and the moment-based metric, $\tilde{R}_{\text{M}}$.
 
-\begin{table}[h!t]
+\begin{table}[h!tb]
 \centering
 \singlespace
 \input{tables/flashingMetricTable}
@@ -225,7 +224,7 @@ The two different nonlinear convergence metrics will now be examined for the fla
 
 \tab{tab:singleMetric} shows the two metrics for the single-phase problem.
 
-\begin{table}[h!t]
+\begin{table}[h!tb]
 \centering
 \singlespace
 \input{tables/singleMetricTable}
@@ -238,25 +237,23 @@ The two different nonlinear convergence metrics will now be examined for the fla
 %============================================================================
 \section{Complex Geometry Problem}
 \label{sect:complexProblem}
-The complex geometry problem tests to determine if the domain decomposition algorithm is implemented properly.
+The complex geometry problem tests whether the domain decomposition algorithm was implemented properly.
 To properly test the domain decomposition algorithm many different permutations of the composition of the nonlinear domain are required.
 The presence of both axial momentum flow paths and transverse momentum flow paths is necessary.
 If the nonlinear domain of the decomposed problem is subjected to just a single Newton step, then the resulting dual domain solution should match within numerical round off that of a single domain with a single Newton step regardless of the composition of the nonlinear domain.
-A model of the General Electric nine-rod subchannel experimental facility \cite{Lahey1970} suites the requirements of this test.
+A model of the General Electric nine-rod subchannel experimental facility \cite{Lahey1970} suits the requirements of this test.
 
 \subsection{Model}
 \label{sect:complexModel}
 
 The General Electric (GE) experiments were conducted in an experimental facility with a nine-rod bundle representative of a BWR channel.
 The exact geometry of the experimental facilities can be found in the GE technical report \cite{Lahey1970}.
-The basic layout of the portion of the facility that is of interest to this work is as follows.
-There is an inlet plenum that is opens into a nine-rod bundle depicted in \fig{fig:channel_layout}.
-Above the rod-bundle there is an outlet plenum.
+The basic layout of the portion of the facility that is of interest to this work is as follows: there is an inlet plenum that is opens into a nine-rod bundle depicted in \fig{fig:channel_layout}; above the rod-bundle there is an outlet plenum.
 
-\begin{figure}[ht]
+\begin{figure}[h!tb]
 \centering
 \input{images/position_of_pressure_taps}
-\caption{Position of Pressure Taps for Setting Isokinetic Conditions \cite{Lahey1970}.}
+\caption{Cross-section of rod bundle geometry adapted from GE experiment \cite{Lahey1970}.}
 \label{fig:channel_layout}
 \end{figure}
 
@@ -266,39 +263,38 @@ The inlet plenum is 12 [in] tall with a cross-sectional area of 2.93 $[ \text{in
 The outlet plenum is identically dimensioned.
 The second section represents the rod-bundle.
 This section is 121.5 [in] tall.
-The rod-bundle is approximated by four-by-four grid of sixteen channels.
+The rod-bundle is approximated by a four-by-four grid of sixteen channels.
 There are the four corner subchannels, the eight side subchannels, and the four center subchannels in the model.
 The dimensions for the various channels are shown in \fig{fig:channel_layout}.
 
-Since the primary purpose of this problem is to test the ability of the domain decomposition algorithm to accurately recover the linear solution when the nonlinear domain is restricted to a single Newton step, the details of the boundary and initial conditions are omitted here.
+The primary purpose of this problem is to test the ability of the domain decomposition algorithm to accurately recover the linear solution when the nonlinear domain is restricted to a single Newton step.
+For that reason the details of the boundary and initial conditions are omitted here.
 
-There eighteen channels in this model.
+There are eighteen channels in this model: the 16 subchannels in the rod bundle, the inlet plenum, and the outlet plenum.
 That means that there are $2^{18}$ possible ways to decompose this problem with the domain decomposition algorithm.
 The time required to run all possible permutations is prohibitive, so only a subset are simulated here.
-To test if the domain decomposition algorithm was implemented correctly, two-hundred and fifty-six different permutations were selected at random and run.
+To test if the domain decomposition algorithm was implemented correctly, 2 different permutations were selected at random and run.
 
 \subsection{Results}
 \label{sect:complexResults}
-
-As stated earlier, the intent of this problem is to show that the algorithm is implemented correctly.
-The traditional \cobra{} graphics file is created with single precision variables.
-These single precision variables were inaccurate to capture the error present in the simulation.
-A special version of \cobra{} was compiled that produced the variables of interest in double precision.
 
 The intent of this problem is to determine if the domain decomposition algorithm is properly implemented.
 First, recognize that the use of the domain decomposition algorithm with only a single Newton step permitted in the nonlinear domain results a single Newton step being taken over the entire domain.
 This provided the basis for the following comparison.
 Regardless of how the $2^{18}$ channels of the problem are allocated between a linear and nonlinear domain, the solutions produced by the domain decomposition algorithm should be almost identical to that produced by the single domain linear solver.
 The caveat is that the different linear algebra involved with the domain decomposition will not produce the same floating-point solution as that produced by the linear solver.
-However, this floating-point variance should not impact the solution above the level of numerical round-off error.
+This floating-point variance should not impact the solution above the level of numerical round-off error.
+However, the traditional \cobra{} graphics file is created with single precision variables.
+These single precision variables were incapable of capturing the error present in the simulation.
+A special version of \cobra{} was compiled that produced the variables of interest in double precision.
 
 There were 256 different simulations run: one where the entire domain is linear, one where the entire domain is nonlinear solver, and 254 where a random number of random channels are nonlinear.
 This collection is a representative subset of the $2^{18}$ possible decompositions.
 For each of these simulations, the pressure at two locations were recorded: the pressures near the top and near the bottom of the upper left corner channel of \fig{fig:channel_layout} were chosen.
 The differences between these pressures and those produced by the linear solver were squared and integrated over the course of the transient.
-The bar graph in \fig{fig:complexBar} shows the distribution of these error integrals at the both the top and bottom of the channel.
+The bar graph in \fig{fig:complexBar} shows the distribution of these error integrals at both the top and bottom of the channel.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/complexBar}
 \caption{Histogram of pressure error at two locations.}
@@ -331,8 +327,8 @@ Initially fully open, the valve slowly closes.
 While closing, the valve stops twice at cross-sectional areas that are equivalent to the two loss coefficients of the two partially obstructed pipes.
 After fully closing, the valve returns to the first stopping point.
 
-The pipe is initially full of subcooled liquid at 800 $[ \text{psia}] $.
-The bottom and top of the pipe are open to reservoirs.
+The pipes are initially full of subcooled liquid at 800 $[ \text{psia}] $.
+The bottom and top of the pipes are open to reservoirs.
 The bottom reservoir is full of subcooled liquid with a time variant pressure.
 The pressure starts at at 802 $[ \text{psia} ] $ and increases to 818 $[ \text{psia}]$ over the first second, staying there for the duration of the problem.
 The top reservoir is full of subcooled liquid at 800 $[\text{psia} ] $.
@@ -350,7 +346,7 @@ The fourth channel has a time dependent area ratio multiplier, $A(t)_r$, at 15 [
 This multiplier acts to reduce the area of the momentum flow path, $A_m$, used in the determination of form losses and wall drag.
 However, these four channels have had their wall drag terms artificially reduced.
 Reducing the wall drag allows the impact of the loss coefficients upon the solution to be isolated.
-Since there is no wall drag in this problem, the area ratio is can be related to the effective loss coefficient by \eqref{eqn:valveLossCoefficient}.
+Since there is no wall drag in this problem, the area ratio can be related to the effective loss coefficient, $K(t)$, by \eqref{eqn:valveLossCoefficient}.
 
 \begin{equation}
 \label{eqn:valveLossCoefficient}
@@ -377,15 +373,15 @@ A(t)_{r} = \left\{
 \end{equation}
 
 The simulation is run to an end time of 19 seconds.
-The functional form of the transient area boundary condition was chosen so that the solution of the transient area pipe would mimic the three other pipes for portions of the transient.
+The functional form of the transient area boundary condition was chosen so that the solution of the transient area pipe would mimic each of the three other pipes for portions of the transient.
 
 \subsection{Results}
 \label{subsect:valveResults}
 
 The parameter of interest is the flow of liquid at the 15 [in] above the inlet.
-This location corresponds to the location of the loss coefficients, the no-flow boundary condition, and the variable momentum-area boundary condition in the four pipes.
+This location corresponds to the location of either the loss coefficients, the no-flow boundary condition, or the variable momentum-area boundary condition in each of the respective pipes.
 An automated procedure was used to conduct the timestep sensitivity study.
-Given an initial \dtmax{}, $\dtmax{}_{o}$, a refinement factor, $r_{f}$, and the number of timestep size refinements to be taken, $n$, the simulation was run with both the linear solver and the nonlinear solver for each \dtmax{} in the set calculated according to \eqref{eqn:timeStepAlgo}.
+Given an initial \dtmax{}, $\dtmax{}_{o}$, a refinement factor, $r_{f}$, and the number of timestep size refinements to be taken, $n$, the simulation was run with both the linear solver and the nonlinear solver for each \dtmax{} in the set, calculated according to \eqref{eqn:timeStepAlgo}.
 
 \begin{equation}
 \label{eqn:timeStepAlgo}
@@ -395,10 +391,10 @@ Given an initial \dtmax{}, $\dtmax{}_{o}$, a refinement factor, $r_{f}$, and the
 For this study, the three parameters, $\dtmax{}_{o}$, $r_{f}$, and $n$, were 1.0, 2.0, and 10, respectively.
 Upon examining the solution, it was determined that timestep size was \dtcrnt{} limited for a portion of the transient until \dtmax{} = \expneg{1.56}{2}{[s]} was reached.
 The timestep history of the simulations from \dtmax{} = 1.0 through \dtmax{} = \expneg{6.25}{2}{[s]} were identical for both the linear and the nonlinear solution.
-The first four simulation results for each solver were dropped from the data sets since they represented duplicated results.
+As such, the first four simulation results for each solver were dropped from the data sets since they represented duplicate results.
 The solution obtained with \dtmax{} = \expneg{6.25}{2}{[s]} with the linear solver is shown in \fig{fig:valveLin6pt25em02}.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/valveLin6pt2500em02}
 \caption{Valve problem with \dtmax{} = \expneg{6.25}{2}{[s]} with the linear solver.}
@@ -406,21 +402,21 @@ The solution obtained with \dtmax{} = \expneg{6.25}{2}{[s]} with the linear solv
 \end{figure}
 
 This solution shows that the there is a non-smooth spike in the mass flow rate when the closed valve starts to open at 15 [s].
-This behavior is observed for the linear solver's solutions at successively smaller max timesteps through \dtmax{} = \expneg{1.9531}{3}{[s]}, inclusive.
+This behavior is observed for the linear solver's solutions at successively smaller max timesteps through the smallest \dtmax{}, \expneg{1.95}{3}{[s]}.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/valveLinSols}
 \label{fig:valveLinSols}
 \caption{Zoom of flow rate in linear solutions to the valve problem.}
 \end{figure}
 
-The presence of the spike in the flow rate in the simulation with \dtmax{} = \expneg{1.56}{2}{[2]}, a \dtmax{} that produces a \dt{} history that is never \dtcrnt{} limited, necessitated that additional timestep refinements be examined for a smooth solution.
-Subsequent timestep refinements produced results where the flow-rate spikes became progressively smaller; however, the time-step refinement study did not yield a solution that did not have this perturbation.
-The lack of a linear solution that is free from is not an impediment to this study since the purpose is not to find a \dtmax{} that produces such a solution.
-Instead \tab{tab:valveLinTable} shows the run time statistics for the linear solver's solutions.
+The presence of the spike in the flow rate in the simulation with \dtmax{} = \expneg{1.56}{2}{[s]}, a \dtmax{} that produces a \dt{} history that is never \dtcrnt{} limited, necessitated that additional timestep refinements be examined for a smooth solution.
+Subsequent timestep refinements produced results where the flow-rate spikes became progressively smaller; however, the time-step refinement study did not yield a solution that was free of this perturbation, as shown in \fig{fig:valveLinSols}.
+The lack of a linear solution that is free from this perturbation is not an impediment to this study since the purpose is not to find a \dtmax{} that produces such a solution.
+Instead, \tab{tab:valveLinTable} shows the run time statistics for the linear solver's solutions.
 
-\begin{table}[h!t]
+\begin{table}[h!tb]
 \centering
 \singlespace
 \input{tables/valveLinTable}
@@ -430,15 +426,15 @@ Instead \tab{tab:valveLinTable} shows the run time statistics for the linear sol
 
 In \tab{tab:valveLinTable} the first column shows the maximum timestep size for the simulation.
 The second column shows the number of successful timesteps taken, $N_{t}$.
-The third column is the cpu time required to complete simulation, $T_{\text{CPU}}$.
-The final column is the the cpu time per timestep for a given simulation.
-On average, the cpu time per timestep is \expneg{2.8}{3}{[s]} for the linear solution.
+The third column is the CPU time required to complete simulation, $T_{\text{CPU}}$.
+The final column is the the CPU time per timestep for a given simulation.
+On average, the CPU time per timestep is \expneg{2.8}{3}{[s]} for the linear solution.
 
 Next, the nonlinear solver was used to perform the same timestep sensitivity study.
 The same set of \dtmax{} were run.
 The solution at \dtmax{} = \expneg{6.25}{2}{[s]} is shown in \fig{fig:valveNln6pt25em02}
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/valveNln6pt2500em02}
 \caption{Valve problem with \dtmax{} = \expneg{6.25}{2}{[s]} with the nonlinear solver.}
@@ -446,11 +442,11 @@ The solution at \dtmax{} = \expneg{6.25}{2}{[s]} is shown in \fig{fig:valveNln6p
 \end{figure}
 
 The solution obtained at \dtmax{} = \expneg{6.25}{2}{[s]} does not exhibit the nonphysical spike in the flow rate that the linear solution displays.
-This solution is at the largest \dt{} run in the study.
+This solution is also obtained at the largest \dt{} run in the study, \expneg{1.0}{0}{[s]}.
 Reducing the \dtmax{} produces solutions that are qualitatively identical to that shown above.
 \fig{fig:valveNlnSols} shows the same zoomed view of at 15 [s], when the valve opens.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/valveNlnSols}
 \caption{Zoom of flow rate in nonlinear solutions to the valve problem.}
@@ -458,10 +454,10 @@ Reducing the \dtmax{} produces solutions that are qualitatively identical to tha
 \end{figure}
 
 These results indicate that the linear solver's timestep refinement serves the purpose of trying to resolve an isolated linearization error in a single channel of the problem.
-By using the nonlinear solver, that error is removed and subsequent timestep reductions is not necessary to obtain the physical solution.
-However, \tab{tab:valveNlnTable} shows that the nonlinear solver takes more cpu time per timestep than the linear solver.
+By using the nonlinear solver, that error is removed and subsequent timestep reductions are not necessary to obtain the physical solution.
+However, \tab{tab:valveNlnTable} shows that the nonlinear solver takes more CPU time per timestep than the linear solver.
 
-\begin{table}[h!t]
+\begin{table}[h!tb]
 \centering
 \singlespace
 \input{tables/valveNlnTable}
@@ -473,10 +469,9 @@ Given that the nonlinearities in this problem are clearly isolated in a single c
 The use of the domain decomposition algorithm in this problem is restricted to the channel with the valve.
 The other three channels are not included in the nonlinear domain.
 The same set of timesteps is run to collect data.
-\fig{fig:valveDom6pt25em02} shows the solution as obtained with \dtmax{} = \expneg{6.25}{2}{[s]}.
-The results in this figure are qualitatively indistinguishable from the results of the nonlinear solver.
+\fig{fig:valveDom6pt25em02} shows the solution as obtained with \dtmax{} = \expneg{6.25}{2}{[s]}; the results in this figure are qualitatively indistinguishable from the results of the nonlinear solver.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/valveDom6pt2500em02}
 \caption{Valve problem with \dtmax{} = \expneg{6.25}{2}{[s]} and domain decomposition active.}
@@ -488,7 +483,7 @@ This result indicates that the nonlinear solution can be obtained with the domai
 Since the nonlinearities were designed to be isolated, this result is expected.
 However, looking at the run time statistics, \tab{tab:valveDomTable}, provides additional information about the domain decomposition algorithm's performance.
 
-\begin{table}[h!t]
+\begin{table}[h!tb]
 \centering
 \singlespace
 \input{tables/valveDomTable}
@@ -496,10 +491,10 @@ However, looking at the run time statistics, \tab{tab:valveDomTable}, provides a
 \label{tab:valveDomTable}
 \end{table}
 
-The cpu time per time step of the domain decomposition is lower than that obtained by the nonlinear solver.
+The CPU time per time step of the domain decomposition is lower than that obtained by the nonlinear solver.
 \fig{fig:valveRunTime} shows that the domain decomposition algorithm is capable of producing the same solution as the the nonlinear solver at less than half the cost per timestep than the nonlinear solver.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/valveRunTime}
 \caption{CPU time per timestep for the nonlinear and the domain decomposition runs.}
@@ -507,8 +502,8 @@ The cpu time per time step of the domain decomposition is lower than that obtain
 \end{figure}
 
 As the \dtmax{} is reduced, the cost of the nonlinear solver decreases because there are fewer nonlinear iterates required per timestep.
-This reduction is the number of Newton iterates per timestep is also evident in the domain decomposition run time plot.
-This problem was developed to show that for a problem with isolable nonlinearities, the application of the domain decomposition algorithm to resolve those nonlinearities will result in a smaller computational cost than the global nonlinear solver.
+This reduction in the number of Newton iterates per timestep is also evident in the domain decomposition run-time plot.
+This problem was developed to show that for a problem with isolable nonlinearities, the application of the domain decomposition algorithm to resolve those nonlinearities will result in a smaller computational cost than the global nonlinear solver while producing results that are qualitatively as accurate.
 
 %============================================================================
 % Problem that shows that local nonlinearities can impact the global solution adversely.
@@ -518,21 +513,21 @@ This problem was developed to show that for a problem with isolable nonlineariti
 \label{sect:vmp}
 This problem was developed to illustrate that the use of the domain decomposition algorithm in the presence of localized nonlinearities produces a global solution that is in-line with the nonlinear solution.
 The problem will be run with a large timestep to show how the solution from the linear and the nonlinear solvers differ.
-The solution at smaller timesteps is shown to be in agreement with the analytic solution.
-The solution produced by the domain decomposition algorithm is then shown.
-The impact of resolving local nonlinearities on the global solution is discussed.
+The solution at smaller timesteps is shown to be in agreement with the analytic solution for both the linear and the nonlinear solver.
+The solution produced by the domain decomposition algorithm is then shown as a function of timestep size.
+Finally, the impact of resolving local nonlinearities on the global solution is discussed.
 
 \subsection{Model}
 \label{subsect:vmpModel}
 
 A vertical pipe slowly filling with saturated water at atmospheric pressure is the basis for this simulation.
-The physical pipe is 3 [ft] tall, having a 36 [in] cross-sectional area and a wetted perimeter of 24 [in].
+The physical pipe is 3 [ft] tall, having a 36 [in$^{2}$] cross-sectional area and a wetted perimeter of 24 [in].
 The pipe is initially full of saturated steam at 14.7 [psia].
 The top of the pipe is open to an infinite reservoir of saturated steam at 14.7 [psia].
 Saturated water flows into the bottom of the pipe, displacing the steam.
 The boundary and initial conditions are contained in \tab{tab:vmpBCIC}.
 
-\begin{table}[ht]
+\begin{table}[h!tb]
 \centering
 \singlespace
 \input{tables/vmpBCICTable}
@@ -540,8 +535,8 @@ The boundary and initial conditions are contained in \tab{tab:vmpBCIC}.
 \label{tab:vmpBCIC}
 \end{table}
 
-The pressure at a given point in the pipe has an analytic solution under certain assumptions.
-An assumption is that the variations in the liquid's specific volume, $v_{l}$, within the range of pressures experienced during the course of the simulation can be neglected.
+The pressure at a given point in the pipe has a simple, closed-form, analytic solution under the assumptions listed below.
+The first assumption is that the variations in the liquid's specific volume, $v_{l}$, within the range of pressures experienced during the course of the simulation can be neglected.
 The liquid flow rate into the problem is given by \eqref{eqn:vmpMassFlowRate}.
 
 \begin{equation}
@@ -574,7 +569,7 @@ v_{l} \dot{m}_{l,\text{max}} \left( t - \onehalf  \right) & [ \text{ft}^{3} ] & 
 \end{array}\right.
 \end{equation}
 
-Neglecting the hydrostatic head contribution from the vapor column, the pressure at any point and time in the problem, $P(t, h(t))$, is either 14.7 [psia], $P_o$, if the water level has yet to reach that point, or it is the hydrostatic pressure dictated by the height of liquid column above that point, \eqref{eqn:vmpHydroStaticHead}.
+Neglecting the hydrostatic head contribution from the vapor column, the pressure at any point and time in the problem, $P(t, h(t))$, is either 14.7 [psia], $P_o$, if the water level has yet to reach that point, or it is the hydrostatic pressure dictated by the height of the liquid column above that point, \eqref{eqn:vmpHydroStaticHead}.
 
 \begin{equation}
 \label{eqn:vmpHydroStaticHead}
@@ -600,7 +595,7 @@ t^{*}(h)=
 
 This analytic function for pressure evaluated at six different axial heights from 0.0 [s] to 75.0 [s] is shown in \fig{fig:vmpAnalyticSol}.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/vmpAnalytic}
 \caption{Analytic solution to the filling problem.}
@@ -608,17 +603,17 @@ This analytic function for pressure evaluated at six different axial heights fro
 \end{figure}
 
 The \cobra{} model of this pipe is composed of two sections, each with a single channel.
-While it is not necessary for so simple of a problem to have multiple section, it was done to allow for the domain decomposition algorithm to run, since the algorithm uses channels to decomposes the domain.
+While it is not necessary for so simple of a problem to have multiple sections, it was done to allow for the domain decomposition algorithm to run, since the algorithm uses channels to decompose the domain.
 The channel in the bottom section is 1 [ft] tall and is broken into three continuity volumes, each 4 [in] high.
 The top section's channel is 2 [ft] tall and is broken into six continuity volumes, each 4 [in] high.
 
 First, the simulation was run with both the linear and the nonlinear solver.
 The nonlinear convergence parameters were \kmax{} = 35, $f_{tol}$ = \expneg{1.0}{6}, $d_{tol}$ = \expneg{1.0}{8}. 
 Each simulation was run for 75 $[ \text{s} ]$.
-The largest permissible timestep size, \dtmax{}, was chosen as \expneg{1.0}{1}{[s]}
-The \dtmax{} was reduced several time over two orders of magnitude to determine timestep sensitivity.
+The largest permissible timestep size, \dtmax{}, was chosen as \expneg{1.0}{1}{[s]}.
+The \dtmax{} was reduced several times over two orders of magnitude to determine timestep sensitivity.
 
-For each simulation, a time averaged error measure was calculated.
+For each simulation, a time-averaged error measure was calculated.
 The error at a given point was determined by taking the square root of the the integral of the squared difference between the analytic pressure, $P_{a}$, and that calculated by \cobra{}, $P_{c}$, divided by the total simulation run time, $T$.
 This error at the center of the lower six continuity volumes was summed to produce a measure of the error in the calculated result, \eqref{eqn:vpmPressureError}.
 
@@ -630,7 +625,7 @@ e_{p} =  \frac{1}{\sqrt{T}} \sum_{i\,=\,1}^{6}\sqrt{\int_{0}^{T} \left(P_{i,c}(t
 Next, the domain decomposition algorithm was activated.
 There were two simulations in this run: one was with the bottom channel in the nonlinear domain and the other with the top channel in the nonlinear domain.
 The \dtmax{} for these runs was chosen to be \expneg{1.0}{1}{[s]}.
-The solution of these runs is compared to the solutions produced by the single domain solvers.
+The solution of these runs will be compared to the solutions produced by the single domain solvers.
 
 \subsection{Results}
 \label{subsect:vmpResults}
@@ -639,7 +634,7 @@ The simulation was first run with the linear solver.
 The \dtmax{} was chosen to be \expneg{1.0}{1}{[s]}.
 The pressure at the center of the bottom six continuity volumes in the problem are shown in \fig{fig:linFill1em1}.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/vmpLinear1em1}
 \caption{Filling problem with \dtmax{} = \expneg{1.0}{1}{[s]} with the linear solver.}
@@ -649,7 +644,7 @@ The pressure at the center of the bottom six continuity volumes in the problem a
 The solution at this \dtmax{} is rather noisy and when the actual timestep sizes are examined, \dtmax{} is infrequently reached due to restrictive \dtcrnt{} limits.
 The measure of error, $e_{p}$, for this simulation was \expneg{7.5}{2}{[psia]}.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/vmpLinear5em2}
 \caption{Filling problem with \dtmax{} = \expneg{5.0}{2}{[s]} using the linear solver.}
@@ -657,10 +652,11 @@ The measure of error, $e_{p}$, for this simulation was \expneg{7.5}{2}{[psia]}.
 \end{figure}
 
 The solution from the simulation with \dtmax{} = \expneg{5.0}{2}{[s]}, \fig{fig:vmpLinFill5em2}, is more in line with the analytic solution, \fig{fig:vmpAnalyticSol}.
-
+The slight spike visible in \fig{fig:vmpLinFill5em2} are characteristic of \cobra{} software.
+They cannot be removed by either resolution of nonlinearities or reduction in timestep size.
 \tab{tab:vmpLinRunTime} shows the run time data for the linear cases that were run.
 
-\begin{table}[ht]
+\begin{table}[h!tb]
 \centering
 \singlespace
 \input{tables/vmpLinRunTimeTable}
@@ -673,17 +669,17 @@ The pressures from the \dtmax{} = \expneg{1.0}{1}{[s]} case is shown in \fig{fig
 The measure of error, $e_{p}$, for this simulation was \expneg{3.5}{2}{[psia]}.
 This error measure was half that of the linear case at the same \dtmax{}.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/vmpNLN1em1}
 \caption{Filling problem with \dtmax{} = \expneg{1.0}{1}{[s]} with the nonlinear solver active.}
 \label{fig:nlnFill1em1}
 \end{figure}
 
-This solution obtained by the nonlinear solver at this large \dtmax{} is comparable to those obtained by the smaller timestep sizes, \dtmax{} = \expneg{5.0}{2}{[s]} and \expneg{1.5}{3}{[s]}, with the linear solver.
+The solution obtained by the nonlinear solver at this large \dtmax{} is comparable to those obtained by the smaller timestep sizes, \dtmax{} = \expneg{5.0}{2}{[s]} and \expneg{1.5}{3}{[s]}, with the linear solver.
 Examining the actual timestep sizes shows that the nonlinear simulation with \dtmax{} = \expneg{5.0}{2}{[s]} actually run at \dtmax{} for the majority of timesteps.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/vmpDeltaTNln1em1}
 \caption{Comparison of \dt{} to \dtcrnt{} for the nonlinear solver with \dtmax{} = \expneg{1.0}{1}{[s]}.}
@@ -694,22 +690,15 @@ The nonlinear solver actually took fewer total timesteps than the linear solver 
 This was possible because the calculated \dtcrnt{} limit is different for the nonlinear case.
 The larger \dtcrnt{} is possible because the nonphysical oscillations in the linear solution's pressures are no longer present.
 These deviations had induced large velocities, which had reduced \dtcrnt{} below \dtmax{} causing \cobra{} to reduce the timestep size repeatedly.
-The nonlinear solver produces similarly accurate solutions at more restrictive \dtmax{}, \fig{fig:nlnFill1pt6em3}.
-At the smaller \dtmax{}, the linear and the nonlinear solver's solutions had similar error measures.
-
-\begin{figure}[h!t]
-\centering
-\input{plots/vmpNLN1pt6em3}
-\caption{Filling problem with \dtmax{} = \expneg{1.6}{3}{[s]} with the nonlinear solver active.}
-\label{fig:nlnFill1pt6em3}
-\end{figure}
+The nonlinear solver produces qualitatively and quantitatively similar solutions at more restrictive \dtmax{}.
+At the smaller \dtmax{} both the linear and the nonlinear solver's solutions had similar error measures, approximately \expneg{3.5}{2}{[psia]}.
 
 Resolving the nonlinear error allows \cobra{} to run at larger \dt{} without a reduction in the accuracy of the solution.
 However, the use of the nonlinear solver imposes additional computational costs.
 These costs are evident in \tab{tab:vmpNlnRunTime}.
 The run time per timestep of the nonlinear solver for this problem is on average 5.5 times that of the linear solver.
 
-\begin{table}[ht]
+\begin{table}[h!tb]
 \centering
 \singlespace
 \input{tables/vmpNlnRunTimeTable}
@@ -722,7 +711,7 @@ The application of the domain decomposition algorithm provides more insight into
 The domain decomposition simulations were run with \dtmax{} = \expneg{1.0}{1}{[s]}.
 The first simulation to be examined will be the one with the bottom channel in the nonlinear domain, \fig{fig:vmpDDBotChan}.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/vmpBotNLN1em1}
 \caption{Filling problem with the bottom channel in the nonlinear domain.}
@@ -731,10 +720,9 @@ The first simulation to be examined will be the one with the bottom channel in t
 
 While the water front is in the nonlinear domain, the pressures everywhere are in alignment with the analytic solution.
 However, once the water front enters the linear domain, the unresolved nonlinearities in the linear domain induce nonphysical pressure oscillations in both domains.
-
 This result is mirrored in the case where the top channel is in the nonlinear domain, \fig{fig:vmpDDTopChan}.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/vmpTopNLN1em1}
 \caption{Filling problem with the top channel in the nonlinear domain.}
@@ -757,7 +745,7 @@ Isolating places where the nonlinearities are present and solving those regions 
 The final test problem is meant to reflect a typical LWR scenario.
 The model is a simplified LWR core model with upper-head safety injection that is going through the reflood phase of a simulated accident scenario.
 The intent of this reflood problem is to bring together the individual assertions from the previous test problems.
-In particular, if there are localized nonlinearities, then the use of the domain decomposition algorithm can produce results that are not only more accurate than hose produced by the linear solver but are also less computationally expensive than those produced by the nonlinear solver.
+In particular, if there are localized nonlinearities, then the use of the domain decomposition algorithm can produce results that are not only more accurate than those produced by the linear solver but are also less computationally expensive than those produced by the nonlinear solver.
 
 \subsection{Model}
 \label{sect:refloodModel}
@@ -765,29 +753,29 @@ In particular, if there are localized nonlinearities, then the use of the domain
 The physical basis for the problem is a model of a nuclear reactor vessel.
 \fig{fig:refloodModel} contains a schematic of the discrete representation of this problem.
 There are three sections in the problem.
-In section first section, there is the inlet pleneum to core and two hemispheres of the downcomer.
-The donwcomers are connected to each other and the inlet plenum.
+In the first section there is the inlet pleneum to the core and two hemispheres of the downcomer.
+The downcomers are connected to each other and the inlet plenum, as indicated by dotted lines.
 The second section contains a three subchannel representation of the reactor core.
-One subchannel represents the inner ring of the core, another the outer ring, and a third represents the control rod channels.
-There is no hydrodynamic communication between the core subchannels and the two downcomer subchannels.
+One subchannel represents the inner ring of the core, which produces more steam than the outer ring.
+Another subchannel represents the outer core ring, which has a lower rate of steam production.
+And, a third represents the control rod channels, which have neither steam production nor hydrodynamic communication with the two core rings.
+There is no hydrodynamic communication between the core subchannels and the two downcomer subchannels, as indicated by solid lines.
 The third section represents the upper head of the reactor.
 In this model, there are transverse flow paths between all adjacent subchannels in the upper head.
-In the third section there is also a safety injection system, point B.
-There is a pressure connection to the outside world at point A.
+In the third section there is also a safety injection inlet at point B, and a pressure connection to containment at point A.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{images/refloodModel}
 \caption{\cobra{} model for the reflood problem.}
 \label{fig:refloodModel}
 \end{figure}
 
-The lower plenum and the bottom of the downcomer are initially full of saturated water while both the core region and the upper head above the core are full of saturated steam.
-The water injection is located above one side of the outer ring of the reactor core.
+The lower plenum and the bottom of the downcomer in section one are initially full of saturated water while both the core region in section two and the upper head in section three are full of saturated steam.
 Of note, this model does not have solid fuel structures to produce heat in the reactor core.
 To simulate the presence of the fuel rods, a mass source produces steam within the reactor core.
 This source is located in the outer core ring near the top of the middle section.
-This steam rises into the upper head and condensation on the safety injection will occur.
+This steam rises into the upper head and condensation will be caused by the safety injection inlet flow.
 The total amount of this condensation will be of interest for this problem.
 
 \subsection{Results}
@@ -796,13 +784,13 @@ The total amount of this condensation will be of interest for this problem.
 Like previous problems, this simulation was subject to timestep sensitivity studies.
 The set of timestep sizes analyzed is is given by \eqref{eqn:timeStepAlgo}.
 For this problem, $\dtmax{}_{o}$, $r_{f}$, and ${n}$ were 0.02, 2.0, and 4 respectively.
-Additionally, the nonlinear convergence parameters \kmax{}, $f_{tol}$, and $d_{tol}$ were 35, \expneg{1.0}{6}, and \expneg{1.0}{8}.
+Additionally, the nonlinear convergence parameters \kmax{}, $f_{tol}$, and $d_{tol}$ were 35, \expneg{1.0}{6}, and \expneg{1.0}{8}, respectively.
 
-The primary variable of engineering interest in this problem is the time dependent behavior of the condensation in the region of the safety injection and the net condensation over the course of the transient.
-Since this model was intended to model a reflood, the parameters of interest are safety related.
+The primary variable of engineering interest in this problem is the time-dependent behavior of the condensation in the region of the safety injection inlet and the net condensation over the course of the transient.
+Since this model was intended to model a reflood, the parameters of interest are related to core cooling.
 Included in these items are the condensation occurring in the channel above the core that contains the safety injection mass source.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/refloodGammaLin}
 \caption{Condensation in upper head as calculated by the linear solver.}
@@ -811,11 +799,11 @@ Included in these items are the condensation occurring in the channel above the 
 
 First, the linear solution for the four different \dtmax{} is shown in \fig{fig:refloodGammaLin}.
 This shows the linear solver's behavior.
-There is drastic variability in the rate of condensation and the rate at which the condensation is occurring.
-However, note that the two smallest \dtmax{} appear to have reached a timestep size insensitive solution.
+There is drastic variability in the condensation rate.
+However, note that the two smallest \dtmax{} appear to have reached a timestep-size insensitive solution.
 Or, more precisely, there is less variability in this quantity over the last two simulations than between any previous two.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/refloodGammaNln}
 \caption{Condensation in upper head as calculated by the nonlinear solver.}
@@ -823,22 +811,22 @@ Or, more precisely, there is less variability in this quantity over the last two
 \end{figure}
 
 Next, \fig{fig:refloodGammaNln} contains condensation rates for the four different \dtmax{}.
-This axes of this graph is the same as those in \fig{fig:refloodGammaLin}.
+The axes of this graph are the same as those in \fig{fig:refloodGammaLin}.
 Note the dramatic decrease both the magnitude and variability of the quantity as a result of using the nonlinear solver.
 This results argues that the nonlinear solver is capable of producing solutions that are not only  more consistent than those produced by the linear solver but also different in value.
 
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/refloodGammaDom}
-\caption{Condensation in upper head as calculated with dual domains.}
+\caption{Condensation in upper head as calculated with domain decomposition algorithm.}
 \label{fig:refloodGammaDom}
 \end{figure}
 
-The two channels in section two that represent the core region and the four channels in section three above the core region comprise the nonlinear domain in this problem.
 Running simulation with the domain decomposition active produces the condensation rates shown in \fig{fig:refloodGammaDom}.
+The two channels in section two that represent the core region and the four channels in section three above the core region comprise the nonlinear domain in this problem.
 These results, while not as consistent as those produced by the global nonlinear solver, are both more consistent and more accurate than those produced by the linear solver.
 
-\begin{figure}[h!t]
+\begin{figure}[t!hb]
 \centering
 \input{plots/refloodMaxGamma}
 \caption{Integrated condensation in upper head for all three algorithms.}
@@ -848,31 +836,16 @@ These results, while not as consistent as those produced by the global nonlinear
 Next, the integrated condensation for each of the three solution techniques are shown in \fig{fig:refloodMaxGamma}.
 This figure shows the integrated condensate for each of the \dtmax{} for each solver.
 Note that the linear solver does not produce results that are comparable with the nonlinear solver even at small timestep sizes.
-However, the domain decomposition algorithm produces results that are significantly more consistent with the nonlinear solution.
-By using the domain decomposition algorithm, the consistency of the nonlinear solver and a solution that is quantitatively and qualitatively more consistent with the nonlinear solution is obtained.
+By using the domain decomposition algorithm, a solution that is quantitatively and qualitatively more consistent with the nonlinear solution is obtained.
 
-\begin{figure}[h!t]
-\centering
-\input{plots/refloodRunTimes}
-\caption{Reflood run times.}
-\label{fig:refloodRunTimes}
-\end{figure}
-
-Next, the computational cost of the different methods is compared in \fig{fig:refloodRunTimes}.
-This figure shows the run times for the three solvers.
-The nonlinear solver is computationally more expensive than the linear solver.
-However, the domain decomposition run time is more comparable to the run time of the linear solver.
-
-\begin{figure}[h!t]
+\begin{figure}[h!tb]
 \centering
 \input{plots/refloodRunTimeRatios}
-\caption{Ratios of nonlinear and dual-domain runtimes to linear run time.}
+\caption{Ratios of nonlinear and dual-domain run times to linear run time.}
 \label{fig:refloodRunTimeRatios}
 \end{figure}
 
-These results are more accurately displayed in \fig{fig:refloodRunTimeRatios}.
+Next, the computational cost of the nonlinear and the domain decomposition solution methods are compared in \fig{fig:refloodRunTimeRatios}.
 This figure shows the ratio of the full nonlinear and the domain decomposition run times to the linear solver's run time.
- 
-
- 
-There is a factor of two runtime savings with the domain decomposition algorithm.
+While the nonlinear solver is approximately eight times more computationally expensive than the linear solver, the domain decomposition is only three times more computationally expensive than the linear solver.
+That is a consistent 60\% run time savings while using the domain decomposition algorithm as compared to the full nonlinear solver.

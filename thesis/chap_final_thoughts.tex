@@ -1,46 +1,12 @@
 \chapter{Concluding Remarks}
 \label{chap:end}
-This dissertation has focused upon developing a novel method to solve the nonlinear partial differential equations associated with thermal-hydraulic safety analysis software.
-The two-fluid, three-field software \cobra{} was converted from a linearized semi-implicit solver.
-In review, the single-shot semi-implicit \cobra{} software was converted to a nonlinearly convergent, semi-implicit algorithm.
+This dissertation has focused on developing a novel method to solve the nonlinear partial differential equations associated with thermal-hydraulic safety analysis software.
+The two-fluid, three-field software \cobra{} was converted from a linearized semi-implicit solver to a nonlinearly convergent solver.
 An operator-based scaling that provides a physically meaningful convergence measure was developed and implemented.
-The nonlinear solver produced results that were qualitatively different than those obtained from the legacy solver for the problem with high nonlinearities.
-Tests indicated that a timestep size insensitive solution may not be nonlinearly converged.
+The nonlinear solver produced results that were qualitatively different than those obtained from the linear solver for the problem with nonlinearities.
+Tests indicated that a timestep-size insensitive solution obtained with the linear solver may not be nonlinearly converged.
 It was shown that the nonlinear solver produces results that are indistinguishable from those produced by the legacy solver for the single-phase problem, which has relatively mild nonlinearities.
-A metric to quantify the nonlinear convergence of a timestep size insensitive simulation was developed and implemented.
-This non-convergence of the discrete nonlinear system in the legacy solver mode produced a qualitatively different solution from the nonlinear solver.
-
-\section{Areas of Future Work}
-\label{sect:futureWork}
-During this work several opportunities for follow-on research presented themselves.
-These research opportunities include the development and implementation of an spatially and temporally adaptive version of the domain decomposition algorithm, the evaluation of theoretical computational costs for the domain decomposition, the investigation of the interaction of the nonlinear solver and the solid structures within \cobra{}, and the ability to dynamically switch governing equations for a given spatial location during the transient.
-The following section will outline each of the above mentioned avenues of research in turn.
-
-The current research produced a domain decomposition framework that requires engineering judgment to determine portions of the domain where nonlinear convergence may require multiple Newton steps.
-A possible extension of this work would be the development of a method to identify areas where additional Newton steps would would be advantageous.
-Since, over the course of a given simulation, the spatial location with the greatest nonlinearities may shift, being able to change the nonlinear domain as the transient progressed would provide a reduction in the computational cost.
-Once a viable determination of when and where additional nonlinear iterates might be advantageous, an efficient method of generating the pressure matrices would need to be developed.
-Currently, the matrices are preallocated and of fixed size through the simulation.
-If the two domains were to shift during the course of the transient, the pressure matrices and the corresponding ordinals of continuity volumes would need to be changed to reflect the new domains.
-
-The current operator based scaling method has conflicting implementations for determining the magnitude of the divergence operators.
-For the momentum equations the net divergence is used as the operator for the scale factor.
-While the mass and energy equations consider each discrete portion of the surface integral to be an independent operator.
-Studies looking at the efficiency of the two different interpretations are needed to clarify which is the better option.
-
-The current implementation of the domain decomposition algorithm requires engineering judgment to determine which portion of the domain is subjected to subsequent nonlinearities.
-However, there is a relationship between the number of surfaces connecting the linear domain to the nonlinear domain, $N_{\text{nln}}$, and the computational expense of solving the problem.
-There would need to be an investigation into the computational costs of solving the dual-domain problem as opposed to solving the entire domain using the nonlinear solver.
-There is computational overhead in setting up the infrastructure for the dual-domains.
-There would need to be a detailed study of the computational costs.
-
-Additionally, the use of the nonlinear solver, in the presence of fluid-wall heat transfer produces non-convergent behavior in test problems.
-This work was centered on the hydrodynamics of the reactor core, without consideration of the heat transfer.
-A detailed study and analysis of the interaction of the explicit heat transfer and the iterative nonlinear solver for the hydrodynamic needs to be conducted.
-
-The \cobra{} software possesses the ability to switch governing differential equations for the momentum equations if certain criteria are met.
-During the course of this work, the interaction between the iterative solver and the decision on when to switch equations was found to be in need of some serious work.
-The interaction of the nonlinear solver with the Counter-Current Flow Limit Boundary Condition  needs to be examined.
+A metric to quantify the nonlinear convergence of a timestep-size insensitive simulation was developed and implemented.
 
 \section{Summary of Findings}
 \label{sect:end:summary}
@@ -48,4 +14,33 @@ Resolving the nonlinearities at every timestep provides more consistent solution
 By selecting those areas of the domain where the nonlinearities are expected to be high and subjecting them to multiple nonlinear iterations, the consistency of the nonlinear solver may be obtained at a lower computational cost than the full nonlinear solver.
 The proper selection of the nonlinear domain depends upon engineering judgment.
 
+\section{Areas of Future Work}
+\label{sect:futureWork}
+During this work several opportunities for follow-on research presented themselves.
+These research opportunities include the development and implementation of a spatially and temporally adaptive version of the domain decomposition algorithm, the evaluation of theoretical computational costs for the domain decomposition, the investigation of the interaction of the nonlinear solver and the solid structures within \cobra{}, and the ability to dynamically switch governing equations for a given spatial location during the transient.
+The following section will outline each of the above mentioned avenues of research in turn.
 
+The current research produced a domain decomposition framework that requires engineering judgment to select portions of the domain where nonlinear convergence may require multiple Newton steps.
+A possible extension of this work would be the development of an algorithm that identifies areas where additional Newton steps would be advantageous.
+Since, over the course of a given simulation, the spatial location with the greatest nonlinearities may shift, being able to change the nonlinear domain as the transient progressed would provide a reduction in the computational cost.
+Once a viable determination of when and where additional nonlinear iterates might be advantageous, a method for dynamically generating the pressure matrices would need to be developed.
+Currently, the matrices are preallocated and of fixed size through the simulation.
+If the two domains were to shift during the course of the transient, the pressure matrices and the corresponding ordinals of continuity volumes would need to be changed to reflect the new domains.
+
+The current operator-based scaling method has conflicting implementations for determining the magnitude of the divergence operators.
+For the momentum equations the net divergence is used as the operator for the scale factor, while the mass and energy equations consider each discrete portion of the surface integral to be an independent operator.
+Studies looking at the efficiency of the two different interpretations are needed to clarify which is the better option.
+
+The current implementation of the domain decomposition algorithm requires engineering judgment to determine which portion of the domain is subjected to subsequent nonlinearities.
+However, there is a relationship between the number of surfaces connecting the linear domain to the nonlinear domain, $N_{\text{nln}}$, and the computational expense of solving the problem.
+There is also additional computational overhead in setting up the infrastructure for the dual-domains.
+There would need to be an investigation into the computational costs of solving the dual-domain problem as opposed to solving the entire domain using the nonlinear solver.
+
+Additionally, the use of the nonlinear solver, in the presence of fluid-wall heat transfer produces non-convergent behavior in test problems.
+This work was centered on the hydrodynamics of the reactor core, without consideration of the heat transfer.
+A detailed study and analysis of the interaction of the explicit heat transfer and the iterative nonlinear solver for the hydrodynamic needs to be conducted.
+
+The \cobra{} software possesses the ability to switch governing differential equations for the momentum equations if certain criteria are met.
+The primary use of this feature is the implementation of a counter-current flow limit boundary condition, which switch governing equations based upon flow regimes.
+During the course of this work, the interaction between the iterative solver and the decision on when to switch equations was found to produce excessive equation switching in some models.
+The reason for this are as of yet unknown, and additional research is required to identify the root cause.

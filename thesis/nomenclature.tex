@@ -24,18 +24,18 @@
 \nomtypeR[A]{$A$}{Cross-sectional area.}{$ \text{ft}^{2} $}
 \nomtypeR[A]{$\tilde{A}$}{Effective cross-sectional area between two momentum flow paths.}{$ \text{ft}^{2} $}
 \nomtypeR{$\tilde{a}$}{Variable $a$ averaged of a given cross-section.}{}
-\nomtypeR{$s_{m}$}{Source or sink of mass for a given field or phase k}{$\lbm{}\,\text{s}^{-1} $}
-\nomtypeR{$w^{n+1}_{k, j}$}{Volumetric flux for phase k in RELAP5-3D}{$ \text{ft}^{3}\,\text{s}^{-1}$}
-\nomtypeR{$u^{n+1}_{k, j}$}{Flux of internal energy for phase k in RELAP5-3D}{$\text{BTU}\,\text{s}^{-1} $}
-\nomtypeR{$\vec{u}_{k}$}{Velocity vector for field or phase k}{$ \text{ft}\, \text{s}^{-1}$}
+\nomtypeR{$s_{m}$}{Source or sink of mass in conversation of mass equations.}{$\lbm{}\,\text{s}^{-1} $}
+\nomtypeR{$w^{n+1}_{k, j}$}{Volumetric flux for phase k in \relap53d{}.}{$ \text{ft}^{3}\,\text{s}^{-1}$}
+\nomtypeR{$u^{n+1}_{k, j}$}{Flux of internal energy for phase k in \relap53d{}.}{$\text{BTU}\,\text{s}^{-1} $}
+\nomtypeR{$\vec{u}$}{Velocity vector for a given flow path.}{$ \text{ft}\, \text{s}^{-1}$}
 \nomtypeR{$P$}{Pressure}{$\text{psia}$}
 \nomtypeR{$h$}{Specific enthalpy.}{$ \text{BTU}\, \lbm{}^{-1}$}
 \nomtypeR{$q_{i,\phi}$}{Energy transferred between the saturated interface and any given field or phase $\phi$.}{$ \text{BTU}\,\text{ft}^{-3} \text{s}^{-1}$}
-\nomtypeR{$\vec{x}$}{Vector of nine independent variables used by \cobra{}}{}
+\nomtypeR{$\vec{x}$}{Vector of nine independent variables used by \cobra{}.}{}
 \nomtypeR{$\momVec{}$}{Vector of three momenta fields.}{$ \lbm{}\, \text{s}^{-1}$}
-\nomtypeR{$\vec{E}^{*}$}{Approximation of temporal integral of $\vec{E}(\vec{y}(\vec{x}))$}{}
-\nomtypeR{$n^{n+1}_{g,j}$}{Flux of \ncg{} mass in RELAP5-3D}{$ \lbm{} \, \text{s}^{-1}$}
-\nomtypeR{$m^{n+1}_{k,j}$}{Flux of mass for phase k in RELAP5-3D}{$ \lbm{}\, \text{s}^{-1} $}
+\nomtypeR{$\vec{E}^{*}$}{Approximation of temporal integral of $\vec{E}(\vec{y}(\vec{x}))$.}{}
+\nomtypeR{$n^{n+1}_{g,j}$}{Flux of \ncg{} mass in \relap53d{}.}{$ \lbm{} \, \text{s}^{-1}$}
+\nomtypeR{$m^{n+1}_{k,j}$}{Flux of mass for phase k in \relap53d{}.}{$ \lbm{}\, \text{s}^{-1} $}
 \nomtypeR{$\vec{S}$}{Vector of operator based scale factors}{}
 \nomtypeR{$\vec{F}$}{Vector of nonlinear residuals}{}
 \nomtypeR{$s_{p}$}{External source or sink of momentum.}{$ \lbf{} \, \text{ft}^{-3} $}
@@ -58,6 +58,7 @@
 \nomtypeR{$\mathcal{L}_{2}$}{Euclidean norm of a given vector.}{}
 \nomtypeR{$N_{\text{CPL}}$}{Number of \cobra{} -- \relap53d{} coupling interfaces.}{}
 \nomtypeR{$N_{f}$}{Set of flow paths connected to a given continuity volume.}{}
+\nomtypeR{$N_{s}$}{Number of stages in a multi-stage temporal integration scheme.}{}
 \nomtypeR{$N_{n}$}{Number of inter-domain connections in the global domain.}{}
 \nomtypeR{$N_{\text{lin}}$}{Number of continuity volumes in the linear domain.}{}
 \nomtypeR{$N_{\text{NBC}}$}{Set of inter-domain connection for a given linear continuity volumes.}{}
