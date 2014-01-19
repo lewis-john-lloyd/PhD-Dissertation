@@ -787,9 +787,8 @@ The set of timestep sizes analyzed is is given by \eqref{eqn:timeStepAlgo}.
 For this problem, $\dtmax{}_{o}$, $r_{f}$, and ${n}$ were 0.02, 2.0, and 4 respectively.
 Additionally, the nonlinear convergence parameters \kmax{}, $f_{tol}$, and $d_{tol}$ were 35, \expneg{1.0}{6}, and \expneg{1.0}{8}, respectively.
 
-The primary variable of engineering interest in this problem is the time-dependent behavior of the condensation in the region of the safety injection inlet and the net condensation over the course of the transient.
 Since this model was intended to model a reflood, the parameters of interest are related to core cooling.
-Included in these items are the condensation occurring in the channel above the core that contains the safety injection mass source.
+The primary variable of engineering interest in this problem is the time-dependent behavior of the condensation in the region of the safety injection inlet and the maximum condensation over the course of the transient.
 
 \begin{figure}[h!tb]
 \centering
@@ -800,7 +799,7 @@ Included in these items are the condensation occurring in the channel above the 
 
 First, the linear solution for the four different \dtmax{} is shown in \fig{fig:refloodGammaLin}.
 This shows the linear solver's behavior.
-There is drastic variability in the condensation rate.
+There is drastic variability in the condensation in the upper head.
 However, note that the two smallest \dtmax{} appear to have reached a timestep-size insensitive solution.
 Or, more precisely, there is less variability in this quantity over the last two simulations than between any previous two.
 
@@ -811,7 +810,7 @@ Or, more precisely, there is less variability in this quantity over the last two
 \label{fig:refloodGammaNln}
 \end{figure}
 
-Next, \fig{fig:refloodGammaNln} contains condensation rates for the four different \dtmax{}.
+Next, \fig{fig:refloodGammaNln} contains the condensation for the four different \dtmax{}.
 The axes of this graph are the same as those in \fig{fig:refloodGammaLin}.
 Note the dramatic decrease both the magnitude and variability of the quantity as a result of using the nonlinear solver.
 This results argues that the nonlinear solver is capable of producing solutions that are not only  more consistent than those produced by the linear solver but also different in value.
