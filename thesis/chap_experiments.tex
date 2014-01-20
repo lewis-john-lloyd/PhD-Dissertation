@@ -776,7 +776,7 @@ In the third section there is also a safety injection inlet at point B, and a pr
 
 \begin{figure}[h!tb]
 \centering
-\input{images/refloodModel}
+\input{images/refillModel}
 \caption{\cobra{} model for the refill problem.}
 \label{fig:refillModel}
 \end{figure}
@@ -802,7 +802,7 @@ The primary variable of engineering interest in this problem is the time-depende
 
 \begin{figure}[h!tb]
 \centering
-\input{plots/refloodGammaLin}
+\input{plots/refillGammaLin}
 \caption{Condensation in upper head as calculated by the linear solver.}
 \label{fig:refillGammaLin}
 \end{figure}
@@ -815,7 +815,7 @@ Or, more precisely, there is less variability in this quantity over the last two
 
 \begin{figure}[h!tb]
 \centering
-\input{plots/refloodGammaNln}
+\input{plots/refillGammaNln}
 \caption{Condensation in upper head as calculated by the nonlinear solver.}
 \label{fig:refillGammaNln}
 \end{figure}
@@ -827,7 +827,7 @@ This results argues that the nonlinear solver is capable of producing solutions 
 
 \begin{figure}[h!tb]
 \centering
-\input{plots/refloodGammaDom}
+\input{plots/refillGammaDom}
 \caption{Condensation in upper head as calculated with domain decomposition algorithm.}
 \label{fig:refillGammaDom}
 \end{figure}
@@ -838,7 +838,7 @@ These results, while not as consistent as those produced by the global nonlinear
 
 \begin{figure}[t!hb]
 \centering
-\input{plots/refloodMaxGamma}
+\input{plots/refillMaxGamma}
 \caption{Integrated condensation in upper head for all three algorithms.}
 \label{fig:refillMaxGamma}
 \end{figure}
@@ -850,7 +850,7 @@ By using the domain decomposition algorithm, a solution that is quantitatively a
 
 \begin{figure}[h!tb]
 \centering
-\input{plots/refloodRunTimeRatios}
+\input{plots/refillRunTimeRatios}
 \caption{Ratios of nonlinear and dual-domain run times to linear run time.}
 \label{fig:refillRunTimeRatios}
 \end{figure}

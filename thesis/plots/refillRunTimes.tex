@@ -2,7 +2,7 @@
 % Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
 % All rights reserved.
 % 
-\tikzsetnextfilename{plots/refloodNwtPerDt_eps}
+\tikzsetnextfilename{plots/refillRunTimes_eps}
 \begin{tikzpicture}
 
 \begin{axis}[%
@@ -13,36 +13,50 @@ x dir=reverse,
 xmin=0.001,
 xmax=0.01,
 xlabel={$\dtmax{} [\text{s}]$},
-ymin=17,
-ymax=23,
-ylabel={$\frac{\sum_{i\,=\,1}^{N_{t}}k_{i}}{N_{t}} [-]$},
+ymin=0,
+ymax=4.5,
+ylabel={Runtime $[\text{hr}]$},
 legend style={at={(0.03,0.97)},anchor=north west,draw=black,fill=white,legend cell align=left}
 ]
 \addplot [
 color=black,
 solid,
-mark=o,
+mark=*,
 mark options={solid}
 ]
 table[row sep=crcr]{
-0.01 21.5146007537842\\
-0.005 21.4209060668945\\
-0.0025 21.9510841369629\\
-0.00125 22.5086059570313\\
+0.01 0.0867131948471069\\
+0.005 0.137340813875198\\
+0.0025 0.247352123260498\\
+0.00125 0.486203700304031\\
+};
+\addlegendentry{Linear};
+
+\addplot [
+color=black,
+solid,
+mark=square,
+mark options={solid}
+]
+table[row sep=crcr]{
+0.01 0.695521235466003\\
+0.005 1.14041018486023\\
+0.0025 2.13051748275757\\
+0.00125 4.19457244873047\\
 };
 \addlegendentry{Nonlinear};
 
 \addplot [
 color=black,
-dotted,
-mark=o,
+solid,
+mark=diamond,
 mark options={solid}
 ]
 table[row sep=crcr]{
-0.01 19.2084121704102\\
-0.005 18.1128673553467\\
-0.0025 17.8526344299316\\
-0.00125 18.196907043457\\
+0.01 0.267567843198776\\
+0.005 0.428373456001282\\
+0.0025 0.798175454139709\\
+0.00125 1.5512136220932\\
 };
 \addlegendentry{Dual Domains};
 
