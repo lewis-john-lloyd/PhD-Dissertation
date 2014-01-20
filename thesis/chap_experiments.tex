@@ -102,15 +102,32 @@ Given an initial \dtmax{}, $\dt{}_{0}$, a refinement factor, $r_{f}$, and the nu
 \end{equation}
 
 For these two problems, the three parameters, $\dt{}_{0}$, $r_{f}$, and $n_{t}$, were 1.0, 10.0, and 6, respectively.
-Each of the two problems were run with both the linear and the nonlinear solver at the six different \dtmax{}:  \expneg{1.0}{0}{[s]}, \expneg{1.0}{1}{[s]}, \expneg{1.0}{2}{[s]}, \expneg{1.0}{3}{[s]}, \expneg{1.0}{4}{[s]}, and \expneg{1.0}{5}{[s]}.
-In total there were 24 simulations run.
-For the linear runs, the scaled residuals were evaluated after the single Newton step, $\vec{F}(\vec{x}^{1})$.
-For the nonlinear runs, the scaled nonlinear residuals were evaluated at the end of the Newton-loop.
+Each of the two problems were run with both the linear and the nonlinear solver at each of the six different \dtmax{}; in total there were 24 simulations run.
 The nonlinear convergence criteria used for the nonlinear simulations were $\kmax$ = 35, $F_{\text{tol}}$ = \expneg{1.0}{6}, and $\delta_{\text{tol}}$ = \expneg{1.0}{8}.
 \comment{Someone will ask how these were chosen.}
 
 The results from the simulations will now be analyzed to determine the impact of nonlinear convergence upon time-step size sensitivity.
 The solutions produced by both solvers will be compared to determine the efficacy of the convergence metric in determining the validity of the nonlinear solution.
+
+\begin{figure}[h!tb]
+\centering
+\input{plots/single1pt000em0}
+\caption{Single-phase solution with \dtmax{} = 1.0 {[s]}.}
+\label{fig:single1pt000em0}
+\end{figure}
+
+\begin{figure}[h!tb]
+\centering
+\input{plots/single1pt000em5}
+\caption{Single-phase solution with \dtmax{} = 5.0 {[s]}.}
+\label{fig:single1pt000em5}
+\end{figure}
+
+The single-phase case was designed to test if the linear solver produced a simulation result that was equivalent to that produced by the nonlinear solver.
+More specifically, it was designed to show that for problems where the physics of interest have relatively low nonlinearities, the linear solver provides as accurate a solution as the nonlinear solver.
+\fig{fig:single1pt000em0} and \fig{fig:single1pt000em5} show the solution produced by both the nonlinear and linear solvers of \cobra{}.
+The solutions produced by both solvers are qualitatively equivalent at \dtmax{} = 1.0 [s] and \dtmax{} = \expneg{1.0}{5} [s].
+This indicates that the linear solver is adequate in regions where the solution is not highly nonlinear.
 
 For the flashing problem, the parameter of interest for temporal convergence testing is $\alpha_g$ at 2 [in] from the inlet of the pipe.
 This parameter is chosen because it represents the region where the nonlinearities should have the largest impact on the solution as this is the location where the flashing occurs.
@@ -172,6 +189,8 @@ The same level of qualitative timestep-size invariance is achieved in the linear
 
 The timestep-size insensitive solution produced by the nonlinear solver occurs at a maximum timestep size three orders of magnitude greater than that achieved by the linear solver in \cobra{}.
 An examination of the nonlinear residual over the course of the transient provides insight into why this behavior is observed.
+For the linear runs, the scaled residuals were evaluated after the single Newton step, $\tilde{\vec{F}}(\vec{x}^{1})$.
+For the nonlinear runs, the scaled nonlinear residuals were evaluated at the end of the Newton-loop.
 The scaled residual after the single Newton step of the linear solver for flashing problem indicates that, even for small timestep sizes, the solution obtained still does not satisfy the discrete nonlinear equations, \fig{fig:flashingResidualLin}.
 This is in contrast to the nonlinear flashing problem, which shows a lower residual over the course of the simulation, \fig{fig:flashingResidualNln}.
 
@@ -196,27 +215,6 @@ The second purpose in reducing \dtmax{} is to decrease the error due to the disc
 While the reduction of the maximum timestep size in the linear solver serves the purpose of reducing the residual, the nonlinear solver performs this task naturally.
 Therefore, in the nonlinear solver the reduction of the maximum timestep size primarily serves to reduce the error from the approximate discrete temporal integral.
 
-\begin{figure}[h!tb]
-\centering
-\input{plots/single1pt000em0}
-\caption{Single-phase solution with \dtmax{} = 1.0 {[s]}.}
-\label{fig:single1pt000em0}
-\end{figure}
-
-\begin{figure}[h!tb]
-\centering
-\input{plots/single1pt000em5}
-\caption{Single-phase solution with \dtmax{} = 5.0 {[s]}.}
-\label{fig:single1pt000em5}
-\end{figure}
-
-The single-phase case was designed to test if the linear solver produced a simulation result that was equivalent to that produced by the nonlinear solver.
-More specifically, it was designed to show that for problems where the physics of interest have relatively low nonlinearities, the linear solver provides as accurate a solution as the nonlinear solver.
-\fig{fig:single1pt000em0} and \fig{fig:single1pt000em5} show the solution produced by both the nonlinear and linear solvers of \cobra{}.
-Unlike the flashing problem, both solvers were able to solve the problem for all of the \dtmax{} specified.
-The solutions produced by both solvers are qualitatively equivalent at \dtmax{} = 1.0 [s] and \dtmax{} = \expneg{1.0}{5} [s].
-This indicates that the linear solver is adequate in regions where the solution is not highly nonlinear.
-
 One way to quantify the difference between the solutions is by measuring the residual convergence metrics outlined in \sect{sect:temporal_convergence}.
 These metrics provide a measure of how poorly the discrete nonlinear equations are being solved at every timestep in the transient.
 The resolution of the residual allows for a solution that is less sensitive to timestep size selection than for a solution that does not resolve the residual.
@@ -226,9 +224,9 @@ For each of the test cases, the two different metrics were compared at the diffe
 These convergence metrics were evaluated during post-processing.
 To examine efficacy of the the temporal convergence criteria, both the average and moment-based temporal convergence criteria were evaluated for each of the 24 simulations.
 The values of these metrics will be compared between different solvers for the same test problem. 
-
 The two different nonlinear convergence metrics will now be examined for the flashing problem.
 \tab{tab:flashingMetric} shows both the average metric, $\tilde{R}$, and the moment-based metric, $\tilde{R}_{\text{M}}$.
+\tab{tab:singleMetric} shows the two metrics for the single-phase problem.
 
 \begin{table}[h!tb]
 \centering
@@ -237,8 +235,6 @@ The two different nonlinear convergence metrics will now be examined for the fla
 \caption{Nonlinear convergence metrics for flashing problem.}
 \label{tab:flashingMetric}
 \end{table}
-
-\tab{tab:singleMetric} shows the two metrics for the single-phase problem.
 
 \begin{table}[h!tb]
 \centering
@@ -753,7 +749,7 @@ Isolating places where the nonlinearities are present and solving those regions 
 \label{sect:refillProblem}
 
 The final test problem is meant to reflect a typical LWR scenario.
-The model is a simplified LWR core model with upper-head safety injection that is going through the refill phase of a simulated accident scenario.
+The model is a simplified two-loop, LWR core model with upper-head safety injection that is going through the refill phase of a simulated accident scenario.
 The intent of this refill problem is to bring together the individual assertions from the previous test problems.
 In particular, if there are localized nonlinearities, then the use of the domain decomposition algorithm can produce results that are not only more accurate than those produced by the linear solver but are also less computationally expensive than those produced by the nonlinear solver.
 
@@ -768,7 +764,7 @@ The downcomers are connected to each other and the inlet plenum, as indicated by
 The second section contains a three subchannel representation of the reactor core.
 One subchannel represents the inner ring of the core, which produces more steam than the outer ring.
 Another subchannel represents the outer core ring, which has a lower rate of steam production.
-And, a third represents the control rod channels, which have neither steam production nor hydrodynamic communication with the two core rings.
+And, a third represents the control rod channels, which are represented by the grey circle and have neither steam production nor hydrodynamic communication with the two core rings.
 There is no hydrodynamic communication between the core subchannels and the two downcomer subchannels, as indicated by solid lines.
 The third section represents the upper head of the reactor.
 In this model, there are transverse flow paths between all adjacent subchannels in the upper head.
