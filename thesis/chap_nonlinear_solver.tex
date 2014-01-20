@@ -114,10 +114,10 @@ V_c \left[(\alpha_g \rho_{n})^{n+1}\right. & - & \left. (\alpha_g \rho_{n})^{n}\
 V_c \left[ \left(\alpha_l \rho_l \right)^{n+1} \right. & - & \left. \left(\alpha_l \rho_l \right)^{n} \right]=  -\dt{} \sum_{i\, \in \, N_{f} }\left( \don{\alpha^n_l \rho^n_l}^{n+1}_{d} u^{n+1}_l  A_{m} \right)_{i} \nonumber \\
 &- &\left[(1-\eta)\Gamma + \Upsilon\right]^{n+1} \\
 \label{eqn:nlnGasEnergyEquation}
-V_c \left[ \left( \alpha_g \rho_g h_g \right)^{n+1} \right. & - & \left. \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_g ( P^{\,n+1} - P^{n} ) \right] = \dt{} \left[ q_{i,v} + \dot{\Gamma} h^{'}_v + q_{gl} \right]^{n+1} \nonumber \\
-& - &\dt{} \sum_{i\, \in \, N_{f}} \left(  \don{\alpha^{n}_g \rho^{n}_g h^{n}_{g}}^{n+1}_{d} u^{n+1}_g  A_{m} \right)_{i} + \dt{} q^{n}_{wg} \\ 
+V_c \left[ \left( \alpha_g \rho_g h_g \right)^{n+1} \right. & - & \left. \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_g ( P^{\,n+1} - P^{n} ) \right] = \left[ q_{i,v} + \Gamma h^{'}_v + q_{gl} \right]^{n+1} + q^{n}_{wg}\nonumber \\
+& - &\dt{} \sum_{i\, \in \, N_{f}} \left(  \don{\alpha^{n}_g \rho^{n}_g h^{n}_{g}}^{n+1}_{d} u^{n+1}_g  A_{m} \right)_{i} \\ 
 \label{eqn:nlnLiqEnergyEquation}
-V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1} \right. & - & \left. \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1} - P^{\,n}) \right] = \dt{} \left[q_{i,l} -\dot{\Gamma} h^{'}_l - q_{gl}\right]^{n+1}  + \dt{} q^{n}_{wl} \nonumber \\
+V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1} \right. & - & \left. \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1} - P^{\,n}) \right] = \left[q_{i,l} -\Gamma h^{'}_l - q_{gl}\right]^{n+1}  + q^{n}_{wl} \nonumber \\
 & -& \dt{} \sum_{i\, \in \, N_{f} } \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1}_{d} u^{n+1}_l A_{m} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1}_{d} u^{n+1}_e  A_{m} \right)_{i}\\
 \label{eqn:nlnEntMassEquation}
 V_c \left[ \left(\alpha_e \rho_l \right)^{n+1}\right. & - & \left. \left(\alpha_e \rho_l \right)^{n} \right]= -\dt{} \sum_{i\,\in \,N_{f}} \left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1}_{d} u^{n+1}_e  A_{m} \right)_{i}+ \left[ \Upsilon -\eta\Gamma \right]^{n+1} \\
@@ -433,11 +433,11 @@ F^{k}_{c, n} & = & V_c\left[ (\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{
 F^{k}_{c, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_l \rho_l \right)^{n} + \dt{} \sum_{i\,\in\,N_{f}} \left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l A_{m} \right)_{i}   \nonumber \\
 &+& \left[(1-\eta)\Gamma + \Upsilon\right]^{n+1, k} \\
 \label{eqn:nlnGasEnergyResidual}
-F^{k}_{e, g} & = & V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_{g} ( P^{\,n+1, k} - P^{\,n} ) \right] - \dt{} q^{n}_{wg} \nonumber \\
-& - & \dt{} \left[q_{i,v} + \dot{\Gamma} h^{'}_v + q_{gl}\right]^{n+1, k} + \dt{} \sum_{i\,\in\,N_{f}} \left(\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  A_{m} \right)_{i} \\
+F^{k}_{e, g} & = & V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_{g} ( P^{\,n+1, k} - P^{\,n} ) \right] - q^{n}_{wg} \nonumber \\
+& - & \left[q_{i,v} + \Gamma h^{'}_v + q_{gl}\right]^{n+1, k} + \dt{} \sum_{i\,\in\,N_{f}} \left(\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  A_{m} \right)_{i} \\
 \label{eqn:nlnLiqEnergyResidual}
-F^{k}_{e, l} & = & V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})\right] - \dt{} \left[q_{i,l} - \dot{\Gamma} h^{'}_l - q_{gl}\right]^{n+1,k}    \nonumber \\
-& +& \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_l A_{m} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} -\dt{} q^{n}_{wl}\\
+F^{k}_{e, l} & = & V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})\right] - \left[q_{i,l} - \Gamma h^{'}_l - q_{gl}\right]^{n+1,k}    \nonumber \\
+& +& \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_l A_{m} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} - q^{n}_{wl}\\
 \label{eqn:nlnEntMassResidual}
 F^{k}_{c, e} & = & V_c \left(\alpha_e \rho_l \right)^{n+1,k} - V_c \left(\alpha_e \rho_l \right)^{n} + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} \nonumber \\
 &-& \left[\Upsilon - \eta \Gamma \right]^{n+1, k} \\
@@ -654,11 +654,11 @@ S^{k}_{c, n} & = & \dt{}\left[\abs{\frac{V_c\left[(\alpha_g \rho_{n})^{n+1, k} -
 S^{k}_{m, l} & = & \dt{}\left[\abs{\frac{V_c \left[\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n}\right]}{\dt{}}} + \sum_{i\, \in \, N_{f} } \abs{ \don{ \alpha^n_l \rho^n_l }^{n+1,k}_{d} u^{n+1, k}_l A_{m} }_{i} \right. \nonumber \\
 & + & \left. \abs{\left[(1-\eta)\dot{\Gamma}\right]^{n+1,k}} + \abs{\dot{\Upsilon}^{n+1, k}} \vphantom{\abs{\frac{V_c \left[\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n}\right]}{\dt{}}}} \right] \\
 \label{eqn:nlnGasEnergyScale}
-S^{k}_{e, g} & = & \dt{}\left[\abs{\frac{V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n}\right]}{\dt{}}} +\abs{\frac{V_c \alpha^{n}_{g} ( P^{n+1, k} - P^{n} )}{\dt{}}} + \abs{q_{wg}^{n}} \right. \nonumber \\
-& + & \left. \abs{\left[\dot{\Gamma} h^{'}_v\right]^{n+1,k}} + \abs{q_{i,v}^{n+1,k}} +\abs{q^{n+1,k}_{gl}} + \sum_{i\,\in \, N_{f} } \abs{\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  A_{m}}_{i} \vphantom{\abs{\frac{V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n}\right]}{\dt{}}}} \right]\\
+S^{k}_{e, g} & = & \dt{}\left[\abs{\frac{V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n}\right]}{\dt{}}} +\abs{\frac{V_c \alpha^{n}_{g} ( P^{n+1, k} - P^{n} )}{\dt{}}} + \abs{\dot{q}_{wg}^{n}} \right. \nonumber \\
+& + & \left. \abs{\left[\dot{\Gamma} h^{'}_v\right]^{n+1,k}} + \abs{\dot{q}_{i,v}^{n+1,k}} +\abs{\dot{q}^{n+1,k}_{gl}} + \sum_{i\,\in \, N_{f} } \abs{\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  A_{m}}_{i} \vphantom{\abs{\frac{V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n}\right]}{\dt{}}}} \right]\\
 \label{eqn:nlnLiqEnergyScale}
-S^{k}_{e, l} & = & \dt{}\left[ \abs{\frac{V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n}\right]}{\dt{}}} + \abs{\frac{V_c \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})}{\dt{}}} + \abs{q_{wl}^{n}} \right . \nonumber \\
-& + & \abs{\left[\dot{\Gamma} h^{'}_l\right]^{n+1}} + \abs{q^{n+1,k}_{i,l}} + \abs{q_{gl}^{n+1,k}} + \sum_{i\,\in \, N_{f} }\abs{ \don{ \alpha^{n}_l \rho^{n}_l h^{n}_l }^{n+1,k}_{d} u^{n+1,k}_l A_{m} }_{i} \nonumber \\
+S^{k}_{e, l} & = & \dt{}\left[ \abs{\frac{V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n}\right]}{\dt{}}} + \abs{\frac{V_c \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})}{\dt{}}} + \abs{\dot{q}_{wl}^{n}} \right . \nonumber \\
+& + & \abs{\left[\dot{\Gamma} h^{'}_l\right]^{n+1}} + \abs{\dot{q}^{n+1,k}_{i,l}} + \abs{\dot{q}_{gl}^{n+1,k}} + \sum_{i\,\in \, N_{f} }\abs{ \don{ \alpha^{n}_l \rho^{n}_l h^{n}_l }^{n+1,k}_{d} u^{n+1,k}_l A_{m} }_{i} \nonumber \\
 & + & \left. \sum_{i\,\in \, N_{f} } \abs{ \don{ \alpha^{n}_e \rho^{n}_l h^{n}_l }^{n+1,k}_{d} u^{n+1,k}_e  A_{m} }_{i} \vphantom{ \abs{\frac{V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n}\right]}{\dt{}}}} \right] \\
 \label{eqn:nlnEntMassScale}
 S^{k}_{m, e} & = & \dt{} \left[ \abs{\frac{V_c \left[\left(\alpha_e \rho_l \right)^{n+1,k} - \left(\alpha_e \rho_l \right)^{n}\right]}{\dt{}}} + \sum^{N_{f}}_{i\,=\,1}\abs{\left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  \tilde{A}\right)}_{i} \right. \nonumber \\

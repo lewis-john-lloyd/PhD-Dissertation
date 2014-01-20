@@ -21,38 +21,55 @@
 
 \nomtypeR{$L$}{Axial length of the problem.}{$ \text{ft} $}
 \nomtypeR{$M$}{Number of sections in problem.}{}
-\nomtypeR[A]{$A$}{Cross-sectional area.}{$ \text{ft}^{2} $}
-\nomtypeR[A]{$\tilde{A}$}{Effective cross-sectional area between two momentum flow paths.}{$ \text{ft}^{2} $}
 \nomtypeR{$\tilde{a}$}{Variable $a$ averaged of a given cross-section.}{}
-\nomtypeR{$s_{m}$}{Source or sink of mass in conversation of mass equations.}{$\lbm{}\,\text{s}^{-1} $}
-\nomtypeR{$w^{n+1}_{k, j}$}{Volumetric flux for phase k in \relap53d{}.}{$ \text{ft}^{3}\,\text{s}^{-1}$}
-\nomtypeR{$u^{n+1}_{k, j}$}{Flux of internal energy for phase k in \relap53d{}.}{$\text{BTU}\,\text{s}^{-1} $}
+
+\nomtypeR{$w^{n+1}_{k, j}$}{Volumetric flow for phase k in \relap53d{}.}{$ \text{ft}^{3}\,\text{s}^{-1}$}
+\nomtypeR{$u^{n+1}_{k, j}$}{Flow of internal energy for phase k in \relap53d{}.}{$\text{BTU}\,\text{s}^{-1} $}
+\nomtypeR{$n^{n+1}_{g,j}$}{Flow of \ncg{} mass in \relap53d{}.}{$ \lbm{} \, \text{s}^{-1}$}
+\nomtypeR{$m^{n+1}_{k,j}$}{Flow of mass for phase k in \relap53d{}.}{$ \lbm{}\, \text{s}^{-1} $}
+
+\nomtypeR{$s_{p}$}{External source or sink of momentum.}{$ \lbf{} $}
+\nomtypeR{$s_{e}$}{Energy transferred from an external source or sink.}{$ \text{BTU} $}
+\nomtypeR{$s_{m}$}{Source or sink of mass in conversation of mass equations.}{$\lbm{} $}
+
 \nomtypeR{$\vec{u}$}{Vector of phasic velocities for a given flow path.}{$ \text{ft}\, \text{s}^{-1}$}
-\nomtypeR{$P$}{Pressure}{$\text{psia}$}
-\nomtypeR{$h$}{Specific enthalpy.}{$ \text{BTU}\, \lbm{}^{-1}$}
-\nomtypeR{$q_{i,\phi}$}{Energy transferred between the saturated interface and any given field or phase $\phi$.}{$ \text{BTU}\,\text{ft}^{-3} \text{s}^{-1}$}
 \nomtypeR{$\vec{x}$}{Vector of nine independent variables used by \cobra{}.}{}
 \nomtypeR{$\momVec{}$}{Vector of three momenta fields.}{$ \lbm{}\, \text{s}^{-1}$}
 \nomtypeR{$\vec{E}^{*}$}{Approximation of temporal integral of $\vec{E}(\vec{y}(\vec{x}))$.}{}
-\nomtypeR{$n^{n+1}_{g,j}$}{Flux of \ncg{} mass in \relap53d{}.}{$ \lbm{} \, \text{s}^{-1}$}
-\nomtypeR{$m^{n+1}_{k,j}$}{Flux of mass for phase k in \relap53d{}.}{$ \lbm{}\, \text{s}^{-1} $}
-\nomtypeR{$\vec{S}$}{Vector of operator based scale factors}{}
-\nomtypeR{$\vec{F}$}{Vector of nonlinear residuals}{}
-\nomtypeR{$s_{p}$}{External source or sink of momentum.}{$ \lbf{} \, \text{ft}^{-3} $}
-\nomtypeR{$\vec{e}$}{Vector of conservation equations, except the temporal derivatives of the conserved quantities}{}
-\nomtypeR{$\vec{y}$}{Vector of conserved quantities}{}
-\nomtypeR{$V$}{Volume of a given continuity volume}{$ \text{ft}^{3} $}
-\nomtypeR{$\don{a}_{d,j \pm \onehalf }$}{Donored quantity}{}
-\nomtypeR{$\ave{a}_{a,j \pm \onehalf }$}{Average quantity at cell edge.}{}
-\nomtypeR{$\vec{E}$}{Vector of spatially discrete conservation equations}{}
-\nomtypeR{$R$}{Integral of nonlinear residuals}{--}
-\nomtypeR{$\tilde{R}$}{Time-averaged integral of nonlinear residuals}{}
-\nomtypeR{$\tilde{R}_{M}$}{Time-moment integral of nonlinear residuals}{}
-\nomtypeR{$q_{g,l}$}{Energy transfer rate between the \ncg{} field and the liquid water phase}{$ \text{BTU} \, \text{s}^{-1} $}
-\nomtypeR{$q_{w,\phi}$}{Energy transfer rate between a solid structure and any given field or phase $\phi$}{$ \text{BTU} \, \text{s}^{-1}$}
-\nomtypeR{$s_{e}$}{Rate of energy transfer from an external source or sink.}{$ \text{BTU} \, \text{s}^{-1} $}
-\nomtypeR{$\vec{g}$}{Gravitational acceleration vector}{$ \text{ft} \, \text{s}^{-2} $}
+\nomtypeR{$\vec{S}$}{Vector of operator based scale factors.}{}
+\nomtypeR{$\vec{F}$}{Vector of nonlinear residuals.}{}
+\nomtypeR{$\vec{E}$}{Vector of spatially discrete conservation equations.}{}
+\nomtypeR{$\vec{e}$}{Vector of conservation equations, except the temporal derivatives.}{}
+\nomtypeR{$\vec{y}$}{Vector of conserved quantities.}{}
+\nomtypeR{$\vec{g}$}{Gravitational acceleration vector.}{$ \text{ft} \, \text{s}^{-2} $}
+\nomtypeR{$\vec{J}$}{A given Jacobian matrix.}{}
+\nomtypeR{$\vec{K}$}{Matrix representing inter-continuity volume pressure coupling coefficients.}{}
+\nomtypeR{$\vec{C}$}{Vector of unknowns for a given continuity volume.}{}
+\nomtypeR{$\vec{r}$}{Vector of right-hand sides for a given continuity volume.}{}
+\nomtypeR{$\vec{U}$}{Upper triangular matrix from \vec{LU} decomposition.}{}
+\nomtypeR{$\vec{L}$}{Lower triangular matrix from \vec{LU} decomposition.}{}
+\nomtypeR{$\vec{A}$}{Pressure matrix.}{}
+\nomtypeR{$\vec{Q}$}{Matrix representing inter-domain flow rate coefficients.}{}
+\nomtypeR{$\vec{B}$}{Matrix representing pressure matrix inter-domain coupling coefficients.}{}
+\nomtypeR{$\vec{W}$}{Matrix representing global inter-domain coupling coefficients.}{}
+\nomtypeR{$\vec{w}$}{Vector representing inter-domain coupling coefficients for a given NBC volume.}{}
+
+\nomtypeR{$V$}{Volume of a given continuity volume.}{$ \text{ft}^{3} $}
 \nomtypeR{$x$}{Spatial location.}{$\text{ft}$}
+\nomtypeR[A]{$A$}{Cross-sectional area.}{$ \text{ft}^{2} $}
+\nomtypeR[A]{$\tilde{A}$}{Effective cross-sectional area between two flow paths.}{$ \text{ft}^{2} $}
+
+\nomtypeR{$\don{a}_{d,j \pm \onehalf }$}{Donored quantity.}{}
+\nomtypeR{$\ave{a}_{a,j \pm \onehalf }$}{Average quantity at cell edge.}{}
+
+\nomtypeR{$R$}{Integral of nonlinear residuals.}{}
+\nomtypeR{$\tilde{R}$}{Time-averaged integral of nonlinear residuals.}{}
+\nomtypeR{$\tilde{R}_{M}$}{Time-moment integral of nonlinear residuals.}{}
+
+\nomtypeR{$q_{g,l}$}{Energy transferred between the \ncg{} field and the liquid water phase.}{$ \text{BTU}$}
+\nomtypeR{$q_{w,\phi}$}{Energy transferred between a solid structure and a fluid $\phi$.}{$\text{BTU}$}
+\nomtypeR{$q_{i,\phi}$}{Energy transferred between the saturated interface and the fluid $\phi$.}{$ \text{BTU}$}
+
 \nomtypeR{$c$}{Local speed of sound.}{$ \text{ft}\, \text{s}^{-1} $}
 \nomtypeR{$\mathcal{L}_{\infty}$}{Infinity norm of a given vector.}{}
 \nomtypeR{$\mathcal{L}_{2}$}{Euclidean norm of a given vector.}{}
@@ -63,34 +80,26 @@
 \nomtypeR{$N_{\text{lin}}$}{Number of continuity volumes in the linear domain.}{}
 \nomtypeR{$N_{\text{NBC}}$}{Set of inter-domain connection for a linear continuity volumes.}{}
 \nomtypeR{$N_{c}$}{Set of continuity volumes connected to a given flow path.}{}
-\nomtypeR{$\vec{J}$}{A given Jacobian matrix.}{}
-\nomtypeR{$\vec{K}$}{Matrix representing inter-continuity volume pressure coupling coefficients.}{}
-\nomtypeR{$\vec{C}$}{Vector of unknowns for a given continuity volume.}{}
-\nomtypeR{$\vec{r}$}{Vector of right-hand sides for a given continuity volume.}{}
-\nomtypeR{$\vec{U}$}{Upper triangular matrix from \vec{LU} decomposition of a given continuity volume.}{}
-\nomtypeR{$\vec{L}$}{Lower triangular matrix from \vec{LU} decomposition of a given continuity volume.}{}
 \nomtypeR{$S$}{Scale factor for an equation.}{}
-\nomtypeR{$\vec{A}$}{Pressure matrix.}{}
 \nomtypeR{$C_{1}$}{Coefficient in phase transition function.}{}
-\nomtypeR{$\vec{Q}$}{Matrix representing inter-domain flow rate coefficients.}{}
-\nomtypeR{$\vec{B}$}{Matrix representing global pressure matrix inter-domain coupling coefficients for the flow rates.}{}
-\nomtypeR{$\vec{W}$}{Matrix representing global inter-domain coupling coefficients.}{}
-\nomtypeR{$\vec{w}$}{Vector representing inter-domain coupling coefficients for a given NBC volume.}{}
 
-\nomtypeG{$\dtmax{}$}{Maximum timestep allowed for a simulation}{$\text{s}$}
-\nomtypeG{$\dt{}$}{Timestep between time $t^{n}$ and $t^{n+1}$ for a simulation}{$\text{s}$}
+\nomtypeR{$P$}{Pressure.}{$\text{psia}$}
+\nomtypeR{$h$}{Specific enthalpy.}{$ \text{BTU}\, \lbm{}^{-1}$}
+
+\nomtypeG{$\dtmax{}$}{Maximum timestep allowed for a simulation.}{$\text{s}$}
+\nomtypeG{$\dt{}$}{Timestep between time $t^{n}$ and $t^{n+1}$ for a simulation.}{$\text{s}$}
 \nomtypeG{$\dx{}$}{Axial length of a volume.}{$\text{ft}$}
-\nomtypeG{$\eta$}{Apportionment factor}{}
-\nomtypeG{$\Upsilon$}{Inter liquid field source or sink of mass}{$\lbm{}$}
-\nomtypeG{$\rho$}{Density}{$\lbm{} \, \text{ft}^{-3} $}
-\nomtypeG{$\Gamma$}{Inter-phase source or sink of mass}{$ \lbm{}$}
+\nomtypeG{$\eta$}{Apportionment factor for inter-phase mass transfer.}{}
+\nomtypeG{$\Upsilon$}{Inter-field field source or sink of mass.}{$\lbm{}$}
+\nomtypeG{$\rho$}{Density.}{$\lbm{} \, \text{ft}^{-3} $}
+\nomtypeG{$\Gamma$}{Inter-phase source or sink of mass.}{$ \lbm{}$}
 \nomtypeG{$\alpha$}{Volume fraction.}{}
-\nomtypeG{$\delta \vec{x}$}{Newton update vector}{}
+\nomtypeG{$\delta \vec{x}$}{Vector of updates to the independent parameters.}{}
 \nomtypeG{$\tau^{'}_{w,\phi}$}{Shear force from contact between the channel wall and fluid $\phi$.}{$\lbf{} \, \text{ft}^{-3}$}
-\nomtypeG{$\tau^{'}_{i,\phi_{1} \phi_{2}}$}{Shear force from contact between the field or phase $\phi_{1}$ and $\phi_{2}$}{$ \lbf{} \, \text{ft}^{-3} $}
-\nomtypeG{$\Gamma \vec{u}^{'}$}{Momentum transfer due to the exchange of mass between the aqueous phases}{$ \lbf{} $}
-\nomtypeG{$\Upsilon \vec{u}^{'}$}{Momentum transfer due to the exchange of mass between the two liquid fields}{$ \lbf{} \, \text{ft}^{-3} $}
-\nomtypeG{$\Gamma h^{'}_{\phi}$}{Energy transfer rate due to aqueous phase change}{$ \text{BTU} \, \text{s}^{-1} $}
+\nomtypeG{$\tau^{'}_{i,\phi_{1} \phi_{2}}$}{Shear force from contact between the field or phase $\phi_{1}$ and $\phi_{2}$.}{$ \lbf{} \, \text{ft}^{-3} $}
+\nomtypeG{$\Gamma \vec{u}^{'}$}{Momentum transfer due to the exchange of mass between the aqueous phases.}{$ \lbf{} $}
+\nomtypeG{$\Upsilon \vec{u}^{'}$}{Momentum transfer due to the exchange of mass between the two liquid fields.}{$ \lbf{} $}
+\nomtypeG{$\Gamma h^{'}_{\phi}$}{Energy transfer rate due to aqueous phase change.}{$ \text{BTU}$}
 \nomtypeG{$\vec{\Xi}$}{Matrix of coefficients that converts the momentum vector to the flow rate vector.}{}
 \nomtypeG{$\Psi$}{A given flow rate.}{}
 \nomtypeG{$\vec{\Psi}$}{Vector of flow rates.}{}
@@ -120,4 +129,3 @@
 \nomtypeS{j}{The coordinate of a particular continuity volume.}
 \nomtypeS{i}{Generic index representing a particular coordinate of a location.}
 \nomtypeS{o(i)}{Coordinate of continuity volume connected via a flow path at coordinate i.}
-

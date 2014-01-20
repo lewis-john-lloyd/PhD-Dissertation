@@ -174,17 +174,17 @@ There are four equations that represent the conservation of mass, one each for t
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:conservation_of_ncg}
-\frac{\partial \left(\alpha_g \rho_{n}\right) }{\partial t } + \nabla \cdot \left( \alpha_g \rho_{n} \vec{u}_g \right) & = & s_{m,n} \\
+\frac{\partial \left(\alpha_g \rho_{n}\right) }{\partial t } + \nabla \cdot \left( \alpha_g \rho_{n} \vec{u}_g \right) & = & \dot{s}^{'''}_{m,n} \\
 \label{eqn:conservation_of_vap}
-\frac{\partial \left(\alpha_g \rho_v \right)}{\partial t } + \nabla \cdot \left( \alpha_g \rho_v \vec{u}_g \right)         & = & \dot{\Gamma}^{'''} + s_{m,v} \\
+\frac{\partial \left(\alpha_g \rho_v \right)}{\partial t } + \nabla \cdot \left( \alpha_g \rho_v \vec{u}_g \right)         & = & \dot{\Gamma}^{'''} + \dot{s}^{'''}_{m,v} \\
 \label{eqn:conservation_of_liq}
-\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \right)         & = & -(1-\eta)\dot{\Gamma}^{'''} - \dot{\Upsilon}^{'''} + s_{m,l} \\
+\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \right)         & = & -(1-\eta)\dot{\Gamma}^{'''} - \dot{\Upsilon}^{'''} + \dot{s}^{'''}_{m,l} \\
 \label{eqn:conservation_of_ent}
-\frac{\partial \left(\alpha_e \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_e \rho_l \vec{u}_e \right)         & = & -\eta\dot{\Gamma}^{'''} + \dot{\Upsilon}^{'''}+ s_{m,e}
+\frac{\partial \left(\alpha_e \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_e \rho_l \vec{u}_e \right)         & = & -\eta\dot{\Gamma}^{'''} + \dot{\Upsilon}^{'''}+ \dot{s}^{'''}_{m,e}
 \end{IEEEeqnarray}
 
 The left-hand sides of \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:conservation_of_ent} represent the Lagrangian derivative for the given field.
-The terms on the right-hand side represent the volumetric inter-field transfer ($\dot{\Upsilon}^{'''}$), inter-phase transfer ($\dot{\Gamma}^{'''}$), and external ($s_{m,k}$) sources or sinks of mass.
+The terms on the right-hand side represent the volumetric inter-field transfer ($\dot{\Upsilon}^{'''}$), inter-phase transfer ($\dot{\Gamma}^{'''}$), and external ($\dot{s}^{'''}_{m,\phi}$) sources or sinks of mass.
 Since there are two liquid fields, the net phasic mass transfer between the water-vapor field and the liquid fields, $\dot{\Gamma}^{'''}$, is apportioned between the continuous liquid field and the entrained liquid field.
 The relationship between the phasic mass transfer terms is given by \eqref{eqn:apportionment_of_mass_transfer}, where $\eta$ is an apportionment factor. 
 
@@ -216,10 +216,10 @@ In addition to the conservation of mass equations there are conservation of ener
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:con_energy_gas}
 \frac{\partial \left( \alpha_g \rho_g h_g \right)}{\partial t } + \nabla \cdot \left(  \alpha_g \rho_g h_g \vec{u}_g \right) & =& \nonumber \\
-\dot{\Gamma}^{'''} h^{'}_v + q^{'''}_{i,v} + q^{'''}_{n,l}  + q^{'''}_{w,g} + \alpha_g\frac{\partial P}{\partial t} + s_{e,g}  & &\\
+\dot{\Gamma}^{'''} h^{'}_v + \dot{q}^{'''}_{i,v} + \dot{q}^{'''}_{n,l}  + \dot{q}^{'''}_{w,g} + \alpha_g\frac{\partial P}{\partial t} + \dot{s}^{'''}_{e,g}  & &\\
 \label{eqn:con_energy_liq}
 \frac{\partial \left( (1 - \alpha_g) \rho_l h_l \right) }{\partial t } + \nabla \cdot \left( \alpha_l \rho_l h_l \vec{u}_l \right) + \nabla \cdot \left( \alpha_e \rho_l h_l \vec{u}_e \right)& = & \nonumber \\
--\dot{\Gamma}^{'''} h^{'}_l +  q^{'''}_{i,l} - q^{'''}_{n,l}  + q^{'''}_{w,l} + (1 - \alpha_g) \frac{\partial P}{\partial t} + s_{e,l}  & &
+-\dot{\Gamma}^{'''} h^{'}_l + \dot{q}^{'''}_{i,l} - \dot{q}^{'''}_{n,l}  + \dot{q}^{'''}_{w,l} + (1 - \alpha_g) \frac{\partial P}{\partial t} + \dot{s}^{'''}_{e,l}  & &
 \end{IEEEeqnarray}
 
 The conservation of energy equations used in this work are formulated such that the conserved quantities are the phasic enthalpies, $\alpha_{\phi} \rho_{\phi} h_{\phi}$, where $\phi$ represents either either the gaseous or the liquid phase.
@@ -240,15 +240,15 @@ $\dot{\Gamma}^{'''} h^{'}_{\phi}$:
  The effective enthalpies, $h^{'}_{\phi}$, are dependent upon the mechanism of phase change.
 }
 \item{
-$q^{'''}_{i,\phi}$:
+$\dot{q}^{'''}_{i,\phi}$:
 energy transfer between the liquid and vapor fields and the saturated interface.
 }
 \item{
-$q^{'''}_{n,l}$:
+$\dot{q}^{'''}_{n,l}$:
 energy transfer between the liquid fields and the \ncgs{}.
 }
 \item{
-$q^{'''}_{w,\phi}$:
+$\dot{q}^{'''}_{w,\phi}$:
  energy transfer between the solid-structures and a given phase.
 }
 \item{
@@ -257,7 +257,7 @@ $\alpha_{\phi} \frac{\partial P}{\partial t}$:
  The liquid volume fraction is the sum of the volume fractions of the continuous and the entrained liquid fields.
 }
 \item{
-$s_{e,\phi}$:
+$\dot{s}^{'''}_{e,\phi}$:
  external source/sink of energy for a given field $\phi$.
 }
 \end{itemize}
@@ -275,13 +275,13 @@ The assumed mechanical equilibrium between the two gaseous fields enable the use
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:con_mom_liq}
 \frac{\partial \left( \alpha_l \rho_l \vec{u}_l \right )}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \vec{u}_l \right) & = & \nonumber \\
- -\alpha_l \nabla P + \alpha_l \rho_l \vec{g} - \vec{\tau}^{'}_{w,l} + \vec{\tau}^{'}_{i,gl} - (1 - \eta)\dot{\Gamma}^{'''}\vec{u}^{'} - \dot{\Upsilon}^{'''}\vec{u}^{'} + s_{p,l} & & \\
+ -\alpha_l \nabla P + \alpha_l \rho_l \vec{g} - \vec{\tau}^{'}_{w,l} + \vec{\tau}^{'}_{i,gl} - (1 - \eta)\dot{\Gamma}^{'''}\vec{u}^{'} - \dot{\Upsilon}^{'''}\vec{u}^{'} + \dot{s}^{'''}_{p,l} & & \\
 \label{eqn:con_mom_gas}
 \frac{\partial \left( \alpha_g \rho_g \vec{u}_g \right) }{\partial t } + \nabla \cdot \left( \alpha_g \rho_g \vec{u}_g \vec{u}_g \right) & = & \nonumber \\
- -\alpha_g \nabla P + \alpha_g \rho_g \vec{g} - \vec{\tau}^{'}_{w,g} - \vec{\tau}^{'}_{i,gl} - \vec{\tau}^{'}_{i,ge} + \dot{\Gamma}^{'''}\vec{u}^{'} + s_{p,g} & & \\
+ -\alpha_g \nabla P + \alpha_g \rho_g \vec{g} - \vec{\tau}^{'}_{w,g} - \vec{\tau}^{'}_{i,gl} - \vec{\tau}^{'}_{i,ge} + \dot{\Gamma}^{'''}\vec{u}^{'} + \dot{s}^{'''}_{p,g} & & \\
 \label{eqn:con_mom_ent}
 \frac{\partial \left( \alpha_e \rho_l \vec{u}_e \right) }{\partial t } + \nabla \cdot \left( \alpha_e \rho_l \vec{u}_e \vec{u}_e \right) & = & \nonumber \\
- -\alpha_e \nabla P + \alpha_e \rho_l \vec{g} - \vec{\tau}^{'}_{w,e} + \vec{\tau}^{'}_{i,ge} - \eta \dot{\Gamma}^{'''}\vec{u}^{'} + \dot{\Upsilon}^{'''}\vec{u}^{'} + s_{p,l} & &
+ -\alpha_e \nabla P + \alpha_e \rho_l \vec{g} - \vec{\tau}^{'}_{w,e} + \vec{\tau}^{'}_{i,ge} - \eta \dot{\Gamma}^{'''}\vec{u}^{'} + \dot{\Upsilon}^{'''}\vec{u}^{'} + \dot{s}^{'''}_{p,l} & &
 \end{IEEEeqnarray}
 
 The $\rho_g$ used in \eqref{eqn:con_mom_gas} is defined by \eqref{eqn:gaseous_density}.
@@ -323,7 +323,7 @@ $\dot{\Upsilon}^{'''}\vec{u}^{'}$:
  The $\vec{u}^{'}$ term depends upon the net inter-field transfer of mass.
 }
 \item{
-$s_{p,\phi}$:
+$\dot{s}^{'''}_{p,\phi}$:
  external sources/sinks of momentum for field $\phi$.
 }
 \end{itemize}
@@ -406,12 +406,12 @@ This volume integrated equation is given by \eqref{eqn:spatially_discrete_liq_m_
 The same general procedure is used for the other five scalar conservation equations.
 
 \begin{IEEEeqnarray}{lcl}
-\int_{V_j}\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } & + & \nabla \cdot \left( \alpha_l \rho_l u_l \right) \mathrm{d}V = \int_{V_j} \left(-(1-\eta)\dot{\Gamma}^{'''} - \dot{\Upsilon}^{'''} + s_{m,l}\right) \mathrm{d}V \nonumber \\
-V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\int_{V_j}\nabla \cdot \left( \alpha_l \rho_l u_l \right) \mathrm{d}V -(1-\eta_j)\dot{\Gamma}_j - \dot{\Upsilon}_j + s_{m,l,j}V_j \nonumber \\
-V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left[\alpha_l \rho_l u_l A_{m}\right]_{x_{j-\onehalf}}^{x_{j+\onehalf}} -(1-\eta_j)\dot{\Gamma}_j - \dot{\Upsilon}_j + s_{m,l,j}V_j \nonumber \\
+\int_{V_j}\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } & + & \nabla \cdot \left( \alpha_l \rho_l u_l \right) \mathrm{d}V = \int_{V_j} \left(-(1-\eta)\dot{\Gamma}^{'''} - \dot{\Upsilon}^{'''} + \dot{s}^{'''}_{m,l}\right) \mathrm{d}V \nonumber \\
+V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\int_{V_j}\nabla \cdot \left( \alpha_l \rho_l u_l \right) \mathrm{d}V -(1-\eta_j)\dot{\Gamma}_j - \dot{\Upsilon}_j + \dot{s}_{m,l,j} \nonumber \\
+V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left[\alpha_l \rho_l u_l A_{m}\right]_{x_{j-\onehalf}}^{x_{j+\onehalf}} -(1-\eta_j)\dot{\Gamma}_j - \dot{\Upsilon}_j + \dot{s}_{m,l,j} \nonumber \\
 \label{eqn:spatially_discrete_liq_m_con}
 V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left( \don{\alpha_l \rho_l}_{\text{d},j+\onehalf} u_{l,j+\onehalf} A_{m,j+\onehalf} - \don{\alpha_l \rho_l}_{\text{d},j-\onehalf} u_{l,j - \onehalf} A_{m,j - \onehalf}\right) \nonumber \\
-& & -(1-\eta)\dot{\Gamma}_j - \dot{\Upsilon}_j + s_{m,l,j}V_j
+& & -(1-\eta)\dot{\Gamma}_j - \dot{\Upsilon}_j + \dot{s}_{m,l,j}
 \end{IEEEeqnarray}
 
 For the mass-flux terms evaluated on the continuity volume edge, the advected quantity is evaluated using a 1st order upwind method \cite{Tannehill1997}.
