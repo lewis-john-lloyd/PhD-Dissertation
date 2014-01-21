@@ -18,20 +18,19 @@
 \nomtypeA{BWR}{Boiling Water Reactors}
 \nomtypeA{CFL}{Courant-Friedrichs-Lewy}
 \nomtypeA{NBC}{Nonlinear-Boundary Continuity}
-
-\nomtypeR{$L$}{Axial length of the problem.}{$ \text{ft} $}
-\nomtypeR{$M$}{Number of sections in problem.}{}
-\nomtypeR{$\tilde{a}$}{Variable $a$ averaged of a given cross-section.}{}
+\nomtypeA{PDE}{Partial Differential Equation}
+\nomtypeA{SETS}{Stability Enhancing Two-Step}
+\nomtypeA{PVM}{Parallel Virtual Machine}
 
 \nomtypeR{$w^{n+1}_{k, j}$}{Volumetric flow for phase k in \relap53d{}.}{$ \text{ft}^{3}\,\text{s}^{-1}$}
 \nomtypeR{$u^{n+1}_{k, j}$}{Flow of internal energy for phase k in \relap53d{}.}{$\text{BTU}\,\text{s}^{-1} $}
 \nomtypeR{$n^{n+1}_{g,j}$}{Flow of \ncg{} mass in \relap53d{}.}{$ \lbm{} \, \text{s}^{-1}$}
 \nomtypeR{$m^{n+1}_{k,j}$}{Flow of mass for phase k in \relap53d{}.}{$ \lbm{}\, \text{s}^{-1} $}
-
-\nomtypeR{$s_{p}$}{External source or sink of momentum.}{$ \lbf{} $}
-\nomtypeR{$s_{e}$}{Energy transferred from an external source or sink.}{$ \text{BTU} $}
-\nomtypeR{$s_{m}$}{Source or sink of mass in conversation of mass equations.}{$\lbm{} $}
-
+\nomtypeR{$s_{p}$}{Source or sink of external momentum.}{$ \lbf{} \text{s}$}
+\nomtypeR{$s_{e}$}{Source or sink of external energy.}{$ \text{BTU} $}
+\nomtypeR{$s_{m}$}{Source or sink of external mass.}{$\lbm{} $}
+\nomtypeR{$\vec{a}$}{Vector of constants from right-hand-side of momentum system.}{}
+\nomtypeR{$\vec{b}$}{Vector of pressure-update coefficients from momentum system.}{}
 \nomtypeR{$\vec{u}$}{Vector of phasic velocities for a given flow path.}{$ \text{ft}\, \text{s}^{-1}$}
 \nomtypeR{$\vec{x}$}{Vector of nine independent variables used by \cobra{}.}{}
 \nomtypeR{$\momVec{}$}{Vector of three momenta fields.}{$ \lbm{}\, \text{s}^{-1}$}
@@ -43,51 +42,65 @@
 \nomtypeR{$\vec{y}$}{Vector of conserved quantities.}{}
 \nomtypeR{$\vec{g}$}{Gravitational acceleration vector.}{$ \text{ft} \, \text{s}^{-2} $}
 \nomtypeR{$\vec{J}$}{A given Jacobian matrix.}{}
+\nomtypeR{$\vec{I}$}{Identity matrix.}{}
 \nomtypeR{$\vec{K}$}{Matrix representing inter-continuity volume pressure coupling coefficients.}{}
 \nomtypeR{$\vec{C}$}{Vector of unknowns for a given continuity volume.}{}
 \nomtypeR{$\vec{r}$}{Vector of right-hand sides for a given continuity volume.}{}
 \nomtypeR{$\vec{U}$}{Upper triangular matrix from \vec{LU} decomposition.}{}
 \nomtypeR{$\vec{L}$}{Lower triangular matrix from \vec{LU} decomposition.}{}
 \nomtypeR{$\vec{A}$}{Pressure matrix.}{}
+\nomtypeR{$\vec{res}$}{Right hand side of pressure system.}{}
 \nomtypeR{$\vec{Q}$}{Matrix representing inter-domain flow rate coefficients.}{}
 \nomtypeR{$\vec{B}$}{Matrix representing pressure matrix inter-domain coupling coefficients.}{}
+\nomtypeR{$\vec{Z}$}{Matrix representing a linear domain continuity volume's linear system.}{}
 \nomtypeR{$\vec{W}$}{Matrix representing global inter-domain coupling coefficients.}{}
 \nomtypeR{$\vec{w}$}{Vector representing inter-domain coupling coefficients for a given NBC volume.}{}
-
 \nomtypeR{$V$}{Volume of a given continuity volume.}{$ \text{ft}^{3} $}
 \nomtypeR{$x$}{Spatial location.}{$\text{ft}$}
 \nomtypeR[A]{$A$}{Cross-sectional area.}{$ \text{ft}^{2} $}
 \nomtypeR[A]{$\tilde{A}$}{Effective cross-sectional area between two flow paths.}{$ \text{ft}^{2} $}
-
-\nomtypeR{$\don{a}_{d,j \pm \onehalf }$}{Donored quantity.}{}
-\nomtypeR{$\ave{a}_{a,j \pm \onehalf }$}{Average quantity at cell edge.}{}
-
+\nomtypeR[A]{$A(t)_{r}$}{Time dependent area ratio in valve problem.}{}
+\nomtypeR{$K(t)$}{Effective time dependent loss coefficient in valve problem.}{$\lbf{}\,\text{s}\,\text{ft}^{-1}$}
+\nomtypeR{$v$}{Specific volume.}{$\text{ft}^{3} \, \lbm{}$}
+\nomtypeR{$K_{o}$}{Base loss coefficient in valve problem.}{$\lbf{}\,\text{s}\,\text{ft}^{-1}$}
+\nomtypeR{$T_{\text{CPU}}$}{CPU time taken for a simulation to run.}{$\text{s}$}
 \nomtypeR{$R$}{Integral of nonlinear residuals.}{}
 \nomtypeR{$\tilde{R}$}{Time-averaged integral of nonlinear residuals.}{}
 \nomtypeR{$\tilde{R}_{M}$}{Time-moment integral of nonlinear residuals.}{}
-
-\nomtypeR{$q_{g,l}$}{Energy transferred between the \ncg{} field and the liquid water phase.}{$ \text{BTU}$}
+\nomtypeR{$q_{n,l}$}{Energy transferred between the \ncg{} field and the liquid water phase.}{$ \text{BTU}$}
 \nomtypeR{$q_{w,\phi}$}{Energy transferred between a solid structure and a fluid $\phi$.}{$\text{BTU}$}
 \nomtypeR{$q_{i,\phi}$}{Energy transferred between the saturated interface and the fluid $\phi$.}{$ \text{BTU}$}
-
 \nomtypeR{$c$}{Local speed of sound.}{$ \text{ft}\, \text{s}^{-1} $}
 \nomtypeR{$\mathcal{L}_{\infty}$}{Infinity norm of a given vector.}{}
 \nomtypeR{$\mathcal{L}_{2}$}{Euclidean norm of a given vector.}{}
 \nomtypeR{$N_{\text{CPL}}$}{Number of \cobra{} -- \relap53d{} coupling interfaces.}{}
 \nomtypeR{$N_{f}$}{Set of flow paths connected to a given continuity volume.}{}
 \nomtypeR{$N_{s}$}{Number of stages in a multi-stage temporal integration scheme.}{}
+\nomtypeR{$N_{t}$}{Number of successful timesteps in a simulated time span.}{}
+\nomtypeR{$n_{t}$}{Number of time step refinements in timestep generation function.}{}
 \nomtypeR{$N_{n}$}{Number of inter-domain connections in the global domain.}{}
+\nomtypeR{$N_{u}$}{Number of variables in a residual or update vector.}{}
 \nomtypeR{$N_{\text{lin}}$}{Number of continuity volumes in the linear domain.}{}
+\nomtypeR{$N_{\text{nln}}$}{Number of continuity volumes in the nonlinear domain.}{}
 \nomtypeR{$N_{\text{NBC}}$}{Set of inter-domain connection for a linear continuity volumes.}{}
 \nomtypeR{$N_{c}$}{Set of continuity volumes connected to a given flow path.}{}
 \nomtypeR{$S$}{Scale factor for an equation.}{}
+\nomtypeR{$t$}{Time.}{$\text{s}$}
 \nomtypeR{$C_{1}$}{Coefficient in phase transition function.}{}
-
 \nomtypeR{$P$}{Pressure.}{$\text{psia}$}
 \nomtypeR{$h$}{Specific enthalpy.}{$ \text{BTU}\, \lbm{}^{-1}$}
+\nomtypeR{$f(x)$}{A generic function.}{}
+\nomtypeR{$r_{f}$}{Refinement factor for timestep generation function.}{}
+\nomtypeR{$\dot{m}$}{A generic momentum.}{$\lbf{}$}
+\nomtypeR{$u$}{A generic velocity.}{$\text{ft}\, \text{s}^{-1}$}
+\nomtypeR{$K_{i,\phi_1 \phi_2}$}{Effective coefficient for drag between fluids $\phi_1$ and $\phi_2$.}{$\lbf{}\,\text{s}\,\text{ft}^{-1}$}
+\nomtypeR{$K_{w,\phi}$}{Effective coefficient for drag between wall and fluid $\phi$.}{$\lbf{}\,\text{s}\,\text{ft}^{-1}$}
+\nomtypeR{$e_{p}$}{Error in calculated pressure}{$ \text{psia} $}
+\nomtypeR{$T$}{End time of simulation.}{$\text{s} $}
 
+\nomtypeG{$F_{\text{tol}}$}{Convergence tolerance with respect to the scaled residual vector.}{}
 \nomtypeG{$\dtmax{}$}{Maximum timestep allowed for a simulation.}{$\text{s}$}
-\nomtypeG{$\dt{}$}{Timestep between time $t^{n}$ and $t^{n+1}$ for a simulation.}{$\text{s}$}
+\nomtypeG{$\dt{}$}{Timestep between time $t^{n}$ and $t^{n+1}$.}{$\text{s}$}
 \nomtypeG{$\dx{}$}{Axial length of a volume.}{$\text{ft}$}
 \nomtypeG{$\eta$}{Apportionment factor for inter-phase mass transfer.}{}
 \nomtypeG{$\Upsilon$}{Inter-field field source or sink of mass.}{$\lbm{}$}
@@ -103,14 +116,18 @@
 \nomtypeG{$\vec{\Xi}$}{Matrix of coefficients that converts the momentum vector to the flow rate vector.}{}
 \nomtypeG{$\Psi$}{A given flow rate.}{}
 \nomtypeG{$\vec{\Psi}$}{Vector of flow rates.}{}
+\nomtypeG{$\Omega$}{The domain; the set of volumes that determines the domain.}{}
+\nomtypeG{$\delta_{\text{tol}}$}{Convergence tolerance with respect to the relative update vector.}{}
 
 \nomtypeT{k}{Newton iteration index.}
-\nomtypeT{n}{Time step index.}
+\nomtypeT{n}{Time index.}
+\nomtypeT{s}{Temporal integral stage index.}
 \nomtypeT{$'''$}{Per unit volume.}
 \nomtypeT{b}{The time point at which the donored quantities are evaluated in the donoring operator.}
 \nomtypeT{c}{The time point at which the donoring velocity is evaluated in the donoring operator.}
 \nomtypeT{.}{Per second, a denotation of a rate.}
 \nomtypeT{$C_{2}$}{Coefficient in phase transition function.}
+\nomtypeT{p}{Generic power.}
 
 \nomtypeS{$\phi$}{A generic field or phase depending upon context.}
 \nomtypeS{n}{Indicating the \ncg{} component of the gaseous phase.}
@@ -123,9 +140,13 @@
 \nomtypeS{e}{Relating to a continuity volume's energy equations.}
 \nomtypeS{d}{Donored quantity.}
 \nomtypeS{lin}{Relating to the linear domain or solver.}
+\nomtypeS{nln}{Relating to the nonlinear domain or solver.}
 \nomtypeS{a}{Averaged quantity.}
-\nomtypeS{s}{Stage in a temporal integration scheme.}
+\nomtypeS{r}{Relative.}
+\nomtypeS{dep}{Depleting phase.}
+\nomtypeS{car}{Carrier phase.}
 \nomtypeS{p}{Index representing a particular coordinate for a given inter-domain flow path.}
 \nomtypeS{j}{The coordinate of a particular continuity volume.}
 \nomtypeS{i}{Generic index representing a particular coordinate of a location.}
 \nomtypeS{o(i)}{Coordinate of continuity volume connected via a flow path at coordinate i.}
+\nomtypeS{s(i)}{Coordinate of continuity volume connected via a flow path at coordinate i.}

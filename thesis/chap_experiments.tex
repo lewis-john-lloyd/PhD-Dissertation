@@ -15,15 +15,15 @@ The goal of the tests, the methods used, and the models will be discussed in eac
 \label{sect:single_phase_and_flashing}
 
 Two test problems were developed to illustrate the effectiveness of the nonlinear solver, the operator-based scaling, and the convergence metric.
-
+\comment{I think I need more here.}
 
 \subsection{Model}
 \label{subsect:single_model}
-The two problem developed for these tests were thought problems with generic input conditions.
-For both of these test problems, the same computational geometry was used;  \fig{fig:exp_geometry} represents the model geometry.
+The two models developed for these tests were thought problems with generic input conditions.
+For both of these problems, the same computational geometry was used;  \fig{fig:exp_geometry} represents the model geometry.
 Each block represents a single continuity volume with a fixed \dx{} of 4 [in].
 Each continuity cell has a cross-sectional area of 4 [in$^2$].
-The red block at the top of the channel represents a boundary cell where the pressure and enthalpy are specified.
+The red block at the top of the subchannel represents a boundary cell where the pressure and enthalpy are specified.
 It represents an infinite reservoir filled with a fluid at a specified thermodynamic state.
 The red triangle represents a specified flow at the bottom edge of the first continuity volume. 
 
@@ -189,8 +189,8 @@ The same level of qualitative timestep-size invariance is achieved in the linear
 
 The timestep-size insensitive solution produced by the nonlinear solver occurs at a maximum timestep size three orders of magnitude greater than that achieved by the linear solver in \cobra{}.
 An examination of the nonlinear residual over the course of the transient provides insight into why this behavior is observed.
-For the linear runs, the scaled residuals were evaluated after the single Newton step, $\tilde{\vec{F}}(\vec{x}^{1})$.
-For the nonlinear runs, the scaled nonlinear residuals were evaluated at the end of the Newton-loop.
+For the linear runs, the scaled residuals were evaluated after the single Newton step, $\tilde{\vec{F}}^{1}$.
+For the nonlinear runs, the scaled nonlinear residuals were evaluated at the end of the Newton-loop, $\tilde{\vec{F}}^{k}$.
 The scaled residual after the single Newton step of the linear solver for flashing problem indicates that, even for small timestep sizes, the solution obtained still does not satisfy the discrete nonlinear equations, \fig{fig:flashingResidualLin}.
 This is in contrast to the nonlinear flashing problem, which shows a lower residual over the course of the simulation, \fig{fig:flashingResidualNln}.
 
@@ -215,6 +215,7 @@ The second purpose in reducing \dtmax{} is to decrease the error due to the disc
 While the reduction of the maximum timestep size in the linear solver serves the purpose of reducing the residual, the nonlinear solver performs this task naturally.
 Therefore, in the nonlinear solver the reduction of the maximum timestep size primarily serves to reduce the error from the approximate discrete temporal integral.
 
+\comment{I may remove the metric conversation in general.}
 One way to quantify the difference between the solutions is by measuring the residual convergence metrics outlined in \sect{sect:temporal_convergence}.
 These metrics provide a measure of how poorly the discrete nonlinear equations are being solved at every timestep in the transient.
 The resolution of the residual allows for a solution that is less sensitive to timestep size selection than for a solution that does not resolve the residual.
@@ -323,21 +324,21 @@ These results indicate that the domain decomposition algorithm was implemented a
 
 This problem is designed to demonstrate the ability of the domain decomposition algorithm to resolve isolated nonlinearities at a lower computational cost than the fully nonlinear solver. 
 First, the model will be discussed and initial and boundary conditions provided.
-Second, a timestep sensitivity study of the solution for both the linear and the nonlinear solver will be conducted.
+Second, the timestep sensitivity study of the solution for both the linear and the nonlinear solver will be detailed.
 Next, the portion of the domain with the nonlinearities will be isolated via the domain decomposition algorithm and another timestep sensitivity study will be conducted.
 Finally, the solution and run time data from the three methods will be compared.
 
 \subsection{Model}
 \label{subsect:valveModel}
 
-The physical system being modeled is that of four pipes.
+The system being modeled is that of four pipes.
 Each pipe is modeled as having ten continuity volumes, each with a height, $\dx{}$, of 4 [in] and a cross-sectional area, $ A_{c} $, of 16 $[\text{in}^{2}]$.
 Two pipes have a fixed obstruction, manifesting as a loss coefficients, along their lengths.
 One pipe has a complete obstruction, preventing flow.
-The last pipe has a boundary condition that imitates the behavior of a valve by using a  time dependent loss coefficient at one point.
+The last pipe has a boundary condition that imitates the behavior of a valve by using a time dependent loss coefficient.
 Initially fully open, the valve slowly closes.
 While closing, the valve stops twice at cross-sectional areas that are equivalent to the two loss coefficients of the two partially obstructed pipes.
-After fully closing, the valve returns to the first stopping point.
+After fully closing, the valve returns to its first stopping point.
 
 The pipes are initially full of subcooled liquid at 800 $[ \text{psia}] $.
 The bottom and top of the pipes are open to reservoirs.
@@ -345,13 +346,13 @@ The bottom reservoir is full of subcooled liquid with a time variant pressure.
 The pressure starts at at 802 $[ \text{psia} ] $ and increases to 818 $[ \text{psia}]$ over the first second, staying there for the duration of the problem.
 The top reservoir is full of subcooled liquid at 800 $[\text{psia} ] $.
 This pressure does not change as a function of time.
-The $\Delta P$ that exists between these two reservoirs is what drives the flow in this problem.
+The pressure difference that exists between these two reservoirs is what drives the flow in this problem.
 
 The model used in \cobra{} is a single section.
-Within that section there are four channels.
-These channels are hydrodynamically isolated from each other.
+Within that section there are four subchannels.
+These subchannels are hydrodynamically isolated from each other.
 They correspond to the four pipes.
-The two partially-obstructed pipes have user-defined loss coefficients placed 15 [in] up the pipe.
+The two partially-obstructed pipes have user-defined loss coefficients placed at an elevation of 15 [in].
 The two coefficients are 40 $[-]$ and 160 $[-]$.
 The fully-obstructed channel has a no-flow boundary condition at 15 [in].
 The fourth channel has a time dependent area ratio multiplier, $A(t)_r$, at 15 [in].
@@ -469,9 +470,9 @@ However, \tab{tab:valveNlnTable} shows that the nonlinear solver takes more CPU 
 \label{tab:valveNlnTable}
 \end{table}
 
-Given that the nonlinearities in this problem are clearly isolated in a single channel, using the domain decomposition algorithm provides an ideal test to determine if a nonlinearly converged solution can be obtained at a lower computational cost than the full nonlinear solver.
-The use of the domain decomposition algorithm in this problem is restricted to the channel with the valve.
-The other three channels are not included in the nonlinear domain.
+Given that the nonlinearities in this problem are clearly isolated in a single subchannel, using the domain decomposition algorithm provides an ideal test to determine if a nonlinearly converged solution can be obtained at a lower computational cost than the full nonlinear solver.
+The use of the domain decomposition algorithm in this problem is restricted to the subchannel with the valve.
+The other three subchannels are not included in the nonlinear domain.
 The same set of timesteps is run to collect data.
 \fig{fig:valveDom6pt25em02} shows the solution as obtained with \dtmax{} = \expneg{6.25}{2}{[s]}; the results in this figure are qualitatively indistinguishable from the results of the nonlinear solver.
 
@@ -529,7 +530,6 @@ The physical pipe is 3 [ft] tall, having a 36 [in$^{2}$] cross-sectional area an
 The pipe is initially full of saturated steam at 14.7 [psia].
 The top of the pipe is open to an infinite reservoir of saturated steam at 14.7 [psia].
 Saturated water flows into the bottom of the pipe, displacing the steam.
-\comment{It is a steam problem. No air.}
 The boundary and initial conditions are contained in \tab{tab:vmpBCIC}.
 
 \begin{table}[h!tb]
@@ -613,7 +613,7 @@ The channel in the bottom section is 1 [ft] tall and is broken into three contin
 The top section's channel is 2 [ft] tall and is broken into six continuity volumes, each 4 [in] high.
 
 First, the simulation was run with both the linear and the nonlinear solver.
-The nonlinear convergence parameters were \kmax{} = 35, $f_{tol}$ = \expneg{1.0}{6}, $d_{tol}$ = \expneg{1.0}{8}. 
+The nonlinear convergence parameters were \kmax{} = 35, $F_{tol}$ = \expneg{1.0}{6}, $\delta_{tol}$ = \expneg{1.0}{8}. 
 Each simulation was run for 75 $[ \text{s} ]$.
 The largest permissible timestep size, \dtmax{}, was chosen as \expneg{1.0}{1}{[s]}.
 The \dtmax{} was reduced several times over two orders of magnitude to determine timestep sensitivity.
@@ -739,7 +739,7 @@ This result is mirrored in the case where the top channel is in the nonlinear do
 In addition, once the water level enters the nonlinear domain, the solution is out of sync with the analytic solution.
 This discrepancy is due to the time lag introduced by the linear solver while the water level is in the linear domain.
 
-This problem highlights the impact of unresolved local nonlinearities on the global solution.
+This problem highlights the impact of unresolved nonlinearities on the global solution.
 Isolating places where the nonlinearities are present and solving those regions with the nonlinear solver allows for a global solution that more accurately solves the nonlinear equations.
 
 %============================================================================
@@ -748,8 +748,8 @@ Isolating places where the nonlinearities are present and solving those regions 
 \section{Refill Problem}
 \label{sect:refillProblem}
 
-The final test problem is meant to reflect a typical LWR scenario.
-The model is a simplified two-loop, LWR core model with upper-head safety injection that is going through the refill phase of a simulated accident scenario.
+The final test problem is meant to reflect an LWR scenario relevant to reactor safety.
+The model is a simplified two-loop, LWR core model with upper-head safety injection that is going through the refill phase of an accident scenario.
 The intent of this refill problem is to bring together the individual assertions from the previous test problems.
 In particular, if there are localized nonlinearities, then the use of the domain decomposition algorithm can produce results that are not only more accurate than those produced by the linear solver but are also less computationally expensive than those produced by the nonlinear solver.
 
@@ -761,7 +761,7 @@ The physical basis for the problem is a model of a nuclear reactor vessel.
 There are three sections in the problem.
 In the first section there is the inlet pleneum to the core and two hemispheres of the downcomer.
 The downcomers are connected to each other and the inlet plenum, as indicated by dotted lines.
-The second section contains a three subchannel representation of the reactor core.
+The second section contains a three subchannel representation of the reactor core and the two subchannel representation of the downcomer.
 One subchannel represents the inner ring of the core, which produces more steam than the outer ring.
 Another subchannel represents the outer core ring, which has a lower rate of steam production.
 And, a third represents the control rod channels, which are represented by the grey circle and have neither steam production nor hydrodynamic communication with the two core rings.
@@ -791,7 +791,7 @@ The total amount of this condensation will be of interest for this problem.
 Like previous problems, this simulation was subject to timestep sensitivity studies.
 The set of timestep sizes analyzed is is given by \eqref{eqn:timeStepAlgo}.
 For this problem, $\dt{}_{0}$, $r_{f}$, and ${n}$ were 0.02, 2.0, and 4 respectively.
-Additionally, the nonlinear convergence parameters \kmax{}, $f_{tol}$, and $d_{tol}$ were 35, \expneg{1.0}{6}, and \expneg{1.0}{8}, respectively.
+Additionally, the nonlinear convergence parameters \kmax{}, $F_{tol}$, and $\delta_{tol}$ were 35, \expneg{1.0}{6}, and \expneg{1.0}{8}, respectively.
 
 Since this model was intended to model a core refill, the parameters of interest are related to core cooling.
 The primary variable of engineering interest in this problem is the time-dependent behavior of the condensation in the region of the safety injection inlet and the maximum condensation over the course of the transient.

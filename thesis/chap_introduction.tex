@@ -9,7 +9,7 @@ In part, SARs for Light Water Reactors (LWRs) require the applicant to provide a
 This evaluation must conform with section 46 of 10CFR50, which requires the applicant to perform analyses for ``a number of postulated loss-of-coolant accidents of different sizes, locations, and other properties sufficient to provide assurance that the most severe postulated loss-of-coolant accidents are calculated" \cite{CFR10}.
 This requires designers and operators of NPPs to model the thermal-hydraulic behavior within the core of a reactor during postulated LOCAs.  
 The diverse physical conditions experienced by the reactor during postulated accidents necessitate the inclusion of a range of complex physics during safety analyses.
-Each of these physics have dedicated pieces of software that are under continual development to improve their predictive capabilities.
+Each of these physics has dedicated pieces of software that are under continual development to improve their predictive capabilities.
 The work that follows is concerned with the mathematical formulation and solution of the equations governing the thermal-hydraulic behavior within the reactor core.
 
 %-------------------------------------------------------------------------------
@@ -30,12 +30,12 @@ A brief description of these two types of software is provided below.
 
 The system analysis software has historically been used for complete plant analysis.
 These software systems have extensive collections of empirical models for pumps, valves, accumulators, etc.
-These models allows for a macroscopic model of the balance of plant and its interaction with the
+These models allows for a macroscopic description of the balance of plant and its interaction with the
 reactor core.
 The reactor core itself is normally a low-fidelity representation that operates primarily as a heat source for the balance of plant model.
-While the system software can be successfully used to model the balance of plant, more detailed physical models and hydrodynamics is required to accurately provide details of in-core behavior.
+While the system software can be successfully used to model the balance of plant, more detailed physical models and hydrodynamics ares required to accurately provide details of in-core behavior.
 
-To address the need for accurate behavior during simulated accident, software capable of modeling the dominant physics of interest within a reactor core was developed.
+To address the need for accurate simulations of accident scenarios, software capable of modeling the dominant physics of interest within a reactor core was developed.
 This is the second type of software: subchannel analysis.
 The use of subchannel analysis software stems from physical arguments about dominant flow within a LWR.
 To motivate these arguments, a brief discussion of the geometry within the nuclear reactor is presented.
@@ -65,7 +65,7 @@ Each of the methods outlined in \sect{sect:solution_techniques} has one thing in
 The advantage of the linear approximation is the reduction in computational costs; however, the accuracy of this approximation at large timestep sizes in regions of highly nonlinear physics is suspect.
 This limitation has traditionally been mitigated by restrictions placed upon the maximum permissible change in the independent parameters during a given timestep, which can in turn lead to excessively small timestep sizes.
 The benefit of an iterative solver is that the nonlinear physics are resolved at each timestep by using multiple iterations.
-In trade, the computational cost of the multiple iterations is high.
+In trade, the computational cost of those multiple iterations is high.
 This research seeks to find a balance between the competing incentives of computational cost and accuracy by creating a hybrid method, as illustrated in \fig{fig:my_diagram}.
 Specifically, if there are parts of the domain with a high degree of nonlinear physics that are spatially isolable, then the computational cost of solving the entire domain's governing equations iteratively may be unnecessary.
 Instead, by restricting the multiple iterations to only those portions of the global domain where they are necessary, the computational cost will be reduced while maintaining accuracy. 
@@ -74,7 +74,7 @@ The objectives of this research were the design, implementation, and evaluation 
 Isolation of a specified subdomain where nonlinearities are high was achieved by developing a new variant of the code coupling algorithm discussed in \sect{sect:code_coupling}.
 For this work, the subdomain to be isolated was comprised of geometric components predetermined by the user.
 Upon isolation, the coupled nonlinear subdomain was subjected to Newton's method to resolve any nonlinearities at every timestep.
-This converged solution was then communicated via coupling coefficients to the linear portion of the domain for use in finishing its single Newton step.
+This converged solution was then communicated via coupling coefficients to the remainder of the domain for use in finishing its single Newton step.
 This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling provides a route to obtaining nonlinearly-converged, timestep-size insensitive solutions for traditional two-phase flow methods with a lower computational cost than an iterative Newton method.
 This work will show that the convergence of the nonlinearities within a given subdomain allows for temporal convergence to be achieved with a lower computational cost at larger timestep sizes than those required by current methods.
-The following chapters will provide an overview of: relevant background and research, \chap{chap:background}; the work that was done to allows this research to be carried out, \chap{chap:nonlinear}; the domain decomposition algorithm, \chap{chap:domDecomposition}; and the results of numerical experiments, \chap{chap:results}.
+The following chapters will provide an overview of: relevant background material and research, \chap{chap:background}; the work that was done to allows this research to be carried out, \chap{chap:nonlinear}; the domain decomposition algorithm, \chap{chap:domDecomposition}; and the results of numerical experiments, \chap{chap:results}.

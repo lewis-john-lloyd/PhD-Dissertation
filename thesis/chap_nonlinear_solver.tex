@@ -27,7 +27,7 @@ This section will outline the different steps within a single timestep of the li
 \Loop \; Transient Loop
     \Set $t^{n+1} : = t^{n} + \dt{}$
 	\Algorithm Assemble Linear Pressure Matrix \Comment{\alg{alg:xschem}}
-   	\Solve $\vec{A}_{l} \delta \vec{P}_{l} = \vec{res}_{l}$
+   	\Solve $\vec{A}_{\text{lin}} \delta \vec{P}_{\text{lin}} = \vec{res}_{\text{lin}}$
 	\Algorithm Update Linear Variables \Comment{\alg{alg:updateVariables}}
 	\Set $n \pluseq 1$
 \EndLoop
@@ -67,7 +67,7 @@ The vector notation for the three momenta, \momVec{}, is defined by \eqref{eqn:m
 \end{equation}
 
 The terms in the momentum equations that are evaluated at their new-time values are then linearized about their old-time values.
-This includes the momenta, $\momVec{}^{n}$, and the pressure, $P^{n}$, giving \eqref{eqn:linLiqMomentumEquation} - \eqref{eqn:linEntMomentumEquation}.
+This includes the momenta, $\momVec{}^{n+1}$, and the pressure, $P^{n+1}$, giving \eqref{eqn:linLiqMomentumEquation} - \eqref{eqn:linEntMomentumEquation}.
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:linLiqMomentumEquation}
@@ -90,7 +90,7 @@ This includes the momenta, $\momVec{}^{n}$, and the pressure, $P^{n}$, giving \e
 
 The momentum equations, \eqref{eqn:linLiqMomentumEquation} - \eqref{eqn:linEntMomentumEquation}, are now linear in the unknown variables $\momVec{}^{n+1}$.
 These three equations are then simultaneously solved for the three unknown new time momenta, $\momVec{}^{n+1}$.
-The differential of the pressure gradient , $\delta \left( \nabla P \right)$, should be read as the difference between the pressure updates, $\delta P_{a} - \delta P_{b}$, for the two continuity volumes attached to this momentum flow path.
+The differential of the pressure gradient , $\delta \left( \nabla P \right)$, should be read as the difference between the pressure updates for the two continuity volumes attached to this momentum flow path.
 The $\delta P$ terms are left as unknowns, creating additional unknowns on the right-hand side of the linear system.
 The resulting system is of the form $\displaystyle \vec{A}_{j} \momVec{}_{j}^{n+1} = \vec{a}_{j} + \sum_{i\, \in \, N_{c}} \vec{b}_{j, i}\, \delta P_{i}$.
 The solution of this linear system is expressed in \eqref{eqn:momStar}.
@@ -208,7 +208,7 @@ Note that a discussion of vectors $\vec{F}_{m}$ and $\vec{F}_{c}$ will be in \se
 \end{equation}
 
 The system, \eqref{eqn:pressureUpdateSystem}, is then solved to determine the pressure updates for the whole domain.
-A loop over each continuity volume is then performed so that the pressure update can be used in solving its associated upper triangular system for the updates to the other five continuity variables in \eqref{eqn:linearUpdate}.
+A loop over each continuity volume is then performed so that the pressure update can be used in solving its associated upper-triangular system for the updates to the other five continuity variables in \eqref{eqn:linearUpdate}.
 As the loop over the continuity volume is progressing, any momentum flow path connected to the given continuity volume will have its momenta updated according to \eqref{eqn:momStar} to include the contribution from that continuity volumes' change in pressure. 
 After the continuity volume loop has been completed the $\momVec{}^{*}$ variables are assigned to $\momVec{}^{n+1}$. 
 This update loop is shown in \alg{alg:updateVariables}.
@@ -269,8 +269,8 @@ Additionally, upon verification of the proper discretization of the governing eq
 %-------------------------------------------------------------------------------
 \subsection{Active Domain Determination}
 \label{subsect:activeDomainDetermination}
-In \cobra{} the smallest geometric component that can be input is the channel.
-As mentioned in \sect{sect:geometry} channels inherit their geometric properties from the section in which they reside.
+In \cobra{} the smallest geometric component that can be input is the subchannel.
+As mentioned in \sect{sect:geometry} subchannels inherit their geometric properties from the section in which they reside.
 To create geometrically complicated problems, it is possible to enforce zero momentum in a given momentum flow path, decoupling adjacent continuity volumes by eliminating the flow paths that connect them.
 This constraint is known as a no-flow boundary condition, and it allows more complicated models to be created by isolating portions of the domain.
 If an isolated domain is not connected to an external boundary condition, then it is marked as an inactive region.
@@ -279,7 +279,7 @@ These areas of the domain do not impact the solution in the portion of the domai
 After evaluating several prototypical models, it was determined that a non-trivial portion of the domain of these problems were thermodynamically isolable.
 \fig{fig:activeDomain} shows an example of a domain with inactive regions.
 The inactive portions of the domain are marked with grey, the active with white, and the external boundary conditions with black.
-Inter-channel flow paths are marked with dashed lines.
+Inter-subchannel flow paths are marked with dashed lines.
 
 \begin{figure}[ht!]
 \centering
@@ -289,10 +289,10 @@ Inter-channel flow paths are marked with dashed lines.
 \end{figure}
 
 Originally, \cobra{} would solve the momentum and continuity equations at every defined location in the problem.
-The pressure matrix, $\vec{A}_{N\,x\,N}$, was sized based upon the number of volumes in the domain, $N$, not the number of active volumes, $N_{a}$.
-During development it was determined that those continuity volumes and momentum flow paths which were in the inactive region would be pruned from the the simulation.
+The pressure matrix, $\vec{A}$, was sized based upon the number of volumes in the domain, not the number of active volumes.
+During this work it was determined that those continuity volumes and momentum flow paths which were in the inactive region would be pruned from the the simulation.
 While the additional costs of including these volumes in the simulation have historically been acceptable, the use of an iterative solver would amplify the computational time spent in those regions to an unacceptable degree.
-Removing these inactive volumes saved computational time by precluding the evaluation of the residuals at those locations and by modifying the size of the pressure system \eqref{eqn:pressureUpdateSystem}.
+Removing these inactive volumes saved computational time by precluding the evaluation of the residuals at those locations and by modifying the size of the pressure matrix \eqref{eqn:pressureUpdateSystem}.
 Additionally, since the inactive regions of the problem are interpreted as not being part of the system being modeled, including their equations in the residual would not provide an accurate measure of convergence.
 
 To determine which areas of the domain were active and which ones were inactive, a geometry traversing routine was written.
@@ -513,7 +513,7 @@ The final row of the linear system in \eqref{eqn:nlnLUSystem} is then scaled by 
 \left[ \vec{U}^{k}_{c} \vert \left[\vec{L}^{k}_{c}\right]^{-1}\vec{K}^{k}_{c} \right] \delta \vec{C}^{k}_{c} = \left[\vec{L}^{k}_{c}\right]^{-1}\vec{r}^{k}_{c}
 \end{equation}
 
-This scaled row of \eqref{eqn:nlnLUSystem} is referred to as the pressure equation for a given continuity volume.
+This final, scaled row of \eqref{eqn:nlnLUSystem} is referred to as the pressure equation for a given continuity volume.
 The pressure equations for all continuity volumes are collated into the global pressure matrix according to the continuity volumes' ordinal.
 This pressure matrix is then inverted to solve for the pressure update for all continuity volumes.
 At this point all continuity volumes are looped over to solve their linear systems, \eqref{eqn:nlnLUSystem}, for the non-pressure portion of their update vectors, $\delta \vec{C}_{c}^{k}$.
@@ -530,9 +530,9 @@ This is necessary since the momentum equations are solved for the new-time varia
 \delta \momVec{}^{k} = \momVec{}^{n+1,k + \onehalf} + \sum_{i \, \in \, N_{c} } \frac{\partial \momVec{}^{k}}{\partial P_{i}} \delta P^{k}_{i} - \momVec{}^{n+1, k}
 \end{equation}
 
-The residuals from every volume in the active domain, both continuity and momentum, are assembled into the $\vec{F}^{k}$ vector.
-The degree to which a given solution vector, $\vec{x}^{n+1, k}$, satisfies the governing differential equation can be measured by a norm of the residual vector of the nonlinear system.
-If the exact solution for the nonlinear system were known, the residual vector would be identically $\vec{0}$; however, in practice the residual will never be identically zero.
+The residuals from every continuity volume and momentum flow path in the active domain are assembled into the $\vec{F}^{k}$ vector.
+The degree to which a given solution vector, $\vec{x}^{n+1, k}$, satisfies the governing PDEs can be measured by a norm of the residual vector of the nonlinear system.
+If the exact solution for the nonlinear system were known, the residual vector would be identically zero; however, in practice the residual will never be identically zero.
 As such it is necessary to discuss the various means by which a solution for a timestep is determined to be accurate enough.
 
 While a Newton step is being performed, the residual is being evaluated with the current solution vector, $\vec{x}^{n+1,k}$.
@@ -627,7 +627,7 @@ The dynamic behavior of the residual necessitates a method for scaling that adap
 The scaling method developed during this work is an operator-based approach.
 The governing PDEs can be viewed as a collection of operators, both linear and nonlinear, acting upon the vector of independent parameters.
 The summation of these operators must balance to zero for the nonlinear equation to be satisfied.
-The scaling factor developed uses the magnitudes of these operators to determine an absolute measure of the physics processes occurring in a given volume.
+The scaling factor developed uses the magnitudes of these operators to determine an absolute measure of the physical processes occurring in a given volume.
 This is accomplished by summing the absolute value of the different discrete operators in the governing equations.
 This scaling creates a relative measure of the nonlinear residual when compared to the magnitude of the physics involved in the process.
 
@@ -714,7 +714,7 @@ These floors are updated during the iterative process.
 An important factor in thermal-hydraulic safety analysis is the temporal convergence of the solution.
 A definition for a temporally converged solution is required.
 In theory, a temporally converged solution is one where the local truncation error due to the discrete approximation of the temporal integral is orders of magnitude below both the engineering scales of interest and precision of the physical models being used in the simulation.
-Unfortunately, the precise measurement of the error in a simulation requires that an analytic solution be available for comparison.
+Unfortunately, precise measurement of the error in a simulation requires that an analytic solution be available for comparison.
 During the simulation of physically realistic systems, there is rarely an analytic solution against which to compare.
 This situation requires a slightly different definition of a temporally converged solution --- a definition that does not depend upon accurately measuring the local truncation error.
 
@@ -723,7 +723,6 @@ While commonly used, this definition is subjective.
 Traditionally, this ``change in solution" is addressed in a very qualitative manner.
 Engineering judgment of which parameters of the solution are of interest is required.
 These parameters may include items of regulatory concern such as peak clad temperature or peak system pressure.
-Examining only engineering parameters of interest is a weakness.
 This locality means that the entire solution domain is not being considered.
 Depending upon the context in which the work is being done, the degree of ``small enough" may be nothing more than looking at a graph of the parameter of interest and using engineering judgment to say that ``those two graphs look about the same."
 In some cases, a more quantifiable measure may be used.
@@ -745,26 +744,26 @@ The natural extension of this metric to transient problems would be a temporal i
 
 \begin{equation}
 \label{eqn:metricResidualIntegral}
-R = \int_{t^{0}}^{t^{N}} ||\tilde{\vec{F}}(\tau)||_2 \,\mathrm{d} \tau
+R = \int_{t^{0}}^{t^{N_{t}}} ||\tilde{\vec{F}}(\tau)||_2 \,\mathrm{d} \tau
 \end{equation}
 
 Given the bounds of the scaled residual it was considered desirable to have a similarly scaled transient residual.
-The transient residual in \eqref{eqn:metricResidualIntegral} possesses a dependence upon the number of timesteps taken.
+The transient residual in \eqref{eqn:metricResidualIntegral} possesses a dependence upon the length of the transient.
 To remove this dependence, a temporal average was instead investigated, \eqref{eqn:metricResidualAverage}.
 
 \begin{equation}
 \label{eqn:metricResidualAverage}
-\tilde{R} = \frac{\int_{t^{0}}^{t^{N}} ||\tilde{\vec{F}}(\tau)||_2 \,\mathrm{d} \tau}{t^{N} - t^{0}}
+\tilde{R} = \frac{\int_{t^{0}}^{t^{N_{t}}} ||\tilde{\vec{F}}(\tau)||_2 \,\mathrm{d} \tau}{t^{N_{t}} - t^{0}}
 \end{equation}
 
 This metric possesses the desirable bounds $0 \leq R \leq 1$.
 Other weighted temporal integrals were considered, such as a simple moment about $t^{0}$, \eqref{eqn:metricResidualMoment}.
 The metric in \eqref{eqn:metricResidualMoment} has the disadvantage of arbitrarily setting the moment about the beginning of the transient, resulting in the end of the simulation being more important.
-Since different simulations may different transient behavior, fixing the moment arm at $t^{0}$ is too strict.
+Since different simulations may have different transient behavior, fixing the moment arm at $t^{0}$ is too strict.
 
 \begin{equation}
 \label{eqn:metricResidualMoment}
-\tilde{R}_{\text{M}} = \frac{\int_{t^{0}}^{t^{N}} \,\tau\,||\tilde{\vec{F}}(\tau)||_2 \,\mathrm{d} \tau}{\int_{t^{0}}^{t^{N}} \,\tau \,\mathrm{d} \tau}
+\tilde{R}_{\text{M}} = \frac{\int_{t^{0}}^{t^{N_{t}}} \,\tau\,||\tilde{\vec{F}}(\tau)||_2 \,\mathrm{d} \tau}{\int_{t^{0}}^{t^{N_{t}}} \,\tau \,\mathrm{d} \tau}
 \end{equation}
 
 
@@ -823,8 +822,8 @@ When multi-phase flow within \cobra{} approaches that of single-phase flow, ther
 This means that the software does not transition between the governing equations for two-phase flow and those for single-phase flow when a phase depletes.
 Even during simulated single-phase flow, the non-dominant phase is still present, but it is at a small volume fraction.
 However, since the \ncgs{} and the vapor fields share a common volume fraction, the partial pressure of the \ncgs{} is allowed to go to zero. 
-Since \cobra{} incorporates two liquid fields, the lower limit for the aggregate liquid volume fraction, $\alpha_e + \alpha_l$, is equally divided between the two liquid fields.
-As a phase approaches depletion, $\alpha_k \rightarrow \alpha_{k,\text{min}}$, or starts to appear, several physical limits are imposed upon the depleted phase.
+Since \cobra{} incorporates two liquid fields, the lower limit for the aggregate liquid volume fraction, $\alpha_e + \alpha_l$, is divided equally between the two liquid fields.
+As a phase approaches depletion, $\alpha_{\phi} \rightarrow \alpha_{\phi,\text{min}}$, or starts to appear, several physical limits are imposed upon the depleted phase.
 
 First, the velocity of the depleting phase is required to approach that of the carrier phase.
 The following list shows how the velocities are required to behave as their respective volume fractions approach zero.
@@ -854,7 +853,7 @@ Compare the old-time velocity, as defined by \eqref{eqn:oldTimeVelocity}, with t
 
 \begin{equation}
 \label{eqn:oldTimeVelocity}
-u^{n}_{\phi, j \pm \onehalf} = \frac{\dot{m}^{n}_{\phi, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha_{\phi} \rho_{\phi}}^{n}_{\text{a}, j \pm \onehalf}} 
+u^{n}_{\phi, i} = \frac{\dot{m}^{n}_{\phi, i}}{A_{m, i} \ave{\alpha_{\phi} \rho_{\phi}}^{n}_{\text{a}, i}} 
 \end{equation}
 
 Since the new-time velocity is what is forced to be equal by the interfacial drag, at the beginning of the next timestep, the old-time velocity is not equal to the new-time velocity at the end of the previous timestep.
@@ -862,17 +861,17 @@ The discrepancy in the definition of the velocities, \eqref{eqn:compareVelocitie
 
 \begin{equation}
 \label{eqn:compareVelocities}
-\frac{\dot{m}^{n+1}_{\phi, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha_{\phi} \rho_{\phi}}^{n}_{\text{a}, j \pm \onehalf}} \neq \frac{\dot{m}^{n+1}_{\phi, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha_{\phi} \rho_{\phi}}^{n+1}_{\text{a}, j \pm \onehalf}}
+\frac{\dot{m}^{n+1}_{\phi, i}}{A_{m, i} \ave{\alpha_{\phi} \rho_{\phi}}^{n}_{\text{a}, i}} \neq \frac{\dot{m}^{n+1}_{\phi, i}}{A_{m, i} \ave{\alpha_{\phi} \rho_{\phi}}^{n+1}_{\text{a}, i}}
 \end{equation}
 
 For the linear solver, this was acceptable; however, the iterative nature of the nonlinear solver exacerbated this problem.
 This created a situation where multiple Newton steps might have been required to drive the new-time relative velocity to zero even though the previous timestep's new-time relative velocity was zero.
-To remove this problem, if the new-time relative velocity of the previous timestep is below a certain threshold, $u_{r, min}$, then the momentum of the depleted phase, $\dot{m}_{d}$, is relinearized so that the new-time relative velocity is zero.
-The linearization point is equal to the carrier momentum, $\dot{m}_{c}$ multiplied by the ratio depleted phase's to the carrier phase's macroscopic densities, \eqref{eqn:velRelinearization}.
+To remove this problem, if the new-time relative velocity of the previous timestep is below a certain threshold, $u_{r, min}$, then the momentum of the depleted phase, $\dot{m}_{\text{dep}}$, is relinearized so that the new-time relative velocity is zero.
+The linearization point is equal to the carrier phase momentum, $\dot{m}_{\text{car}}$, multiplied by the ratio of the depleted phase's to the carrier phase's macroscopic densities, \eqref{eqn:velRelinearization}.
 
 \begin{equation}
 \label{eqn:velRelinearization}
-\dot{m}^{n+1}_{d, j \pm \onehalf} = \dot{m}^{n+1}_{c, j \pm \onehalf} \frac{\ave{\alpha_{d} \rho_{d}}^{n+1}_{\text{a}, j \pm \onehalf}}{\ave{\alpha_{c} \rho_{c}}^{n+1}_{\text{a}, j \pm \onehalf}}
+\dot{m}^{n+1}_{\text{dep}, i} = \dot{m}^{n+1}_{\text{car}, i} \frac{\ave{\alpha_{\text{dep}} \rho_{\text{dep}}}^{n+1}_{\text{a}, i}}{\ave{\alpha_{\text{car}} \rho_{\text{car}}}^{n+1}_{\text{a}, i}}
 \end{equation}
 
 The second restriction is placed upon the thermodynamic state of the depleting phase.
@@ -913,7 +912,7 @@ The constrained thermodynamic parameters and the limits imposed upon their per-t
 These three limits are an attempt to mitigate an initial guess that may be outside of the Newton step's radius of convergence.
 If any of the above limits are exceeded, the timestep is considered a failure and is repeated with a smaller timestep size.
 
-To determine the \dt{} at each timestep \cobra{} uses an adaptive timestep selection algorithm.
+An adaptive timestep selection algorithm determines the \dt{} at each timestep.
 This algorithm utilizes the maximum permissible timestep calculated from the material Courant limit, $\dtcrnt{}$.
 The \dt{} for any timestep is given by \eqref{eqn:time_step}.
 
