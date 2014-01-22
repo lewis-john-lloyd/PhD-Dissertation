@@ -1,19 +1,22 @@
 \chapter{Numerical Results}
 \label{chap:results}
 
-A total of six test problems were developed for evaluating the nonlinear solver, the operator-based scaling, the convergence metric, the implementation of the domain decomposition algorithm, and the efficacy of the selective nonlinear refinement.
-Two of these problems were developed to evaluate the nonlinear solver, the operator-based scale factor, and the temporal convergence metric.
-A third problem with extensive geometric complexity was used to evaluate the correct implementation of the domain decomposition algorithm.
-The fourth problem was designed to show that the selective nonlinear refinement can produce the nonlinear solver's solution with less computational effort.
-The fifth problem shows that by resolving local nonlinearities, the global solution more accurately reflected the correct solution.
-And, the last problem is a simple model of a core refill event.
-This problem shows that use of the domain decomposition algorithm can obtain results that are more reflective of the nonlinear solver, with less computational time.
+There were a total of six test problems developed for this work.
+Two of these problems evaluated the implementation and the efficacy of the nonlinear solver.
+A third problem with extensive geometric complexity was designed to evaluate the implementation of the domain decomposition algorithm.
+The fourth problem demonstrated that the selective nonlinear refinement can produce the nonlinear solver's solution with less computational effort.
+The fifth problem showed the impact of spatially isolable nonlinearities upon solution in the remainder of the problem domain.
+And, the last problem simulated a physically relevant situation to reactor safety.
+This problem showed that use of the domain decomposition algorithm can obtain results that are more reflective of the nonlinear solver, with less computational time.
 The goal of the tests, the methods used, and the models will be discussed in each section.
 
 \section{Single-Phase Flow and Flashing Problems}
 \label{sect:single_phase_and_flashing}
 
-Two test problems were developed to illustrate the effectiveness of the nonlinear solver, the operator-based scaling, and the convergence metric.
+The two problems in this section were developed to evaluate the implementation and the efficacy of the nonlinear solver.
+The first problem discussed demonstrated that the nonlinear solver reproduces the linear solution in the absence of strong nonlinearities.
+The second problem illustrated that the use of the nonlinear solver on a problem with strong nonlinearities produces a solution that is more temporally consistent than that produced with the linear solver.
+Additionally, this second problem demonstrated that temporal convergence using the linear solver may be misleading.
 
 \subsection{Model}
 \label{subsect:single_model}
@@ -92,7 +95,7 @@ Both problems adjust their initial pressure distribution to account for hydrosta
 \subsection{Results}
 \label{subsect:single_results}
 
-The two models described above were subjcted to to timestep-sensitivity studies.
+The two models described above were subjected to to timestep-sensitivity studies.
 An automated procedure was used to conduct the timestep sensitivity study.
 Given an initial \dtmax{}, $\dt{}_{0}$, a refinement factor, $r_{f}$, and the number of timestep size refinements to be taken, $n_{t}$, the simulation was run with both the linear solver and the nonlinear solver for each \dtmax{} in the set, calculated according to \eqref{eqn:timeStepAlgo}.
 
