@@ -443,7 +443,7 @@ The steps in this algorithm will be detailed in the following section.
 \label{alg:domDecompAlgorithm}
 \end{algo}
 
-First, the nonlinear domain decomposition input file described in \sect{subsect:domDecompInputFile} is parsed to determine to which domain each channel belongs.
+First, the nonlinear domain decomposition input file described in \sect{subsect:domDecompInputFile} is parsed to determine to which domain each subchannel belongs.
 Second, each continuity volume is designated as either a \classname{baseVolume} or an \classname{nbcVolume}.
 Then the \classname{solver} objects are instantiated according to the \cobra{} input file.
 Lastly, after the input processing and state initialization, the temporal integration loop begins.
@@ -550,10 +550,10 @@ Upon termination of the Newton loop, the linear domain's variables are updated.
 Since the domain decomposition algorithm uses the nonlinear solver, the nonlinear convergence tolerances and the iteration limit are input as described in \sect{subsect:nlnCobraInputFile}.
 These parameters only apply to the nonlinear domain.
 Additional information is appended to the end of the basic nonlinear input file to activate the domain decomposition algorithm.
-The nonlinear solver input file needs to have the IDs of the channels that are going to be subjected to additional Newtons steps specified.
+The nonlinear solver input file needs to have the IDs of the subchannels that are going to be subjected to additional Newtons steps specified.
 The presence of the character string ``\classname{'begin-nln-channels'}'' after the nonlinear input signals that there will be two domains.
-After that string, the IDs of the channels are listed, one per line, in no particular order.
-Once all channels to be in the nonlinear domain have been listed, the character string ``\classname{'end-nln-channels'}'' needs to be on a separate line.
+After that string, the IDs of the subchannels are listed, one per line, in no particular order.
+Once all subchannels to be in the nonlinear domain have been listed, the character string ``\classname{'end-nln-channels'}'' needs to be on a separate line.
 The following is an example of the dual domain input segment of the ``\classname{nwt.cob}'' input file.
 
 {
@@ -569,8 +569,8 @@ The following is an example of the dual domain input segment of the ``\classname
 \end{verbatim}
 }
 
-In the above example, <chanID\_N> is the channel ID that will be included in the nonlinear domain.
+In the above example, <chanID\_N> is the subchannel ID that will be included in the nonlinear domain.
 The input processing routine has extensive error checking and user feedback for proper formatting of this input.
-Note that there is no requirement that the channels specified to be in the nonlinear domain form a contiguous domain.
+Note that there is no requirement that the subchannels specified to be in the nonlinear domain form a contiguous domain.
 
 

@@ -26,7 +26,7 @@ The boundaries of the continuity volumes align with the center of the momentum f
 \label{fig:staggered_mesh}
 \end{figure}
 
-The geometric modeling framework in this work involves two primary components: sections and channels.
+The geometric modeling framework in this work involves two primary components: sections and subchannels.
 The total axial height of the problem is divided into sections.
 Each section is defined by two bounding elevations and a spatial discretization of that span into discrete non-overlapping axial segments that represent the axial spacing of the continuity volumes.
 The total number of continuity volumes in a given subchannel is one less than the number of momentum flow paths in that subchannel.
@@ -280,7 +280,7 @@ gravity body force acting upon field $\phi$.
 }
 \item{
 $\vec{\tau}^{'}_{w,\phi}$:
- shear forces from contact between field $\phi$ and the channel walls. 
+ shear forces from contact between field $\phi$ and the subchannel walls. 
 }
 \item{
 $\vec{\tau}^{'}_{i,\phi_1\,\phi_2}$:
@@ -342,7 +342,7 @@ As such, methods need to be selected to approximate the spatial, temporal, and n
 In the thermal-hydraulic safety analysis methods of interest the governing equation are discretized using the finite-volume method \cite{LeVeque2002}.
 The discussion that follows is specific to \cobra{}, but other safety analysis software use similar procedures \cite{RELAP,TRACE}.
 
-The labeling scheme for the finite volumes is shown in \fig{fig:vertical_pipe_with_cells}, which is a segment of a channel.
+The labeling scheme for the finite volumes is shown in \fig{fig:vertical_pipe_with_cells}, which is a segment of a subchannel.
 Two momentum flow paths, $j + \onehalf $ and $j - \onehalf$, spatially overlap a continuity volume, $j$.
 Variables are indexed by the mesh on which their conservation equations are defined.
 For example, the velocity $u_{j - \onehalf}$ would be spatially located at center of the momentum path $j - \onehalf $ and at the boundary between the continuity volumes $j$ and $j-1$.
@@ -365,7 +365,7 @@ The assumption in these integrals is that the value of the conserved quantities 
 \label{fig:constant_value}
 \end{figure}
 
-Within a channel, a given continuity volume of length $\Delta x $ has a constant cross-sectional area, $A_{c}$, over its length.
+Within a subchannel, a given continuity volume of length $\Delta x $ has a constant cross-sectional area, $A_{c}$, over its length.
 The cross-sectional area of the boundary between two continuity volumes is given by the cross-sectional area of the momentum path at that boundary, $A_{m}$.
 
 \begin{figure}[ht!]
