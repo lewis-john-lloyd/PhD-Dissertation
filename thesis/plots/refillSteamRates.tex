@@ -1,0 +1,48 @@
+% This file was created by matlab2tikz v0.4.3.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+\tikzsetnextfilename{plots/refillSteamRates_pdf}
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=\mytikzpicwidth,
+height=\mytikzpicheight,
+scale only axis,
+xmin=0,
+xmax=150,
+xlabel={Time $[\text{s}]$},
+ymin=0,
+ymax=5,
+ylabel={Steam Generation Rate $[ \frac{\lbm{}}{\text{s}} ]$},
+legend style={at={(0.97,0.97)},anchor=north east,draw=black,fill=white,legend cell align=left}
+]
+\addplot [
+color=black,
+solid,
+domain=24:25
+]{1.67*(x - 24.0)};
+\addlegendentry{Inner Ring};
+
+\addplot [
+color=gray,
+dashdotted,
+domain=24:25
+]{3.33*(x - 24.0)};
+\addlegendentry{Outer Ring};
+
+\addplot [
+color=black,
+solid,
+domain=25:125
+]{1.67*(1.0 - (x - 25.0)/(100.0))};
+
+
+\addplot [
+color=gray,
+dashdotted,
+domain=25:125
+]{3.33*(1.0 - (x - 25.0)/(100.0))};
+
+\end{axis}
+\end{tikzpicture}%

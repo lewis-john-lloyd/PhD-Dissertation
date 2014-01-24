@@ -305,7 +305,7 @@ A special version of \cobra{} was compiled that produced the variables of intere
 There were 256 different simulations run: one where the entire domain is linear, one where the entire domain is nonlinear solver, and 254 where a random number of random subchannels are nonlinear.
 This collection is a representative subset of the $2^{18}$ possible decompositions.
 For each of these simulations, the pressure at two locations were recorded: the pressures near the top and near the bottom of the upper left corner subchannel of \fig{fig:channel_layout} were chosen.
-The differences between these pressures and those produced by the linear solver were squared and integrated over the course of the transient.
+The differences at each in point in between these pressures and those produced by the linear solver were summed over the course of the transient.
 The bar graph in \fig{fig:complexBar} shows the distribution of these error integrals at both the top and bottom of the subchannel.
 
 \begin{figure}[h!tb]
@@ -749,8 +749,8 @@ Isolating places where the nonlinearities are present and solving those regions 
 \section{Refill Problem}
 \label{sect:refillProblem}
 
-The final test problem is meant to reflect an LWR scenario relevant to reactor safety.
-The model is a simplified two-loop, LWR core model with upper-head safety injection that is going through the refill phase of an accident scenario.
+The final test problem is meant to reflect a scenario relevant to LWR safety.
+The model is a simplified BWR core model with upper-head safety injection that is going through the refill phase of an accident scenario.
 The intent of this refill problem is to bring together the individual assertions from the previous test problems.
 In particular, if there are localized nonlinearities, then the use of the domain decomposition algorithm can produce results that are not only more accurate than those produced by the linear solver but are also less computationally expensive than those produced by the nonlinear solver.
 
@@ -758,12 +758,12 @@ In particular, if there are localized nonlinearities, then the use of the domain
 \label{sect:refillModel}
 
 The physical basis for the problem is a model of a nuclear reactor vessel.
-\fig{fig:refillModel} contains a schematic of the discrete representation of this problem.
+\fig{fig:refillModel} contains a cross-sectional schematic of the discrete representation of this problem.
 There are three sections in the problem.
-In the first section there is the inlet pleneum to the core and two hemispheres of the downcomer.
+In the first section there is the inlet plenum to the core and two hemispheres of the downcomer.
 The downcomers are connected to each other and the inlet plenum, as indicated by dotted lines.
-The second section contains a three subchannel representation of the reactor core and the two subchannel representation of the downcomer.
-One subchannel represents the inner ring of the core, which produces more steam than the outer ring.
+The second section contains a three subchannel representation of the reactor core, a subchannel representing the water reflector at the outer edge of the core, and the two subchannel representation of the downcomer.
+One of the core subchannels represents the inner ring of the core.
 Another subchannel represents the outer core ring, which has a lower rate of steam production.
 And, a third represents the control rod subchannels, which are represented by the grey circle and have neither steam production nor hydrodynamic communication with the two core rings.
 There is no hydrodynamic communication between the core subchannels and the two downcomer subchannels, as indicated by solid lines.
@@ -783,7 +783,23 @@ Of note, this model does not have solid fuel structures to produce heat in the r
 The fuel rods were omitted from this work because the evaluation of the impact of the nonlinear solver on wall heat is beyond the scope of this work.
 To simulate the presence of the fuel rods, a mass source produces steam within the reactor core.
 This source is located in the outer core ring near the top of the middle section.
+
+\begin{figure}[h!tb]
+\centering
+\input{plots/refillSteamRates}
+\caption{Refill problem steam generation rates.}
+\label{fig:refillSteamRates}
+\end{figure}
+
 This steam rises into the upper head and condensation will be caused by the safety injection inlet flow.
+
+\begin{figure}[h!tb]
+\centering
+\input{plots/refillSafetyInjection}
+\caption{Refill problem safety injection rates.}
+\label{fig:refillSafetyInjection}
+\end{figure}
+
 The total amount of this condensation will be of interest for this problem.
 
 \subsection{Results}

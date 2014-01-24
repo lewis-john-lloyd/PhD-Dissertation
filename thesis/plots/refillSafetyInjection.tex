@@ -1,0 +1,34 @@
+% This file was created by matlab2tikz v0.4.3.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+\tikzsetnextfilename{plots/refillSafetyInjection_pdf}
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=\mytikzpicwidth,
+height=\mytikzpicheight,
+scale only axis,
+xmin=0,
+xmax=150,
+xlabel={Time $[\text{s}]$},
+ymin=0,
+ymax=40,
+ylabel={Flow Rate $[ \frac{\lbm{}}{\text{s}} ]$},
+legend style={at={(0.97,0.05)},anchor=south east,draw=black,fill=white,legend cell align=left}
+]
+\addplot [
+color=black,
+solid,
+domain=20:20.5
+]{35.0*(20.5-x)/(0.5)};
+\addlegendentry{Flow Rate $[\frac{\lbm{}}{\text{s}}]$};
+
+\addplot [
+color=black,
+solid,
+domain=20.5:150.0
+]{35.0};
+
+\end{axis}
+\end{tikzpicture}%
