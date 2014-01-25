@@ -1,16 +1,9 @@
-\chapter{Concluding Remarks}
+\chapter{Summary of Findings}
 \label{chap:end}
-This dissertation has focused on developing a novel method to solve the nonlinear PDEs associated with thermal-hydraulic safety analysis software.
-The two-fluid, three-field software \cobra{} was converted from a linearized semi-implicit solver to a nonlinearly convergent solver.
-An operator-based scaling that provides a physically meaningful convergence measure was developed and implemented.
-The nonlinear solver produced results that were qualitatively different than those obtained from the linear solver for the problem with nonlinearities.
-Tests indicated that a timestep-size insensitive solution obtained with the linear solver may not be nonlinearly converged.
-It was shown that the nonlinear solver produces results that are indistinguishable from those produced by the legacy solver for the single-phase problem, which has relatively mild nonlinearities.
 %A metric to quantify the nonlinear convergence of a timestep-size insensitive simulation was developed and implemented.
 
-\section{Summary of Findings}
-\label{sect:end:summary}
-Traditional methods used in thermal-hydraulic safety analysis software solving large systems of nonlinear equations.
+This dissertation has focused on developing a novel method for solving the nonlinear PDEs associated with thermal-hydraulic safety analysis software.
+Traditional methods used in thermal-hydraulic safety analysis software involve solving large systems of nonlinear equations.
 Some methods resolve those nonlinearities by using some form of iterative nonlinear refinement technique.
 Other methods linearize the nonlinear equations and attempt to control the nonlinear truncation error through the use of timestep size refinement.
 The insensitivity of the solution to timestep refinement is taken as an indicator of a converged solution. 
@@ -21,14 +14,14 @@ However, the application of a nonlinear solver can incur excessive computational
 These two paradigms have stood at the opposite ends of a spectrum, while the middle ground has yet to be investigated.
 This research has developed a means of providing a middle ground, a spatially-selective, nonlinear refinement algorithm.
 
-During the course of this work, a nonlinear semi-implicit thermal-hydraulic safety analysis software program was developed.
-As part of that development, an operator-based scale factor for the nonlinear residuals was developed.
-The operator-based approach allows for residual scaling that eliminate inherent bias due to the order of magnitude of the terms in the equations; as such, this localized scale factor normalizes its residual equation to between zero and one.
+During the course of this work, the two-fluid, three-field software \cobra{} was converted from a linearized semi-implicit solver to a nonlinearly convergent solver.
+As part of that development, an operator-based scaling that provides a physically meaningful convergence measure was developed and implemented.
+This operator-based approach allows for residual scaling that eliminate inherent bias due to the order of magnitude of the terms in the equations; as such, this localized scale factor normalizes its residual equation to between zero and one.
 The use of this scale factor is integral to the effective use of the nonlinear solver in subsequent analysis.
 
 The nonlinear solver utilizing the operator-based scale factor was used to evaluate the roles of nonlinearities in temporal convergence.
 Two problem were used to determine the impact of nonlinearities upon the efficacy of the linear and the nonlinear solver.
-It was found that not resolving the nonlinearities present in a simulation may result in situations where that timestep-size insensitivity is an artifact brought about degraded order of temporal accuracy caused by linearizing the discrete equations.
+It was found that not resolving the nonlinearities present in a simulation may result in situations where that timestep-size insensitivity is an artifact brought about degraded order of temporal accuracy caused by linearizing the discrete nonlinear equations.
 Resolving the nonlinearities at every timestep not only provided a more consistent solution during temporal convergence studies, but also allowed for convergence to a different solution than that obtained by taking only a single Newton step during each timestep.
 However, in simulations where nonlinearities were expected to be low, it was found that the linear solver provided as accurate a solution as that produced by the nonlinear solver.
 

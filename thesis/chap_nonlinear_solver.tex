@@ -92,7 +92,7 @@ The momentum equations, \eqref{eqn:linLiqMomentumEquation} - \eqref{eqn:linEntMo
 These three equations are then simultaneously solved for the three unknown new time momenta, $\momVec{}^{n+1}$.
 The differential of the pressure gradient , $\delta \left( \nabla P \right)$, should be read as the difference between the pressure updates for the two continuity volumes attached to this momentum flow path.
 The $\delta P$ terms are left as unknowns, creating additional unknowns on the right-hand side of the linear system.
-The resulting system is of the form $\displaystyle \vec{A}_{j} \momVec{}_{j}^{n+1} = \vec{a}_{j} + \sum_{i\, \in \, N_{c}} \vec{b}_{j, i}\, \delta P_{i}$.
+The resulting system is of the form $\displaystyle \vec{J}_{p,j} \momVec{}_{j}^{n+1} = \vec{a}_{j} + \sum_{i\, \in \, N_{c}} \vec{b}_{j, i}\, \delta P_{i}$.
 The solution of this linear system is expressed in \eqref{eqn:momStar}.
 
 \begin{equation}
@@ -132,7 +132,7 @@ The use of \eqref{eqn:momStar} in defining the new-time velocities introduces in
 
 \begin{equation}
 \label{eqn:linSystem}
-\underbrace{\left[\vec{Z}_{c}\right]}_{\left[6\, \text{x}\, 6 + N_{f}\right]} \delta \vec{C}_{c} = \vec{r}_{c}
+\vec{Z}_{c}\, \delta \vec{C}_{c} = \vec{r}_{c}
 \end{equation}
 
 With the addition of the unknown pressure updates from the connected flow paths, $\delta P_{o(i)}$,  the six linearized continuity equations now form the linear system \eqref{eqn:linSystem}.
@@ -176,16 +176,16 @@ The last row of each continuity volume's \eqref{eqn:linSystem} is then formed in
 The two loops, one over the momentum flow paths and one over the continuity volumes, form a single group of operations that act upon a given domain.
 This grouping will be known hereafter as assembling the pressure matrix for a given domain.
 \alg{alg:xschem} shows the two loops and their associated actions.
-Note that a discussion of vectors $\vec{F}_{m}$ and $\vec{F}_{c}$ will be in \sect{subsect:nlnCobraAlgo}, and one of vectors $\vec{S}_{m}$ and $\vec{S}_{c}$ will be in \sect{sect:nlnScaling}.
+Note that a discussion of vectors $\vec{F}_{p}$ and $\vec{F}_{p}$ will be in \sect{subsect:nlnCobraAlgo}, and one of vectors $\vec{S}_{p}$ and $\vec{S}_{c}$ will be in \sect{sect:nlnScaling}.
 
 \begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
 \begin{algorithmic}[1]
 \Loop \; Momentum Flow Paths
-	\Calculate $\vec{J}_{m, j}$, $\vec{a}_{j}$, and $\vec{b}_{j}$
+	\Calculate $\vec{J}_{p, j}$, $\vec{a}_{j}$, and $\vec{b}_{j}$
 	\Calculate $\momVec{}^{*}$ and $\frac{\partial \momVec{}}{\partial P}$
-	\Calculate $\vec{F}_{m, j}$	
-	\Calculate $\vec{S}_{m, j}$	
+	\Calculate $\vec{F}_{p, j}$	
+	\Calculate $\vec{S}_{p, j}$	
 \EndLoop
 \Loop \; Continuity Volumes
    	\Calculate $\vec{Z}_{c,j}$ and $\vec{r}_{c, j}$
