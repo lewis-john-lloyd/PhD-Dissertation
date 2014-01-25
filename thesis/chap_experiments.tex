@@ -369,22 +369,14 @@ K(t) = \frac{K_{o}}{{A(t)_r}^2}
 
 The base loss coefficient, $K_o$, for subchannel four is 10 [-].
 Using \eqref{eqn:valveLossCoefficient}, the equivalent area ratios for the loss coefficients of the two partially obstructed pipes, 40 [-] and 160 [-], are 0.5 and 0.25 respectively.
-The time dependent area ratio multiplier for subchannel four is given by \eqref{eqn:valveTransLoss}.
+The time dependent area ratio multiplier for subchannel four is shown in \fig{fig:valveTransientArea}.
 
-\begin{equation}
-\label{eqn:valveTransLoss}
-A(t)_{r} = \left\{
-\begin{array}{cclrcll}
- 1.0 & [-] & , & & t & \leq 3 & [\text{s}] \\
- 1.0 - 0.5 \left( t - 3\right) & [-] & , & 3\; [\text{s}] < & t & \leq 4 & [\text{s}] \\
- 0.5 & [-] & , & 4\; [\text{s}] < & t & \leq 7 & [\text{s}] \\
- 0.5 - 0.25 \left( t - 7\right) & [-] & , &  7\; [\text{s}] < & t & \leq 8 & [\text{s}] \\
- 0.25 & [-] & , & 8\; [\text{s}] < & t & \leq 11 & [\text{s}] \\
- 0.25 - 0.25 \left( t - 11\right) & [-] & , & 11\; [\text{s}] < & t & \leq 12 & [\text{s}] \\
- 0 & [-] & , & 12\; [\text{s}] < & t & \leq 15 & [\text{s}] \\
- 0.5 \left( t - 15\right) & [-] & , & & t & > 16 & [\text{s}]
-\end{array}\right.
-\end{equation}
+\begin{figure}[h!tb]
+\centering
+\input{plots/valveTransientArea}
+\caption{Transient area ratio for vale-type problem.}
+\label{fig:valveTransientArea}
+\end{figure}
 
 The simulation is run to an end time of 19 seconds.
 The functional form of the transient area boundary condition was chosen so that the solution of the transient area pipe would mimic each of the three other pipes for portions of the transient.
@@ -757,18 +749,23 @@ In particular, if there are localized nonlinearities, then the use of the domain
 \subsection{Model}
 \label{sect:refillModel}
 
-The physical basis for the problem is a model of a nuclear reactor vessel.
+This problem is a model of a generic BWR nuclear reactor vessel.
 \fig{fig:refillModel} contains a cross-sectional schematic of the discrete representation of this problem.
 There are three sections in the problem.
 In the first section there is the inlet plenum to the core and two hemispheres of the downcomer.
 The downcomers are connected to each other and the inlet plenum, as indicated by dotted lines.
-The second section contains a three subchannel representation of the reactor core, a subchannel representing the water reflector at the outer edge of the core, and the two subchannel representation of the downcomer.
-One of the core subchannels represents the inner ring of the core.
-Another subchannel represents the outer core ring, which has a lower rate of steam production.
-And, a third represents the control rod subchannels, which are represented by the grey circle and have neither steam production nor hydrodynamic communication with the two core rings.
-There is no hydrodynamic communication between the core subchannels and the two downcomer subchannels, as indicated by solid lines.
+The second section contains a three-subchannel representation of the reactor core, a subchannel representing the water buffer at the outer edge of the core, and the two subchannel representation of the downcomer.
+One of the core subchannels represents the inner ring of the core, denoted by point C.
+Another subchannel represents the outer core ring, marked by point D.
+And, a third represents the control rod subchannels.
+This subchannel is straddling the two core rings.
+Each of the core subchannels is hydrodynamically isolated from the other other core subchannels, indicated by the solid black lines.
+There is no hydrodynamic communication between the core subchannels and the two downcomer subchannels, once again indicated by the solid black lines.
 The third section represents the upper head of the reactor.
 In this model, there are transverse flow paths between all adjacent subchannels in the upper head.
+However, the transverse flow paths connecting the two water buffer subchannels to the two downcomer subchannels are modeled by a specialized set of PDEs meant to represent leakages paths.
+These equations have are a simplified physical model and use a homogeneous-flow assumption.
+The use of the leakage path models to represent the connections between the water buffer subchannels and the downcomer subchannels allows for a pressure differential to exist between the upper head of the core and the top of the downcomer.
 In the third section there is also a safety injection inlet at point B, and a pressure connection to containment at point A.
 
 \begin{figure}[h!tb]
@@ -778,11 +775,17 @@ In the third section there is also a safety injection inlet at point B, and a pr
 \label{fig:refillModel}
 \end{figure}
 
-The lower plenum and the bottom of the downcomer in section one are initially full of saturated water while both the core region in section two and the upper head in section three are full of saturated steam.
+The lower plenum and the bottom of the downcomer in section one are initially full of saturated water.
+The downcomer in sections two and three, however, have a mixture of saturated steam and a \ncg{} mixture representing air.
+The mole fraction of the \ncg{} in these four subchannel starts at 25\%.
+The pressure boundary condition at point A is connected to an infinite reservoir of this \ncg{}-steam mixture at 45 [psia]. 
+Both the four-subchannel core region in section two and the seven-subchannel upper head in section three are full of saturated steam.
 Of note, this model does not have solid fuel structures to produce heat in the reactor core.
 The fuel rods were omitted from this work because the evaluation of the impact of the nonlinear solver on wall heat is beyond the scope of this work.
-To simulate the presence of the fuel rods, a mass source produces steam within the reactor core.
-This source is located in the outer core ring near the top of the middle section.
+However, to simulate the presence of these fuel rods, there are two source, points C \& D in \fig{fig:refillModel}, that produce steam within the two subchannels representing the core.
+These sources are located near the top of section two.
+The transient behavior of these sources is shown in \fig{fig:refillSteamRates}.
+The steam generations rates were chosen such that the steam mass fluxes per subchannel were equal.
 
 \begin{figure}[h!tb]
 \centering
@@ -792,6 +795,9 @@ This source is located in the outer core ring near the top of the middle section
 \end{figure}
 
 This steam rises into the upper head and condensation will be caused by the safety injection inlet flow.
+This safety injection is saturated water at 45 [psia] and is initiated at 20 [s] into the transient.
+Once initiated this safety injection will continue throughout the course of the transient.
+\fig{fig:refillSafetyInjection} shows this time dependent behavior.
 
 \begin{figure}[h!tb]
 \centering
@@ -799,8 +805,6 @@ This steam rises into the upper head and condensation will be caused by the safe
 \caption{Refill problem safety injection rates.}
 \label{fig:refillSafetyInjection}
 \end{figure}
-
-The total amount of this condensation will be of interest for this problem.
 
 \subsection{Results}
 \label{sect:refillResults}
@@ -810,8 +814,19 @@ The set of timestep sizes analyzed is is given by \eqref{eqn:timeStepAlgo}.
 For this problem, $\dt{}_{0}$, $r_{f}$, and ${n}$ were 0.02, 2.0, and 4 respectively.
 Additionally, the nonlinear convergence parameters \kmax{}, $F_{tol}$, and $\delta_{tol}$ were 35, \expneg{1.0}{6}, and \expneg{1.0}{8}, respectively.
 
-Since this model was intended to model a core refill, the parameters of interest are related to core cooling.
-
+First, the macroscopic transient behavior of the simulation is as follows.
+First, the safety injection nozzle starts to condense the steam present in the core, dropping the ambient pressure in the upper head.
+This drop in pressure starts to draw a mixture of liquid, air, and steam into the core from the downcomer.
+Once the steam generation is initiated, the pressure in the upper head increases, causing water the liquid water to pushed out the bottom of the core and back up into the downcomer.
+There is some manometer type oscillations between the downcomer and the core as the downcomer fills with water.
+The pressurization of the upper head from prevents the core filling in parallel with downcomer.
+The downcomer will fill entirely while the upper head is still pressurized.
+Once the core is filled, the pressure in the upper head will cause a collapse of the upper head steam, which will result in the rapid depressurization of the upperhead.
+This causes a rapid drain of the downcomer into the core region.
+During this rapid draw down, air and steam can be drawn back into the core.
+This slug of gas travels through the core, collapsing and rising its way into the upper head where the air provide a pressurizable bubble.
+At that point, the downcomer will start to fill again.
+\fig{fig:refillCoreVolFracDom} illustrates this macroscopic behavior as calculated by a the simulation with \dtmax{} = \expneg{2.0}{2}{[s]}.
 
 \begin{figure}[h!tb]
 \centering
@@ -820,6 +835,9 @@ Since this model was intended to model a core refill, the parameters of interest
 \label{fig:refillCoreVolFracDom}
 \end{figure}
 
+Since this model simulates a core refill event, the parameter of interest will be related to core cooling.
+Of particular interest is the amount of condensation that occurs in the section three subchannel in which the safety injection nozzle is located over the course of the transient.
+The total amount of this condensation will be of interest for this problem.
 The primary variable of engineering interest in this problem is the time-dependent behavior of the condensation in the region of the safety injection inlet and the maximum condensation over the course of the transient.
 
 \begin{figure}[h!tb]

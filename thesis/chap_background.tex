@@ -190,10 +190,10 @@ In addition to the conservation of mass equations there are conservation of ener
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:con_energy_gas}
 \frac{\partial \left( \alpha_g \rho_g h_g \right)}{\partial t } + \nabla \cdot \left(  \alpha_g \rho_g h_g \vec{u}_g \right) & =& \nonumber \\
-\dot{\Gamma}^{'''} h^{'}_v + \dot{q}^{'''}_{i,v} + \dot{q}^{'''}_{n,l}  + \dot{q}^{'''}_{w,g} + \alpha_g\frac{\partial P}{\partial t} + \dot{s}^{'''}_{e,g}  & &\\
+\dot{\Gamma}^{'''} h^{'}_v + \dot{q}^{'''}_{i,v} + \dot{q}^{'''}_{n,l}  + \dot{q}^{'''}_{w,g} + \alpha_g\frac{\partial P}{\partial t} + \dot{s}^{'''}_{h,g}  & &\\
 \label{eqn:con_energy_liq}
 \frac{\partial \left( (1 - \alpha_g) \rho_l h_l \right) }{\partial t } + \nabla \cdot \left( \alpha_l \rho_l h_l \vec{u}_l \right) + \nabla \cdot \left( \alpha_e \rho_l h_l \vec{u}_e \right)& = & \nonumber \\
--\dot{\Gamma}^{'''} h^{'}_l + \dot{q}^{'''}_{i,l} - \dot{q}^{'''}_{n,l}  + \dot{q}^{'''}_{w,l} + (1 - \alpha_g) \frac{\partial P}{\partial t} + \dot{s}^{'''}_{e,l}  & &
+-\dot{\Gamma}^{'''} h^{'}_l + \dot{q}^{'''}_{i,l} - \dot{q}^{'''}_{n,l}  + \dot{q}^{'''}_{w,l} + (1 - \alpha_g) \frac{\partial P}{\partial t} + \dot{s}^{'''}_{h,l}  & &
 \end{IEEEeqnarray}
 
 The conservation of energy equations used in this work are formulated such that the conserved quantities are the phasic enthalpies, $\alpha_{\phi} \rho_{\phi} h_{\phi}$, where $\phi$ represents either either the gaseous or the liquid phase.
@@ -231,7 +231,7 @@ $\alpha_{\phi} \frac{\partial P}{\partial t}$:
  The liquid volume fraction is the sum of the volume fractions of the continuous and the entrained liquid fields.
 }
 \item{
-$\dot{s}^{'''}_{e,\phi}$:
+$\dot{s}^{'''}_{h,\phi}$:
  energy transfer rate between an external source and a given phase.
 }
 \end{itemize}

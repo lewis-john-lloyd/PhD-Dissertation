@@ -36,12 +36,12 @@ The definition of the six unknown flow rates for a given location are shown in \
 \begin{equation}
 \label{eqn:nbcFluxDefinition}
 \vec{\Psi}^{n+1, k}_{i} = \begin{bmatrix}
-\Psi_{c, n} \\
-\Psi_{c, l} \\
-\Psi_{e, g} \\
-\Psi_{e, l} \\
-\Psi_{c, e} \\
-\Psi_{c, v} \\
+\Psi_{m, n} \\
+\Psi_{m, l} \\
+\Psi_{h, g} \\
+\Psi_{h, l} \\
+\Psi_{m, e} \\
+\Psi_{m, v} \\
 \end{bmatrix}^{n+1, k}_{i} = \begin{bmatrix}
 \frac{\don{\alpha^{n}_{g} \rho^{n}_{n}}^{n+1,k}_{d}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a}}\dot{m}^{n+1,k}_{g} \\
 %
@@ -66,31 +66,30 @@ Using \eqref{eqn:momentumToFlowRates} and \eqref{eqn:momentumVector}, the flow r
 
 The corresponding continuity equations for a given NBC volume in residual form are given by \eqref{eqn:nbcNcgMassEquation} -- \eqref{eqn:nbcVapMassEquation}.
 In these equations, the set of flow paths connecting an NBC volume to other continuity volumes within the linear domain is given by $N_{f}$.
-The index $i$ corresponds to the coordinates of the flow paths in $N_{f}$.
 The set of flow paths connecting an NBC volume to the nonlinear domain is given by $N_{\text{NBC}}$.
-The index $p$ corresponds to the coordinate of a given inter-domain flow path in $N_{\text{NBC}}$.
+The set of inter-domain flow paths connecting an NBC volume to the nonlinear domain is given by $N_{\text{NBC}}$.
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:nbcNcgMassEquation}
-F^{k}_{c, n} & = & V_c\left[ (\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{n}\right] +\dt{} \sum_{i\,\in \, N_{f} }\left( \don{ \alpha^{n}_g \rho^{n}_{n} }^{n+1,k}_{d} u^{n+1, k}_{g}  A_{m} \right)_{i} \nonumber \\
-& + & \dt{} \sum_{p\, \in \, N_{\text{NBC}}} \left( \Psi^{n+1, k}_{c,n} \right)_{p} \\
+F^{k}_{m, n} & = & V_c\left[ (\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{n}\right] +\dt{} \sum_{i\,\in \, N_{f} }\left( \don{ \alpha^{n}_g \rho^{n}_{n} }^{n+1,k}_{d} u^{n+1, k}_{g}  A_{m} \right)_{i} \nonumber \\
+& + & \dt{} \sum_{i\, \in \, N_{\text{NBC}}} \left( \Psi^{n+1, k}_{m,n} \right)_{i} \\
 \label{eqn:nbcLiqMassEquation}
-F^{k}_{c, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_l \rho_l \right)^{n} + \dt{} \sum_{i\,\in \,N_{f}} \left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l A_{m}  \right)_{i} \nonumber \\
-&+& \left[(1-\eta)\Gamma + \Upsilon \right]^{n+1, k} +  \dt{} \sum_{p\,\in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{c,l} \right)_{p}  \\
+F^{k}_{m, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_l \rho_l \right)^{n} + \dt{} \sum_{i\,\in \,N_{f}} \left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l A_{m}  \right)_{i} \nonumber \\
+&+& \left[(1-\eta)\Gamma + \Upsilon \right]^{n+1, k} +  \dt{} \sum_{i\,\in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{m,l} \right)_{i}  \\
 \label{eqn:nbcGasEnergyEquation}
-F^{k}_{e, g} & = & V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_{g} ( P^{\,n+1, k} - P^{\,n} ) \right] - \dt{} q_{wg}^{n} \nonumber \\
+F^{k}_{h, g} & = & V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_{g} ( P^{\,n+1, k} - P^{\,n} ) \right] - \dt{} q_{wg}^{n} \nonumber \\
 & - & \dt{} \left[q_{i,v} + \dot{\Gamma} h^{'}_v + q_{gl}\right]^{n+1, k} + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{ \alpha^{n}_g \rho^{n}_g h_g^{n} }^{n+1,k}_{d} u^{n+1, k}_g  A_{m}  \right)_{i} \nonumber \\
-& + &  \dt{} \sum_{p\, \in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{e,g} \right)_{p} \\
+& + &  \dt{} \sum_{i\, \in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{h,g} \right)_{i} \\
 \label{eqn:nbcLiqEnergyEquation}
-F^{k}_{e, l} & = & V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})\right] - \dt{} \left[q_{i,l} -\dot{\Gamma} h^{'}_l - q_{gl}\right]^{n+1,k}    \nonumber \\
+F^{k}_{h, l} & = & V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})\right] - \dt{} \left[q_{i,l} -\dot{\Gamma} h^{'}_l - q_{gl}\right]^{n+1,k}    \nonumber \\
 & +& \dt{} \sum_{i\,\in \, N_{f} } \left( \don{ \alpha^{n}_l \rho^{n}_l h^{n}_l }^{n+1,k}_{d} u^{n+1,k}_l A_{m} + \don{ \alpha^{n}_e \rho^{n}_l h^{n}_l }^{n+1,k}_{d} u^{n+1,k}_e A_{m} \right)_{i} \nonumber \\
-& + &  \dt{} \sum_{p \,\in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{e,l} \right)_{p} \\
+& + &  \dt{} \sum_{i \,\in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{h,l} \right)_{i} \\
 \label{eqn:nbcEntMassEquation}
-F^{k}_{c, e} & = & V_c \left(\alpha_e \rho_l \right)^{n+1,k} - V_c \left(\alpha_e \rho_l \right)^{n} + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{ \alpha^{n}_e \rho^{n}_l }^{n+1, k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} \nonumber \\
-&-& \left[\Upsilon -\eta\Gamma\right]^{n+1,k} +  \dt{} \sum_{p \, \in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{c,e} \right)_{p}\\
+F^{k}_{m, e} & = & V_c \left(\alpha_e \rho_l \right)^{n+1,k} - V_c \left(\alpha_e \rho_l \right)^{n} + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{ \alpha^{n}_e \rho^{n}_l }^{n+1, k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} \nonumber \\
+&-& \left[\Upsilon -\eta\Gamma\right]^{n+1,k} +  \dt{} \sum_{i \, \in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{m,e} \right)_{i}\\
 \label{eqn:nbcVapMassEquation}
-F^{k}_{c, v} & = & V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right] + \dt{} \sum_{i\, \in \, N_{f} } \left( \don{ \alpha^{n}_g \rho^{n}_v }^{n+1,k}_{d} u^{n+1, k}_{g}  A_{m} \right)_{i} - \Gamma^{n+1, k} \nonumber \\
-& + & \dt{} \sum_{p \, \in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{c,v} \right)_{p}
+F^{k}_{m, v} & = & V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right] + \dt{} \sum_{i\, \in \, N_{f} } \left( \don{ \alpha^{n}_g \rho^{n}_v }^{n+1,k}_{d} u^{n+1, k}_{g}  A_{m} \right)_{i} - \Gamma^{n+1, k} \nonumber \\
+& + & \dt{} \sum_{i \, \in \, N_{\text{NBC}} } \left( \Psi^{n+1, k}_{m,v} \right)_{i}
 \end{IEEEeqnarray}
 
 By treating the boundary flow rates as independent parameters, the linearized system given in \eqref{eqn:nlnContinuitySystem} is modified to be \eqref{eqn:nbcContinuitySystem}.
@@ -98,10 +97,10 @@ By treating the boundary flow rates as independent parameters, the linearized sy
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:nbcContinuitySystem}
 \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & + &  \nonumber \\
-\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum_{i \, \in \, N_{f} } \frac{\partial \vec{F}^{k}_{c}}{\partial \momVec{}_{i} } \delta \momVec{}_{i}^{k} + \sum_{p\,\in \, N_{\text{NBC}}} \frac{\partial \vec{F}^{k}_{c}}{\partial \vec{\Psi}_{p} } \delta \vec{\Psi}_{p}^{k}  = - \vec{F}^{k}_{c} & & 
+\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum_{i \, \in \, N_{f} } \frac{\partial \vec{F}^{k}_{c}}{\partial \momVec{}_{i} } \delta \momVec{}_{i}^{k} + \sum_{i\,\in \, N_{\text{NBC}}} \frac{\partial \vec{F}^{k}_{c}}{\partial \vec{\Psi}_{i} } \delta \vec{\Psi}_{i}^{k}  = - \vec{F}^{k}_{c} & & 
 \end{IEEEeqnarray}
 
-Since the continuity equations are linear in the boundary flow rates, the matrix of derivatives of the NBC volumes' continuity equations with respect to a given boundary flow rate vector, $ \frac{\partial \vec{F}^{k}_{c}}{\partial \vec{\Psi}_{p} } $, is the identity matrix times the timestep size, $\dt{} \vec{I}$.
+Since the continuity equations are linear in the boundary flow rates, the matrix of derivatives of the NBC volumes' continuity equations with respect to a given boundary flow rate vector, $ \frac{\partial \vec{F}^{k}_{c}}{\partial \vec{\Psi}_{i} } $, is the identity matrix times the timestep size, $\dt{} \vec{I}$.
 For algorithmic convenience, the flow rates in the continuity equations' residuals are kept as unknown parameters when solving the local linear system.
 However, the residual used for convergence includes this term.
 Utilizing \eqref{eqn:momentumToFlowRates} and \eqref{eqn:momentumUpdate}, the linear system for the NBC volume, \eqref{eqn:nbcContinuitySystem}, can be expressed as \eqref{eqn:nbcLinearSystem} in a manner analogous to that outlined in \sect{sect:nlnCobraSolver}.
@@ -109,14 +108,14 @@ Utilizing \eqref{eqn:momentumToFlowRates} and \eqref{eqn:momentumUpdate}, the li
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:nbcLinearSystem}
 \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & + & \nonumber \\
-\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \left( \frac{\partial \vec{F}^{k}_{c}}{\partial P } + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i}\frac{\partial \momVec{}^{k}_{i}}{\partial P}\right) \delta P^{k} + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}^{k} + \dt{} \sum_{p \, \in \, N_{\text{NBC}}} \delta \vec{\Psi}^{k}_{p} & = &\nonumber \\
-- \left( \vec{F}^{k}_{c} + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \delta \momVec{}_{i}^{*} - \dt{} \sum_{p \, \in \, N_{\text{NBC}}} \vec{\Psi}^{k}_{p} \right) - \dt{} \sum_{p \, \in \, N_{\text{NBC}}} \vec{\Psi}^{k}_{p} & &
+\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \left( \frac{\partial \vec{F}^{k}_{c}}{\partial P } + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i}\frac{\partial \momVec{}^{k}_{i}}{\partial P}\right) \delta P^{k} + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}^{k} + \dt{} \sum_{i \, \in \, N_{\text{NBC}}} \delta \vec{\Psi}^{k}_{i} & = &\nonumber \\
+- \left( \vec{F}^{k}_{c} + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \delta \momVec{}_{i}^{*} - \dt{} \sum_{i \, \in \, N_{\text{NBC}}} \vec{\Psi}^{k}_{i} \right) - \dt{} \sum_{i \, \in \, N_{\text{NBC}}} \vec{\Psi}^{k}_{i} & &
 \end{IEEEeqnarray}
 
 As outlined in \sect{sect:nlnCobraSolver}, the advection terms in the residuals of \eqref{eqn:nbcLinearSystem} are evaluated using $\momVec{}^{n+1, k + \onehalf}$.
 The first six columns of \eqref{eqn:nbcLinearSystem} will be represented by $\vec{J}_{n}$.
 The next $N_{f}$ inter-continuity volume coupling columns multipiying their respective pressure changes, $\delta P_{o(i)}$, will be represented by $\vec{K}_{n}$.
-The final $6 * N_{\text{NBC}}$ columns representing the inter-domain coupling coefficients, which are multiplied by the change in flow rates, $\delta \vec{\Psi}_{p}$, will be collectively referred to as $\vec{Q}_{n}$.
+The final $6 * N_{\text{NBC}}$ columns representing the inter-domain coupling coefficients, which are multiplied by the change in flow rates, $\delta \vec{\Psi}_{i}$, will be collectively referred to as $\vec{Q}_{n}$.
 This matrix, $\vec{Q}_{n}$, is also present with the opposite sign on the right-hand side of \eqref{eqn:nbcLinearSystem}.
 Using this matrix notation, \eqref{eqn:nbcLinearSystem} can be represented as \eqref{eqn:nbcLinSystem}.
 
@@ -137,10 +136,10 @@ The vector of unknowns, $\vec{C}_{n}$ is defined in \eqref{eqn:nbcUpdate}.
 \delta ( (1 - \alpha_{g} ) h_l ) \\
 \delta \alpha_{e} \\
 \delta P \\ 
-\delta P_i \\
+\delta P_{o(i)} \\
 \vdots \\
-\delta P_{N_{f}} \\
-\delta \vec{\Psi}_{p} \\
+\delta P_{o(N_{f})} \\
+\delta \vec{\Psi}_{i} \\
 \vdots \\
 \delta \vec{\Psi}_{N_{\text{NBC}}}
 \end{bmatrix}

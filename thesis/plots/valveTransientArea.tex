@@ -1,0 +1,76 @@
+% This file was created by matlab2tikz v0.4.3.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+\tikzsetnextfilename{plots/valveTransientArea_pdf}
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=\mytikzpicwidth,
+height=\mytikzpicheight,
+scale only axis,
+xmin=0,
+xmax=19,
+xlabel={Time $[\text{s}]$},
+ymin=-0.1,
+ymax=1.1,
+ylabel={$A_{r}$ [ -- ]},
+legend style={at={(0.03,0.05)},anchor=south west,draw=black,fill=white,legend cell align=left}
+]
+
+\addplot [
+color=black,
+solid,
+domain=0.0:3.0
+]{1.0};
+
+\addplot [
+color=black,
+solid,
+domain=3.0:4.0
+]{1.0 - 0.5 *(x - 3.0)};
+
+\addplot [
+color=black,
+solid,
+domain=4.0:7.0
+]{0.5};
+
+\addplot [
+color=black,
+solid,
+domain=7.0:8.0
+]{0.5 - 0.25 *(x - 7.0)};
+
+\addplot [
+color=black,
+solid,
+domain=8.0:11.0
+]{0.25};
+
+\addplot [
+color=black,
+solid,
+domain=11.0:12.0
+]{0.25 - 0.25 *(x - 11.0)};
+
+\addplot [
+color=black,
+solid,
+domain=12.0:15.0
+]{0.0};
+
+\addplot [
+color=black,
+solid,
+domain=15.0:16.0
+]{0.5*(x - 15.0)};
+
+\addplot [
+color=black,
+solid,
+domain=16.0:19.0
+]{0.5};
+
+\end{axis}
+\end{tikzpicture}%

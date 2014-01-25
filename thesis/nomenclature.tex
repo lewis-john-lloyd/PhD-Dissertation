@@ -97,8 +97,9 @@
 \nomtypeR{$K_{w,\phi}$}{Effective coefficient for drag between wall and fluid $\phi$.}{$\lbf{}\,\text{s}\,\text{ft}^{-1}$}
 \nomtypeR{$e_{p}$}{Error in calculated pressure}{$ \text{psia} $}
 \nomtypeR{$T$}{End time of simulation.}{$\text{s} $}
+\nomtypeR{$F_{\text{tol}}$}{Convergence tolerance with respect to the scaled residual vector.}{}
 
-\nomtypeG{$F_{\text{tol}}$}{Convergence tolerance with respect to the scaled residual vector.}{}
+
 \nomtypeG{$\dtmax{}$}{Maximum timestep allowed for a simulation.}{$\text{s}$}
 \nomtypeG{$\dt{}$}{Timestep between time $t^{n}$ and $t^{n+1}$.}{$\text{s}$}
 \nomtypeG{$\dx{}$}{Axial length of a volume.}{$\text{ft}$}
@@ -110,8 +111,8 @@
 \nomtypeG{$\delta \vec{x}$}{Vector of updates to the independent parameters.}{}
 \nomtypeG{$\tau^{'}_{w,\phi}$}{Shear force from contact between the channel wall and fluid $\phi$.}{$\lbf{} \, \text{ft}^{-3}$}
 \nomtypeG{$\tau^{'}_{i,\phi_{1} \phi_{2}}$}{Shear force from contact between the field or phase $\phi_{1}$ and $\phi_{2}$.}{$ \lbf{} \, \text{ft}^{-3} $}
-\nomtypeG{$\Gamma \vec{u}^{'}$}{Momentum transfer due to the exchange of mass between the aqueous phases.}{$ \lbf{} $}
-\nomtypeG{$\Upsilon \vec{u}^{'}$}{Momentum transfer due to the exchange of mass between the two liquid fields.}{$ \lbf{} $}
+\nomtypeG{$\Gamma \vec{u}^{'}$}{Momentum transfer due to the exchange of mass between the aqueous phases.}{$ \lbf{}\, \text{s} $}
+\nomtypeG{$\Upsilon \vec{u}^{'}$}{Momentum transfer due to the exchange of mass between the two liquid fields.}{$ \lbf{} \, \text{s}$}
 \nomtypeG{$\Gamma h^{'}_{\phi}$}{Energy transfer rate due to aqueous phase change.}{$ \text{BTU}$}
 \nomtypeG{$\vec{\Xi}$}{Matrix of coefficients that converts the momentum vector to the flow rate vector.}{}
 \nomtypeG{$\Psi$}{A given flow rate.}{}
@@ -127,26 +128,26 @@
 \nomtypeT{c}{The time point at which the donoring velocity is evaluated in the donoring operator.}
 \nomtypeT{.}{Per second, a denotation of a rate.}
 \nomtypeT{$C_{2}$}{Coefficient in phase transition function.}
-\nomtypeT{p}{Generic power.}
+\nomtypeT{p}{Generic exponent.}
 
 \nomtypeS{$\phi$}{A generic field or phase depending upon context.}
 \nomtypeS{n}{Indicating the \ncg{} component of the gaseous phase.}
 \nomtypeS{g}{Indicating the gaseous phase.}
 \nomtypeS{e}{Indicating the entrained liquid field.}
-\nomtypeS{l}{Indicating either the continuous liquid field or the total liquid phase.}
-\nomtypeS{m}{Relating to a momentum flow path.}
 \nomtypeS{v}{Indicating the vapor component of the gaseous phase.}
-\nomtypeS{c}{Relating to a continuity volume.}
-\nomtypeS{e}{Relating to a continuity volume's energy equations.}
+\nomtypeS{l}{Indicating either the continuous liquid field or the total liquid phase.}
+\nomtypeS{p}{Relating to a momentum flow path.}
+\nomtypeS{m}{Relating to a continuity volume.}
+\nomtypeS{h}{Relating to a continuity volume's energy equations.}
 \nomtypeS{d}{Donored quantity.}
-\nomtypeS{lin}{Relating to the linear domain or solver.}
-\nomtypeS{nln}{Relating to the nonlinear domain or solver.}
 \nomtypeS{a}{Averaged quantity.}
 \nomtypeS{r}{Relative.}
+\nomtypeS{lin}{Relating to the linear domain or solver.}
+\nomtypeS{nln}{Relating to the nonlinear domain or solver.}
 \nomtypeS{dep}{Depleting phase.}
 \nomtypeS{car}{Carrier phase.}
-\nomtypeS{p}{Index representing a particular coordinate for a given inter-domain flow path.}
+\nomtypeS{q}{Index representing a particular coordinate for a given inter-domain flow path.}
 \nomtypeS{j}{The coordinate of a particular continuity volume.}
-\nomtypeS{i}{Generic index representing a particular coordinate of a location.}
+\nomtypeS{i}{Index representing a generic coordinate.}
 \nomtypeS{o(i)}{Coordinate of continuity volume connected via a flow path at coordinate i.}
 \nomtypeS{s(i)}{Coordinate of continuity volume connected via a flow path at coordinate i.}
