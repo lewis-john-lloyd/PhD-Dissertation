@@ -1,56 +1,58 @@
-\chapter{Summary of Findings}
+\chapter{Concluding Remarks}
 \label{chap:end}
 %A metric to quantify the nonlinear convergence of a timestep-size insensitive simulation was developed and implemented.
+This work has developed a spatially-selective nonlinear refinement algorithm and has identified areas for future research.
+The following two sections will discuss these items.
 
+\section{Summary of Current Work}
+\label{section:summary}
 This dissertation has focused on developing a novel method for solving the nonlinear PDEs associated with thermal-hydraulic safety analysis software.
 Traditional methods used in thermal-hydraulic safety analysis software involve solving large systems of nonlinear equations.
-Some methods resolve those nonlinearities by using some form of iterative nonlinear refinement technique.
-Other methods linearize the nonlinear equations and attempt to control the nonlinear truncation error through the use of timestep size refinement.
-The insensitivity of the solution to timestep refinement is taken as an indicator of a converged solution. 
-However, the error caused by the linearization can dominate that produced by the temporal discretization, even at smaller timesteps.
-This nonlinear truncation error can a solution to remain unchanged with reduction in timestep size.
-Until the nonlinear error is eliminated through the use of an iterative solver, temporal convergence cannot be assured.
-However, the application of a nonlinear solver can incur excessive computationally expensive.
-These two paradigms have stood at the opposite ends of a spectrum, while the middle ground has yet to be investigated.
-This research has developed a means of providing a middle ground, a spatially-selective, nonlinear refinement algorithm.
+One class of methods resolves those nonlinearities by using an iterative nonlinear refinement technique.
+Another class linearizes the nonlinear equations and attempts to minimize the nonlinear truncation error through the use of timestep size refinement.
+However, this nonlinear truncation error can cause a solution to remain unchanged with reduction in timestep size.
+This insensitivity of the solution to timestep size refinement is often taken as an indicator of a converged solution. 
+Until the nonlinear truncation error is eliminated through the use of an iterative solver, temporal convergence cannot be assured.
+However, the application of a nonlinear solver can be excessively computationally expensive.
+These two paradigms stand at the opposite ends of a spectrum, and the middle ground had yet to be investigated.
+This research has developed a means of providing that middle ground: a spatially-selective, nonlinear refinement algorithm.
 
 During the course of this work, the two-fluid, three-field software \cobra{} was converted from a linearized semi-implicit solver to a nonlinearly convergent solver.
 As part of that development, an operator-based scaling that provides a physically meaningful convergence measure was developed and implemented.
-This operator-based approach allows for residual scaling that eliminate inherent bias due to the order of magnitude of the terms in the equations; as such, this localized scale factor normalizes its residual equation to between zero and one.
-The use of this scale factor is integral to the effective use of the nonlinear solver in subsequent analysis.
+This operator-based approach allows for a scaling of the residual that eliminates inherent bias due to the order of magnitude of the terms in the equations; as such, this localized scale factor normalizes its residual equation to between zero and one.
+The use of this scale factor is integral to the effective use of the nonlinear solver in  subsequent analyses.
 
-The nonlinear solver utilizing the operator-based scale factor was used to evaluate the roles of nonlinearities in temporal convergence.
-Two problem were used to determine the impact of nonlinearities upon the efficacy of the linear and the nonlinear solver.
-It was found that not resolving the nonlinearities present in a simulation may result in situations where that timestep-size insensitivity is an artifact brought about degraded order of temporal accuracy caused by linearizing the discrete nonlinear equations.
+Two problems were used to determine the impact of nonlinearities upon the efficacy of the linear and the nonlinear solver.
+It was found that not resolving the nonlinearities present in a simulation may result in situations where timestep-size insensitivity is not a result of temporal convergence, but rather is an artifact brought about the degraded order of temporal accuracy caused by linearizing the discrete nonlinear equations.
 Resolving the nonlinearities at every timestep not only provided a more consistent solution during temporal convergence studies, but also allowed for convergence to a different solution than that obtained by taking only a single Newton step during each timestep.
-However, in simulations where nonlinearities were expected to be low, it was found that the linear solver provided as accurate a solution as that produced by the nonlinear solver.
+However, in simulations where nonlinearities were expected to be low, it was found that the solution produced by the linear solver was as accurate as that produced by the nonlinear solver.
 
-A problem where nonlinearities were isolated to a give portion of the domain was run to determine the impact of resolving those localized nonlinearities upon the global solution.
-By using a linear solver, the solution exhibited nonphysical behavior in all portion of the domain.
+A problem where nonlinearities were isolated to a given portion of the domain was run to determine the impact of resolving those localized nonlinearities upon the global solution.
+When using a linear solver, the solution exhibited nonphysical behavior in all portions of the domain.
 Use of the nonlinear solver eliminated the nonphysical behavior from the solution.
-Through the use of the domain decomposition algorithm outlined in this work, it was found that eliminating the spatially isolable nonlinearity produced a global solution that was able to more accurately reflect the analytic solution.
+Through the use of the domain decomposition algorithm developed for this work, it was found that eliminating the spatially isolable nonlinearity produced a global solution that more accurately reflected the analytic solution.
 When the nonlinearities were not part of the nonlinear subdomain, the entire domain still exhibited spurious nonphysical behavior at large timestep sizes.
 These results emphasized the need to resolve nonlinearities and the usefulness of being able to resolve localized nonlinearities.
 
-Resolving the local nonlinearities requires the use of the domain decomposition algorithm. 
+Resolving the local nonlinearities required the development of the domain decomposition algorithm. 
 To test the implementation of the domain decomposition algorithm, a geometrically complex problem was developed.
-When the domain decomposition algorithm is used to subject the nonlinear subdomain to only a single linearization, the solution obtained should analytically match that from the traditional linear solver.
-By running a sample of random simulation with various domain decompositions, it was shown that the obtained solutions matched those obtained by the linear solver to numerical round-off.
-These results indicate that the mathematical formulation is accurate and that the implementation was carried out correctly.
+When the domain decomposition algorithm was used to subject the nonlinear subdomain to only a single linearization, the solution obtained should analytically match that from the traditional linear solver.
+By running a sample of simulations with random domain decompositions, it was shown that the obtained solutions matched those of the linear solver to numerical round-off.
+These results indicated that the mathematical formulation of the domain decomposition algorithm was accurate and that the implementation was carried out correctly.
 
 As a final evaluation of the domain decomposition algorithm, a simple LWR model was developed.
 This simulation modeled the refill portion of an accident scenario.
 When observing engineering parameters of interest, such as condensation from the safety injection nozzle in the upper head, the nonlinear solver demonstrated a more temporally converged solution than the linear solver.
-The linear solution was shown to converge to a different solution than that obtained by the nonlinear solver.
-The domain decomposition algorithm was capable of generating a solution that more temporally consistent than that obtained by the linear solver's, and one that was more qualitatively in agreement with the nonlinear solver's solution, with only approximately one-third the computational effort.
-This problem demonstrated that the domain decomposition algorithm may be useful in obtained nonlinearly and temporally converged safety simulations with less computational cost than traditional nonlinear solvers.
+The linear solution was also shown to converge to a different solution than that obtained by the nonlinear solver.
+The domain decomposition algorithm was capable of generating a solution that more temporally consistent than that obtained by the linear solver, and one that was more qualitatively in agreement with the nonlinear solver's solution, with only approximately one-third the computational effort.
+This problem demonstrated that the domain decomposition algorithm may be useful in obtaining nonlinearly and temporally converged safety simulations with less computational cost than traditional nonlinear solvers.
 
-In summary, a nonlinear solver will assist in achieving a temporally converged simulation at larger timestep sizes during timestep sensitivity studies.
+In summary, a nonlinear solver can assist in achieving a temporally converged simulation at larger timestep sizes during timestep sensitivity studies.
 Unfortunately, nonlinear solvers are computationally expensive when multiple nonlinear iterates are required to resolve the nonlinearities.
-However, in problem where the spatial location of the nonlinearities can be determined by engineering judgment, the use of the domain decomposition algorithm is warranted.
-By selecting those areas of the domain where the nonlinearities are expected to be high and subjecting only them to multiple nonlinear iterations, the consistency of the nonlinear solver may be obtained at a lower computational cost than the full nonlinear solver.
+However, in problems where the spatial location of the nonlinearities can be determined by engineering judgment, the use of the domain decomposition algorithm is warranted.
+By selecting those areas of the domain where the nonlinearities are expected to be high and subjecting only them to multiple nonlinear iterations, the accuracy of the nonlinear solver may be obtained at a lower computational cost than that of the full nonlinear solver.
 
-\section{Areas of Future Work}
+\section{Areas for Future Research}
 \label{sect:futureWork}
 During this work several opportunities for follow-on research presented themselves.
 These research opportunities include the development and implementation of a spatially and temporally adaptive version of the domain decomposition algorithm, the evaluation of theoretical computational costs for the domain decomposition, the investigation of the interaction of the nonlinear solver and the solid structures within \cobra{}, and the ability to dynamically switch governing equations for a given spatial location during the transient.
@@ -58,25 +60,24 @@ The following section will outline each of the above mentioned avenues of resear
 
 The current research produced a domain decomposition framework that requires engineering judgment to select portions of the domain where nonlinear convergence may require multiple Newton steps.
 A possible extension of this work would be the development of an algorithm that identifies areas where additional Newton steps would be advantageous.
-Since, over the course of a given simulation, the spatial location with the greatest nonlinearities may shift, being able to change the nonlinear domain as the transient progressed would provide a reduction in the computational cost.
-Once a viable determination of when and where additional nonlinear iterates might be advantageous, a method for dynamically generating the pressure matrices would need to be developed.
+Since, over the course of a given simulation, the spatial location with the greatest nonlinearities may shift, being able to change the nonlinear domain as the transient progressed would provide an additional reduction in the computational cost.
+Once a viable determination of when and where additional nonlinear iterates might be advantageous can be made, a method for dynamically generating the pressure matrices would need to be developed.
 Currently, the matrices are preallocated and of fixed size through the simulation.
-If the two domains were to shift during the course of the transient, the pressure matrices and the corresponding ordinals of continuity volumes would need to be changed to reflect the new domains.
+If the two domains were to shift during the course of the transient, the pressure matrices and the corresponding ordinals of continuity volumes would need to change to reflect the new domains.
 
 The current operator-based scaling method has conflicting implementations for determining the magnitude of the divergence operators.
 For the momentum equations the net divergence is used as the operator for the scale factor, while the mass and energy equations consider each discrete portion of the surface integral to be an independent operator.
 Studies looking at the efficiency of the two different interpretations are needed to clarify which is the better option.
 
-The current implementation of the domain decomposition algorithm requires engineering judgment to determine which portion of the domain is subjected to subsequent nonlinearities.
-However, there is a relationship between the number of surfaces connecting the linear domain to the nonlinear domain and the computational expense of solving the problem.
-There is also additional computational overhead in setting up the infrastructure for the dual-domains.
-There would need to be an investigation into the computational costs of solving the dual-domain problem as opposed to solving the entire domain using the nonlinear solver.
+Another topic requiring additional research is the computational cost of the domain decomposition algorithm in the presence of spatially dispersed nonlinearities. 
+The computational cost of using the domain decomposition algorithm is a function of the number of domain interfaces, the average number of Newton steps required, and the relative size of the two domains.
+There would need to be an investigation into when it becomes computationally less expensive to solve the global domain with the nonlinear solver as opposed to solving the dual-domain problem.
 
 Additionally, the use of the nonlinear solver, in the presence of fluid-wall heat transfer produces non-convergent behavior in test problems.
 This work was centered on the hydrodynamics of the reactor core, without consideration of the heat transfer.
-A detailed study and analysis of the interaction of the explicit heat transfer and the iterative nonlinear solver for the hydrodynamic needs to be conducted.
+A detailed study and analysis of the interaction of the explicit heat transfer and the iterative nonlinear solver for the hydrodynamics needs to be conducted.
 
-The \cobra{} software possesses the ability to switch governing differential equations for the momentum equations if certain criteria are met.
+Finally, the \cobra{} software possesses the ability to switch governing differential equations for the momentum equations if certain criteria are met.
 The primary use of this feature is the implementation of a counter-current flow limit boundary condition, which switch governing equations based upon flow regimes.
 During the course of this work, the interaction between the iterative solver and the decision on when to switch equations was found to produce excessive equation switching in some models.
 The reason for this are as of yet unknown, and additional research is required to identify the root cause.
