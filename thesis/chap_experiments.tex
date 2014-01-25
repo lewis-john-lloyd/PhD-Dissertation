@@ -66,8 +66,8 @@ Each of the problems has a specified pressure-enthalpy boundary condition at the
 The flow-enthalpy boundary condition describes the thermodynamic state of the in-flowing fluid and its flow rate.
 \tab{tab:dualInlet} describes the inlet boundary conditions for the two problems.
 The thermodynamic state of the inlet liquid for the flashing problem is unstable.
-There is a 87.1 $\displaystyle \frac{\text{BTU}}{\lbm{}}]$ difference between the inlet enthalpy and the saturation enthalpy at 200 [psia].
-This difference is what drive the liquid to flash into vapor.
+There is a 87.1 $\displaystyle [\frac{\text{BTU}}{\lbm{}}]$ difference between the inlet enthalpy and the saturation enthalpy at 200 [psia].
+This difference is what drive the liquid's phase change into vapor.
 
 \begin{table}[h!tb]
 \centering
@@ -217,34 +217,34 @@ The second purpose in reducing \dtmax{} is to decrease the error due to the disc
 While the reduction of the maximum timestep size in the linear solver serves the purpose of reducing the residual, the nonlinear solver performs this task naturally.
 Therefore, in the nonlinear solver the reduction of the maximum timestep size primarily serves to reduce the error from the approximate discrete temporal integral.
 
-One way to quantify the difference between the solutions is by measuring the residual convergence metrics outlined in \sect{sect:temporal_convergence}.
-These metrics provide a measure of how poorly the discrete nonlinear equations are being solved at every timestep in the transient.
-The resolution of the residual allows for a solution that is less sensitive to timestep size selection than for a solution that does not resolve the residual.
-The convergence metrics will be used to determine if a qualitative temporal-convergence determination can lead to the acceptance of a solution that is not nonlinearly converged.
-
-For each of the test cases, the two different metrics were compared at the different \dtmax{}.
-These convergence metrics were evaluated during post-processing.
-To examine efficacy of the the temporal convergence criteria, both the average and moment-based temporal convergence criteria were evaluated for each of the 24 simulations.
-The values of these metrics will be compared between different solvers for the same test problem. 
-The two different nonlinear convergence metrics will now be examined for the flashing problem.
-\tab{tab:flashingMetric} shows both the average metric, $\tilde{R}$, and the moment-based metric, $\tilde{R}_{\text{M}}$.
-\tab{tab:singleMetric} shows the two metrics for the single-phase problem.
-
-\begin{table}[h!tb]
-\centering
-\singlespace
-\input{tables/flashingMetricTable}
-\caption{Nonlinear convergence metrics for flashing problem.}
-\label{tab:flashingMetric}
-\end{table}
-
-\begin{table}[h!tb]
-\centering
-\singlespace
-\input{tables/singleMetricTable}
-\caption{Nonlinear convergence metrics for the single-phase problem.}
-\label{tab:singleMetric}
-\end{table}
+%One way to quantify the difference between the solutions is by measuring the residual convergence metrics outlined in \sect{sect:temporal_convergence}.
+%These metrics provide a measure of how poorly the discrete nonlinear equations are being solved at every timestep in the transient.
+%The resolution of the residual allows for a solution that is less sensitive to timestep size selection than for a solution that does not resolve the residual.
+%The convergence metrics will be used to determine if a qualitative temporal-convergence determination can lead to the acceptance of a solution that is not nonlinearly converged.
+%
+%For each of the test cases, the two different metrics were compared at the different \dtmax{}.
+%These convergence metrics were evaluated during post-processing.
+%To examine efficacy of the the temporal convergence criteria, both the average and moment-based temporal convergence criteria were evaluated for each of the 24 simulations.
+%The values of these metrics will be compared between different solvers for the same test problem. 
+%The two different nonlinear convergence metrics will now be examined for the flashing problem.
+%\tab{tab:flashingMetric} shows both the average metric, $\tilde{R}$, and the moment-based metric, $\tilde{R}_{\text{M}}$.
+%\tab{tab:singleMetric} shows the two metrics for the single-phase problem.
+%
+%\begin{table}[h!tb]
+%\centering
+%\singlespace
+%\input{tables/flashingMetricTable}
+%\caption{Nonlinear convergence metrics for flashing problem.}
+%\label{tab:flashingMetric}
+%\end{table}
+%
+%\begin{table}[h!tb]
+%\centering
+%\singlespace
+%\input{tables/singleMetricTable}
+%\caption{Nonlinear convergence metrics for the single-phase problem.}
+%\label{tab:singleMetric}
+%\end{table}
 
 %============================================================================
 % Problem that shows that the domain decomposition algorithm is implemented correctly.
@@ -306,7 +306,14 @@ There were 256 different simulations run: one where the entire domain is linear,
 This collection is a representative subset of the $2^{18}$ possible decompositions.
 For each of these simulations, the pressure at two locations were recorded: the pressures near the top and near the bottom of the upper left corner subchannel of \fig{fig:channel_layout} were chosen.
 The differences at each in point in between these pressures and those produced by the linear solver were summed over the course of the transient.
-The bar graph in \fig{fig:complexBar} shows the distribution of these error integrals at both the top and bottom of the subchannel.
+\eqref{eqn:complexError} shows this value for a given transient simulation, $k$, at a given location in the simulation, $j$, over the course of a transient with $N_{t}$ timesteps.
+
+\begin{equation}
+\label{eqn:complexError}
+\text{Error}_{j, k} = \sum_{i\,=\,1}^{N_{t}} \abs{P_{j,1} -P_{j, k}}
+\end{equation}
+
+The bar graph in \fig{fig:complexBar} shows the distribution of these errors at both the top and bottom of the subchannel.
 
 \begin{figure}[h!tb]
 \centering

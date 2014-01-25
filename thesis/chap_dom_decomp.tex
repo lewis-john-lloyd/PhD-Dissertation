@@ -451,20 +451,20 @@ In a dual domain problem, a single timestep is now broken into two parts: the li
 At the beginning of a timestep, the entire domain is traversed to assemble the pressure matrices for both the linear domain and the first iterate of the nonlinear domain.
 This process is similar to the algorithm outlined in \ref{sect:linCobraAlg} for assembling the pressure matrix.
 However, there are differences when an \classname{nbcVolume} is encountered.
-
-\comment{Is the following paragraph necessary?}
-For each \classname{baseVolume} the following procedure is followed.
-Each continuity volume's linearized system of equations, \eqref{eqn:linSystem}, is subjected to partial \vec{LU} decomposition without pivoting.
-The lower triangular matrix has a unit diagonal.
-The sixth equation in the upper-triangular system is then scaled by its diagonal.
-This upper-triangular, rectangular system for each continuity volume is then stored for later back-substitution.
-Since the pressure update, $\delta P$, corresponds to the last row in the linear system, the reduction of the linear system to its upper-triangular form allows for the isolation of the pressure update.
-This isolated equation represents the relationship of a given continuity volume's pressure change to the pressure change in the other continuity volumes to which it is attached.
-The last row of each continuity volume's \eqref{eqn:linSystem} is then formed into the linear pressure matrix, $\vec{A}_{\text{lin}}$, and its associated right-hand side, $\vec{res}_{\text{lin}}$.
-
-The two loops, one over the momentum flow paths and one over the continuity volumes, form a single group of operations that act upon a given domain.
-This grouping will be known hereafter as assembling the pressure matrix for a given domain.
-\alg{alg:xschem} shows the two loops and their associated actions.
+%
+%\comment{Is the following paragraph necessary?}
+%For each \classname{baseVolume} the following procedure is followed.
+%Each continuity volume's linearized system of equations, \eqref{eqn:linSystem}, is subjected to partial \vec{LU} decomposition without pivoting.
+%The lower triangular matrix has a unit diagonal.
+%The sixth equation in the upper-triangular system is then scaled by its diagonal.
+%This upper-triangular, rectangular system for each continuity volume is then stored for later back-substitution.
+%Since the pressure update, $\delta P$, corresponds to the last row in the linear system, the reduction of the linear system to its upper-triangular form allows for the isolation of the pressure update.
+%This isolated equation represents the relationship of a given continuity volume's pressure change to the pressure change in the other continuity volumes to which it is attached.
+%The last row of each continuity volume's \eqref{eqn:linSystem} is then formed into the linear pressure matrix, $\vec{A}_{\text{lin}}$, and its associated right-hand side, $\vec{res}_{\text{lin}}$.
+%
+%The two loops, one over the momentum flow paths and one over the continuity volumes, form a single group of operations that act upon a given domain.
+%This grouping will be known hereafter as assembling the pressure matrix for a given domain.
+%\alg{alg:xschem} shows the two loops and their associated actions.
 
 \begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
@@ -485,16 +485,16 @@ This grouping will be known hereafter as assembling the pressure matrix for a gi
 \label{alg:domDecompGetCoef}
 \end{algo}
 
-Each \classname{nbcVolume} is treated slightly differently.
+The \classname{nbcVolume} objects are treated slightly different from the regular \classname{baseVolume} objects.
 The flow rate terms from the equations are not included in the residual at this point, but are instead treated as unknowns.
 These flow rates are treated as independent parameters, which decreases the number of entries in the $\vec{K}_{n}$ matrix.
-However, the derivatives of the flow rate terms with respect to themselves, $\dt{} \vec{I}$, are added to the linear system.
-If a linear continuity volume is attached through more than one surface to the nonlinear domain, then there will be multiple identity matrices in the continuity volume's linear system.
+However, the derivatives of the flow rate terms with respect to themselves, $\vec{Q}_{n}$, are added to the linear system.
+If a linear continuity volume is attached through more than one surface to the nonlinear domain, then $\vec{Q}_{n}$ will contain multiple identity matrices.
 The resulting system will be subjected to the same \vec{LU} decomposition as outlined for a regular volume.
 The last equation with the additional right-hand sides will be assembled into the linear domain's pressure matrix.
 The linear system for the linear domain is then inverted by the chosen solver.
-The additional coefficients represent the coefficients for the boundary flow rate between the linear and the nonlinear domain.
-After the inversion of the pressure matrix, the coefficients for the NBC volumes are collected into the \classname{nbcVolume} objects for ease of manipulation later.
+The additional coefficients, $\vec{W}_{\text{lin}}$, represent the coefficients for the boundary flow rate between the linear and the nonlinear domain.
+After the inversion of the pressure matrix, these coefficients for the NBC volumes are collected into the \classname{nbcVolume} objects for ease of manipulation later.
 This is shown in \alg{alg:domDecompGetCoef}.
 
 \begin{algo}[ht!]
@@ -537,8 +537,10 @@ Once the pressure equations for the NBC volumes have been inserted into the nonl
 The resulting pressure update vector is then used to update the nonlinear continuity volumes' variables according to \alg{alg:updateVariables}.
 This inversion and update represent the first iterate for the nonlinear domain.
 The Newton loop is now entered.
-This loop is similar to that discussed in \sect{sect:nlnCobraSolver}, with the addition of a step to set the NBC volumes' equations.
-Upon termination of the Newton loop, the linear domain's variables are updated.
+This loop is similar to that discussed in \sect{sect:nlnCobraSolver}, with the addition of a step to set the NBC volumes' equations prior to inverting $\vec{A}_{\text{nln}}$.
+The loop termination criteria for this Newton loop are the similar as those outlined in \sect{sect:nlnCobraSolver}.
+The difference is that these convergence metrics depend only upon the nonlinear subdomain.
+Upon termination of the Newton loop, the linear domain's variables are then updated.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
