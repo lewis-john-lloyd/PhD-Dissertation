@@ -1,20 +1,52 @@
 \documentclass[compress,xcolor=table]{beamer}
+\usepackage[T1]{fontenc}
+
+\usepackage{etoolbox}
+\usepackage{ragged2e}
 \usepackage{multicol}
+
+%\usepackage{times}
+%\renewcommand{\ttdefault}{cmtt}
+
+\usepackage[normalem]{ulem}
+
 \usepackage{tikz}
-\usepackage{IEEEtrantools}
 \usetikzlibrary{shapes}
 \usetikzlibrary{arrows}
 \usetikzlibrary{patterns}
+
+\usetikzlibrary{external}
+\tikzsetexternalprefix{../}
+
+%\tikzexternalize[shell escape=-enable-write18]
+%\tikzset{external/system call={lualatex \tikzexternalcheckshellescape -halt-on-error -interaction=batchmode -jobname "\image" "\texsource"}}
+%\tikzset{external/force remake}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+\pgfplotsset{plot coordinates/math parser=false}
+
+\usepackage{pgfplotstable}
+\pgfplotstableset{set thousands separator ={}}
+\usepackage{booktabs}
+
+\usepackage[simplified,nocolor]{../pgf-umlcd}
+
 \usepackage{booktabs}
 \usepackage{multirow}
 
+\usepackage{../IEEEtrantools}
+
 \usepackage{algpseudocode}
 
-\input{../commandsmath}
-\input{../commandsgeneral}
+\input{../commands/commandsmath}
+\input{../commands/commandsgeneral}
+\input{../commands/commandstikz}
+
 
 \usetheme{Szeged}
 \usecolortheme{beaver}
+\usefonttheme{serif}
 %\setbeamertemplate{navigation symbols}{}
 
 %----------------------------------------------------------------------------
@@ -148,10 +180,6 @@ Thermal-Hydraulic Safety Analysis Codes}
 -\Gamma^{'''} h^{'}_l +  q^{'''}_{i,l} & - & q^{'''}_{n,l}  + q^{'''}_{w,l} + (1 - \alpha_g) \frac{\partial P}{\partial t} + s_{e,l} \nonumber
 \end{IEEEeqnarray}
 
-\begin{equation*}
-\displaystyle \frac{\partial \vec{y}}{\partial t} = \vec{e}(\vec{y})
-\end{equation*}
-
 \end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
@@ -166,19 +194,19 @@ Thermal-Hydraulic Safety Analysis Codes}
 \begin{itemize}
 \item{Sections
 \begin{itemize}
-\item{Contain pipes}
-\item{Defines spatial discretization of pipes within section.}
-\item{Splitting and merging of pipes occur at section boundaries.}
+\item{Contain subchannels}
+\item{Defines spatial discretization of subchannel within section.}
+\item{Splitting and merging of subchannels occur at section boundaries.}
 \end{itemize}
 }
-\item{Pipes
+\item{Subchannels
 \begin{itemize}
 \item{Defines cross-sectional areas.}
 \end{itemize}
 }
 \item{Gaps
 \begin{itemize}
-\item{Connect pipes within a section.}
+\item{Connect subchannel within a section.}
 \item{Defines transverse length.}
 \end{itemize}
 }
@@ -188,30 +216,7 @@ Thermal-Hydraulic Safety Analysis Codes}
 \begin{figure}[t]
 \centering
 \resizebox{!}{0.7\textheight}{
-\begin{tikzpicture}
-\draw [thick] (-2,-2) rectangle (-1,2);
-\draw [thick] (1,-2) rectangle (2,2);
-\draw [thick] (-0.5,3) rectangle (0.5,7);
-\draw [thick] (-0.5,-7) rectangle (0.5,-3);
-\draw [dashed] (-1.5,2.5) -- (1.5,2.5);
-\draw [dashed](-1.5,-2.5) -- (1.5,-2.5);
-\draw [dashed,<-] (0,3) -- (0,2.5);
-\draw [dashed,->] (-1.5,2.5) -- (-1.5,2);
-\draw [dashed,->] (1.5,2.5) -- (1.5,2);
-\draw [dashed,->] (0,-2.5) -- (0,-3);
-\draw [dashed,<-] (-1.5,-2) -- (-1.5,-2.5);
-\draw [dashed,<-] (1.5,-2) -- (1.5,-2.5);
-\foreach \y in {-1.5, -0.5, 0.5, 1.5}
-	\draw [dashed, <->] (-1,\y) -- (1,\y);
-\foreach \y in {-6,-5,-4,4,5,6}
-	\draw (-0.5,\y) -- (0.5,\y);
-\foreach \y in {-1,0,1}
-	\draw (-2,\y) -- (-1,\y);
-\foreach \y in {-1,0,1}
-	\draw (1,\y) -- (2,\y);
-\foreach \y/\ytext in {-5/ 1,0/ 2,5/ 3}
-	\draw (2.2,\y) node [anchor=west] {\huge Section $\ytext$};
-\end{tikzpicture}
+\input{../images/complex_geometry}
 }
 \end{figure}
 
@@ -245,19 +250,7 @@ Thermal-Hydraulic Safety Analysis Codes}
 \begin{figure}
 \centering
 \resizebox{\textwidth}{!}{
-\begin{tikzpicture}
-\draw (-3,0) rectangle +(1,5);
-\draw (3,0) rectangle +(1,5);
-\draw (0,0) rectangle +(1,1) (0,1) rectangle +(1,1) (0, 2) rectangle +(1,1) (0,3) rectangle +(1,1) (0,4) rectangle +(1,1);
-\draw[dashed] (3,-0.5) rectangle +(1,1) (3,0.5) rectangle +(1,1) (3,1.5) rectangle +(1,1) (3, 2.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3,3.5) rectangle +(1,1) (3, 4.5) rectangle +(1,1) ;
-\draw[dashed] (-3,0) -- (4,0);
-\draw[dashed] (-3,5) -- (4,5);
-\draw (-2.5,-1) node {\textbf{Channel}};
-\draw (0.5,-1) node {\textbf{Continuity}};
-\draw (0.5,-1.5) node {\textbf{Volumes}};
-\draw (3.5,-1) node {\textbf{Momentum}};
-\draw (3.5,-1.5) node {\textbf{Volumes}};
-\end{tikzpicture}
+\input{../images/staggered_mesh}
 }
 \end{figure}
 \end{columns}
@@ -325,12 +318,6 @@ P                  \\
 \end{equation*}
 \end{columns}
 
-\begin{IEEEeqnarray}{rcccl}
-0 & = & \vec{F}(\vec{x}^{n+1,k}+\vec{\delta x}^k) & = & \vec{F}(\vec{x}^{n+1,k}) +  \int_{\vec{x}^{n+1,k}}^{\vec{x}^{n+1,k}+\vec{\delta x}^k}\frac{\partial \vec{F}}{\partial \vec{x}}(\vec{z}) \mathrm{d} \vec{z} \nonumber \\
-\label{eqn:newton_taylor}
-0 & = & \vec{F}(\vec{x}^{n+1,k}+\vec{\delta x}^k) & \approx & \vec{F}(\vec{x}^{n+1,k}) + \vec{J}(\vec{x}^{n+1,k}) \cdot \vec{\delta x}^k \nonumber
-\end{IEEEeqnarray}
-
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
@@ -369,18 +356,7 @@ P                  \\
 \begin{figure}[t]
 \centering
 \resizebox{1.0\textwidth}{!}{
-\begin{tikzpicture}
-\draw[pattern=north west lines, pattern color=blue] [thick] (-3,0) rectangle (0,3);
-\draw (-1.5,3) node[anchor=south] {Linearized Approximation};
-\draw (-3,2.5) node[anchor=east] {RELAP5-3D};
-\draw (-3,2) node[anchor=east] {COBRA};
-\draw (-3,1.5) node[anchor=east] {MARS};
-\draw (-3,1) node[anchor=east] {SPACE};
-\draw[pattern=north east lines, pattern color=red] [thick] (3,0) rectangle (6,3);
-\draw (4.5,3) node[anchor=south] {Nonlinearly Convergent};
-\draw (6,2) node[anchor=west] {CATHARE};
-\draw (6,1.5) node[anchor=west] {TRACE};
-\end{tikzpicture}
+\input{../images/mySimpleDiagram}
 }
 \end{figure}
 
@@ -430,15 +406,15 @@ Used in TRACE, COBRA, RELAP, SPACE, MARS.
 
 Conservation of continuous liquid mass:
 \begin{IEEEeqnarray}{rCl}
-V_c ( (\alpha_l \rho_l )^{n+1} & - & (\alpha_l \rho_l )^{n} ) =  -\Delta t \sum_{NK}\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right) \nonumber \\
-&- &\Delta t\left[(1-\eta)\Gamma + S \right]^{n+1} \nonumber
+V_c \left[ (\alpha_l \rho_l )^{n+1} \right. & - & \left. (\alpha_l \rho_l )^{n} \right] =  -\Delta t \sum_{NK}\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l \tilde{A} \right) \nonumber \\
+&- & \left[ (1-\eta)\Gamma + S \right]^{n+1} \nonumber
 \end{IEEEeqnarray}
 
 Conservation of continuous liquid momentum:
 \begin{IEEEeqnarray}{rcl}
 \dx{} ( \dot{m}_{l}^{n+1} & - & \dot{m}_{l}^{n} ) = - \dt{} \sum_{NK} \left( <\alpha_l \rho_l u_l>^n_d u^n_l \cdot \vec{\bar{A}}\right) \nonumber \\
  & + & \dt{} V_m\left[ (\alpha_l \rho_l)^{n} g  - \alpha^{n}_l \nabla P^{n+1} - K^{n}_{w,l}(\dot{m}_l^{n+1})^2 \right. \nonumber \\
- & + & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2\right] - \dt{}\left[((1 - \eta)\Gamma u^{'})^{n} - (S u^{'})^{n}\right] \nonumber
+ & + & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2\right] - \left[((1 - \eta)\Gamma u^{'})^{n} - (S u^{'})^{n}\right] \nonumber
 \end{IEEEeqnarray}
 
 \end{frame}
@@ -508,9 +484,10 @@ f_{3}
 
 \begin{figure}[h!t]
 \centering
-\includegraphics[width=.94\textwidth]{images/coupled_domains.eps}
+\resizebox{1.0\textwidth}{!}{
+\input{../images/my_diagram}
+}
 \end{figure}
-
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
@@ -533,7 +510,7 @@ f_{3}
 \frametitle{Research Objectives}
 
 \begin{itemize}
-\item{Develop, implement, and test a unique domain decomposition method based upon RELAP5-3D semi-implicit code coupling within COBRA.}
+\item{Develop, implement, and test a unique domain decomposition method based upon \relap53d{} semi-implicit code coupling within \cobra{}.}
 \item{Develop method for resolving the nonlinearities in a specified subdomain via an iterative Newton method while maintaining a consistent boundary with the linearized domain.}
 \item{Develop and test metric for possible nonlinear nonconvergence of a time-step size insensitive solution.}
 \end{itemize}
@@ -547,25 +524,7 @@ f_{3}
 \begin{figure}[t]
 \centering
 \resizebox{!}{0.7\textheight}{
-\begin{tikzpicture}
-\draw[pattern=north west lines, pattern color=blue] [thick] (-3,0) rectangle (0,3);
-\draw (-1.5,3) node[anchor=south] {Linearized Approximation};
-\draw (-3,2.5) node[anchor=east] {RELAP5-3D};
-\draw (-3,2) node[anchor=east] {COBRA};
-\draw (-3,1.5) node[anchor=east] {MARS};
-\draw (-3,1) node[anchor=east] {SPACE};
-\draw[pattern=north east lines, pattern color=red] [thick] (3,0) rectangle (6,3);
-\draw (4.5,3) node[anchor=south] {Nonlinearly Convergent};
-\draw (6,2) node[anchor=west] {CATHARE};
-\draw (6,1.5) node[anchor=west] {TRACE};
-\draw (0,-4) rectangle +(3,3);
-\path[pattern=north west lines, pattern color=blue] (0,-4) rectangle +(0.75,3);
-\path[pattern=north west lines, pattern color=blue] (2.25,-4) rectangle +(0.75,3);
-\path[pattern=north west lines, pattern color=blue] (0.75,-1.75) rectangle +(1.5,0.75);
-\path[pattern=north east lines, pattern color=red] (0.75,-3.25) rectangle +(1.5,1.5);
-\path[pattern=north west lines, pattern color=blue] (0.75,-4) rectangle +(1.5,0.75);
-\draw (1.5,-1) node[anchor=south] {Proposed Method};
-\end{tikzpicture}
+\input{../images/my_diagram}
 }
 \end{figure}
 
@@ -611,7 +570,7 @@ F_{m,l} & = & V_c \left[ \left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \r
 Scaling chosen:
 
 \begin{IEEEeqnarray}{rcl}
-S_{m,l} & = & V_c \abs{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho_l \right)^{n}} + \dt{} \sum_{NK}\abs{\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right)} \nonumber \\
+S_{m,l} & = & V_c \abs{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho_l \right)^{n}} + \dt{} \sum_{NK}\abs{\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l  \tilde{A}\right)} \nonumber \\
 & + & \dt{} \left[\abs{(1-\eta)\Gamma} + \abs{S} \right]^{n+1} \nonumber
 \end{IEEEeqnarray}
 
@@ -622,14 +581,14 @@ S_{m,l} & = & V_c \abs{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho
 \frametitle{Operator-Based Scaling}
 
 \begin{itemize}
-\item{$(S_{i}^{k})^{-1} F^{k}_i \approx 1$ when $\vec{x}^{k}$ is a "poor" solution.}
-\item{$(S_{i}^{k})^{-1} F^{k}_i \rightarrow 0$ when phase $i$ disappears.}
-\item{$0 \leq \abs{(S_{i}^{k})^{-1} F^{k}_{i}} \leq 1 $ for all values of $\vec{x}^{k}_i$.}
+\item{$\left( S_{i}^{-1} F_{i} \right)^{k} \approx 1$ when $\vec{x}^{k}$ is a "poor" solution.}
+\item{$\left( S_{i}^{-1} F_{i} \right)^{k} \rightarrow 0$ when phase $i$ disappears.}
+\item{$0 \leq \abs{ \left( S_{i}^{-1} F_{i} \right)^{k} } \leq 1 $ for all values of $\vec{x}^{k}_i$.}
 \end{itemize}
 
 At low volume fractions:
 \begin{equation*}
-S_{m,l} = \max[1.0, \left(\frac{100 \alpha_{k,\text{MIN}}}{\alpha_k}\right)^{6} ] S_{m,l}
+S_{m,l} = \max[1.0, \left(\frac{100 \alpha_{k,\text{min}}}{\alpha_k}\right)^{6} ] S_{m,l}
 \end{equation*}
 
 Scaled residual:
@@ -685,7 +644,6 @@ Metrics for nonlinear convergence testing:
 
 \begin{itemize}
 \item{Cross-sectional area: 4 [in$^2$]}
-\item{Total height: 48 [in]}
 \item{\dx{} is constant: 4 [in]}
 \item{ Boundary Conditions
 	\begin{itemize}
@@ -698,15 +656,10 @@ Metrics for nonlinear convergence testing:
 \column{0.3\textwidth}
 \begin{figure}[h!t]
 \centering
-\resizebox{!}{0.7\textheight}{
-\begin{tikzpicture}
-\foreach \x in {1,..., 12} \draw(0, 0.5*\x-0.5) rectangle +(.5,.5);
-\filldraw[fill=red] (0, 6) rectangle +(.5,.5); 
-\filldraw[fill=red] (0, -0.5) -- (0.25, 0) -- (0.5, -0.5) -- cycle;
-\draw[->] (2,0) -- (2, 1) node[anchor=west] {z};
-\draw[->] (2,0) -- (3, 0) node[anchor=west] {$\perp$ z};
-\end{tikzpicture}
+\resizebox{!}{0.65\textheight}{
+\input{../images/scaling_test_problem_geometry}
 }
+
 \end{figure}
 \end{columns}
 \end{frame}
@@ -786,7 +739,7 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 
 \begin{figure}[h!t]
 \centering
-\includegraphics[width=0.94\textwidth]{images/flashing_1em1.eps}
+\includegraphics[width=0.94\textwidth]{../plots/flashing1pt0000em0_pdf}
 \end{figure}
 
 \end{frame}
@@ -797,7 +750,7 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 
 \begin{figure}[h!t]
 \centering
-\includegraphics[width=.94\textwidth]{images/flashing_1em5.eps}
+\includegraphics[width=0.94\textwidth]{../plots/flashing1pt0000em5_pdf}
 \end{figure}
 
 \end{frame}
@@ -808,7 +761,7 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 
 \begin{figure}[h!t]
 \centering
-\includegraphics[width=.94\textwidth]{images/cobra_flashing_al_2in.eps}
+\includegraphics[width=.94\textwidth]{../plots/flashingAlphaLin_pdf}
 \end{figure}
 
 \end{frame}
@@ -819,7 +772,7 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 
 \begin{figure}[h!t]
 \centering
-\includegraphics[width=.94\textwidth]{images/nl_flashing_al_2in.eps}
+\includegraphics[width=.94\textwidth]{../plots/flashingAlphaNln_pdf}
 \end{figure}
 
 \end{frame}
@@ -830,7 +783,7 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 
 \begin{figure}[h!t]
 \centering
-\includegraphics[width=.94\textwidth]{images/cobra_flashing_1em1_1em4.eps}
+\includegraphics[width=.94\textwidth]{../plots/flashingDtInsensitiveLin_pdf}
 \end{figure}
 
 \end{frame}
@@ -841,7 +794,7 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 
 \begin{figure}[h!t]
 \centering
-\includegraphics[width=.94\textwidth]{images/nl_flashing_1em0_1em1_2.eps}
+\includegraphics[width=.94\textwidth]{../plots/flashingDtInsensitiveNln_pdf}
 \end{figure}
 
 \end{frame}
@@ -852,7 +805,7 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 
 \begin{figure}[h!t]
 \centering
-\includegraphics[width=0.94\textwidth]{images/cobra_flashing_res_compare.eps}
+\includegraphics[width=0.94\textwidth]{../plots/flashingResidualLin_pdf}
 \end{figure}
 
 \end{frame}
@@ -863,7 +816,7 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 
 \begin{figure}[h!t]
 \centering
-\includegraphics[width=0.94\textwidth]{images/nl_flashing_res_compare.eps}
+\includegraphics[width=0.94\textwidth]{../plots/flashingResidualNln_pdf}
 \end{figure}
 
 \end{frame}
@@ -874,7 +827,7 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 
 \begin{figure}[h!t]
 \centering
-\includegraphics[width=0.94\textwidth]{images/single_1em0.eps}
+\includegraphics[width=0.94\textwidth]{../plots/single1pt000em0_pdf}
 \end{figure}
 
 \end{frame}
@@ -885,80 +838,8 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 
 \begin{figure}[h!t]
 \centering
-\includegraphics[width=0.94\textwidth]{images/single_1em5.eps}
+\includegraphics[width=0.94\textwidth]{../plots/single1pt000em5_pdf}
 \end{figure}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Legacy solver single-phase residuals}
-
-\begin{figure}[h!t]
-\centering
-\includegraphics[width=0.94\textwidth]{images/cobra_single_res_v_dt.eps}
-\end{figure}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Nonlinear solver single-phase residuals}
-
-\begin{figure}[h!t]
-\centering
-\includegraphics[width=0.94\textwidth]{images/nl_single_res_v_dt.eps}
-\end{figure}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Convergence Metrics for Flashing Problem}
-
-\begin{table}[h!t]
-\centering
-\resizebox{0.9\textwidth}{!}{
-\begin{tabular}{@{}l r@{.}l r@{.}l r@{.}l r@{.}l @{}}
-\toprule
-& \multicolumn{4}{c}{$\tilde{R}$} & \multicolumn{4}{c}{$\tilde{R}_{\text{M}}$}  \\
-$\dtmax{}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlinear} & \multicolumn{2}{c}{Legacy}& \multicolumn{2}{c}{Nonlinear}  \\
-\midrule
-1.0    & \multicolumn{2}{c}{-} & 1&177E-3 & \multicolumn{2}{c}{-} & 6&885E-4 \\
-1.0E-1 & 5&487E-2 & 1&141E-3 & 5&044E-2 & 6&730E-4 \\
-1.0E-2 & 4&960E-2 & 3&413E-4 & 4&570E-2 & 2&511E-4 \\
-1.0E-3 & 3&172E-2 & 2&669E-4 & 2&372E-2 & 1&975E-4 \\
-1.0E-4 & 2&504E-2 & 1&346E-4 & 1&838E-2 & 8&974E-5 \\
-1.0E-5 & 2&166E-2 & 5&075E-5 & 1&922E-2 & 4&581E-5 \\
-\bottomrule  
-\end{tabular}
-}
-\end{table}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Convergence Metrics for Single-Phase Problem}
-
-\begin{table}[h!t]
-\centering
-\resizebox{0.9\textwidth}{!}{
-\begin{tabular}{@{}l r@{.}l r@{.}l r@{.}l r@{.}l @{}}
-\toprule
-& \multicolumn{4}{c}{$\tilde{R}$} & \multicolumn{4}{c}{$\tilde{R}_{\text{M}}$}  \\
-$\dtmax{}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlinear} & \multicolumn{2}{c}{Legacy}& \multicolumn{2}{c}{Nonlinear}  \\
-\midrule
-1.0    & 3&149E-3 & 1&700E-3 & 1&485E-3 & 1&070E-4 \\
-1.0E-1 & 2&866E-3 & 1&700E-3 & 1&287E-3 & 1&070E-4 \\
-1.0E-2 & 3&412E-4 & 1&357E-3 & 1&417E-4 & 7&701E-5 \\
-1.0E-3 & 2&207E-4 & 4&584E-4 & 8&805E-5 & 1&178E-4 \\
-1.0E-4 & 1&672E-4 & 1&588E-3 & 1&834E-5 & 4&958E-5 \\
-1.0E-5 & 5&493E-4 & 2&758E-4 & 1&916E-5 & 8&939E-5 \\
-\bottomrule  
-\end{tabular}
-}
-\end{table}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -1053,40 +934,6 @@ Issues that need to be addressed in scaling:
 \item{Develop a domain decomposition method to enable local nonlinearities to be resolved.}
 \item{By resolving local nonlinearities, a timestep size insensitive solution may be obtained at larger timesteps than otherwise achievable.}
 \end{itemize}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Proposed Timeline}
-
-\newcommand{\cc}{\cellcolor{black}}
-\begin{table}
-\centering
-\resizebox{0.9\textwidth}{!}{
-\begin{tabular}{@{}l l c c c c  c c c c c c @{}} \toprule
-Task & \multicolumn{1}{r}{Month} & Jan & Feb & Mar & Apr & May & Jun & Jul & Aug & Sep & Oct\\
-\midrule
-\multicolumn{12}{l}{Scaling}  \\
-& Implementation & \cc & \cc &     &     &     &     &     &     &     &     \\
-& Testing        &     & \cc & \cc &     &     &     &     &     &     &     \\
-\multicolumn{12}{l}{Domain Decomposition} \\
-& Development    & \cc & \cc &     &     &     &     &     &     &     &     \\
-& Implementation &     & \cc & \cc & \cc & \cc &     &     &     &     &     \\
-& Testing        &     &     &     &     & \cc & \cc &     &     &     &     \\
-%\multicolumn{12}{l}{Temporal Convergence Criteria}\\
-%& Implementation & \cc & \cc &     &     &     &     &     &     &     &     \\
-%& Testing        &     &     & \cc & \cc &     &     &     &     &     &     \\
-\multicolumn{12}{l}{Performance Evaluation} \\
-& Testing        &     &     &     &     &     & \cc & \cc &     &     &     \\
-\multicolumn{12}{l}{Parametric Studies} \\
-& Testing        &     &     &     &     &     & \cc & \cc & \cc &     &     \\
-\multicolumn{12}{l}{Dissertation} \\
-& Writing        & \cc & \cc & \cc & \cc & \cc & \cc & \cc & \cc & \cc & \cc \\
-\bottomrule  
-\end{tabular}
-}
-\end{table}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -1584,87 +1431,62 @@ Isolate last row from each continuity block.
 & + & c_{\text{cbv},j}<\alpha_g^n \rho_g^n u^n_g>_d^n v_{g,j}^{n+1} +
 d_{\text{cbv},j} <\alpha_f^n \rho_f^n u_f^n>_d^n v_{f,j}^{n+1}  \nonumber \\
 & + & e_{\text{cbv},j} <\alpha_g^n \rho_g^n>_d^n v_{g,j}^{n+1} +
-f_{\text{cbv},j} < \alpha_f^n \rho_f^n>_d^n v_{f,j}^{n+1} \nonumber \\
+f_{\text{cbv},j} \don{\alpha_f^n \rho_f^n}_d^n v_{f,j}^{n+1} \nonumber \\
 & + & \left. g_{\text{cbv},j} <\alpha^n_g>_d^n v_{g,j}^{n+1} +
 h_{\text{cbv},j} <\alpha_f^n>_d^n v_{f,j}^{n+1} \right] \nonumber
 \end{IEEEeqnarray}
 
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Zoomed nonlinear solver single-phase residuals}
-
-\begin{figure}[h!t]
-\centering
-\includegraphics[width=0.94\textwidth]{images/nl_res_single_zoom.eps}
-\end{figure}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Single-phase solution with \dtmax{} = 1.0E-3 {[s]}}
-
-\begin{figure}[h!t]
-\centering
-\includegraphics[width=0.94\textwidth]{images/single_1em3.eps}
-\end{figure}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Zoomed single-phase solution with \dtmax{} = 1.0E-3 {[s]}}
-
-\begin{figure}[h!t]
-\centering
-\includegraphics[width=0.94\textwidth]{images/single_1em3_zoom.eps}
-\end{figure}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Legacy flashing residual}
-
-\begin{figure}[h!t]
-\centering
-\includegraphics[width=0.94\textwidth]{images/flashing_semilogy_res_compare_lin.eps}
-\end{figure}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Nonlinear flashing residual}
-
-\begin{figure}[h!t]
-\centering
-\includegraphics[width=0.94\textwidth]{images/flashing_semilogy_res_compare_nl.eps}
-\end{figure}
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Legacy single-phase residual}
-
-\begin{figure}[h!t]
-\centering
-\includegraphics[width=0.94\textwidth]{images/single_semilogy_res_v_dt_lin.eps}
-\end{figure}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Nonlinear single-phase residual}
-
-\begin{figure}[h!t]
-\centering
-\includegraphics[width=0.94\textwidth]{images/single_semilogy_res_v_dt_nl.eps}
-\end{figure}
-\end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Convergence Metrics for Flashing Problem}
+
+\begin{table}[h!t]
+\centering
+\resizebox{0.9\textwidth}{!}{
+\begin{tabular}{@{}l r@{.}l r@{.}l r@{.}l r@{.}l @{}}
+\toprule
+& \multicolumn{4}{c}{$\tilde{R}$} & \multicolumn{4}{c}{$\tilde{R}_{\text{M}}$}  \\
+$\dtmax{}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlinear} & \multicolumn{2}{c}{Legacy}& \multicolumn{2}{c}{Nonlinear}  \\
+\midrule
+1.0    & \multicolumn{2}{c}{-} & 1&177E-3 & \multicolumn{2}{c}{-} & 6&885E-4 \\
+1.0E-1 & 5&487E-2 & 1&141E-3 & 5&044E-2 & 6&730E-4 \\
+1.0E-2 & 4&960E-2 & 3&413E-4 & 4&570E-2 & 2&511E-4 \\
+1.0E-3 & 3&172E-2 & 2&669E-4 & 2&372E-2 & 1&975E-4 \\
+1.0E-4 & 2&504E-2 & 1&346E-4 & 1&838E-2 & 8&974E-5 \\
+1.0E-5 & 2&166E-2 & 5&075E-5 & 1&922E-2 & 4&581E-5 \\
+\bottomrule  
+\end{tabular}
+}
+\end{table}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Convergence Metrics for Single-Phase Problem}
+
+\begin{table}[h!t]
+\centering
+\resizebox{0.9\textwidth}{!}{
+\begin{tabular}{@{}l r@{.}l r@{.}l r@{.}l r@{.}l @{}}
+\toprule
+& \multicolumn{4}{c}{$\tilde{R}$} & \multicolumn{4}{c}{$\tilde{R}_{\text{M}}$}  \\
+$\dtmax{}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlinear} & \multicolumn{2}{c}{Legacy}& \multicolumn{2}{c}{Nonlinear}  \\
+\midrule
+1.0    & 3&149E-3 & 1&700E-3 & 1&485E-3 & 1&070E-4 \\
+1.0E-1 & 2&866E-3 & 1&700E-3 & 1&287E-3 & 1&070E-4 \\
+1.0E-2 & 3&412E-4 & 1&357E-3 & 1&417E-4 & 7&701E-5 \\
+1.0E-3 & 2&207E-4 & 4&584E-4 & 8&805E-5 & 1&178E-4 \\
+1.0E-4 & 1&672E-4 & 1&588E-3 & 1&834E-5 & 4&958E-5 \\
+1.0E-5 & 5&493E-4 & 2&758E-4 & 1&916E-5 & 8&939E-5 \\
+\bottomrule  
+\end{tabular}
+}
+\end{table}
+
+\end{frame}
 \end{document}
