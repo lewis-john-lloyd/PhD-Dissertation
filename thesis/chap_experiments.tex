@@ -749,29 +749,28 @@ Isolating places where the nonlinearities are present and solving those regions 
 \label{sect:refillProblem}
 
 The final test problem is meant to reflect a scenario relevant to LWR safety.
-The model is a simplified BWR core model with upper-head safety injection that is going through the refill phase of an accident scenario.
+The model is a simplified PWR core model with upper-head safety injection that is going through the refill phase of an accident scenario.
 The intent of this refill problem is to bring together the individual assertions from the previous test problems.
 In particular, if there are localized nonlinearities, then the use of the domain decomposition algorithm can produce results that are not only more accurate than those produced by the linear solver but are also less computationally expensive than those produced by the nonlinear solver.
 
 \subsection{Model}
 \label{sect:refillModel}
 
-This problem is a model of a generic BWR nuclear reactor vessel.
+This problem is a model of a generic PWR nuclear reactor vessel.
 \fig{fig:refillModel} contains a cross-sectional schematic of the discrete representation of this problem.
 There are three sections in the problem.
 In the first section there is the inlet plenum to the core and two hemispheres of the downcomer.
 The downcomers are connected to each other and the inlet plenum, as indicated by dotted lines.
-The second section contains a three-subchannel representation of the reactor core, a subchannel representing the water buffer at the outer edge of the core, and the two subchannel representation of the downcomer.
+The second section contains a total of five subchannels: two subchannels representing the active core, one subchannel representing the core bypass flow paths, one representing the reflector, and two subchannels representing the downcomer.
 One of the core subchannels represents the inner ring of the core, denoted by point C.
 Another subchannel represents the outer core ring, marked by point D.
-And, a third represents the control rod subchannels.
-This subchannel is straddling the two core rings.
+And, a third represents the flow bypass paths.
 Each of the core subchannels is hydrodynamically isolated from the other other core subchannels, indicated by the solid black lines.
 There is no hydrodynamic communication between the core subchannels and the two downcomer subchannels, once again indicated by the solid black lines.
 The third section represents the upper head of the reactor.
-In this model, there are transverse flow paths between all adjacent subchannels in the upper head.
-However, the transverse flow paths connecting the two water buffer subchannels to the two downcomer subchannels are modeled by a specialized set of PDEs meant to represent leakages paths.
-These equations have are a simplified physical model and use a homogeneous-flow assumption.
+In this model, there are transverse flow paths between all adjacent subchannels in the upper head representing leakage past the hot leg nozzle seals.
+However, the transverse flow paths connecting these outer ring subchannels to the two downcomer subchannels are modeled by a specialized set of PDEs meant to represent leakages paths.
+These equations a specialized physical model and use a homogeneous-flow assumption.
 The use of the leakage path models to represent the connections between the water buffer subchannels and the downcomer subchannels allows for a pressure differential to exist between the upper head of the core and the top of the downcomer.
 In the third section there is also a safety injection inlet at point B, and a pressure connection to containment at point A.
 
@@ -782,6 +781,7 @@ In the third section there is also a safety injection inlet at point B, and a pr
 \label{fig:refillModel}
 \end{figure}
 
+This simulation is assumed to start after the blowdown phase of a LOCA.
 The lower plenum and the bottom of the downcomer in section one are initially full of saturated water.
 The downcomer in sections two and three, however, have a mixture of saturated steam and a \ncg{} mixture representing air.
 The mole fraction of the \ncg{} in these four subchannel starts at 25\%.
@@ -803,6 +803,7 @@ The steam generations rates were chosen such that the steam mass fluxes per subc
 
 This steam rises into the upper head and condensation will be caused by the safety injection inlet flow.
 This safety injection is saturated water at 45 [psia] and is initiated at 20 [s] into the transient.
+This 20 [s] initialization period allows the initialization conditions to to stabilize to prevent initial stagnant conditions from impacting the transient solution.
 Once initiated this safety injection will continue throughout the course of the transient.
 \fig{fig:refillSafetyInjection} shows this time dependent behavior.
 
@@ -822,13 +823,14 @@ For this problem, $\dt{}_{0}$, $r_{f}$, and ${n}$ were 0.02, 2.0, and 4 respecti
 Additionally, the nonlinear convergence parameters \kmax{}, $F_{tol}$, and $\delta_{tol}$ were 35, \expneg{1.0}{6}, and \expneg{1.0}{8}, respectively.
 
 First, the macroscopic transient behavior of the simulation is as follows.
-First, the safety injection nozzle starts to condense the steam present in the core, dropping the ambient pressure in the upper head.
+First, the safety injection nozzle starts to condense the steam present in the core, dropping the pressure in the upper head.
 This drop in pressure starts to draw a mixture of liquid, air, and steam into the core from the downcomer.
-Once the steam generation is initiated, the pressure in the upper head increases, causing water the liquid water to pushed out the bottom of the core and back up into the downcomer.
-There is some manometer type oscillations between the downcomer and the core as the downcomer fills with water.
+Once the steam generation is initiated, the water seal in the inlet plenum prevents the steam from escaping to containment and the pressure in the upper head increases, causing the liquid water to be pushed out the bottom of the core and back up into the downcomer.
+There is some manometer type oscillations between the downcomer and the core as they fill with water.
 The pressurization of the upper head from prevents the core filling in parallel with downcomer.
-The downcomer will fill entirely while the upper head is still pressurized.
-Once the core is filled, the pressure in the upper head will cause a collapse of the upper head steam, which will result in the rapid depressurization of the upperhead.
+The downcomer will fill entirely while the upper head is still pressurized with steam.
+Concurrent with the filling of the downcomer, the steam flow rate continues to decrease.
+Eventually, the remaining steam is condensed by the safety injection water.
 This causes a rapid drain of the downcomer into the core region.
 During this rapid draw down, air and steam can be drawn back into the core.
 This slug of gas travels through the core, collapsing and rising its way into the upper head where the air provide a pressurizable bubble.
@@ -867,7 +869,7 @@ Or, more precisely, there is less variability in this quantity over the last two
 \label{fig:refillGammaNln}
 \end{figure}
 
-Next, \fig{fig:refillGammaNln} contains the condensation for the four different \dtmax{}.
+Next, \fig{fig:refillGammaNln} contains the condensation for the four different \dtmax{} using the nonlinear solver for the entire solution.
 The axes of this graph are the same as those in \fig{fig:refillGammaLin}.
 Note the dramatic decrease both the magnitude and variability of the quantity as a result of using the nonlinear solver.
 This results argues that the nonlinear solver is capable of producing solutions that are not only  more consistent than those produced by the linear solver but also different in value.
@@ -881,7 +883,7 @@ This results argues that the nonlinear solver is capable of producing solutions 
 
 Running simulation with the domain decomposition active produces the condensation rates shown in \fig{fig:refillGammaDom}.
 The two subchannels in section two that represent the core region and the four subchannels in section three above the core region comprise the nonlinear domain in this problem.
-These results, while not as consistent as those produced by the global nonlinear solver, are both more consistent and more accurate than those produced by the linear solver.
+These results, while not as consistent over the entire range of timesteps analyzed as those produced by the global nonlinear solver, are both more consistent and more accurate than those produced by the linear solver.
 
 \begin{figure}[t!hb]
 \centering
