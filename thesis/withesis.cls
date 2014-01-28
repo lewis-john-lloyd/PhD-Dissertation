@@ -157,14 +157,9 @@
 %=============================================================================
 \newenvironment{titlepage}{
 	\@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn
-	\else
-		\newpage
-	\fi
-	\thispagestyle{empty}
-% \c@page\z@ -- deleted: count title page in thesis
-	}{
-	\if@restonecol\twocolumn \else \newpage \fi
-	}
+	\else \newpage \fi \thispagestyle{empty}
+	% \c@page\z@ -- deleted: count title page in thesis
+	}{\if@restonecol\twocolumn \else \newpage \fi}
 
 %=============================================================================
 % ARRAY AND TABULAR
@@ -628,7 +623,8 @@
 %     The department can be changed using the command \department{}
 %   - once the above are defined, use \maketitle to generate the titlepage
 %=============================================================================
-\newcommand\@thesistitlemedskip{0.25in}
+\newcommand\@thesistitlesmallskip{0.125in}
+\newcommand\@thesistitlemedskip{0.2in}
 \newcommand\@thesistitlebigskip{0.6in}
 \newcommand{\degree}[1]{\gdef\@degree{#1}}
 \newcommand{\project}{\gdef\@doctype{A masters project report}}
@@ -636,28 +632,39 @@
 \newcommand{\thesis}{\gdef\@doctype{A thesis}}
 \newcommand{\dissertation}{\gdef\@doctype{A dissertation}}
 \newcommand{\department}[1]{\gdef\@department{(#1)}}
+\newcommand{\defensedate}[1]{\gdef\@defensedate{#1}}
+\newcommand{\committee}[1]{\gdef\@committee{#1}}
 
 \gdef\@degree{Doctor of Philosophy}		% Default is Ph.D.
 \gdef\@doctype{A dissertation}			% Default is dissertation.
 \gdef\@department{(Engineering Physics)}	% Default is Nuclear Engineering.
+\gdef\@defensedate{01/01/2100}
+\gdef\@committee{{\singlespace
+	Jane Doeverything, Professor, Electrical Engineering\\
+	John Dosomethings, Associate Professor, Electrical Engineering\\
+	}}
 
 \newcommand{\maketitle}{%
   \begin{titlepage}
     \def\thanks##1{\typeout{Warning: `thanks' deleted from thesis titlepage.}}
     \let\footnotesize\small \let\footnoterule\relax \setcounter{page}{1}
-    \vspace*{0.1in}
+    \vspace*{-0.5in}
     \begin{center}
-      {\bf\expandafter\uppercase\expandafter{\@title}} \\[\@thesistitlebigskip]
-       by \\[\@thesistitlemedskip]
-      \@author \\[\@thesistitlebigskip]
-      \@doctype\ submitted in partial fulfillment of \\
-      the requirements for the degree of\\[\@thesistitlebigskip]
-      \@degree \\[\@thesistitlemedskip]
-      \@department \\[\@thesistitlebigskip]
-      at the \\[\@thesistitlebigskip]
-      UNIVERSITY OF WISCONSIN--MADISON\\[\@thesistitlebigskip]
+      {\textbf{\expandafter\expandafter{\@title}}} \\[0.5in]
+       By \\[0.05in]
+      \@author \\[0.5in]
+      \@doctype\ submitted in partial fulfillment of \\[0.05in]
+      the requirements for the degree of\\[0.5in]
+      \@degree \\[0.05in]
+      \@department \\[0.5in]
+      at the \\[0.05in]
+      UNIVERSITY OF WISCONSIN--MADISON\\[0.05in]
       \@date
     \end{center}
+    \vspace*{0.6in}
+    Date of final oral examination: \@defensedate \\[0.1in]
+    The dissertation is approved by the following members of the Final Oral Committee:\\[-0.1in]
+    \@committee
   \end{titlepage}
   \setcounter{footnote}{0}
   \setcounter{page}{1} %title page is NOT counted
@@ -1095,7 +1102,7 @@
 %=============================================================================
 \def\acknowledgments{
   \chapter*{Acknowledgments}
-  \addcontentsline{toc}{chapter}{Acknowledgments}
+%  \addcontentsline{toc}{chapter}{Acknowledgments}
   \doublespace}
 \def\endacknowledgments{\par\newpage}
 
