@@ -1102,7 +1102,7 @@
 %=============================================================================
 \def\acknowledgments{
   \chapter*{Acknowledgments}
-%  \addcontentsline{toc}{chapter}{Acknowledgments}
+  \addcontentsline{toc}{chapter}{Acknowledgments}
   \doublespace}
 \def\endacknowledgments{\par\newpage}
 

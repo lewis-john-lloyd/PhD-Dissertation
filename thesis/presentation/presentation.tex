@@ -43,6 +43,8 @@
 \input{../commands/commandsgeneral}
 \input{../commands/commandstikz}
 
+\newlength{\hpw}
+\setlength{\hpw}{0.5\textwidth}
 
 \usetheme{Szeged}
 \usecolortheme{beaver}
@@ -108,7 +110,7 @@ Thermal-Hydraulic Safety Analysis Codes}
 \begin{frame}
 
 \begin{columns}
-\column{0.5\textwidth}
+\column{\hpw}
 \begin{itemize}
 \item{\textbf{Background}
 \begin{itemize}
@@ -121,7 +123,7 @@ Thermal-Hydraulic Safety Analysis Codes}
 }
 \end{itemize}
 
-\column{0.5\textwidth}
+\column{\hpw}
 \begin{itemize}
 \item{\textbf{Preliminary Work}
 \begin{itemize}
@@ -172,12 +174,11 @@ Thermal-Hydraulic Safety Analysis Codes}
 \frametitle{Two-Phase Flow: Conservation of Continuous Liquid Field Mass and Momentum and Total Liquid Phase Energy}
 
 \begin{IEEEeqnarray}{rcl}
-\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \right) & = & -(1-\eta)\Gamma^{'''} - S^{'''} + s_{m,l} \nonumber \\
-\frac{\partial \left( \alpha_l \rho_l \vec{u}_l \right )}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \vec{u}_l \right) & = &
- -\alpha_l \nabla P + \alpha_l \rho_l \vec{g} - \vec{\tau}^{'}_{w,l} \nonumber \\
- & + & \vec{\tau}^{'}_{i,gl} - (1 - \eta)\Gamma^{'''}\vec{u}^{'} - S^{'''}\vec{u}^{'} + s_{p,l} \nonumber \\
-\frac{\partial \left( (1 - \alpha_g) \rho_l h_l \right) }{\partial t } + \nabla \cdot \left( \alpha_l \rho_l h_l \vec{u}_l \right) & + & \nabla \cdot \left( \alpha_e \rho_l h_l \vec{u}_e \right) =  \nonumber \\
--\Gamma^{'''} h^{'}_l +  q^{'''}_{i,l} & - & q^{'''}_{n,l}  + q^{'''}_{w,l} + (1 - \alpha_g) \frac{\partial P}{\partial t} + s_{e,l} \nonumber
+\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } & = & -\nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \right) -(1-\eta)\dot{\Gamma}^{'''} - \dot{\Upsilon}^{'''} + \dot{s}^{'''}_{m,l} \nonumber \\
+\frac{\partial \left( \alpha_l \rho_l \vec{u}_l \right )}{\partial t } & = & -\nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \vec{u}_l \right) -\alpha_l \nabla P + \alpha_l \rho_l \vec{g} - \vec{\tau}^{'}_{w,l} \nonumber \\
+ & + & \vec{\tau}^{'}_{i,gl} - (1 - \eta)\dot{\Gamma}^{'''}\vec{u}^{'} - \dot{\Upsilon}^{'''}\vec{u}^{'} + \dot{s}^{'''}_{p,l} \nonumber \\
+\frac{\partial \left( (1 - \alpha_g) \rho_l h_l \right) }{\partial t } & = & -\nabla \cdot \left( \alpha_l \rho_l h_l \vec{u}_l \right) - \nabla \cdot \left( \alpha_e \rho_l h_l \vec{u}_e \right) \nonumber \\
+ & - & \dot{\Gamma}^{'''} h^{'}_l +  \dot{q}^{'''}_{i,l} - \dot{q}^{'''}_{n,l}  + \dot{q}^{'''}_{w,l} + (1 - \alpha_g) \frac{\partial P}{\partial t} + \dot{s}^{'''}_{e,l} \nonumber
 \end{IEEEeqnarray}
 
 \end{frame}
@@ -232,13 +233,13 @@ Thermal-Hydraulic Safety Analysis Codes}
 \frametitle{Spatial Approximations}
 
 \begin{columns}
-\column{0.5\textwidth}
+\column{\hpw}
 
 \begin{itemize}
 \item{Staggered Grid:
 \begin{itemize}
 \item{Continuity volumes: mass and energy conservation equations}
-\item{Momentum volumes: momentum conservation equations}
+\item{Momentum flow paths: momentum conservation equations}
 \end{itemize}
 }
 \item{Conserved quantities are constant over their respective volumes.}
@@ -246,7 +247,7 @@ Thermal-Hydraulic Safety Analysis Codes}
 \end{itemize}
 
 
-\column{0.5\textwidth}
+\column{\hpw}
 \begin{figure}
 \centering
 \resizebox{\textwidth}{!}{
@@ -264,20 +265,21 @@ Thermal-Hydraulic Safety Analysis Codes}
 Integrate conservation equations over a time-step.
 
 \begin{columns}
-\column{0.5\textwidth}
+\column{\hpw}
 \begin{itemize}
 \item{Single step method}
 \item{Temporal integral defined by approximation $\dt{} \vec{E}^{*}$}
 \item{Multistage or single-stage approximations to $\vec{E}^{*}$ are possible.}
 \end{itemize}
-\column{0.5\textwidth}
+
+\column{\hpw}
 \begin{IEEEeqnarray}{rcl}
 \int^{t^{n+1}}_{t^n}\frac{\partial \vec{y}}{\partial t}\mathrm{d}\tau & = & \int^{t^{n+1}}_{t^n}\vec{E}(\vec{y})\mathrm{d}\tau \nonumber \\
 \vec{y}^{n+1} - \vec{y}^{n} & = & \int_{t^{n}}^{t^{n+1}}\vec{E}(\vec{y})\mathrm{d}\tau \nonumber  \\
 \vec{y}^{n+1} - \vec{y}^{n} & = & \Delta t \vec{E}(\vec{y}^{*}) \nonumber  \\
 \label{eqn:simple_partial_t}
 \frac{\vec{y}^{n+1} - \vec{y}^{n}}{\Delta t} & = & \vec{E}^{*} \nonumber \\
-0 = \vec{y}^{n+1} & - & \vec{y}^{n} - \Delta t \vec{E}^{*} \nonumber
+\vec{y}^{n+1} & - & \vec{y}^{n} = \Delta t \vec{E}^{*} \nonumber
 \end{IEEEeqnarray}
 
 \end{columns}
@@ -371,7 +373,7 @@ P                  \\
 \textbf{Residual}: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{} \vec{E}(\vec{x}^{n+1},\vec{x}^{n})$.
 
 \begin{columns}
-\column{0.45\textwidth}
+\column{\hpw}
 
 \begin{itemize}
 \item{Nonlinearities in $\vec{E}(\vec{x}^{n+1},\vec{x}^{n})$}
@@ -379,7 +381,7 @@ P                  \\
 \item{Material Courant limit: $ \Delta t \lesssim \frac{\Delta x}{|u|}$}
 \end{itemize}
 
-\column{0.5\textwidth}
+\column{\hpw}
 
 \begin{algorithmic}
 \scriptsize
@@ -390,7 +392,7 @@ P                  \\
 	\Calculate $\vec{F}(\vec{x}^{n})$ and $\vec{J}(\vec{x}^{n})$
 	\Calculate $\vec{\delta x} = - \vec{J}^{-1}\cdot\vec{F}$
 	\Calculate $\vec{x}^{n+1} = \vec{x}^{n} + \vec{\delta x}$
-\EndLoop{\; $n = n + 1$} 
+\EndLoop{\; $n \pluseq 1$} 
 \end{algorithmic}
 \end{columns}
 
@@ -406,70 +408,21 @@ Used in TRACE, COBRA, RELAP, SPACE, MARS.
 
 Conservation of continuous liquid mass:
 \begin{IEEEeqnarray}{rCl}
-V_c \left[ (\alpha_l \rho_l )^{n+1} \right. & - & \left. (\alpha_l \rho_l )^{n} \right] =  -\Delta t \sum_{NK}\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l \tilde{A} \right) \nonumber \\
-&- & \left[ (1-\eta)\Gamma + S \right]^{n+1} \nonumber
+V_c \left[ (\alpha_l \rho_l )^{n+1} \right. & - & \left. (\alpha_l \rho_l )^{n} \right] =  -\Delta t \sum_{i \, \in \, N_{f}}\left( \don{\alpha^{n}_{l} \rho^{n}_{l}}^{n}_{d} u^{n+1}_{l} A_{m} \right)_{i} \nonumber \\
+&- & \left[ (1-\eta)\Gamma + \Upsilon \right]^{n+1} \nonumber
 \end{IEEEeqnarray}
 
 Conservation of continuous liquid momentum:
 \begin{IEEEeqnarray}{rcl}
-\dx{} ( \dot{m}_{l}^{n+1} & - & \dot{m}_{l}^{n} ) = - \dt{} \sum_{NK} \left( <\alpha_l \rho_l u_l>^n_d u^n_l \cdot \vec{\bar{A}}\right) \nonumber \\
- & + & \dt{} V_m\left[ (\alpha_l \rho_l)^{n} g  - \alpha^{n}_l \nabla P^{n+1} - K^{n}_{w,l}(\dot{m}_l^{n+1})^2 \right. \nonumber \\
- & + & \left. K^{n}_{i,gl}(\dot{m}^{n+1}_l - \dot{m}_g^{n+1})^2\right] - \left[((1 - \eta)\Gamma u^{'})^{n} - (S u^{'})^{n}\right] \nonumber
+& & \dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} = - \frac{\dt{}}{\dx{}} \left[ \sum_{i \, \in \, N_{c}} \left( \don{\alpha_l \rho_l u_l}_d \ave{u}_{a,l} \tilde{A} \right)^{n}_{i} + \ave{\alpha_{l}}^{n}_{a} \nabla P^{n+1} \right. \nonumber \\
+ & & - g\ave{\alpha_l \rho_l}_{a}^{n} + K^{n}_{wl}(\dot{m}_l^{n+1})^2 - K^{n}_{i,gl}(u_{l}^{n+1} - u_{g}^{n+1})^2 \nonumber \\
+ & & + \left[(1 - \eta)\dot{\Gamma} u^{'} + \dot{\Upsilon} u^{'}\right]^{n} ] \nonumber
 \end{IEEEeqnarray}
 
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
-\begin{frame}
-\frametitle{Semi-Implicit Method Solution Algorithm}
 
-Example: Single Newton step for channel with 3 continuity volumes and 3 momentum volumes.
-
-\begin{equation*}
-\label{eqn:si_solve}
-\begin{bmatrix} 
-\vec{J}_{m_1} & \vec{J}_{m_1,c_1} & \vec{0} & \vec{0} & \vec{0} & \vec{0}\\
-\vec{J}_{c_1,m_1} & \vec{J}_{c_1} & \vec{J}_{c_1,m_2} & \vec{0} & \vec{0} & \vec{0} \\
-\vec{0} & \vec{J}_{m_2,c_1} & \vec{J}_{m_2} & \vec{J}_{m_2,c_2} & \vec{0} & \vec{0} \\
-\vec{0} & \vec{0} & \vec{J}_{c_2,m_2} & \vec{J}_{c_2} & \vec{J}_{c_2,m_3} & \vec{0} \\
-\vec{0} & \vec{0} & \vec{0} & \vec{J}_{m_3,c_2} & \vec{J}_{m_3} & \vec{J}_{m_3,c_3} \\ 
-\vec{0} & \vec{0} & \vec{0} & \vec{0} & \vec{J}_{c_3,m_3} & \vec{J}_{c_3}  
-\end{bmatrix} \begin{bmatrix}
-\vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
-\vec{\delta m}_{2} \\ \vec{\delta c}_{2} \\
-\vec{\delta m}_{3} \\ \vec{\delta c}_{3}
-\end{bmatrix}  = -\begin{bmatrix}
-\vec{F}_{m_1} \\ \vec{F}_{c_1} \\
-\vec{F}_{m_2} \\ \vec{F}_{c_2} \\
-\vec{F}_{m_3} \\ \vec{F}_{c_3} \end{bmatrix}
-\end{equation*}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Semi-Implicit Method Solution Algorithm}
-
-Full Newton step is reduced to an [N x N] system for pressure updates in each continuity cell.
-
-\begin{equation*}
-\label{eqn:si_pressure_matrix}
-\begin{bmatrix} 
- 1 & a_{1,2} & \vec{0} \\
-a_{2,1} & 1 & a_{2,3} \\
-\vec{0}           & a_{3,2} & 1
-\end{bmatrix} \begin{bmatrix}
-\vec{\delta P}_{1} \\
-\vec{\delta P}_{2} \\
-\vec{\delta P}_{3}
-\end{bmatrix}  = -\begin{bmatrix}
-f_{1} \\
-f_{2} \\
-f_{3}
-\end{bmatrix}
-\end{equation*}
-
-\end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 %\subsection[Algorithmic Concerns]{Algorithmic Concerns}
@@ -531,7 +484,7 @@ f_{3}
 \end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
-\section[Preliminary Work]{Preliminary Work}
+\section[Numerical Results]{Numerical Results}
 %------------------------------------------------
 %------------------------------------------------
 \subsection[COBRA]{Nonlinear COBRA}
@@ -563,15 +516,15 @@ f_{3}
 Nonlinear residuals have different units:
 
 \begin{IEEEeqnarray}{rcl}
-F_{m,l} & = & V_c \left[ \left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho_l \right)^{n} \right] + \dt{} \sum_{NK}\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l  \cdot \vec{\bar{A}}\right) \nonumber \\
-& + & \dt{} \left[(1-\eta)\Gamma + S \right]^{n+1} \nonumber
+F^{k}_{m,l} & = & V_c \left[ \left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n} \right] + \dt{} \sum_{i\,\in\,N_{f}}\left( \don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1,k}_{l}  A_{m} \right)_{i} \nonumber \\
+& + & \left[(1-\eta)\Gamma + \Upsilon \right]^{n+1,k} \nonumber
 \end{IEEEeqnarray}
 
 Scaling chosen:
 
 \begin{IEEEeqnarray}{rcl}
-S_{m,l} & = & V_c \abs{\left(\alpha_l \rho_l \right)^{n+1} - \left(\alpha_l \rho_l \right)^{n}} + \dt{} \sum_{NK}\abs{\left( <\alpha^n_l \rho^n_l>^{n}_{d} u^{n+1}_l  \tilde{A}\right)} \nonumber \\
-& + & \dt{} \left[\abs{(1-\eta)\Gamma} + \abs{S} \right]^{n+1} \nonumber
+S^{k}_{m,l} & = & V_c \abs{\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n}} + \dt{} \sum_{i\,\in\,N_{f}}\abs{\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1,k}_l  A_{m}}_{i} \nonumber \\
+& + & \abs{(1-\eta)\Gamma}^{n+1,k} + \abs{\Upsilon}^{n+1,k} \nonumber
 \end{IEEEeqnarray}
 
 \end{frame}
@@ -600,28 +553,6 @@ Scaled residual:
 \end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
-\subsection[Convergence]{Temporal Convergence}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Temporal Convergence vs Timestep Size Insensitivity}
-
-\begin{itemize}
-\item{Timestep size insensitivity: solution is insensitive to reduction of \dtmax{}.}
-\item{Temporal convergence: error due to numerical approximation of temporal integral below engineering scales of interest.}
-\end{itemize}
-
-Metrics for nonlinear convergence testing:
-\begin{equation*}
-\tilde{R} = \frac{\int_{t^{0}}^{t^{N}} ||\tilde{\vec{F}}(\tau)||_2 \,\mathrm{d} \tau}{t^{N} - t^{0}}
-\end{equation*}
-\begin{equation*}
-\tilde{R}_{\text{M}} = \frac{\int_{t^{0}}^{t^{N}} \,\tau\,||\tilde{\vec{F}}(\tau)||_2 \,\mathrm{d} \tau}{\int_{t^{0}}^{t^{N}} \,\tau \,\mathrm{d} \tau}
-\end{equation*}
-
-\end{frame}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
 \subsection[Experiments]{Numerical Experiments}
 %------------------------------------------------
 %------------------------------------------------
@@ -629,16 +560,17 @@ Metrics for nonlinear convergence testing:
 \frametitle{Numerical Experiments: Purpose}
 
 \begin{itemize}
-\item{Test nonlinear solver framework.}
-\item{Determine the impact of nonlinear convergence upon timestep size insensitivity.}
-\item{Determine the efficacy of nonlinear convergence metric in predicting timestep size insensitivity.}
+\item{Test the implementation of the nonlinear solver, and determine its efficacy.}
+\item{Test the implementation of the domain decomposition algorithm, and determine its efficacy.}
+\item{Determine the impact of not resolving isolated nonlinearities upon the global solution.}
+\item{Demonstrate the use of the domain decomposition algorithm in physically relevant scenarios.}
 \end{itemize}
 
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Numerical Experiments: Geometry}
+\frametitle{Single-Phase \& Flashing Problems }
 \begin{columns}
 \column{0.7\textwidth}
 
@@ -1489,4 +1421,79 @@ $\dtmax{}$ & \multicolumn{2}{c}{Legacy} & \multicolumn{2}{c}{Nonlinear} & \multi
 \end{table}
 
 \end{frame}
+
+\begin{frame}
+\frametitle{Semi-Implicit Method Solution Algorithm}
+
+Example: Single Newton step for channel with 3 continuity volumes and 3 momentum volumes.
+
+\begin{equation*}
+\label{eqn:si_solve}
+\begin{bmatrix} 
+\vec{J}_{m_1} & \vec{J}_{m_1,c_1} & \vec{0} & \vec{0} & \vec{0} & \vec{0}\\
+\vec{J}_{c_1,m_1} & \vec{J}_{c_1} & \vec{J}_{c_1,m_2} & \vec{0} & \vec{0} & \vec{0} \\
+\vec{0} & \vec{J}_{m_2,c_1} & \vec{J}_{m_2} & \vec{J}_{m_2,c_2} & \vec{0} & \vec{0} \\
+\vec{0} & \vec{0} & \vec{J}_{c_2,m_2} & \vec{J}_{c_2} & \vec{J}_{c_2,m_3} & \vec{0} \\
+\vec{0} & \vec{0} & \vec{0} & \vec{J}_{m_3,c_2} & \vec{J}_{m_3} & \vec{J}_{m_3,c_3} \\ 
+\vec{0} & \vec{0} & \vec{0} & \vec{0} & \vec{J}_{c_3,m_3} & \vec{J}_{c_3}  
+\end{bmatrix} \begin{bmatrix}
+\vec{\delta m}_{1} \\ \vec{\delta c}_{1} \\
+\vec{\delta m}_{2} \\ \vec{\delta c}_{2} \\
+\vec{\delta m}_{3} \\ \vec{\delta c}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+\vec{F}_{m_1} \\ \vec{F}_{c_1} \\
+\vec{F}_{m_2} \\ \vec{F}_{c_2} \\
+\vec{F}_{m_3} \\ \vec{F}_{c_3} \end{bmatrix}
+\end{equation*}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Semi-Implicit Method Solution Algorithm}
+
+Full Newton step is reduced to an [N x N] system for pressure updates in each continuity cell.
+
+\begin{equation*}
+\label{eqn:si_pressure_matrix}
+\begin{bmatrix} 
+ 1 & a_{1,2} & \vec{0} \\
+a_{2,1} & 1 & a_{2,3} \\
+\vec{0}           & a_{3,2} & 1
+\end{bmatrix} \begin{bmatrix}
+\vec{\delta P}_{1} \\
+\vec{\delta P}_{2} \\
+\vec{\delta P}_{3}
+\end{bmatrix}  = -\begin{bmatrix}
+f_{1} \\
+f_{2} \\
+f_{3}
+\end{bmatrix}
+\end{equation*}
+
+\end{frame}
+
+\subsection[Convergence]{Temporal Convergence}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Temporal Convergence vs Timestep Size Insensitivity}
+
+\begin{itemize}
+\item{Timestep size insensitivity: solution is insensitive to reduction of \dtmax{}.}
+\item{Temporal convergence: error due to numerical approximation of temporal integral below engineering scales of interest.}
+\end{itemize}
+
+Metrics for nonlinear convergence testing:
+\begin{equation*}
+\tilde{R} = \frac{\int_{t^{0}}^{t^{N}} ||\tilde{\vec{F}}(\tau)||_2 \,\mathrm{d} \tau}{t^{N} - t^{0}}
+\end{equation*}
+\begin{equation*}
+\tilde{R}_{\text{M}} = \frac{\int_{t^{0}}^{t^{N}} \,\tau\,||\tilde{\vec{F}}(\tau)||_2 \,\mathrm{d} \tau}{\int_{t^{0}}^{t^{N}} \,\tau \,\mathrm{d} \tau}
+\end{equation*}
+
+\end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+
 \end{document}
