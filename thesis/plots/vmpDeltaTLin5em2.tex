@@ -11,12 +11,12 @@ height=\mytikzpicheight,
 scale only axis,
 xmin=0,
 xmax=75,
-xlabel={$\text{\$\dt}{}\text{\$}$},
+xlabel={Time [s]},
 ymode=log,
 ymin=0.001,
 ymax=10,
 yminorticks=true,
-ylabel={Time [s]},
+ylabel={$\dt{} [ \text{s} ]$},
 legend style={at={(0.97,0.03)},anchor=south east,draw=black,fill=white,legend cell align=left}
 ]
 \addplot [
@@ -1590,7 +1590,7 @@ table[row sep=crcr]{
 74.9605102539063 0.0394887588918209\\
 75 0.0394887588918209\\
 };
-\addlegendentry{$\text{\$\dt}{}\text{\$}$};
+\addlegendentry{$\dt{}$};
 
 \addplot [
 color=green!50!black,
@@ -3163,7 +3163,7 @@ table[row sep=crcr]{
 74.9605102539063 1.25039780139923\\
 75 1.26139080524445\\
 };
-\addlegendentry{$\text{\$\dtcrnt}{}\text{\$}$};
+\addlegendentry{$\dtcrnt{}$};
 
 \end{axis}
 \end{tikzpicture}%

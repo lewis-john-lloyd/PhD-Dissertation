@@ -43,6 +43,7 @@
 \input{../commands/commandsgeneral}
 \input{../commands/commandstikz}
 
+\renewcommand{\fileprefix}[1]{../#1}
 \newlength{\hpw}
 \setlength{\hpw}{0.5\textwidth}
 
@@ -482,9 +483,6 @@ Conservation of continuous liquid momentum:
 \end{figure}
 
 \end{frame}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
-\section[Numerical Results]{Numerical Results}
 %------------------------------------------------
 %------------------------------------------------
 \subsection[COBRA]{Nonlinear COBRA}
@@ -553,7 +551,10 @@ Scaled residual:
 \end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
-\subsection[Experiments]{Numerical Experiments}
+\section[Numerical Results]{Numerical Results}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Procedures]{Intent and Procedures}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
@@ -570,7 +571,25 @@ Scaled residual:
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Single-Phase \& Flashing Problems }
+\frametitle{Numerical Experiments: Procedure}
+
+\begin{itemize}
+\item{Timestep size sensitivity studies with the set of \dtmax{} given by
+\begin{equation*}
+\dtmax{} \in \bigcup^{n_{t}-1}_{i\, = 0} \frac{\dt{}_{0}}{r^{i}_{f}}
+\end{equation*}
+}
+\item{Nonlinear convergence paramters, unless otherwise stated, are \kmax{} = 35, $F_{\text{tol}}$ = \expneg{1.0}{6}, $\delta_{\text{tol}}$ = \expneg{1.0}{8}.}
+\end{itemize}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\subsection[Single-Phase and Flashing]{Single-Phase and Flashing Problems}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Single-Phase and Flashing Problems}
 \begin{columns}
 \column{0.7\textwidth}
 
@@ -588,43 +607,32 @@ Scaled residual:
 \column{0.3\textwidth}
 \begin{figure}[h!t]
 \centering
-\resizebox{!}{0.65\textheight}{
+\resizebox{\textwidth}{0.6\textheight}{
 \input{../images/scaling_test_problem_geometry}
 }
 
 \end{figure}
 \end{columns}
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
-\frametitle{Numerical Experiments: Initial Conditions and Outlet Boundary Conditions}
+\frametitle{Initial Conditions and Outlet Boundary Conditions}
 
 \begin{table}[ht]
 \centering
-\begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
-\multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
-                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{BTU}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
-Single-Phase & 200&0  &  355&5 & 0&0 & 1&0 & 0&0 \\
-Flashing     & 200&0  & 1198&3 & 1&0 & 0&0 & 0&0 \\ \bottomrule  
-\end{tabular}
+\input{../tables/dualInitialConditionsTable}
 \end{table}
 
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
-\frametitle{Numerical Experiments: Inlet Boundary Conditions}
+\frametitle{Inlet Boundary Conditions}
 
 \begin{table}[ht]
 \centering
-\begin{tabular}{@{}lr@{.}lr@{.}lr@{.}lr@{.}lr@{.}l@{}} \toprule
-\multirow{2}{*}{Problem} & \multicolumn{2}{c}{Pressure} & \multicolumn{2}{c}{Enthalpy}             & \multicolumn{2}{c}{$\alpha_g$} & \multicolumn{2}{c}{$\alpha_l$} & \multicolumn{2}{c}{$\alpha_e$} \\ 
-                         & \multicolumn{2}{c}{[psia]} & \multicolumn{2}{c}{$[\frac{\text{BTU}}{\lbm{}}]$} & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      & \multicolumn{2}{c}{[-]}      \\ \midrule
-Single-Phase &  200&0 & 355&5 & 0&0 & 1&0 & 0&0 \\
-Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule  
-\end{tabular}
-\label{tab:bc_fe}
+\input{../tables/dualInletTable}
 \end{table}
 
 \begin{equation*}
@@ -638,34 +646,30 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 \end{equation*}
 
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
-\frametitle{Numerical Experiments: Procedure}
+\frametitle{Single-phase solution with \dtmax{} = 1.0 {[s]}}
 
-\begin{itemize}
-\item{Two simulations are run at sequentially smaller \dtmax{}:
-\begin{itemize}
-\item{\dtmax{} = 1.0 [s], 1.0E-1 [s], ..., 1.0E-5 [s]}
-\end{itemize}
-}
-\item{Parameters of interest:
-\begin{itemize}
-\item{Flashing problem: $\alpha_g$ @ 2 [in] from inlet.}
-\item{Single-phase problem: $\dot{m}_l$ @ 4 [in] from inlet.}
-\end{itemize}
-}
-\item{Comparison of convergence metrics:
-\begin{itemize}
-\item{$\tilde{R}$}
-\item{$\tilde{R}_{\text{M}}$}
-\end{itemize}
-}
-\end{itemize}
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/single1pt000em0_pdf}
+\end{figure}
 
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
+\begin{frame}
+\frametitle{Single-phase solution with \dtmax{} = 1.0E-5 {[s]}}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/single1pt000em5_pdf}
+\end{figure}
+
+\end{frame}
+%---------
+%---------
 \begin{frame}
 \frametitle{Flashing solution at \dtmax{} = 1.0E-1 {[s]}}
 
@@ -675,8 +679,8 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 \end{figure}
 
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 \frametitle{Flashing solution at \dtmax{} = 1.0E-5 {[s]}}
 
@@ -686,8 +690,8 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 \end{figure}
 
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 \frametitle{Legacy solver flashing solution}
 
@@ -697,8 +701,8 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 \end{figure}
 
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 \frametitle{Nonlinear solver flashing solution}
 
@@ -708,8 +712,8 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 \end{figure}
 
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 \frametitle{Legacy solver timestep size insensitive flashing solution}
 
@@ -719,8 +723,8 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 \end{figure}
 
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 \frametitle{Nonlinear solver timestep size insensitive flashing solution}
 
@@ -730,8 +734,8 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 \end{figure}
 
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 \frametitle{Residual of the flashing solution for the legacy solver}
 
@@ -741,8 +745,8 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 \end{figure}
 
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 \frametitle{Residual of the flashing solution for the nonlinear solver}
 
@@ -754,31 +758,259 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
+\subsection[Complex Geometry]{Complex Geometry}
+%------------------------------------------------
+%------------------------------------------------
 \begin{frame}
-\frametitle{Single-phase solution with \dtmax{} = 1.0 {[s]}}
+\frametitle{Complex Geometry}
+\begin{columns}
+\column{\hpw}
+
+\begin{itemize}
+\item{Cross-sectional area: 4 [in$^2$]}
+\item{\dx{} is constant: 4 [in]}
+\item{ Boundary Conditions
+	\begin{itemize}
+	\item{Specified inlet flow-enthalpy}
+	\item{Specified outlet pressure-enthalpy}
+\end{itemize}
+}
+\end{itemize}
+
+\column{\hpw}
 
 \begin{figure}[h!t]
 \centering
-\includegraphics[width=0.94\textwidth]{../plots/single1pt000em0_pdf}
+\resizebox{\textwidth}{!}{
+\input{../images/position_of_pressure_taps}
+}
+\end{figure}
+
+\end{columns}
+\end{frame}
+%---------
+%---------
+\begin{frame}
+\frametitle{Error in Complex Geometry Problem}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/complexBar_pdf}
 \end{figure}
 
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
+\subsection[Valve Problem]{Valve Problem}
+%------------------------------------------------
+%------------------------------------------------
 \begin{frame}
-\frametitle{Single-phase solution with \dtmax{} = 1.0E-5 {[s]}}
+\frametitle{Valve Problem}
+\begin{columns}
+\column{0.7\textwidth}
+
+\begin{itemize}
+\item{Cross-sectional area: 4 [in$^2$]}
+\item{\dx{} is constant: 4 [in]}
+\item{ Boundary Conditions
+	\begin{itemize}
+	\item{Specified inlet flow-enthalpy}
+	\item{Specified outlet pressure-enthalpy}
+\end{itemize}
+}
+\end{itemize}
+
+\column{0.3\textwidth}
+\begin{figure}[h!t]
+\centering
+\resizebox{\textwidth}{0.6\textheight}{
+\input{../images/scaling_test_problem_geometry}
+}
+
+\end{figure}
+\end{columns}
+\end{frame}
+%---------
+%---------
+\begin{frame}
+\frametitle{Time Dependent Area }
 
 \begin{figure}[h!t]
 \centering
-\includegraphics[width=0.94\textwidth]{../plots/single1pt000em5_pdf}
+\includegraphics[width=0.94\textwidth]{../plots/valveTransientArea_pdf}
 \end{figure}
 
 \end{frame}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
-\subsection[Review]{Review}
+%---------
+%---------
+\begin{frame}
+\frametitle{Linear Solver's Solutions}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/valveLinSols_pdf}
+\end{figure}
+
+\end{frame}
+%---------
+%---------
+\begin{frame}
+\frametitle{Nonlinear and Domain Decomposition Solver's Solutions}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/valveNlnSols_pdf}
+\end{figure}
+
+\end{frame}
+%---------
+%---------
+\begin{frame}
+\frametitle{Run Time Comparison}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/valveRunTime_pdf}
+\end{figure}
+
+\end{frame}
 %------------------------------------------------
 %------------------------------------------------
+\subsection[Filling Problem]{Filling Problem}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Filling Problem}
+\begin{columns}
+\column{0.7\textwidth}
+
+\begin{itemize}
+\item{Cross-sectional area: 4 [in$^2$]}
+\item{\dx{} is constant: 4 [in]}
+\item{ Boundary Conditions
+	\begin{itemize}
+	\item{Specified inlet flow-enthalpy}
+	\item{Specified outlet pressure-enthalpy}
+\end{itemize}
+}
+\end{itemize}
+
+\column{0.3\textwidth}
+\begin{figure}[h!t]
+\centering
+\resizebox{\textwidth}{0.6\textheight}{
+\input{../images/scaling_test_problem_geometry}
+}
+
+\end{figure}
+\end{columns}
+\end{frame}
+%---------
+%---------
+\begin{frame}
+\frametitle{Analytic Solution}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/vmpAnalytic_pdf}
+\end{figure}
+
+\end{frame}
+%---------
+%---------
+\begin{frame}
+\frametitle{Linear Solution}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/vmpLinear1em1_pdf}
+\end{figure}
+
+\end{frame}
+%---------
+%---------
+\begin{frame}
+\frametitle{Linear \dtmax{}}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/vmpDeltaTLin1em1_pdf}
+\end{figure}
+
+\end{frame}
+%---------
+%---------
+\begin{frame}
+\frametitle{Nonlinear Solution}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/vmpNLN1em1_pdf}
+\end{figure}
+
+\end{frame}
+%---------
+%---------
+\begin{frame}
+\frametitle{Nonlinear \dtmax{}}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/vmpDeltaTNln1em1_pdf}
+\end{figure}
+
+\end{frame}
+%---------
+%---------
+\begin{frame}
+\frametitle{Bottom Section in Nonlinear Domain}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/vmpBotNln1em1_pdf}
+\end{figure}
+
+\end{frame}
+%---------
+%---------
+\begin{frame}
+\frametitle{Top Section in Nonlinear Domain}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/vmpTopNln1em1_pdf}
+\end{figure}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\subsection[Post-blowdown Refill Problem]{Post-blowdown Refill Problem}
+%------------------------------------------------
+%------------------------------------------------
+\begin{frame}
+\frametitle{Post-blowdown Refill Problem}
+
+\begin{figure}[h!t]
+\centering
+\resizebox{!}{0.6\textheight}{\input{../images/refillModel}}
+\end{figure}
+\end{frame}
+%---------
+%---------
+\begin{frame}
+\frametitle{Steam Generation Rate}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/refillSteamRates_pdf}
+\end{figure}
+
+\end{frame}
+
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\section[Conclusions]{Conclusions}
+\subsection[Conclusions]{Conclusions}
 \begin{frame}
 \frametitle{Preliminary Work Review}
 
@@ -792,9 +1024,9 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 \end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
-\section[Proposed Work]{Proposed Work}
+\subsection[Future Work]{Future Work}
 \begin{frame}
-\frametitle{Proposed Work}
+\frametitle{Future Work}
 
 \begin{itemize}
 \item{Develop an original method that will allow for a nonlinearly converged solution to be obtained in only those regions where it is necessary.}
@@ -802,86 +1034,6 @@ Flashing     & 1000&0 & 542&6 & 0&0 & 1&0 & 0&0 \\ \bottomrule
 \item{By only resolving nonlinearities where necessary, both the cost of a globally convergent Newton method and the potential inaccuracy of the linear approximation are avoided.}
 \item{Resolving nonlinearities may enable simulations to reach timestep size insensitive solutions at larger timesteps than previously possible.}
 \item{Obtaining timestep size insensitive solutions at larger timestep sizes reduces computational cost and engineering time.}
-\end{itemize}
-
-\end{frame}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
-\subsection[Domain Decomposition]{Domain Decomposition}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Proposed Domains Decomposition Work}
-
-Milestones required for implementation of domain decomposition:
-
-\begin{itemize}
-\item{Generation of mathematical formulation for COBRA-COBRA semi-implicit domain decomposition.}
-\item{Implementation of decomposition logic into COBRA software.}
-\item{Development of problems with geometric complexity.}
-\item{Test legacy solver using domain decomposition logic.} 
-\end{itemize}
-
-\end{frame}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
-\subsection[Scaling]{Scaling Work}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Proposed Scaling Work}
-
-Issues that need to be addressed in scaling:
-\begin{itemize}
-\item{Nontrivial values of the residual during steady-state portion of transients.}
-\item{Nonconvergence of nonlinear solver.}
-\item{Inconsistent scaling of the update vector in the Newton loop and the linesearch algorithm.} 
-\end{itemize}
-
-\end{frame}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
-\subsection[Testing]{Proposed Testing}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Proposed Testing}
-
-\begin{itemize}
-\item{Parametric studies of convergence tolerances of the Newton steps and lineasearch algorithm and maximum Newton iterate}
-\item{Test values of convergence metric to determine when a solution is "good enough."}
-\end{itemize}
-
-\end{frame}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
-\subsection[Possible Outcomes]{Possible Outcomes}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Possible Outcomes}
-
-\begin{itemize}
-\item{Demonstrate that not resolving the nonlinearities within a timestep reduces the temporal convergence of the solution.}
-\item{Develop a domain decomposition method to enable local nonlinearities to be resolved.}
-\item{By resolving local nonlinearities, a timestep size insensitive solution may be obtained at larger timesteps than otherwise achievable.}
-\end{itemize}
-
-\end{frame}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
-\subsection[Conclusion]{Conclusion}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Conclusion}
-
-\begin{itemize}
-\item{Demonstrated that there are problems where the traditional linear approximation may fail to provide an accurate solution.}
-\item{Demonstrated that resolving nonlinearities for these problems allows for solutions that are less sensitive to timestep size at larger timestep sizes.}
-\item{Demonstrated that for certain problems the linear approximation provides as accurate a solution as a nonlinear solver.}
-\item{Proposed an original method that would allow for nonlinearly converged solutions to be obtained in only those regions where it is necessary.}
-\item{By only resolving nonlinearities where necessary, both the cost of a globally convergent Newton method and the potential inaccuracy of the linear approximation are avoided.}
 \end{itemize}
 
 \end{frame}
@@ -1473,7 +1625,6 @@ f_{3}
 
 \end{frame}
 
-\subsection[Convergence]{Temporal Convergence}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
