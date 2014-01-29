@@ -30,12 +30,17 @@
            \@mparswitchtrue}          % Marginpars go on outside of page.
 
 %=============================================================================
+% Final version option: Adds committee and date to title page.
+% \@finalfalse                     % Default is no committee information on title page.
+%=============================================================================
+\newif\if@final
+\DeclareOption{final}{\@finaltrue}    % Adds committee and date to title page. 
+
+%=============================================================================
 %  Margin Check option
 % \overfullrule = 0pt                 % Default is don't mark overfull hboxes.
 %=============================================================================
 \DeclareOption{margincheck}{\overfullrule 5pt}  % Causes overfull hboxes to be marked.
-
-
 
 %=============================================================================
 % The \ProcessOptions\relax command causes the execution of every command
@@ -661,10 +666,12 @@
       UNIVERSITY OF WISCONSIN--MADISON\\[0.05in]
       \@date
     \end{center}
+    \if@final
     \vspace*{0.6in}
     Date of final oral examination: \@defensedate \\[0.1in]
     The dissertation is approved by the following members of the Final Oral Committee:\\[-0.1in]
     \@committee
+    \fi
   \end{titlepage}
   \setcounter{footnote}{0}
   \setcounter{page}{1} %title page is NOT counted
