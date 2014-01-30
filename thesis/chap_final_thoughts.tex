@@ -50,7 +50,7 @@ This problem demonstrated that the domain decomposition algorithm may be useful 
 In summary, a nonlinear solver can assist in achieving a temporally converged simulation at larger timestep sizes during timestep sensitivity studies.
 Unfortunately, nonlinear solvers are computationally expensive when multiple nonlinear iterates are required to resolve the nonlinearities.
 However, in problems where the spatial location of the nonlinearities can be determined by engineering judgment, the use of the domain decomposition algorithm is warranted.
-By selecting those areas of the domain where the nonlinearities are expected to be high and subjecting only them to multiple nonlinear iterations, the accuracy of the nonlinear solver may be obtained at a lower computational cost than that of the full nonlinear solver.
+By selecting those areas of the domain where the nonlinearities are expected to be high and subjecting only them to multiple nonlinear iterations, the accuracy of the nonlinear solver may be obtained without its associated computational cost.
 
 \section{Areas for Future Research}
 \label{sect:futureWork}
@@ -73,8 +73,8 @@ Another topic requiring additional research is the computational cost of the dom
 The computational cost of using the domain decomposition algorithm is a function of the number of domain interfaces, the average number of Newton steps required, and the relative size of the two domains.
 There would need to be an investigation into when it becomes computationally less expensive to solve the global domain with the nonlinear solver as opposed to solving the dual-domain problem.
 
-Additionally, the use of the nonlinear solver, in the presence of fluid-wall heat transfer produces non-convergent behavior in test problems.
-This work was centered on the hydrodynamics of the reactor core, without consideration of the heat transfer.
+Additionally, this work was centered on the hydrodynamics of the reactor core, without consideration of the fluid-wall heat transfer.
+In the presence of fluid-wall heat transfer, the use of the nonlinear solver produces non-convergent behavior in some test problems.
 A detailed study and analysis of the interaction of the explicit heat transfer and the iterative nonlinear solver for the hydrodynamics needs to be conducted.
 
 Finally, the \cobra{} software possesses the ability to switch governing differential equations for the momentum equations if certain criteria are met.
