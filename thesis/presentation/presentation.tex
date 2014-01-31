@@ -5,9 +5,6 @@
 \usepackage{ragged2e}
 \usepackage{multicol}
 
-%\usepackage{times}
-%\renewcommand{\ttdefault}{cmtt}
-
 \usepackage[normalem]{ulem}
 
 \usepackage{tikz}
@@ -54,15 +51,15 @@
 
 %----------------------------------------------------------------------------
 %----------------------------------------------------------------------------
-\title[Department of Nuclear Engineering and Engineering Physics]{Selective Nonlinear Refinement For
-Thermal-Hydraulic Safety Analysis Codes}
+\title[Department of Nuclear Engineering and Engineering Physics]{Development of a Spatially-Selective, Nonlinear Refinement Algorithm for
+Thermal-Hydraulic Safety Analysis}
 \author[Lloyd]{Lewis John Lloyd}
 \institute[University of Wisconsin - Madison]
 {
   Department of Nuclear Engineering and Engineering Physics \\
   University of Wisconsin - Madison
 }
-\date[Prelim Defense 2012]{Preliminary Report, 2012}
+\date[Defense 2014]{Defense, 2014}
 \subject{Nuclear Engineering}
 
 %----------------------------------------------------------------------------
@@ -110,39 +107,40 @@ Thermal-Hydraulic Safety Analysis Codes}
 %------------------------------------------------
 \begin{frame}
 
-\begin{columns}
-\column{\hpw}
 \begin{itemize}
-\item{\textbf{Background}
+\item{\textbf{Introduction}
 \begin{itemize}
 \item{Two-Phase Flow}
 \item{Computational Geometry}
 \item{Numeric Approximations}
-\item{Solution Methods}
 \item{Research Objectives}
 \end{itemize}
 }
-\end{itemize}
-
-\column{\hpw}
+\item{\textbf{Nonlinear Domain Decomposition Algorithm}
 \begin{itemize}
-\item{\textbf{Preliminary Work}
-\begin{itemize}
-\item{Nonlinear COBRA-TF}
+\item{Nonlinear Solver}
 \item{Operator-based Scaling}
-\item{Numerical Experiments}
+\item{Domain Decomposition Formulation}
+\item{Software Engineering}
 \end{itemize}
 }
-\item{\textbf{Proposed Work}
+\item{\textbf{Numerical Experiments}
 \begin{itemize}
-\item{Scaling}
-\item{Domain Decomposition}
-\item{Testing}
+\item{Single-Phase and Flashing Problem}
+\item{Complex Geometry}
+\item{Valve Problem}
+\item{Filling Problem}
+\item{Post-Blowdown Refill Problem}
+\end{itemize}
+}
+\item{\textbf{Summary}
+\begin{itemize}
+\item{Conclusions}
+\item{Future Work}
 \end{itemize}
 }
 \end{itemize}
 
-\end{columns}
 \end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
@@ -167,20 +165,6 @@ Thermal-Hydraulic Safety Analysis Codes}
 \end{itemize}
 }
 \end{itemize}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Two-Phase Flow: Conservation of Continuous Liquid Field Mass and Momentum and Total Liquid Phase Energy}
-
-\begin{IEEEeqnarray}{rcl}
-\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } & = & -\nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \right) -(1-\eta)\dot{\Gamma}^{'''} - \dot{\Upsilon}^{'''} + \dot{s}^{'''}_{m,l} \nonumber \\
-\frac{\partial \left( \alpha_l \rho_l \vec{u}_l \right )}{\partial t } & = & -\nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \vec{u}_l \right) -\alpha_l \nabla P + \alpha_l \rho_l \vec{g} - \vec{\tau}^{'}_{w,l} \nonumber \\
- & + & \vec{\tau}^{'}_{i,gl} - (1 - \eta)\dot{\Gamma}^{'''}\vec{u}^{'} - \dot{\Upsilon}^{'''}\vec{u}^{'} + \dot{s}^{'''}_{p,l} \nonumber \\
-\frac{\partial \left( (1 - \alpha_g) \rho_l h_l \right) }{\partial t } & = & -\nabla \cdot \left( \alpha_l \rho_l h_l \vec{u}_l \right) - \nabla \cdot \left( \alpha_e \rho_l h_l \vec{u}_e \right) \nonumber \\
- & - & \dot{\Gamma}^{'''} h^{'}_l +  \dot{q}^{'''}_{i,l} - \dot{q}^{'''}_{n,l}  + \dot{q}^{'''}_{w,l} + (1 - \alpha_g) \frac{\partial P}{\partial t} + \dot{s}^{'''}_{e,l} \nonumber
-\end{IEEEeqnarray}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -225,11 +209,8 @@ Thermal-Hydraulic Safety Analysis Codes}
 \end{columns}
 
 \end{frame}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
-\subsection[Numeric Approximations]{Numerical Approximations}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 \frametitle{Spatial Approximations}
 
@@ -258,19 +239,26 @@ Thermal-Hydraulic Safety Analysis Codes}
 \end{columns}
 
 \end{frame}
-
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\subsection[Numeric Approximations]{Numerical Approximations}
 %------------------------------------------------
 %------------------------------------------------
 \begin{frame}
-\frametitle{Methods for Nuclear Thermal Hydraulic Safety Analysis}
+\frametitle{Semi-Implicit Continuous Liquid Mass and Momentum Equations}
 
-\begin{itemize}
-\item{Fully Explicit Method [COBRA-I]}
-\item{Fully Implicit Method [CATHARE] (Barre and Bernard, 1990)}
-\item{Semi-Implicit Method [COBRA-TF] (Liles and Reed, 1978) }
-\item{Stability-Enhancing Two-Step Method (SETS) [TRACE] (Mahaffy, 1982) }
-\item{Nearly Implicit Method [RELAP] (Trapp and Riemke, 1986) }
-\end{itemize}
+Conservation of continuous liquid mass:
+\begin{IEEEeqnarray}{rCl}
+V_c \left[ (\alpha_l \rho_l )^{n+1} \right. & - & \left. (\alpha_l \rho_l )^{n} \right] =  -\Delta t \sum_{i \, \in \, N_{f}}\left( \don{\alpha^{n}_{l} \rho^{n}_{l}}^{n}_{d} u^{n+1}_{l} A_{m} \right)_{i} \nonumber \\
+&- & \left[ (1-\eta)\Gamma + \Upsilon \right]^{n+1} \nonumber
+\end{IEEEeqnarray}
+
+Conservation of continuous liquid momentum:
+\begin{IEEEeqnarray}{rcl}
+& & \dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} = - \frac{\dt{}}{\dx{}} \left[ \sum_{i \, \in \, N_{c}} \left( \don{\alpha_l \rho_l u_l}_d \ave{u}_{a,l} \tilde{A} \right)^{n}_{i} + \ave{\alpha_{l}}^{n}_{a} \nabla P^{n+1} \right. \nonumber \\
+ & & - g\ave{\alpha_l \rho_l}_{a}^{n} + K^{n}_{wl}(\dot{m}_l^{n+1})^2 - K^{n}_{i,gl}(u_{l}^{n+1} - u_{g}^{n+1})^2 \nonumber \\
+ & & + \left[(1 - \eta)\dot{\Gamma} u^{'} + \dot{\Upsilon} u^{'}\right]^{n} ] \nonumber
+\end{IEEEeqnarray}
 
 \end{frame}
 %------------------------------------------------
@@ -304,63 +292,6 @@ Thermal-Hydraulic Safety Analysis Codes}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \subsection[Solution Methods]{Solution Methods}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Semi-Implicit Method}
-\textbf{Residual}: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{} \vec{E}(\vec{x}^{n+1},\vec{x}^{n})$.
-
-\begin{columns}
-\column{\hpw}
-
-\begin{itemize}
-\item{Nonlinearities in $\vec{E}(\vec{x}^{n+1},\vec{x}^{n})$}
-\item{Single Newton step}
-\item{Material Courant limit: $ \Delta t \lesssim \frac{\Delta x}{|u|}$}
-\end{itemize}
-
-\column{\hpw}
-
-\begin{algorithmic}
-\scriptsize
-\Require $\vec{x}^{0}$ and $t^{0}$
-\Set $n = 0$
-\Loop \; Transient Loop
-    \State $t^{n+1} : = t^{n} + \Delta t$
-	\Calculate $\vec{F}(\vec{x}^{n})$ and $\vec{J}(\vec{x}^{n})$
-	\Calculate $\vec{\delta x} = - \vec{J}^{-1}\cdot\vec{F}$
-	\Calculate $\vec{x}^{n+1} = \vec{x}^{n} + \vec{\delta x}$
-\EndLoop{\; $n \pluseq 1$} 
-\end{algorithmic}
-\end{columns}
-
-Problem devolves to an [N x N] matrix for Newton updates of the pressure. 
-
-Used in TRACE, COBRA, RELAP, SPACE, MARS.
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\begin{frame}
-\frametitle{Semi-Implicit Continuous Liquid Mass and Momentum Equations}
-
-Conservation of continuous liquid mass:
-\begin{IEEEeqnarray}{rCl}
-V_c \left[ (\alpha_l \rho_l )^{n+1} \right. & - & \left. (\alpha_l \rho_l )^{n} \right] =  -\Delta t \sum_{i \, \in \, N_{f}}\left( \don{\alpha^{n}_{l} \rho^{n}_{l}}^{n}_{d} u^{n+1}_{l} A_{m} \right)_{i} \nonumber \\
-&- & \left[ (1-\eta)\Gamma + \Upsilon \right]^{n+1} \nonumber
-\end{IEEEeqnarray}
-
-Conservation of continuous liquid momentum:
-\begin{IEEEeqnarray}{rcl}
-& & \dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} = - \frac{\dt{}}{\dx{}} \left[ \sum_{i \, \in \, N_{c}} \left( \don{\alpha_l \rho_l u_l}_d \ave{u}_{a,l} \tilde{A} \right)^{n}_{i} + \ave{\alpha_{l}}^{n}_{a} \nabla P^{n+1} \right. \nonumber \\
- & & - g\ave{\alpha_l \rho_l}_{a}^{n} + K^{n}_{wl}(\dot{m}_l^{n+1})^2 - K^{n}_{i,gl}(u_{l}^{n+1} - u_{g}^{n+1})^2 \nonumber \\
- & & + \left[(1 - \eta)\dot{\Gamma} u^{'} + \dot{\Upsilon} u^{'}\right]^{n} ] \nonumber
-\end{IEEEeqnarray}
-
-\end{frame}
-%------------------------------------------------
-%------------------------------------------------
-
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 %\subsection[Algorithmic Concerns]{Algorithmic Concerns}
@@ -473,14 +404,16 @@ Scaled residual:
 %------------------------------------------------
 \begin{frame}
 \frametitle{Numerical Experiments: Purpose}
-
+\begin{itemize}
+\item{\textbf{Purpose}
 \begin{itemize}
 \item{Test the implementation of the nonlinear solver, and determine its efficacy.}
 \item{Test the implementation of the domain decomposition algorithm, and determine its efficacy.}
 \item{Determine the impact of not resolving isolated nonlinearities upon the global solution.}
 \item{Demonstrate the use of the domain decomposition algorithm in physically relevant scenarios.}
 \end{itemize}
-
+}
+\end{itemize}
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
@@ -537,7 +470,7 @@ Scaled residual:
 %---------
 %---------
 \begin{frame}
-\frametitle{Single-phase solution with \dtmax{} = 1.0 {[s]}}
+\frametitle{Single-Phase Solution with $\dtmax{} = \expneg{1.0}{0}$ [s]}
 
 \begin{figure}[h!t]
 \centering
@@ -548,7 +481,7 @@ Scaled residual:
 %---------
 %---------
 \begin{frame}
-\frametitle{Single-phase solution with \dtmax{} = 1.0E-5 {[s]}}
+\frametitle{Single-Phase Solution with $\dtmax{} = \expneg{1.0}{5}$ [s]}
 
 \begin{figure}[h!t]
 \centering
@@ -559,7 +492,7 @@ Scaled residual:
 %---------
 %---------
 \begin{frame}
-\frametitle{Flashing solution at \dtmax{} = 1.0E-1 {[s]}}
+\frametitle{Flashing Solution at $\dtmax{} = \expneg{1.0}{0}$ [s]}
 
 \begin{figure}[h!t]
 \centering
@@ -570,7 +503,7 @@ Scaled residual:
 %---------
 %---------
 \begin{frame}
-\frametitle{Flashing solution at \dtmax{} = 1.0E-5 {[s]}}
+\frametitle{Flashing Solution at $\dtmax{} = \expneg{1.0}{5}$ [s]}
 
 \begin{figure}[h!t]
 \centering
@@ -581,7 +514,7 @@ Scaled residual:
 %---------
 %---------
 \begin{frame}
-\frametitle{Legacy solver timestep size insensitive flashing solution}
+\frametitle{Linear Solver's Timestep Size Insensitive Solution}
 
 \begin{figure}[h!t]
 \centering
@@ -592,7 +525,7 @@ Scaled residual:
 %---------
 %---------
 \begin{frame}
-\frametitle{Nonlinear solver timestep size insensitive flashing solution}
+\frametitle{Nonlinear Solver's Timestep Size Insensitive Solution}
 
 \begin{figure}[h!t]
 \centering
@@ -603,7 +536,7 @@ Scaled residual:
 %---------
 %---------
 \begin{frame}
-\frametitle{Residual of the flashing solution for the legacy solver}
+\frametitle{Flashing Residual from Linear Solver}
 
 \begin{figure}[h!t]
 \centering
@@ -614,7 +547,7 @@ Scaled residual:
 %---------
 %---------
 \begin{frame}
-\frametitle{Residual of the flashing solution for the nonlinear solver}
+\frametitle{Flashing Residual from Nonlinear Solver}
 
 \begin{figure}[h!t]
 \centering
@@ -776,7 +709,7 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 %---------
 %---------
 \begin{frame}
-\frametitle{Linear Solution}
+\frametitle{Linear Solution with $\dtmax{} = \expneg{1.0}{1}$ [s]}
 
 \begin{figure}[h!t]
 \centering
@@ -787,7 +720,7 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 %---------
 %---------
 \begin{frame}
-\frametitle{Linear \dtmax{}}
+\frametitle{Linear $\dt{}$ with $\dtmax{} = \expneg{1.0}{1}$ [s]}
 
 \begin{figure}[h!t]
 \centering
@@ -798,7 +731,7 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 %---------
 %---------
 \begin{frame}
-\frametitle{Nonlinear Solution}
+\frametitle{Nonlinear Solution with $\dtmax{} = \expneg{1.0}{1}$ [s]}
 
 \begin{figure}[h!t]
 \centering
@@ -809,7 +742,7 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 %---------
 %---------
 \begin{frame}
-\frametitle{Nonlinear \dtmax{}}
+\frametitle{Nonlinear $\dt{}$ with $\dtmax{} = \expneg{1.0}{1}$ [s]}
 
 \begin{figure}[h!t]
 \centering
@@ -853,9 +786,9 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \item{Simulation starts after blow-down stage of LOCA.}
 \item{Conditions:
 \begin{itemize}
-\item{Section 1 $\rightarrow$ $\alpha_{l} = 1$.}
-\item{Downcomer: Mix of air and steam.}
-\item{Core: Steam.}
+\item{Section 1 $\rightarrow$ $\alpha_{l} = 1$}
+\item{Downcomer: Mix of air and steam}
+\item{Core: Steam}
 \item{Containment @ A}
 \item{Safety Injection @ B @ 25 $\displaystyle \left[ \frac{\lbm{}}{\text{s}} \right]$ @ 20 [s].}
 \item{Steam Generation @ Points C \& D @ 25 [s].}
@@ -970,10 +903,10 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \frametitle{Future Work}
 
 \begin{itemize}
-\item{Development of a way to adaptively determine when and where additional nonlinear iterates would be advantageous.}
+\item{Develop a way to adaptively determine when and where additional nonlinear iterates would be advantageous.}
 \item{Investigate the computational costs of the general algorithm to determine when it would be more advantageous to include the entire domain in the nonlinear domain than it would be to use the domain decomposition algorithm.}
-\item{Investigate the interaction between the nonlinear hydrodynamic solver and the explicit fluid-solid heat transfer.}
-\item{Investigate impact of switching governing equations upon nonlinear convergence.}
+\item{Investigate the interaction between the nonlinear hydrodynamics and the explicit fluid-solid heat transfer.}
+\item{Investigate impact of switching the governing equations upon nonlinear convergence.}
 \end{itemize}
 
 \end{frame}
@@ -1648,6 +1581,35 @@ This research was performed under appointment to the Rickover Fellowship Program
 %\end{bmatrix}
 %\end{equation*}
 %\end{columns}
+%
+%\end{frame}
+%%------------------------------------------------
+%%------------------------------------------------
+%\begin{frame}
+%\frametitle{Two-Phase Flow: Conservation of Continuous Liquid Field Mass and Momentum and Total Liquid Phase Energy}
+%
+%\begin{IEEEeqnarray}{rcl}
+%\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } & = & -\nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \right) -(1-\eta)\dot{\Gamma}^{'''} - \dot{\Upsilon}^{'''} + \dot{s}^{'''}_{m,l} \nonumber \\
+%\frac{\partial \left( \alpha_l \rho_l \vec{u}_l \right )}{\partial t } & = & -\nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \vec{u}_l \right) -\alpha_l \nabla P + \alpha_l \rho_l \vec{g} - \vec{\tau}^{'}_{w,l} \nonumber \\
+% & + & \vec{\tau}^{'}_{i,gl} - (1 - \eta)\dot{\Gamma}^{'''}\vec{u}^{'} - \dot{\Upsilon}^{'''}\vec{u}^{'} + \dot{s}^{'''}_{p,l} \nonumber \\
+%\frac{\partial \left( (1 - \alpha_g) \rho_l h_l \right) }{\partial t } & = & -\nabla \cdot \left( \alpha_l \rho_l h_l \vec{u}_l \right) - \nabla \cdot \left( \alpha_e \rho_l h_l \vec{u}_e \right) \nonumber \\
+% & - & \dot{\Gamma}^{'''} h^{'}_l +  \dot{q}^{'''}_{i,l} - \dot{q}^{'''}_{n,l}  + \dot{q}^{'''}_{w,l} + (1 - \alpha_g) \frac{\partial P}{\partial t} + \dot{s}^{'''}_{e,l} \nonumber
+%\end{IEEEeqnarray}
+%
+%\end{frame}
+%
+%%------------------------------------------------
+%%------------------------------------------------
+%\begin{frame}
+%\frametitle{Methods for Nuclear Thermal Hydraulic Safety Analysis}
+%
+%\begin{itemize}
+%\item{Fully Explicit Method [COBRA-I]}
+%\item{Fully Implicit Method [CATHARE] (Barre and Bernard, 1990)}
+%\item{Semi-Implicit Method [COBRA-TF] (Liles and Reed, 1978) }
+%\item{Stability-Enhancing Two-Step Method (SETS) [TRACE] (Mahaffy, 1982) }
+%\item{Nearly Implicit Method [RELAP] (Trapp and Riemke, 1986) }
+%\end{itemize}
 %
 %\end{frame}
 \end{document}
