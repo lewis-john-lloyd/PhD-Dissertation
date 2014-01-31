@@ -5,8 +5,6 @@
 \usepackage{ragged2e}
 \usepackage{multicol}
 
-\usepackage[normalem]{ulem}
-
 \usepackage{tikz}
 \usetikzlibrary{shapes}
 \usetikzlibrary{arrows}
@@ -47,7 +45,6 @@
 \usetheme{Szeged}
 \usecolortheme{beaver}
 \usefonttheme{serif}
-%\setbeamertemplate{navigation symbols}{}
 
 %----------------------------------------------------------------------------
 %----------------------------------------------------------------------------
@@ -62,25 +59,12 @@ Thermal-Hydraulic Safety Analysis}
 \date[Defense 2014]{Defense, 2014}
 \subject{Nuclear Engineering}
 
-%----------------------------------------------------------------------------
-%----------------------------------------------------------------------------
-
 \begin{document}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
-
-%\AtBeginSubsection[]
-%{
-%\begin{frame}
-%\tableofcontents[subsectionstyle=show/shaded/hide,sectionstyle=show/shaded]
-%\end{frame}
-%}
-
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
 \frame{\titlepage}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 \frametitle{Introduction}
 
@@ -103,8 +87,8 @@ Thermal-Hydraulic Safety Analysis}
 \end{itemize}
 
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 
 \begin{itemize}
@@ -112,7 +96,7 @@ Thermal-Hydraulic Safety Analysis}
 \begin{itemize}
 \item{Two-Phase Flow}
 \item{Computational Geometry}
-\item{Numeric Approximations}
+\item{Numerical Approximations}
 \item{Research Objectives}
 \end{itemize}
 }
@@ -144,61 +128,39 @@ Thermal-Hydraulic Safety Analysis}
 \end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
-\section[Background]{Background}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
-\subsection[Two-Phase Flow]{Two-Phase Flow}
+\section[Introduction]{Introduction}
 %------------------------------------------------
 %------------------------------------------------
-\begin{frame}
-\frametitle{Two-Phase Flow}
-
-\begin{itemize}
-\item{Three water fields: vapor, continuous liquid, and dispersed liquid.}
-\item{\Ncg{} field.}
-\item{Assumptions}
-\item{For one-dimensional problems there are nine partial differential equations.
-\begin{itemize}
-\item{Four conservation of mass equations: \Ncg{} field, water vapor field, continuous liquid field, and entrained liquid field.}
-\item{Three conservation of momentum equations: Gaseous phase, continuous liquid field, and entrained liquid field.}
-\item{Two conservation of energy equations: Gaseous phase and liquid phase.}
-\end{itemize}
-}
-\end{itemize}
-
-\end{frame}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
 \subsection[Computational Geometry]{Computational Geometry}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 \frametitle{Computational Geometry}
 \begin{columns}
-\column{0.65\textwidth}
+\column{0.8\textwidth}
 
 \begin{itemize}
 \item{Sections
 \begin{itemize}
 \item{Contain subchannels}
-\item{Defines spatial discretization of subchannel within section.}
-\item{Splitting and merging of subchannels occur at section boundaries.}
+\item{Define discretization of subchannels within section.}
+\item{Splitting and merging of subchannels at section boundaries.}
 \end{itemize}
 }
 \item{Subchannels
 \begin{itemize}
+\item{Contain continuity volumes and momentum flow paths.}
 \item{Defines cross-sectional areas.}
 \end{itemize}
 }
 \item{Gaps
 \begin{itemize}
-\item{Connect subchannel within a section.}
-\item{Defines transverse length.}
+\item{Allow inter-subchannel connections within a section via momentum flow paths.}
 \end{itemize}
 }
 \end{itemize}
 
-\column{0.35\textwidth}
+\column{0.20\textwidth}
 \begin{figure}[t]
 \centering
 \resizebox{!}{0.7\textheight}{
@@ -239,43 +201,51 @@ Thermal-Hydraulic Safety Analysis}
 \end{columns}
 
 \end{frame}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
-\subsection[Numeric Approximations]{Numerical Approximations}
 %------------------------------------------------
 %------------------------------------------------
+\subsection[Two-Phase Flow]{Two-Phase Flow}
+%---------
+%---------
 \begin{frame}
-\frametitle{Semi-Implicit Continuous Liquid Mass and Momentum Equations}
+\frametitle{Two-Phase Flow Governing Equations}
 
-Conservation of continuous liquid mass:
-\begin{IEEEeqnarray}{rCl}
-V_c \left[ (\alpha_l \rho_l )^{n+1} \right. & - & \left. (\alpha_l \rho_l )^{n} \right] =  -\Delta t \sum_{i \, \in \, N_{f}}\left( \don{\alpha^{n}_{l} \rho^{n}_{l}}^{n}_{d} u^{n+1}_{l} A_{m} \right)_{i} \nonumber \\
-&- & \left[ (1-\eta)\Gamma + \Upsilon \right]^{n+1} \nonumber
-\end{IEEEeqnarray}
+\begin{equation*}
+\vec{F}_{c}(\vec{x}^{n+1}) \rightarrow \left[\alpha_{g} P_{n},\alpha_{g}, (\alpha_{g} h_{v}), ((1-\alpha_{g})h_{l}), \alpha_{e}, P\right]
+\end{equation*}
 
-Conservation of continuous liquid momentum:
-\begin{IEEEeqnarray}{rcl}
-& & \dot{m}_{l}^{n+1} - \dot{m}_{l}^{n} = - \frac{\dt{}}{\dx{}} \left[ \sum_{i \, \in \, N_{c}} \left( \don{\alpha_l \rho_l u_l}_d \ave{u}_{a,l} \tilde{A} \right)^{n}_{i} + \ave{\alpha_{l}}^{n}_{a} \nabla P^{n+1} \right. \nonumber \\
- & & - g\ave{\alpha_l \rho_l}_{a}^{n} + K^{n}_{wl}(\dot{m}_l^{n+1})^2 - K^{n}_{i,gl}(u_{l}^{n+1} - u_{g}^{n+1})^2 \nonumber \\
- & & + \left[(1 - \eta)\dot{\Gamma} u^{'} + \dot{\Upsilon} u^{'}\right]^{n} ] \nonumber
-\end{IEEEeqnarray}
+Each continuity volume has six conservation equations: \ncg{} mass, continuous liquid mass, gaseous enthalpy, liquid enthalpy, entrained liquid mass, and vapor mass.
+
+\begin{equation*}
+\vec{F}_{p}(\vec{x}^{n+1}) \rightarrow \left[\dot{m}_{l}, \dot{m}_{g}, \dot{m}_{e} \right]
+\end{equation*}
+
+Each momentum flow path has three conservation equations:
+continuous liquid momentum, gaseous momentum, and entrained liquid momentum.
+
+\begin{center}
+$\vec{F}_{c}$ and $\vec{F}_{p}$ are nonlinear.
+\end{center} 
 
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
+\subsection[Numerical Approximations]{Numerical Approximations}
+%---------
+%---------
 \begin{frame}
-\frametitle{Single Newton Step vs. Iterative Newton Method}
+\frametitle{Linearized Methods vs. Iterative Methods}
 
 \begin{itemize}
-\item{Single Newton Step
+\item{Linearized Methods
 \begin{itemize}
-\item{Linearized Approximation.}
+\item{Equivalent to a single Newton step.}
 \item{Timestep acceptance based upon error mitigation and prevention.}
 \item{Limits placed upon changes in independent parameters.}
 \end{itemize}
 }
-\item{Iterative Newton Step
+\item{Iterative Methods
 \begin{itemize}
+\item{Newton's Method.}
 \item{Nonlinearly Convergent.}
 \end{itemize}
 }
@@ -289,34 +259,11 @@ Conservation of continuous liquid momentum:
 \end{figure}
 
 \end{frame}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
-\subsection[Solution Methods]{Solution Methods}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
-%\subsection[Algorithmic Concerns]{Algorithmic Concerns}
-
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
-\subsection[Domain Coupling]{Domain Coupling}
 %------------------------------------------------
 %------------------------------------------------
-\begin{frame}
-\frametitle{Pressure Based Domain Coupling}
-
-\begin{itemize}
-\item{Master domain obtains pressure updates in terms of continuity variable flow rates at boundary of slave domains.}
-\item{Slave domain contains information about master domain pressures in terms of momentum volume velocities.}
-\item{Allows for consistent semi-implicit treatment of entire domain.}
-\end{itemize}
-
-\end{frame}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
 \subsection[Research Objectives]{Research Objectives}
-
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 \frametitle{Research Objectives}
 
@@ -328,32 +275,42 @@ Conservation of continuous liquid momentum:
 \end{figure}
 
 \end{frame}
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\section[Work]{Nonlinear Domain Decomposition Algorithm}
 %------------------------------------------------
 %------------------------------------------------
-\subsection[COBRA]{Nonlinear COBRA}
-%------------------------------------------------
-%------------------------------------------------
+\subsection[Operator-Based Scaling]{Operator-Based Scaling}
+%---------
+%---------
 \begin{frame}
-\frametitle{Nonlinear COBRA}
+\frametitle{Momentum Flow Paths, $\vec{F}^{k}_{p}$}
+\begin{equation*}
+\frac{\partial\, \vec{F}^{k}_{p}}{\partial \dot{m}^{n+1}_{l}} \delta \dot{m}_{l}^{k} + \frac{\partial\, \vec{F}^{k}_{p}}{\partial \dot{m}^{n+1}_{g}} \delta \dot{m}_{g}^{k} + \frac{\partial\, \vec{F}^{k}_{p}}{\partial \dot{m}^{n+1}_{e}} \delta \dot{m}_{e}^{k} + \sum_{i\, \in \, N_{c}} \frac{\partial\, \vec{F}^{k}_{p}}{\partial P_{i}} \delta P_{i}^{k} = - \vec{F}^{k}_{p}
+\end{equation*}
 
-\begin{itemize}
-\item{Original source code assumes that $\vec{x}^{n+1,k} = \vec{x}^{n}$.
-    \begin{itemize}
-    \item{Temporal derivative terms missing from continuity residuals.}
-    \item{Use of $\vec{x}^{n+1,k}$ for $\vec{x}^{n}$.}
-    \item{Use of $\vec{x}^{n}$ for $\vec{x}^{n+1,k}$.}
-    \end{itemize}
-}
-\item{Linesearch algorithm with cubic backtracking.}
-\item{Quality assurance framework.}
-\end{itemize}
+\begin{equation*}
+\vec{J}^{k}_{p} \delta \momVec{}^{k}  = - \vec{F}^{k}_{p} - \sum_{i\, \in \, N_{c}} \frac{\partial\, \vec{F}^{k}_{p}}{\partial P_{i}} \delta P_{i}^{k}
+\end{equation*}
+
+\begin{equation*}
+\delta \momVec{}^{k} = - \left[\vec{J}_{p}^{k}\right]^{-1} \left[\vec{F}^{k}_{p} \right] - \sum_{i \, \in \, N_{c} } \left[\vec{J}^{k}_{p}\right]^{-1} \left[\frac{\partial \vec{F}^{k}_{p}}{\partial P_{i}}\right] \delta P^{k}_{i}
+\end{equation*}
+
+\begin{equation*}
+\delta \momVec{}^{k} = \delta \momVec{}^{*} + \sum_{i \, \in \, N_{c} } \frac{\partial \momVec{}^{k}}{\partial P_{i}} \delta P^{k}_{i}
+\end{equation*}
 
 \end{frame}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
-\subsection[Scaling]{Operator Based Scaling}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
+\begin{frame}
+\frametitle{Normal Continuity Volumes, $\vec{F}^{k}_{c}$}
+
+
+\end{frame}
+%---------
+%---------
 \begin{frame}
 \frametitle{Operator-Based Scaling}
 Nonlinear residuals have different units:
@@ -371,8 +328,8 @@ S^{k}_{m,l} & = & V_c \abs{\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_
 \end{IEEEeqnarray}
 
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 \frametitle{Operator-Based Scaling}
 
@@ -392,16 +349,27 @@ Scaled residual:
 \tilde{\vec{F}}(t) = \frac{\vec{F}(t)}{\vec{S}(t)}
 \end{equation*}
 
-
 \end{frame}
+%------------------------------------------------
+%------------------------------------------------
+\subsection{Domain Decomposition Algorithm}
+%---------
+%---------
+
+%------------------------------------------------
+%------------------------------------------------
+\subsection{Software Engineering}
+%---------
+%---------
+
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
-\section[Numerical Results]{Numerical Results}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
+\section[Numerical Experiments]{Numerical Experiments}
+%------------------------------------------------
+%------------------------------------------------
 \subsection[Procedures]{Intent and Procedures}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 \frametitle{Numerical Experiments: Purpose}
 \begin{itemize}
@@ -415,8 +383,8 @@ Scaled residual:
 }
 \end{itemize}
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 \frametitle{Numerical Experiments: Procedure}
 
@@ -433,8 +401,8 @@ Scaled residual:
 %------------------------------------------------
 %------------------------------------------------
 \subsection[Single-Phase and Flashing]{Single-Phase and Flashing Problems}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 \frametitle{Single-Phase and Flashing Problems}
 \begin{columns}
@@ -558,8 +526,8 @@ Scaled residual:
 %------------------------------------------------
 %------------------------------------------------
 \subsection[Complex Geometry]{Complex Geometry}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 \frametitle{Complex Geometry}
 \begin{columns}
@@ -600,8 +568,8 @@ Scaled residual:
 %------------------------------------------------
 %------------------------------------------------
 \subsection[Valve Problem]{Valve Problem}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 \frametitle{Valve Problem}
 
@@ -673,8 +641,8 @@ Scaled residual:
 %------------------------------------------------
 %------------------------------------------------
 \subsection[Filling Problem]{Filling Problem}
-%------------------------------------------------
-%------------------------------------------------
+%---------
+%---------
 \begin{frame}
 \frametitle{Filling Problem}
 
@@ -774,11 +742,11 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
-\subsection[Post-blowdown Refill Problem]{Post-blowdown Refill Problem}
-%------------------------------------------------
-%------------------------------------------------
+\subsection[Post-Blowdown Refill Problem]{Post-Blowdown Refill Problem}
+%---------
+%---------
 \begin{frame}
-\frametitle{Post-blowdown Refill Problem}
+\frametitle{Post-Blowdown Refill Problem}
 \begin{columns}
 \column{0.80\textwidth}
 \begin{itemize}
@@ -837,7 +805,8 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \includegraphics[width=0.94\textwidth]{../plots/refillGammaLin_pdf}
 \end{figure}
 
-\end{frame}%---------
+\end{frame}
+%---------
 %---------
 \begin{frame}
 \frametitle{Nonlinear Solver's Net Condensation}
@@ -884,7 +853,11 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \section[Conclusions]{Conclusions}
+%------------------------------------------------
+%------------------------------------------------
 \subsection[Conclusions]{Conclusions}
+%---------
+%---------
 \begin{frame}
 \frametitle{Summary}
 
@@ -896,9 +869,11 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \end{itemize}
 
 \end{frame}
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
+%------------------------------------------------
+%------------------------------------------------
 \subsection[Future Work]{Future Work}
+%---------
+%---------
 \begin{frame}
 \frametitle{Future Work}
 
@@ -910,8 +885,6 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \end{itemize}
 
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \section*{}
@@ -1612,4 +1585,44 @@ This research was performed under appointment to the Rickover Fellowship Program
 %\end{itemize}
 %
 %\end{frame}
+%%------------------------------------------------
+%%------------------------------------------------
+\begin{frame}[shrink=5]
+\frametitle{Conservation of Momentum Equations}
+\begin{IEEEeqnarray}{lCl}
+F^{k}_{p, l} & = & \dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n} + \frac{\dt{}}{\dx{}}\left(\sum_{i\,\in \, N_{c} } \left( \don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a},l} \tilde{A}\right)_{i}^{n}
+ +\ave{\alpha_l}^{n}_{\text{a}} \nabla P^{\,n+1, k} - g \ave{\alpha_l \rho_l}_{\text{a}}^{n} \right. \nonumber \\
+& + & \left. K^{n}_{wl}(\dot{m}_l^{n+1, k})^2 - K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1,k}_{g})^2 + \left[(1 - \eta)\dot{\Gamma} u^{'} + \dot{\Upsilon} u^{'}\right]^{n} \vphantom{\sum_{N_{k}}}\right) \nonumber \\
+%\label{eqn:nlnGasMomentumResidual}
+F^{k}_{p, g} & = & \dot{m}_{g}^{n+1,k} - \dot{m}_{g}^{n} + \frac{\dt{}}{\dx{}}\left(\sum_{i\, \in \, N_{c} } \left( \don{\alpha_g \rho_g u_g}_{\text{d}} \ave{u}_{\text{a},g}  \tilde{A}\right)_{i}^{n}  +\ave{\alpha_g}^{n}_{\text{a}} \nabla P^{\,n+1, k} - g \ave{\alpha_g \rho_g}_{\text{a}}^{n} \right.\nonumber \\
+& + & \left. K^{n}_{wg}(\dot{m}_g^{n+1, k})^2 + K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1, k}_{g})^2 + K^{n}_{i,ge}(u^{n+1,k}_{e} - u^{n+1,k}_{g})^2 - (\dot{\Gamma} u^{'})^{n} \vphantom{\sum_{N_{k}}}\right) \nonumber\\
+%\label{eqn:nlnEntMomentumResidual}
+F^{k}_{p, e} & = & \dot{m}_{e}^{n+1, k} - \dot{m}_{e}^{n} + \frac{\dt{}}{\dx{}}\left(\sum_{i\, \in \, N_{c} } \left( \don{\alpha_e \rho_l u_e}_{\text{d}} \ave{u}_{\text{a},e}  \tilde{A}\right)_{i}^{n} + \ave{\alpha_{e}}^{n}_{\text{a}} \nabla P^{\,n+1, k} - g \ave{\alpha_e \rho_l}^{n}_{\text{a}} \right. \nonumber \\
+& + & \left. K^{n}_{we}(\dot{m}_e^{n+1, k})^2 - K^{n}_{i,ge}(u^{n+1, k}_{e} - u^{n+1, k}_{g})^2 + \left[\eta \dot{\Gamma} u^{'} - \dot{\Upsilon} u^{'}\right]^n\vphantom{\sum_{N_{k}}}\right) \nonumber
+\end{IEEEeqnarray}
+
+\end{frame}
+%---------
+%---------
+\begin{frame}[shrink=5]
+\frametitle{Conservation of Mass and Energy Equations}
+
+\begin{IEEEeqnarray}{lCl}
+%\label{eqn:nlnNcgMassResidual}
+F^{k}_{m, n} & = & V_c\left[ (\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{n}\right] +\dt{} \sum_{i\, \in \, N_{f}}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1,k}_{d} u^{n+1, k}_{g}  A_{m} \right)_{i} \nonumber \\
+%\label{eqn:nlnLiqMassResidual}
+F^{k}_{m, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_l \rho_l \right)^{n} + \dt{} \sum_{i\,\in\,N_{f}} \left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l A_{m} \right)_{i} + \left[(1-\eta)\Gamma + \Upsilon\right]^{n+1, k}  \nonumber  \\
+%\label{eqn:nlnGasEnergyResidual}
+F^{k}_{h, g} & = & V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_{g} ( P^{\,n+1, k} - P^{\,n} ) \right] - q^{n}_{wg} \nonumber \\
+& - & \left[q_{i,v} + \Gamma h^{'}_v + q_{gl}\right]^{n+1, k} + \dt{} \sum_{i\,\in\,N_{f}} \left(\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  A_{m} \right)_{i}  \nonumber  \\
+%\label{eqn:nlnLiqEnergyResidual}
+F^{k}_{h, l} & = & V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})\right] - \left[q_{i,l} - \Gamma h^{'}_l - q_{gl}\right]^{n+1,k}    \nonumber \\
+& +& \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_l A_{m} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} - q^{n}_{wl}  \nonumber  \\
+%\label{eqn:nlnEntMassResidual}
+F^{k}_{m, e} & = & V_c \left(\alpha_e \rho_l \right)^{n+1,k} - V_c \left(\alpha_e \rho_l \right)^{n} + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} - \left[\Upsilon - \eta \Gamma \right]^{n+1, k}  \nonumber \\
+%\label{eqn:nlnVapMassResidual}
+F^{k}_{m, v} & = & V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right] + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1,k}_{d} u^{n+1, k}_{g} A_{m} \right)_{i} - \Gamma^{n+1, k}  \nonumber 
+\end{IEEEeqnarray}
+
+\end{frame}
 \end{document}

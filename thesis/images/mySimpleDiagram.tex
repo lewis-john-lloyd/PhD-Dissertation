@@ -1,13 +1,12 @@
 \tikzsetnextfilename{images/mySimpleDiagram_pdf}
 \begin{tikzpicture}
 \draw[pattern=north west lines, pattern color=blue] [thick] (-3,0) rectangle (0,3);
-\draw (-1.5,3) node[anchor=south] {Linearized Approximation};
-\draw (-3,2.5) node[anchor=east] {RELAP5-3D};
-\draw (-3,2) node[anchor=east] {COBRA};
-\draw (-3,1.5) node[anchor=east] {MARS};
-\draw (-3,1) node[anchor=east] {SPACE};
+\draw (-1.5,3) node[anchor=south] {Linear Approximation};
+\draw (-3,2) node[anchor=east] {RELAP5-3D};
+\draw (-3,1.5) node[anchor=east] {COBRA};
+\draw (-3,1) node[anchor=east] {MARS};
 \draw[pattern=north east lines, pattern color=red] [thick] (3,0) rectangle (6,3);
-\draw (4.5,3) node[anchor=south] {Nonlinearly Convergent};
+\draw (4.5,3) node[anchor=south] {Iterative Convergence};
 \draw (6,2) node[anchor=west] {CATHARE};
 \draw (6,1.5) node[anchor=west] {TRACE};
 \end{tikzpicture}
