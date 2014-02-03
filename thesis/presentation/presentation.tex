@@ -352,46 +352,62 @@ After the pressure update is obtained, each continuity volume and momentum flow 
 \end{columns}
 
 \end{frame}
+%---------
+%---------
+\begin{frame}[shrink=1]
+\frametitle{Nonlinear Solver: Convergence Determination}
+
+The determination of nonlinear convergence is based upon three conditions.
+
+\begin{IEEEeqnarray}{rclcrcl}
+\frac{||\tilde{\vec{F}}^{k+1}||_{2}}{\sqrt{N_{u}}} \, & \leq & \, \ftol{} & \quad & \tilde{\vec{F}}^{k} &=& \left[\vec{S}^{k}\right]^{-1}\vec{F}^{k}\nonumber \\
+\frac{||\delta \tilde{\vec{x}}^{k}||_{2}}{\sqrt{N_{u}}}  \, & \leq & \, \dtol{} & \quad & \delta \tilde{\vec{x}}^{k} &=& \frac{\delta \vec{x}^{k}}{\vec{x}^{n+1, k}} = \frac{ \vec{x}^{n+1, k+1} - \vec{x}^{n+1, k}}{\vec{x}^{n+1,k}} \nonumber \\
+k \, & > & \, \kmax & \quad & & &\nonumber 
+\end{IEEEeqnarray}
+
+The nonlinear convergence parameters for this work, unless otherwise stated, are \kmax{} = 35, $F_{\text{tol}}$ = \expneg{1.0}{6}, $\delta_{\text{tol}}$ = \expneg{1.0}{8}.
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
 \subsection[Operator-Based Scaling]{Operator-Based Scaling}
 %---------
 %---------
 \begin{frame}
 \frametitle{Operator-Based Scaling}
-Nonlinear residuals have different units:
 
-\begin{IEEEeqnarray}{rcl}
-F^{k}_{m,l} & = & V_c \left[ \left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n} \right] + \dt{} \sum_{i\,\in\,N_{f}}\left( \don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1,k}_{l}  A_{m} \right)_{i} \nonumber \\
-& + & \left[(1-\eta)\Gamma + \Upsilon \right]^{n+1,k} \nonumber
-\end{IEEEeqnarray}
-
-Scaling chosen:
-
-\begin{IEEEeqnarray}{rcl}
-S^{k}_{m,l} & = & V_c \abs{\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n}} + \dt{} \sum_{i\,\in\,N_{f}}\abs{\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1,k}_l  A_{m}}_{i} \nonumber \\
-& + & \abs{(1-\eta)\Gamma}^{n+1,k} + \abs{\Upsilon}^{n+1,k} \nonumber
-\end{IEEEeqnarray}
-
-\end{frame}
-%---------
-%---------
-\begin{frame}
-\frametitle{Operator-Based Scaling}
+Scaled residual:
+\begin{equation*}
+\tilde{\vec{F}}^{k} = \left[\vec{S}^{k}\right]^{-1}\vec{F}^{k}\end{equation*}
 
 \begin{itemize}
 \item{$\left( S_{i}^{-1} F_{i} \right)^{k} \approx 1$ when $\vec{x}^{k}$ is a "poor" solution.}
+\item{$(S_{i}^{-1} F_i)^{k} \approx 0$ when $\vec{x}^{k}$ is a "good" solution.}
 \item{$\left( S_{i}^{-1} F_{i} \right)^{k} \rightarrow 0$ when phase $i$ disappears.}
 \item{$0 \leq \abs{ \left( S_{i}^{-1} F_{i} \right)^{k} } \leq 1 $ for all values of $\vec{x}^{k}_i$.}
 \end{itemize}
 
 At low volume fractions:
 \begin{equation*}
-S_{m,l} = \max[1.0, \left(\frac{100 \alpha_{k,\text{min}}}{\alpha_k}\right)^{6} ] S_{m,l}
+S_{\phi} = \max[1.0, \left(C_{1}\frac{\alpha_{\phi,\text{min}}}{\alpha_{\phi}}\right)^{C_{2}} ] S_{\phi}
 \end{equation*}
 
-Scaled residual:
-\begin{equation*}
-\tilde{\vec{F}}(t) = \frac{\vec{F}(t)}{\vec{S}(t)}
-\end{equation*}
+\end{frame}
+%---------
+%---------
+\begin{frame}[shrink=5]
+\frametitle{Scale Factors}
+
+Nonlinear residuals have different units:
+Scaling chosen:
+
+\begin{IEEEeqnarray}{rcl}
+S^{k}_{m,l} & = & V_c \abs{\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n}} + \dt{} \sum_{i\,\in\,N_{f}}\abs{\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1,k}_l  A_{m}}_{i} \nonumber \\
+&+& \abs{(1-\eta)\Gamma}^{n+1,k} + \abs{\Upsilon}^{n+1,k} \nonumber \\
+S^{k}_{p, l} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}} + \abs{\sum_{i\, \in \, N_{c} } \left( \don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a},l} \tilde{A}\right)^{n}_{i}} \right. \nonumber \\ 
+& + & \abs{\ave{\alpha_l}^{n}_{\text{a}} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_l \rho_l}_{\text{a}}^{n}} + \abs{K^{n}_{wl}(\dot{m}_l^{n+1, k})^2} \nonumber \\
+& + & \abs{K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1,k}_{g})^2} + \abs{(1 - \eta)\dot{\Gamma} u^{'}}^{n} + \abs{\dot{\Upsilon} u^{'}}^{n} \left. \vphantom{\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}}}  \right] \nonumber
+\end{IEEEeqnarray}
 
 \end{frame}
 %------------------------------------------------
@@ -408,8 +424,6 @@ Timestep size sensitivity studies with the set of \dtmax{} given by
 \end{equation*}
 
 For the following two problems, $n_{t}$ = 6, $r_{f}$ = 10, and $\dtmax{}_{o}$ = 1.0 [s]. 
-
-Nonlinear convergence parameters, unless otherwise stated, are \kmax{} = 35, $F_{\text{tol}}$ = \expneg{1.0}{6}, $\delta_{\text{tol}}$ = \expneg{1.0}{8}.
 
 \end{frame}
 %---------
