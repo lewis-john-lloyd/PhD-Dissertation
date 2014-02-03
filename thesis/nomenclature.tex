@@ -12,22 +12,20 @@
 \nomtypeA{10CFR50}{Part 50 of 10CFR}
 \nomtypeA{SAR}{Safety Analysis Report}
 \nomtypeA{LWR}{Light Water Reactor}
-\nomtypeA{ECCS}{Emergency Core Cooling System}
 \nomtypeA{LOCA}{Loss-of-Coolant Accident}
-\nomtypeA{PWR}{Pressurized Water Reactor}
-\nomtypeA{BWR}{Boiling Water Reactors}
 \nomtypeA{CFL}{Courant-Friedrichs-Lewy}
 \nomtypeA{NBC}{Nonlinear-Boundary Continuity}
 \nomtypeA{PDE}{Partial Differential Equation}
 \nomtypeA{SETS}{Stability Enhancing Two-Step}
 \nomtypeA{PVM}{Parallel Virtual Machine}
+\nomtypeA{GE}{General Electric}
 
 \nomtypeR{$w^{n+1}_{k, j}$}{Volumetric flow for phase k in \relap53d{}.}{$ \text{ft}^{3}\,\text{s}^{-1}$}
 \nomtypeR{$u^{n+1}_{k, j}$}{Flow of internal energy for phase k in \relap53d{}.}{$\text{BTU}\,\text{s}^{-1} $}
 \nomtypeR{$n^{n+1}_{g,j}$}{Flow of \ncg{} mass in \relap53d{}.}{$ \lbm{} \, \text{s}^{-1}$}
 \nomtypeR{$m^{n+1}_{k,j}$}{Flow of mass for phase k in \relap53d{}.}{$ \lbm{}\, \text{s}^{-1} $}
 \nomtypeR{$s_{p}$}{Source or sink of external momentum.}{$ \lbf{}\, \text{s}$}
-\nomtypeR{$s_{e}$}{Source or sink of external energy.}{$ \text{BTU} $}
+\nomtypeR{$s_{h}$}{Source or sink of external energy.}{$ \text{BTU} $}
 \nomtypeR{$s_{m}$}{Source or sink of external mass.}{$\lbm{} $}
 \nomtypeR{$\vec{a}$}{Vector of constants from right-hand-side of momentum system.}{}
 \nomtypeR{$\vec{b}$}{Vector of pressure-update coefficients from momentum system.}{}
@@ -64,12 +62,12 @@
 \nomtypeR{$v$}{Specific volume.}{$\text{ft}^{3} \, \lbm{}$}
 \nomtypeR{$K_{o}$}{Base loss coefficient in valve problem.}{$\lbf{}\,\text{s}\,\text{ft}^{-1}$}
 \nomtypeR{$T_{\text{CPU}}$}{CPU time taken for a simulation to run.}{$\text{s}$}
-\nomtypeR{$R$}{Integral of nonlinear residuals.}{}
-\nomtypeR{$\tilde{R}$}{Time-averaged integral of nonlinear residuals.}{}
-\nomtypeR{$\tilde{R}_{M}$}{Time-moment integral of nonlinear residuals.}{}
+%\nomtypeR{$R$}{Integral of nonlinear residuals.}{}
+%\nomtypeR{$\tilde{R}$}{Time-averaged integral of nonlinear residuals.}{}
+%\nomtypeR{$\tilde{R}_{M}$}{Time-moment integral of nonlinear residuals.}{}
 \nomtypeR{$q_{n,l}$}{Energy transferred between the \ncg{} field and the liquid water phase.}{$ \text{BTU}$}
 \nomtypeR{$q_{w,\phi}$}{Energy transferred between a solid structure and a fluid $\phi$.}{$\text{BTU}$}
-\nomtypeR{$q_{i,\phi}$}{Energy transferred between the saturated interface and the fluid $\phi$.}{$ \text{BTU}$}
+\nomtypeR{$q_{i,\phi}$}{Energy transferred between the saturated interface and a phase $\phi$.}{$ \text{BTU}$}
 \nomtypeR{$c$}{Local speed of sound.}{$ \text{ft}\, \text{s}^{-1} $}
 \nomtypeR{$\mathcal{L}_{\infty}$}{Infinity norm of a given vector.}{}
 \nomtypeR{$\mathcal{L}_{2}$}{Euclidean norm of a given vector.}{}
@@ -91,16 +89,21 @@
 \nomtypeR{$h$}{Specific enthalpy.}{$ \text{BTU}\, \lbm{}^{-1}$}
 \nomtypeR{$f(x)$}{A generic function.}{}
 \nomtypeR{$r_{f}$}{Refinement factor for timestep generation function.}{}
-\nomtypeR{$\dot{m}$}{A generic momentum.}{$\lbf{}$}
+\nomtypeR{$\dot{m}_{\phi}$}{The conserved quantity for a momentum field or phase equation.}{$\lbm{}\,\text{s}^{-1}$}
+\nomtypeR{$\dot{m}(t)$}{Specified mass flow at boundary.}{$\lbm{}\,\text{s}^{-1}$}
 \nomtypeR{$u$}{A generic velocity.}{$\text{ft}\, \text{s}^{-1}$}
 \nomtypeR{$K_{i,\phi_1 \phi_2}$}{Effective coefficient for drag between fluids $\phi_1$ and $\phi_2$.}{$\lbf{}\,\text{s}\,\text{ft}^{-1}$}
 \nomtypeR{$K_{w,\phi}$}{Effective coefficient for drag between wall and fluid $\phi$.}{$\lbf{}\,\text{s}\,\text{ft}^{-1}$}
 \nomtypeR{$e_{p}$}{Error in calculated pressure}{$ \text{psia} $}
 \nomtypeR{$T$}{End time of simulation.}{$\text{s} $}
 \nomtypeR{$F_{\text{tol}}$}{Convergence tolerance with respect to the scaled residual vector.}{}
+\nomtypeR{$\kmax{}$}{Maximum iteration count for nonlinear solver.}{}
 
-
+\nomtypeG{$\delta \vec{P}$}{Pressure updates for a domain.}{}
+\nomtypeG{$\delta \vec{\Psi}$}{Flow rate updates.}{}
 \nomtypeG{$\dtmax{}$}{Maximum timestep allowed for a simulation.}{$\text{s}$}
+\nomtypeG{$\dtcrnt{}$}{Timestep as calculated by CFL limit.}{$\text{s}$}
+\nomtypeG{$\dt{}_{\text{vol}}$}{Timestep as calculated by volume CFL limit.}{$\text{s}$}
 \nomtypeG{$\dt{}$}{Timestep between time $t^{n}$ and $t^{n+1}$.}{$\text{s}$}
 \nomtypeG{$\dx{}$}{Axial length of a volume.}{$\text{ft}$}
 \nomtypeG{$\eta$}{Apportionment factor for inter-phase mass transfer.}{}
@@ -117,7 +120,7 @@
 \nomtypeG{$\vec{\Xi}$}{Matrix of coefficients that converts the momentum vector to the flow rate vector.}{}
 \nomtypeG{$\Psi$}{A given flow rate.}{}
 \nomtypeG{$\vec{\Psi}$}{Vector of flow rates.}{}
-\nomtypeG{$\Omega$}{The domain; the set of volumes that determines the domain.}{}
+\nomtypeG{$\Omega$}{The domain; the set of volumes that comprises the domain.}{}
 \nomtypeG{$\delta_{\text{tol}}$}{Convergence tolerance with respect to the relative update vector.}{}
 
 \nomtypeT{k}{Newton iteration index.}
@@ -129,6 +132,7 @@
 \nomtypeT{.}{Per second, a denotation of a rate.}
 \nomtypeT{$C_{2}$}{Coefficient in phase transition function.}
 \nomtypeT{p}{Generic exponent.}
+\nomtypeT{~}{Scaled vector.}
 
 \nomtypeS{$\phi$}{A generic field or phase depending upon context.}
 \nomtypeS{n}{Indicating the \ncg{} component of the gaseous phase.}
@@ -137,7 +141,8 @@
 \nomtypeS{v}{Indicating the vapor component of the gaseous phase.}
 \nomtypeS{l}{Indicating either the continuous liquid field or the total liquid phase.}
 \nomtypeS{p}{Relating to a momentum flow path.}
-\nomtypeS{m}{Relating to a continuity volume.}
+\nomtypeS{c}{Relating to a continuity volume.}
+\nomtypeS{m}{Relating to a continuity volume's mass equations.}
 \nomtypeS{h}{Relating to a continuity volume's energy equations.}
 \nomtypeS{d}{Donored quantity.}
 \nomtypeS{a}{Averaged quantity.}
@@ -146,8 +151,11 @@
 \nomtypeS{nln}{Relating to the nonlinear domain or solver.}
 \nomtypeS{dep}{Depleting phase.}
 \nomtypeS{car}{Carrier phase.}
-\nomtypeS{q}{Index representing a particular coordinate for a given inter-domain flow path.}
-\nomtypeS{j}{The coordinate of a particular continuity volume.}
+\nomtypeS{ana}{Analytic.}
+\nomtypeS{j}{The coordinate of a particular location in a given problem.}
+\nomtypeS{o}{Base value.}
+\nomtypeS{*}{An intermediate or tentative value.}
+\nomtypeS{cbv}{Continuity boundary volume between \relap53d{} and \cobra{}.}
 \nomtypeS{i}{Index representing a generic coordinate.}
-\nomtypeS{o(i)}{Coordinate of continuity volume connected via a flow path at coordinate i.}
-\nomtypeS{s(i)}{Coordinate of continuity volume connected via a flow path at coordinate i.}
+\nomtypeS{o(i)}{Coordinate of other continuity volume connected via a flow path at coordinate i.}
+\nomtypeS{s(i)}{Coordinate of current continuity volume connected via a flow path at coordinate i.}

@@ -1,8 +1,5 @@
 \chapter{Concluding Remarks}
 \label{chap:end}
-%A metric to quantify the nonlinear convergence of a timestep-size insensitive simulation was developed and implemented.
-This work has developed a spatially-selective nonlinear refinement algorithm and has identified areas for future research.
-The following two sections will discuss these items.
 
 \section{Summary of Current Work}
 \label{section:summary}
@@ -17,7 +14,7 @@ However, the application of a nonlinear solver can be excessively computationall
 These two paradigms stand at the opposite ends of a spectrum, and the middle ground had yet to be investigated.
 This research has developed a means of providing that middle ground: a spatially-selective, nonlinear refinement algorithm.
 
-During the course of this work, the two-fluid, three-field software \cobra{} was converted from a linearized semi-implicit solver to a nonlinearly convergent solver.
+During the course of this work, the two-phase, three-field software \cobra{} was converted from a linearized semi-implicit solver to a nonlinearly convergent solver.
 As part of that development, an operator-based scaling that provides a physically meaningful convergence measure was developed and implemented.
 This operator-based approach allows for a scaling of the residual that eliminates inherent bias due to the order of magnitude of the terms in the equations; as such, this localized scale factor normalizes its residual equation to between zero and one.
 The use of this scale factor is integral to the effective use of the nonlinear solver in  subsequent analyses.
@@ -27,7 +24,7 @@ It was found that not resolving the nonlinearities present in a simulation may r
 Resolving the nonlinearities at every timestep not only provided a more consistent solution during temporal convergence studies, but also allowed for convergence to a different solution than that obtained by taking only a single Newton step during each timestep.
 However, in simulations where nonlinearities were expected to be low, it was found that the solution produced by the linear solver was as accurate as that produced by the nonlinear solver.
 
-A problem where nonlinearities were isolated to a given portion of the domain was run to determine the impact of resolving those localized nonlinearities upon the global solution.
+A problem where nonlinearities were isolated to a given portion of the domain was run to determine the impact of resolving or not resolving those localized nonlinearities upon the global solution.
 When using a linear solver, the solution exhibited nonphysical behavior in all portions of the domain.
 Use of the nonlinear solver eliminated the nonphysical behavior from the solution.
 Through the use of the domain decomposition algorithm developed for this work, it was found that eliminating the spatially isolable nonlinearity produced a global solution that more accurately reflected the analytic solution.
@@ -79,5 +76,5 @@ A detailed study and analysis of the interaction of the explicit heat transfer a
 
 Finally, the \cobra{} software possesses the ability to switch governing differential equations for the momentum equations if certain criteria are met.
 The primary use of this feature is the implementation of a counter-current flow limit boundary condition, which switch governing equations based upon flow regimes.
-During the course of this work, the interaction between the iterative solver and the decision on when to switch equations was found to produce excessive equation switching in some models.
-The reason for this are as of yet unknown, and additional research is required to identify the root cause.
+During the course of this work, the interaction between the iterative solver and the decision of when to switch equations was found to produce excessive equation switching in some models.
+The reasons for this are as of yet unknown, and additional research is required to identify the root cause.

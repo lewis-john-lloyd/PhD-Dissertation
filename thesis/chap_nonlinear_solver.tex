@@ -3,8 +3,8 @@
 The original \cobra{} software utilized the single step of the traditional semi-implicit method.
 In order to investigate the effects of nonlinear convergence upon the determination of the temporal convergence for a given solution, \cobra{} was modified to enable an iterative global Newton's method.
 Then, for effective use of the nonlinear solver, an operator-based scaling method was developed to provide a physically meaningful measure of convergence.
-A metric was then developed and tested to aid in the identification of solutions that may not be temporally converged.
-This chapter will discuss each of these phases of development as well several implementation specific practicalities that were identified and resolved.
+%A metric was then developed and tested to aid in the identification of solutions that may not be temporally converged.
+This chapter will discuss each of these phases of development, as well as several implementation-specific practicalities that were identified and resolved.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ This includes the momenta, $\momVec{}^{n+1}$, and the pressure, $P^{n+1}$, givin
 \end{IEEEeqnarray}
 
 The momentum equations, \eqref{eqn:linLiqMomentumEquation} - \eqref{eqn:linEntMomentumEquation}, are now linear in the unknown variables $\momVec{}^{n+1}$.
-These three equations are then simultaneously solved for the three unknown new time momenta, $\momVec{}^{n+1}$.
+These three equations are then simultaneously solved for the three unknown new-time momenta, $\momVec{}^{n+1}$.
 The differential of the pressure gradient , $\delta \left( \nabla P \right)$, should be read as the difference between the pressure updates for the two continuity volumes attached to this momentum flow path.
 The $\delta P$ terms are left as unknowns, creating additional unknowns on the right-hand side of the linear system.
 The resulting system is of the form $\displaystyle \vec{J}_{p,j} \momVec{}_{j}^{n+1} = \vec{a}_{j} + \sum_{i\, \in \, N_{c}} \vec{b}_{j, i}\, \delta P_{i}$.
@@ -109,20 +109,20 @@ $N_{f}$ represents the set of momentum flow paths that connect to a given contin
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:nlnNcgMassEquation}
-V_c \left[(\alpha_g \rho_{n})^{n+1}\right. & - & \left. (\alpha_g \rho_{n})^{n}\right] = -\dt{} \sum_{i\, \in \, N_{f}}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1}_{d} u^{n+1}_g  A_{m} \right)_{i} \\
+V_c \left[(\alpha_g \rho_{n})^{n+1}\right. & - & \left. (\alpha_g \rho_{n})^{n}\right] = -\dt{} \sum_{i\, \in \, N_{f}}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1}_{d} u^{n+1}_g  A_{p} \right)_{i} \\
 \label{eqn:nlnLiqMassEquation}
-V_c \left[ \left(\alpha_l \rho_l \right)^{n+1} \right. & - & \left. \left(\alpha_l \rho_l \right)^{n} \right]=  -\dt{} \sum_{i\, \in \, N_{f} }\left( \don{\alpha^n_l \rho^n_l}^{n+1}_{d} u^{n+1}_l  A_{m} \right)_{i} \nonumber \\
+V_c \left[ \left(\alpha_l \rho_l \right)^{n+1} \right. & - & \left. \left(\alpha_l \rho_l \right)^{n} \right]=  -\dt{} \sum_{i\, \in \, N_{f} }\left( \don{\alpha^n_l \rho^n_l}^{n+1}_{d} u^{n+1}_l  A_{p} \right)_{i} \nonumber \\
 &- &\left[(1-\eta)\Gamma + \Upsilon\right]^{n+1} \\
 \label{eqn:nlnGasEnergyEquation}
 V_c \left[ \left( \alpha_g \rho_g h_g \right)^{n+1} \right. & - & \left. \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_g ( P^{\,n+1} - P^{n} ) \right] = \left[ q_{i,v} + \Gamma h^{'}_v + q_{gl} \right]^{n+1} + q^{n}_{wg}\nonumber \\
-& - &\dt{} \sum_{i\, \in \, N_{f}} \left(  \don{\alpha^{n}_g \rho^{n}_g h^{n}_{g}}^{n+1}_{d} u^{n+1}_g  A_{m} \right)_{i} \\ 
+& - &\dt{} \sum_{i\, \in \, N_{f}} \left(  \don{\alpha^{n}_g \rho^{n}_g h^{n}_{g}}^{n+1}_{d} u^{n+1}_g  A_{p} \right)_{i} \\ 
 \label{eqn:nlnLiqEnergyEquation}
 V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1} \right. & - & \left. \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1} - P^{\,n}) \right] = \left[q_{i,l} -\Gamma h^{'}_l - q_{gl}\right]^{n+1}  + q^{n}_{wl} \nonumber \\
-& -& \dt{} \sum_{i\, \in \, N_{f} } \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1}_{d} u^{n+1}_l A_{m} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1}_{d} u^{n+1}_e  A_{m} \right)_{i}\\
+& -& \dt{} \sum_{i\, \in \, N_{f} } \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1}_{d} u^{n+1}_l A_{p} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1}_{d} u^{n+1}_e  A_{p} \right)_{i}\\
 \label{eqn:nlnEntMassEquation}
-V_c \left[ \left(\alpha_e \rho_l \right)^{n+1}\right. & - & \left. \left(\alpha_e \rho_l \right)^{n} \right]= -\dt{} \sum_{i\,\in \,N_{f}} \left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1}_{d} u^{n+1}_e  A_{m} \right)_{i}+ \left[ \Upsilon -\eta\Gamma \right]^{n+1} \\
+V_c \left[ \left(\alpha_e \rho_l \right)^{n+1}\right. & - & \left. \left(\alpha_e \rho_l \right)^{n} \right]= -\dt{} \sum_{i\,\in \,N_{f}} \left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1}_{d} u^{n+1}_e  A_{p} \right)_{i}+ \left[ \Upsilon -\eta\Gamma \right]^{n+1} \\
 \label{eqn:nlnVapMassEquation}
-V_c\left[ \left(\alpha_g \rho_v \right)^{n+1}\right. &-& \left. \left(\alpha_g \rho_v \right)^{n}\right] = - \dt{} \sum_{i \, \in \, N_{f}} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1}_{d} u^{n+1}_g  A_{m} \right)_{i} + \Gamma^{n+1}
+V_c\left[ \left(\alpha_g \rho_v \right)^{n+1}\right. &-& \left. \left(\alpha_g \rho_v \right)^{n}\right] = - \dt{} \sum_{i \, \in \, N_{f}} \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1}_{d} u^{n+1}_g  A_{p} \right)_{i} + \Gamma^{n+1}
 \end{IEEEeqnarray}
 
 Unlike the momentum equations, the continuity equations are linearized with variables other than their conserved quantities, \eqref{eqn:independentVariables}.
@@ -160,9 +160,9 @@ Additionally, while the momentum equations were fully expanded to solve for the 
 ( ( 1 - \alpha_{g} ) h_{l} )^{n+1} - ( ( 1 - \alpha_{g} ) h_{l} )^{n} \\
 \alpha^{n+1}_{e} - \alpha^{n}_{e} \\
  P^{n+1} - P^{n} \\
- P_{i}^{n+1} - P_{i}^{n} \\
+ P_{o(1)}^{n+1} - P_{o(1)}^{n} \\
  \vdots \\
- P_{N_{f}}^{n+1} - P_{N_{f}}^{n}
+ P_{o(N_{f})}^{n+1} - P_{o(N_{f})}^{n}
 \end{bmatrix}
 \end{equation}
 
@@ -176,7 +176,7 @@ The last row of each continuity volume's \eqref{eqn:linSystem} is then formed in
 The two loops, one over the momentum flow paths and one over the continuity volumes, form a single group of operations that act upon a given domain.
 This grouping will be known hereafter as assembling the pressure matrix for a given domain.
 \alg{alg:xschem} shows the two loops and their associated actions.
-Note that a discussion of vectors $\vec{F}_{p}$ and $\vec{F}_{p}$ will be in \sect{subsect:nlnCobraAlgo}, and one of vectors $\vec{S}_{p}$ and $\vec{S}_{c}$ will be in \sect{sect:nlnScaling}.
+Note that a discussion of vectors $\vec{F}_{p}$ and $\vec{F}_{c}$ will be in \sect{subsect:nlnCobraAlgo}, and one of vectors $\vec{S}_{p}$ and $\vec{S}_{c}$ will be in \sect{sect:nlnScaling}.
 
 \begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
@@ -262,7 +262,7 @@ The source code was modified to reflect the intended discretization of the gover
 To do this, areas had to be identified where: there were implicit cancellation of terms, the new-time variables were used in place of old-time variables, and the old-time variables were used in place of new-time variables.
 This required each of the Fortran procedures involved with the calculation of the various physical parameters and operators to be evaluated to determine if the variables being used were correct.
 Where appropriate, the software was changed to reflect the distinction between old-time and tentative new-time variables and to introduce terms that had been assumed to be equal to zero.
-Additionally, upon verification of the proper discretization of the governing equations, several architectural changes were also made to expedite the implementation of the nonlinear solver.
+Finally, upon verification of the proper discretization of the governing equations, several architectural changes were also made to expedite the implementation of the nonlinear solver.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -277,9 +277,7 @@ If an isolated domain is not connected to an external boundary condition, then i
 The inactive regions are thermodynamically isolated and form a closed system.
 These areas of the domain do not impact the solution in the portion of the domain that has boundary values, known as the active region.
 After evaluating several prototypical models, it was determined that a non-trivial portion of the domain of these problems were thermodynamically isolable.
-\fig{fig:activeDomain} shows an example of a domain with inactive regions.
-The inactive portions of the domain are marked with grey, the active with white, and the external boundary conditions with black.
-Inter-subchannel flow paths are marked with dashed lines.
+\fig{fig:activeDomain} shows an example of a domain with inactive regions, where the inactive portions of the domain are marked with grey, the active with white, the external boundary conditions with black, and the inter-subchannel flow paths are marked with dashed lines.
 
 \begin{figure}[ht!]
 \centering
@@ -428,21 +426,21 @@ For a given continuity volume, these six equations are collectively referred to 
 
 \begin{IEEEeqnarray}{lCl}
 \label{eqn:nlnNcgMassResidual}
-F^{k}_{m, n} & = & V_c\left[ (\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{n}\right] +\dt{} \sum_{i\, \in \, N_{f}}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1,k}_{d} u^{n+1, k}_{g}  A_{m} \right)_{i} \\
+F^{k}_{m, n} & = & V_c\left[ (\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{n}\right] +\dt{} \sum_{i\, \in \, N_{f}}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1,k}_{d} u^{n+1, k}_{g}  A_{p} \right)_{i} \\
 \label{eqn:nlnLiqMassResidual}
-F^{k}_{m, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_l \rho_l \right)^{n} + \dt{} \sum_{i\,\in\,N_{f}} \left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l A_{m} \right)_{i}   \nonumber \\
+F^{k}_{m, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_l \rho_l \right)^{n} + \dt{} \sum_{i\,\in\,N_{f}} \left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l A_{p} \right)_{i}   \nonumber \\
 &+& \left[(1-\eta)\Gamma + \Upsilon\right]^{n+1, k} \\
 \label{eqn:nlnGasEnergyResidual}
 F^{k}_{h, g} & = & V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_{g} ( P^{\,n+1, k} - P^{\,n} ) \right] - q^{n}_{wg} \nonumber \\
-& - & \left[q_{i,v} + \Gamma h^{'}_v + q_{gl}\right]^{n+1, k} + \dt{} \sum_{i\,\in\,N_{f}} \left(\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  A_{m} \right)_{i} \\
+& - & \left[q_{i,v} + \Gamma h^{'}_v + q_{gl}\right]^{n+1, k} + \dt{} \sum_{i\,\in\,N_{f}} \left(\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  A_{p} \right)_{i} \\
 \label{eqn:nlnLiqEnergyResidual}
 F^{k}_{h, l} & = & V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})\right] - \left[q_{i,l} - \Gamma h^{'}_l - q_{gl}\right]^{n+1,k}    \nonumber \\
-& +& \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_l A_{m} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} - q^{n}_{wl}\\
+& +& \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_l A_{p} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_e  A_{p} \right)_{i} - q^{n}_{wl}\\
 \label{eqn:nlnEntMassResidual}
-F^{k}_{m, e} & = & V_c \left(\alpha_e \rho_l \right)^{n+1,k} - V_c \left(\alpha_e \rho_l \right)^{n} + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} \nonumber \\
+F^{k}_{m, e} & = & V_c \left(\alpha_e \rho_l \right)^{n+1,k} - V_c \left(\alpha_e \rho_l \right)^{n} + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  A_{p} \right)_{i} \nonumber \\
 &-& \left[\Upsilon - \eta \Gamma \right]^{n+1, k} \\
 \label{eqn:nlnVapMassResidual}
-F^{k}_{m, v} & = & V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right] + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1,k}_{d} u^{n+1, k}_{g} A_{m} \right)_{i} - \Gamma^{n+1, k}
+F^{k}_{m, v} & = & V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right] + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1,k}_{d} u^{n+1, k}_{g} A_{p} \right)_{i} - \Gamma^{n+1, k}
 \end{IEEEeqnarray}
 
 For each continuity volume, the above six equations are linearized about the tentative new-time independent parameters.
@@ -542,7 +540,13 @@ Using the two residuals, $\vec{F}^{k}$ and $\vec{F}^{k+1}$, the comparative accu
 These residual vectors are used in the evaluation of the Newton loop termination criteria.
 
 There are three ways in which the iterative Newton loop can be terminated.
-One way is to have the number of Newton iterates, $k$, exceed a specified threshold, $\kmax{}$.
+One way is that the Newton loop will terminate if the $\mathcal{L}_{2}$ norm of the scaled residual vector, \eqref{eqn:nlnScaledResidual}, divided by the square root of the number of unknowns, $N_{u}$, drops below a specified threshold, $\ftol{}$.
+
+\begin{equation}
+\label{eqn:nlnScaledResidual}
+\tilde{\vec{F}}^{k} = \left[\vec{S}^{k}\right]^{-1}\vec{F}^{k}
+\end{equation}
+
 Another way is to have the $\mathcal{L}_{2}$ norm of the relative update vector, \eqref{eqn:nlnUpdateVector}, divided by the square root of the number of entries in the update vector, $N_{u}$, drop below a specified threshold $\dtol{}$.
 
 \begin{equation}
@@ -550,12 +554,7 @@ Another way is to have the $\mathcal{L}_{2}$ norm of the relative update vector,
 \delta \tilde{\vec{x}}^{k} = \frac{\delta \vec{x}^{k}}{\vec{x}^{n+1, k}} = \frac{ \vec{x}^{n+1, k+1} - \vec{x}^{n+1, k}}{\vec{x}^{n+1,k}}
 \end{equation}
 
-Finally, the Newton loop will terminate if the $\mathcal{L}_{2}$ norm of the scaled residual vector, \eqref{eqn:nlnScaledResidual}, divided by the square root of the number of unknowns, $N_{u}$, drops below a specified threshold, $\ftol{}$.
-
-\begin{equation}
-\label{eqn:nlnScaledResidual}
-\tilde{\vec{F}}^{k} = \left[\vec{S}^{k}\right]^{-1}\vec{F}^{k}
-\end{equation}
+Finally, the Newton loop will terminate if the number of Newton iterates, $k$, exceeds a specified threshold, $\kmax{}$.
 
 The scaling matrix, $\vec{S}^{k}$, will be discussed in detail in \sect{sect:nlnScaling}.
 Note that it is assembled and stored during the process of assembling the pressure matrix, \alg{alg:xschem}.
@@ -619,6 +618,7 @@ In constructing this scaling factor it was determined that the following charact
 
 \begin{itemize}
 \item{$(S_{i}^{-1} F_i)^{k} \approx 1$ when $\vec{x}^{k}$ is a "poor" solution.}
+\item{$(S_{i}^{-1} F_i)^{k} \approx 0$ when $\vec{x}^{k}$ is a "good" solution.}
 \item{$(S_{i}^{-1} F_i)^{k} \rightarrow 0$ when phase $i$ disappears.}
 \item{$0 \leq \abs{S_{i}^{-1} F^{k}_{i}}^{k} \leq 1 $ for all values of $\vec{x}^{k}_i$.}
 \end{itemize}
@@ -645,26 +645,26 @@ S^{k}_{p, e} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[\dot{m}_{e}^
 \end{IEEEeqnarray}
 
 For the momentum equations, \eqref{eqn:nlnLiqMomentumEquation} -- \eqref{eqn:nlnEntMomentumEquation}, the scaled residuals are shown in \eqref{eqn:nlnLiqMomentumScale} -- \eqref{eqn:nlnEntMomentumScale}.
-Likewise, the scale factors for the continuity equations, \eqref{eqn:nlnNcgMassEquation} -- \eqref{eqn:nlnLiqMassEquation}, are given in  \eqref{eqn:nlnNcgMassScale} -- \eqref{eqn:nlnLiqMassScale}.
+Likewise, the scale factors for the continuity equations, \eqref{eqn:nlnNcgMassEquation} -- \eqref{eqn:nlnVapMassEquation}, are given in  \eqref{eqn:nlnNcgMassScale} -- \eqref{eqn:nlnVapMassScale}.
 
 \begin{IEEEeqnarray}{lCl}
 \label{eqn:nlnNcgMassScale}
-S^{k}_{m, n} & = & \dt{}\left[\abs{\frac{V_c\left[(\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{n}\right]}{\dt{}}} + \sum_{i\,\in \, N_{f}}\abs{ \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1,k}_{d} u^{n+1, k}_{g}  A_{m} }_{i} \right]\\
+S^{k}_{m, n} & = & \dt{}\left[\abs{\frac{V_c\left[(\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{n}\right]}{\dt{}}} + \sum_{i\,\in \, N_{f}}\abs{ \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1,k}_{d} u^{n+1, k}_{g}  A_{p} }_{i} \right]\\
 \label{eqn:nlnLiqMassScale}
-S^{k}_{m, l} & = & \dt{}\left[\abs{\frac{V_c \left[\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n}\right]}{\dt{}}} + \sum_{i\, \in \, N_{f} } \abs{ \don{ \alpha^n_l \rho^n_l }^{n+1,k}_{d} u^{n+1, k}_l A_{m} }_{i} \right. \nonumber \\
+S^{k}_{m, l} & = & \dt{}\left[\abs{\frac{V_c \left[\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n}\right]}{\dt{}}} + \sum_{i\, \in \, N_{f} } \abs{ \don{ \alpha^n_l \rho^n_l }^{n+1,k}_{d} u^{n+1, k}_l A_{p} }_{i} \right. \nonumber \\
 & + & \left. \abs{\left[(1-\eta)\dot{\Gamma}\right]^{n+1,k}} + \abs{\dot{\Upsilon}^{n+1, k}} \vphantom{\abs{\frac{V_c \left[\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n}\right]}{\dt{}}}} \right] \\
 \label{eqn:nlnGasEnergyScale}
 S^{k}_{h, g} & = & \dt{}\left[\abs{\frac{V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n}\right]}{\dt{}}} +\abs{\frac{V_c \alpha^{n}_{g} ( P^{n+1, k} - P^{n} )}{\dt{}}} + \abs{\dot{q}_{wg}^{n}} \right. \nonumber \\
-& + & \left. \abs{\left[\dot{\Gamma} h^{'}_v\right]^{n+1,k}} + \abs{\dot{q}_{i,v}^{n+1,k}} +\abs{\dot{q}^{n+1,k}_{gl}} + \sum_{i\,\in \, N_{f} } \abs{\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  A_{m}}_{i} \vphantom{\abs{\frac{V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n}\right]}{\dt{}}}} \right]\\
+& + & \left. \abs{\left[\dot{\Gamma} h^{'}_v\right]^{n+1,k}} + \abs{\dot{q}_{i,v}^{n+1,k}} +\abs{\dot{q}^{n+1,k}_{gl}} + \sum_{i\,\in \, N_{f} } \abs{\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  A_{p}}_{i} \vphantom{\abs{\frac{V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n}\right]}{\dt{}}}} \right]\\
 \label{eqn:nlnLiqEnergyScale}
 S^{k}_{h, l} & = & \dt{}\left[ \abs{\frac{V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n}\right]}{\dt{}}} + \abs{\frac{V_c \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})}{\dt{}}} + \abs{\dot{q}_{wl}^{n}} \right . \nonumber \\
-& + & \abs{\left[\dot{\Gamma} h^{'}_l\right]^{n+1}} + \abs{\dot{q}^{n+1,k}_{i,l}} + \abs{\dot{q}_{gl}^{n+1,k}} + \sum_{i\,\in \, N_{f} }\abs{ \don{ \alpha^{n}_l \rho^{n}_l h^{n}_l }^{n+1,k}_{d} u^{n+1,k}_l A_{m} }_{i} \nonumber \\
-& + & \left. \sum_{i\,\in \, N_{f} } \abs{ \don{ \alpha^{n}_e \rho^{n}_l h^{n}_l }^{n+1,k}_{d} u^{n+1,k}_e  A_{m} }_{i} \vphantom{ \abs{\frac{V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n}\right]}{\dt{}}}} \right] \\
+& + & \abs{\left[\dot{\Gamma} h^{'}_l\right]^{n+1}} + \abs{\dot{q}^{n+1,k}_{i,l}} + \abs{\dot{q}_{gl}^{n+1,k}} + \sum_{i\,\in \, N_{f} }\abs{ \don{ \alpha^{n}_l \rho^{n}_l h^{n}_l }^{n+1,k}_{d} u^{n+1,k}_l A_{p} }_{i} \nonumber \\
+& + & \left. \sum_{i\,\in \, N_{f} } \abs{ \don{ \alpha^{n}_e \rho^{n}_l h^{n}_l }^{n+1,k}_{d} u^{n+1,k}_e  A_{p} }_{i} \vphantom{ \abs{\frac{V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n}\right]}{\dt{}}}} \right] \\
 \label{eqn:nlnEntMassScale}
-S^{k}_{m, e} & = & \dt{} \left[ \abs{\frac{V_c \left[\left(\alpha_e \rho_l \right)^{n+1,k} - \left(\alpha_e \rho_l \right)^{n}\right]}{\dt{}}} + \sum^{N_{f}}_{i\,=\,1}\abs{\left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  \tilde{A}\right)}_{i} \right. \nonumber \\
+S^{k}_{m, e} & = & \dt{} \left[ \abs{\frac{V_c \left[\left(\alpha_e \rho_l \right)^{n+1,k} - \left(\alpha_e \rho_l \right)^{n}\right]}{\dt{}}} + \sum_{i\,\in \, N_{f}}\abs{\left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  A_{m} \right)}_{i} \right. \nonumber \\
 & + & \left. \abs{\dot{\Upsilon}^{n+1, k}} + \abs{\left[\eta\dot{\Gamma} \right]^{n+1,k}} \vphantom{\abs{\frac{V_c \left[\left(\alpha_e \rho_l \right)^{n+1,k} - \left(\alpha_e \rho_l \right)^{n}\right]}{\dt{}}}} \right] \\
 \label{eqn:nlnVapMassScale}
-S^{k}_{m, v} & = & \dt{}\left[\abs{\frac{V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right]}{\dt{}}} + \sum_{i\,\in \, N_{f}} \abs{ \don{ \alpha^{n}_g \rho^{n}_v }^{n+1,k}_{d} u^{n+1, k}_{g}  A_{m} }_{i} \right. \nonumber \\
+S^{k}_{m, v} & = & \dt{}\left[\abs{\frac{V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right]}{\dt{}}} + \sum_{i\,\in \, N_{f}} \abs{ \don{ \alpha^{n}_g \rho^{n}_v }^{n+1,k}_{d} u^{n+1, k}_{g}  A_{p} }_{i} \right. \nonumber \\
 & + & \left.  \abs{\dot{\Gamma}^{n+1, k}} \vphantom{\abs{\frac{V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right]}{\dt{}}}}\right]
 \end{IEEEeqnarray}
 
@@ -686,7 +686,7 @@ S_{\phi} = \max\left[1.0, \left(C_1 \frac{\alpha_{\phi,\text{MIN}}}{\alpha_{\phi
 \end{equation}
 
 For this work, the constant $C_1$ was set equal to 100, and the exponent $C_2$ was set equal to 10.
-This particular phase-transition scaling produced the regular scaling factor when the volume fraction of a phase is at least two orders of magnitude greater than the minimum volume fraction for that phase or field, which is on the order of \expneg{1.0}{6}{[-]}.
+This particular phase-transition scaling produced the regular scaling factor when the volume fraction of a phase was at least two orders of magnitude greater than the minimum volume fraction for that phase or field, which is on the order of \expneg{1.0}{6}{[-]}.
 This drove the scaled residuals for phases that were nominally not present to well below those residuals for equations of the phases that were present.
 
 Another phase depletion limit was a floor placed upon the scale factor.
@@ -775,7 +775,7 @@ These floors are updated during the iterative process.
 There are several aspects of the solution algorithms outlined in \sect{sect:linCobraAlg} and \sect{sect:nlnCobraSolver} that require additional information.
 First, the quality control used during development is discussed.
 Second, the method for activating the nonlinear solver is provided.
-Third, several necessary and practical considerations required to allow the software to simulation of the transition from single-phase to multi-phase flow are outlined.
+Third, several necessary and practical considerations required to allow the software to simulate of the transition from single-phase to multi-phase flow are outlined.
 Lastly, the timestep selection and acceptance criteria are detailed.
 
 %-------------------------------------------------------------------------------
@@ -802,7 +802,7 @@ While adding time to the development cycle, the overhead of the quality assuranc
 The primary input file for \cobra{} is fixed format, so it was decided that a separate input file for the nonlinear solver would provide the most flexibility when running simulations.
 This decision allowed for existing models to be run in nonlinear mode without modification of the actual input file.
 The presence of the file ``\classname{nwt.cob}" triggers the input processing routine for the nonlinear solver.
-There are three parameters that need to be present in the input file; in order they are \kmax{}, \ftol{}, and \dtol{}, each on a separate line. 
+There are three parameters that need to be present in the input file; in order they are $\kmax{}$, $\ftol{}$, and $\dtol{}$, each on a separate line. 
 If the file is present but empty, then the default values are used; they are $35$, \expneg{1.0}{5}, and \expneg{1.0}{10}, respectively.
 
 %-------------------------------------------------------------------------------
@@ -813,7 +813,7 @@ If the file is present but empty, then the default values are used; they are $35
 Given that the governing conservation laws in thermal-hydraulic analyses are those of two-phase flow, phase transition is integral to accurate simulations.
 The ability to model a simulation as it moves from single-phase flow to multi-phase flow and back is the keystone of the software.
 However, the methods for addressing phase transitions within two-phase analysis software are ad hoc procedures that vary between implementations.
-While every software package addresses this issue out of necessity, there is no agreed upon systematic or optimal way of doing so.
+While every software package addresses this issue out of necessity, there is no agreed upon, systematic, or optimal way of doing so.
 However, there are certain physical limits that have been identified that need to be considered when dealing with phase transitions \cite{Bestion2000}.
 
 When multi-phase flow within \cobra{} approaches that of single-phase flow, there is a lower limit imposed upon the volume fraction of the phase that is disappearing.
@@ -845,13 +845,13 @@ For example, \tab{tab:gasMomentumResidual} contains the magnitudes of the variou
 
 The term of interest is the interfacial shear, $\tau_{g,e}$, between the gaseous phase and the entrained liquid phase.
 This term is an order of magnitude greater than the other terms.
-This is due to the combination of the artificially increased interfacial drag coefficient and definition of velocities in \cobra{}.
+This is due to the combination of the artificially increased interfacial drag coefficient and the definitions of velocities in \cobra{}.
 Since \cobra{} uses conservation of momentum equations with momentum as an independent parameter in a semi-implicit discretization, the velocities are poorly defined.
 Compare the old-time velocity, as defined by \eqref{eqn:oldTimeVelocity}, with the new-time velocity as defined by \eqref{eqn:si_vel}.
 
 \begin{equation}
 \label{eqn:oldTimeVelocity}
-u^{n}_{\phi, i} = \frac{\dot{m}^{n}_{\phi, i}}{A_{m, i} \ave{\alpha_{\phi} \rho_{\phi}}^{n}_{\text{a}, i}} 
+u^{n}_{\phi, i} = \frac{\dot{m}^{n}_{\phi, i}}{A_{p, i} \ave{\alpha_{\phi} \rho_{\phi}}^{n}_{\text{a}, i}} 
 \end{equation}
 
 Since the new-time velocity is what is forced to be equal by the interfacial drag, at the beginning of the next timestep, the old-time velocity is not equal to the new-time velocity at the end of the previous timestep.
@@ -859,7 +859,7 @@ The discrepancy in the definition of the velocities, \eqref{eqn:compareVelocitie
 
 \begin{equation}
 \label{eqn:compareVelocities}
-\frac{\dot{m}^{n+1}_{\phi, i}}{A_{m, i} \ave{\alpha_{\phi} \rho_{\phi}}^{n}_{\text{a}, i}} \neq \frac{\dot{m}^{n+1}_{\phi, i}}{A_{m, i} \ave{\alpha_{\phi} \rho_{\phi}}^{n+1}_{\text{a}, i}}
+\frac{\dot{m}^{n+1}_{\phi, i}}{A_{p, i} \ave{\alpha_{\phi} \rho_{\phi}}^{n}_{\text{a}, i}} \neq \frac{\dot{m}^{n+1}_{\phi, i}}{A_{p, i} \ave{\alpha_{\phi} \rho_{\phi}}^{n+1}_{\text{a}, i}}
 \end{equation}
 
 For the linear solver, this was acceptable; however, the iterative nature of the nonlinear solver exacerbated this problem.
@@ -897,7 +897,7 @@ When a predicted volume fraction falls outside of its valid range, it is truncat
 \end{equation}
 
 There are also limits placed upon the changes of the thermodynamic parameters within a timestep in \cobra{}.
-The constrained thermodynamic parameters and the limits imposed upon their per-timestep changes are listed below.
+The constrained thermodynamic parameters and the limits imposed upon their per-timestep changes are:
 
 \begin{itemize}
 \item{Change of phasic enthalpy cannot be greater than $45$ [$\frac{\text{BTU}}{\lbm{}}$].}

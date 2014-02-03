@@ -30,16 +30,16 @@ A brief description of these two types of software is provided below.
 
 The system analysis software has historically been used for complete plant analysis.
 These software systems have extensive collections of empirical models for pumps, valves, accumulators, etc.
-These models allows for a macroscopic description of the balance of plant and its interaction with the
+These models allow for a macroscopic description of the balance of plant and its interaction with the
 reactor core.
 The reactor core itself is normally a low-fidelity representation that operates primarily as a heat source for the balance of plant model.
-While the system software can be successfully used to model the balance of plant, more detailed physical models and hydrodynamics ares required to accurately provide details of in-core behavior.
+While the system software can be successfully used to model the balance of plant, more detailed physical models and hydrodynamics are required to accurately provide details of in-core behavior.
 
 To address the need for accurate simulations of accident scenarios, software capable of modeling the dominant physics of interest within a reactor core was developed.
 This is the second type of software: subchannel analysis.
 The use of subchannel analysis software stems from physical arguments about dominant flow within a LWR.
 To motivate these arguments, a brief discussion of the geometry within the nuclear reactor is presented.
-The basic geometry of commercial nuclear reactor cores in the United States is a cylindrical array of fuel bundles, control rods, and instrumentation.
+The basic geometry of commercial nuclear reactor cores in the United States is a vertical, cylindrical array of fuel bundles, control rods, and instrumentation.
 Within a fuel bundle cylindrical fuel rods are arranged into a lattice.
 The presence of concentric geometric structures of axially aligned units creates natural subchannels for coolant flow.
 This is the basis for one of the underlying assumptions of subchannel analysis software: the axial flow is the dominant flow.
@@ -73,8 +73,7 @@ Instead, by restricting the multiple iterations to only those portions of the gl
 The objectives of this research were the design, implementation, and evaluation of a novel, spatially selective, nonlinear solution method for nuclear thermal-hydraulic safety analysis.
 Isolation of a specified subdomain where nonlinearities are high was achieved by developing a new variant of the code coupling algorithm discussed in \sect{sect:code_coupling}.
 For this work, the subdomain to be isolated was comprised of geometric components predetermined by the user.
-Upon isolation, the coupled nonlinear subdomain was subjected to Newton's method to resolve any nonlinearities at every timestep.
+Upon isolation, the nonlinear subdomain was subjected to Newton's method to resolve any nonlinearities at every timestep.
 This converged solution was then communicated via coupling coefficients to the remainder of the domain for use in finishing its single Newton step.
-This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling provides a route to obtaining nonlinearly-converged, timestep-size insensitive solutions for traditional two-phase flow methods with a lower computational cost than an iterative Newton method.
-This work will show that the convergence of the nonlinearities within a given subdomain allows for temporal convergence to be achieved with a lower computational cost at larger timestep sizes than those required by current methods.
+This unique use of domain decomposition for selective nonlinear-refinement via semi-implicit coupling provides a route for obtaining nonlinearly-converged, timestep-size insensitive solutions for traditional two-phase flow methods with a lower computational cost than that of a globally iterative Newton's method.
 The following chapters will provide an overview of: relevant background material and research, \chap{chap:background}; the work that was done to allows this research to be carried out, \chap{chap:nonlinear}; the domain decomposition algorithm, \chap{chap:domDecomposition}; and the results of numerical experiments, \chap{chap:results}.

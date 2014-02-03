@@ -17,6 +17,7 @@ For this work the computational grid used to represent the physical model is a s
 With a staggered mesh the domain is divided into two overlapping meshes.
 There is one mesh comprised of continuity volumes and another comprised of momentum flow paths, as shown in \fig{fig:staggered_mesh}.
 Thermodynamic variables are defined as constant over the continuity volumes, while momenta are defined as constant over momentum flow paths.
+By definition the momentum flow paths do not contain mass or energy.
 The boundaries of the continuity volumes align with the center of the momentum flow paths.
 
 \begin{figure}[ht!]
@@ -35,9 +36,8 @@ The particular axial discretization of a given section is independent from that 
 Within a given section, subchannels are defined.
 A subchannel inherits the axial discretization of its parent section.
 The number of subchannels in a given section is independent of the number of subchannels in other the sections.
-Each continuity volume and momentum flow path has an associated cross-sectional area, $A_{c}$ and $A_{m}$, respectively. 
+Each continuity volume and momentum flow path has an associated cross-sectional area, $A_{c}$ and $A_{p}$, respectively. 
 These cross-sectional areas can vary from volume to volume and from flow path to flow path.
-By definition the momentum flow paths do not contain mass or energy.
 
 It is also possible to model multi-dimensional flow through the definition of transverse flow paths that connect two subchannels within a given section.
 The transverse flow paths are orthogonal to the axial flow direction.
@@ -49,7 +49,7 @@ An example of a model that includes these different geometric characteristics is
 \begin{figure}[ht!]
 \centering
 \input{images/complex_geometry}
-\caption{A model with transverse flow.}
+\caption{A model with transverse flow paths and complex geometric characteristics.}
 \label{fig:complex_geometry}
 \end{figure}
 
@@ -87,7 +87,7 @@ In the area-averaged formulation the governing equations are averaged over the c
 
 The second simplification regards the manner in which the multi-phase nature of the coolant is treated.
 The particular formulation of the two-phase flow equations used in this work is commonly referred to as a ``two-phase, three-field formulation."
-While this designation comes from the three water fields that are modeled by the software, the software also models \ncg{} fields that are mixed with the steam.
+While this designation comes from the three water fields that are modeled by the software, the software also models a \ncg{} field that is mixed with the steam.
 To simulate the behavior of in-core fluid dynamics during accident scenarios more accurately, the liquid and the gaseous phases are each divided into two distinct fields.
 The two fields of the liquid phase are a continuous liquid field and an entrained liquid droplet field.
 The gaseous phase is composed of a mixture of a \ncg{} field and a water-vapor field. 
@@ -120,7 +120,7 @@ This assumption is made because the simulations of interest are dominated by ine
 The wall-shear effects of viscosity are accounted for via empirically based friction correlations.
 }
 \item{
-The primary positive flow direction is counter to the gravity vector, which will be referred to as the axial flow direction. This vertically oriented coordinate system was chosen to accommodate the vertical core design of NPPs.}
+The primary positive flow direction is counter to the gravity vector, which will be referred to as the axial flow direction. This vertically oriented coordinate system was chosen to accommodate the vertical core design of NPPs in the United States.}
 \item{
 The mechanical energy of the phases is neglected in the conservation of energy. 
 The assumption is that in the simulations of interest the mechanical energy term is negligible.
@@ -145,21 +145,21 @@ The details of this system of PDEs are discussed below.
 \subsubsection{Conservation of Mass Equations}
 \label{subsubsect:mass_equations}
 
-There are four equations that represent the conservation of mass, one each for the vapor \eqref{eqn:conservation_of_vap}, \ncg{} \eqref{eqn:conservation_of_ncg}, continuous liquid  \eqref{eqn:conservation_of_liq}, and entrained liquid \eqref{eqn:conservation_of_ent} fields.
+There are four equations that represent the conservation of mass, one each for the \ncg{} \eqref{eqn:conservation_of_ncg}, continuous liquid \eqref{eqn:conservation_of_liq}, entrained liquid  \eqref{eqn:conservation_of_ent}, and vapor \eqref{eqn:conservation_of_vap} fields.
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:conservation_of_ncg}
 \frac{\partial \left(\alpha_g \rho_{n}\right) }{\partial t } + \nabla \cdot \left( \alpha_g \rho_{n} \vec{u}_g \right) & = & \dot{s}^{'''}_{m,n} \\
-\label{eqn:conservation_of_vap}
-\frac{\partial \left(\alpha_g \rho_v \right)}{\partial t } + \nabla \cdot \left( \alpha_g \rho_v \vec{u}_g \right)         & = & \dot{\Gamma}^{'''} + \dot{s}^{'''}_{m,v} \\
 \label{eqn:conservation_of_liq}
 \frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_l \rho_l \vec{u}_l \right)         & = & -(1-\eta)\dot{\Gamma}^{'''} - \dot{\Upsilon}^{'''} + \dot{s}^{'''}_{m,l} \\
 \label{eqn:conservation_of_ent}
-\frac{\partial \left(\alpha_e \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_e \rho_l \vec{u}_e \right)         & = & -\eta\dot{\Gamma}^{'''} + \dot{\Upsilon}^{'''}+ \dot{s}^{'''}_{m,e}
+\frac{\partial \left(\alpha_e \rho_l \right)}{\partial t } + \nabla \cdot \left( \alpha_e \rho_l \vec{u}_e \right)         & = & -\eta\dot{\Gamma}^{'''} + \dot{\Upsilon}^{'''}+ \dot{s}^{'''}_{m,e} \\
+\label{eqn:conservation_of_vap}
+\frac{\partial \left(\alpha_g \rho_v \right)}{\partial t } + \nabla \cdot \left( \alpha_g \rho_v \vec{u}_g \right)         & = & \dot{\Gamma}^{'''} + \dot{s}^{'''}_{m,v} 
 \end{IEEEeqnarray}
 
 The left-hand sides of \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:conservation_of_ent} represent the Lagrangian derivative for the given field.
-The terms on the right-hand side represent the volumetric rate of the inter-field ($\dot{\Upsilon}^{'''}$), inter-phase ($\dot{\Gamma}^{'''}$), and external ($\dot{s}^{'''}_{m,\phi}$) mass transfer.
+The terms on the right-hand side represent the volumetric rate of the inter-field ($\dot{\Upsilon}^{'''}$), inter-phase ($\dot{\Gamma}^{'''}$), and external ($\dot{s}^{'''}_{m,\phi}$) mass transfer, where $\phi$ represents the relevant phase or field.
 Since there are two liquid fields, the rate of mass transfer between the water-vapor field and the liquid fields, $\dot{\Gamma}^{'''}$, is apportioned between the continuous liquid field and the entrained liquid field.
 The relationship between the phasic mass transfer terms is given by \eqref{eqn:apportionment_of_mass_transfer}, where $\eta$ is an apportionment factor. 
 
@@ -197,7 +197,7 @@ In addition to the conservation of mass equations there are conservation of ener
 -\dot{\Gamma}^{'''} h^{'}_l + \dot{q}^{'''}_{i,l} - \dot{q}^{'''}_{n,l}  + \dot{q}^{'''}_{w,l} + (1 - \alpha_g) \frac{\partial P}{\partial t} + \dot{s}^{'''}_{h,l}  & &
 \end{IEEEeqnarray}
 
-The conservation of energy equations used in this work are formulated such that the conserved quantities are the phasic enthalpies, $\alpha_{\phi} \rho_{\phi} h_{\phi}$, where $\phi$ represents either either the gaseous or the liquid phase.
+The conservation of energy equations used in this work are formulated such that the conserved quantities are the phasic enthalpies, $\alpha_{\phi} \rho_{\phi} h_{\phi}$.
 Under the assumption of thermodynamic equilibrium for the two liquid fields, there is a single enthalpy for the two liquid fields.
 The gaseous phasic enthalpy, however, is defined according to \eqref{eqn:gaseous_enthalpy}.
 
@@ -216,11 +216,11 @@ $\dot{\Gamma}^{'''} h^{'}_{\phi}$:
 }
 \item{
 $\dot{q}^{'''}_{i,\phi}$:
-energy transfer rate between the liquid and vapor fields and the saturated interface.
+energy transfer rate between the liquid and vapor phases and the saturated interface.
 }
 \item{
 $\dot{q}^{'''}_{n,l}$:
-energy transfer rate between the liquid fields and the \ncgs{}.
+energy transfer rate between the liquid phase and the \ncgs{}.
 }
 \item{
 $\dot{q}^{'''}_{w,\phi}$:
@@ -245,7 +245,7 @@ $\dot{s}^{'''}_{h,\phi}$:
 
 Finally, there are three governing equations for the conservation of momentum: the continuous liquid field \eqref{eqn:con_mom_liq}, the gaseous phase \eqref{eqn:con_mom_gas}, and the entrained liquid droplet field \eqref{eqn:con_mom_ent}.
 These equations are expressed in vector notation; however, only axial flow will be detailed below.
-The assumed mechanical equilibrium between the two gaseous fields enable the use of a single momentum conservation equation for the net gaseous phase.
+The assumed mechanical equilibrium between the two gaseous fields enables the use of a single momentum conservation equation for the net gaseous phase.
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:con_mom_liq}
@@ -273,19 +273,19 @@ The various terms in \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent} are desc
 \begin{itemize}
 \item{
 $\alpha_{\phi} \nabla P$:
-pressure gradient acting on field $\phi$.
+pressure gradient acting on field or phase $\phi$.
 }
 \item{
 $\alpha_{\phi} \rho_{\phi} \vec{g}$:
-gravity body force acting upon field $\phi$.
+gravity body force acting upon field or phase $\phi$.
 }
 \item{
 $\vec{\tau}^{'}_{w,\phi}$:
- shear forces from contact between field $\phi$ and the subchannel walls. 
+ shear forces from contact between field or phase $\phi$ and the subchannel walls. 
 }
 \item{
 $\vec{\tau}^{'}_{i,\phi_1\,\phi_2}$:
- shear forces from the interface between fields $\phi_1$ and $\phi_2$. 
+ shear forces from the interface between one field or phase $\phi_1$ and another $\phi_2$. 
 }
 \item{
 $\dot{\Gamma}^{'''}\vec{u}^{'}$:
@@ -327,7 +327,7 @@ The vector, $\vec{y}$, of conserved quantities is defined in \eqref{eqn:conserve
 
 \begin{equation}
 \label{eqn:conserved_variables}
-\vec{y} = [\alpha_g \rho_n,\, \alpha_g \rho_v,\, \alpha_l \rho_l, \alpha_e \rho_l, \alpha_g \rho_g h_g, \alpha_l \rho_l h_l,\, \alpha_g \rho_g \vec{u}_g,\, \alpha_l \rho_l \vec{u}_l,\, \alpha_e \rho_e \vec{u}_e]^{T}
+\vec{y} = [\alpha_g \rho_n,\, \alpha_g \rho_v,\, \alpha_l \rho_l, \alpha_e \rho_l, \alpha_g \rho_g h_g, \alpha_l \rho_l h_l,\, \alpha_g \rho_g \vec{u}_g,\, \alpha_l \rho_l \vec{u}_l,\, \alpha_e \rho_l \vec{u}_e]^{T}
 \end{equation}
 
 %-------------------------------------------------------------------------------
@@ -346,7 +346,7 @@ The discussion that follows is specific to \cobra{}, but other safety analysis s
 The labeling scheme for the finite volumes is shown in \fig{fig:vertical_pipe_with_cells}, which is a segment of a subchannel.
 Two momentum flow paths, $j + \onehalf $ and $j - \onehalf$, spatially overlap a continuity volume, $j$.
 Variables are indexed by the mesh on which their conservation equations are defined.
-For example, the velocity $u_{j - \onehalf}$ would be spatially located at center of the momentum path $j - \onehalf $ and at the boundary between the continuity volumes $j$ and $j-1$.
+For example, the velocity $u_{j - \onehalf}$ would be spatially located at center of the momentum flow path $j - \onehalf $ and at the boundary between the continuity volumes $j$ and $j-1$.
 
 \begin{figure}[ht!]
 \centering
@@ -367,12 +367,12 @@ The assumption in these integrals is that the value of the conserved quantities 
 \end{figure}
 
 Within a subchannel, a given continuity volume of length $\Delta x $ has a constant cross-sectional area, $A_{c}$, over its length.
-The cross-sectional area of the boundary between two continuity volumes is given by the cross-sectional area of the momentum path at that boundary, $A_{m}$.
+The cross-sectional area of the boundary between two continuity volumes is given by the cross-sectional area of the momentum path at that boundary, $A_{p}$.
 
 \begin{figure}[ht!]
 \centering
 \input{images/isoparametric_volume}
-\caption{Single continuity volume, $V_{j}$, over which the conservation equations are integrated.}
+\caption{Single continuity volume over which the conservation equations are integrated.}
 \label{fig:single_volume}
 \end{figure}
 
@@ -383,14 +383,14 @@ The same general procedure is used for the other five scalar conservation equati
 \begin{IEEEeqnarray}{lcl}
 \int_{V_j}\frac{\partial \left(\alpha_l \rho_l \right)}{\partial t } & + & \nabla \cdot \left( \alpha_l \rho_l u_l \right) \mathrm{d}V = \int_{V_j} \left(-(1-\eta)\dot{\Gamma}^{'''} - \dot{\Upsilon}^{'''} + \dot{s}^{'''}_{m,l}\right) \mathrm{d}V \nonumber \\
 V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\int_{V_j}\nabla \cdot \left( \alpha_l \rho_l u_l \right) \mathrm{d}V -(1-\eta_j)\dot{\Gamma}_j - \dot{\Upsilon}_j + \dot{s}_{m,l,j} \nonumber \\
-V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left[\alpha_l \rho_l u_l A_{m}\right]_{x_{j-\onehalf}}^{x_{j+\onehalf}} -(1-\eta_j)\dot{\Gamma}_j - \dot{\Upsilon}_j + \dot{s}_{m,l,j} \nonumber \\
+V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left[\alpha_l \rho_l u_l A_{p}\right]_{x_{j-\onehalf}}^{x_{j+\onehalf}} -(1-\eta_j)\dot{\Gamma}_j - \dot{\Upsilon}_j + \dot{s}_{m,l,j} \nonumber \\
 \label{eqn:spatially_discrete_liq_m_con}
-V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left( \don{\alpha_l \rho_l}_{\text{d},j+\onehalf} u_{l,j+\onehalf} A_{m,j+\onehalf} - \don{\alpha_l \rho_l}_{\text{d},j-\onehalf} u_{l,j - \onehalf} A_{m,j - \onehalf}\right) \nonumber \\
+V_j \frac{\partial \left(\alpha_{l,j} \rho_{l,j} \right)}{\partial t } & = & -\left( \don{\alpha_l \rho_l}_{\text{d},j+\onehalf} u_{l,j+\onehalf} A_{p,j+\onehalf} - \don{\alpha_l \rho_l}_{\text{d},j-\onehalf} u_{l,j - \onehalf} A_{p,j - \onehalf}\right) \nonumber \\
 & & -(1-\eta)\dot{\Gamma}_j - \dot{\Upsilon}_j + \dot{s}_{m,l,j}
 \end{IEEEeqnarray}
 
 For the mass-flux terms evaluated on the continuity volume edge, the advected quantity is evaluated using a 1st order upwind method \cite{Tannehill1997}.
-The velocity and cross-sectional area utilized in the continuity flux terms, $u_{j \pm \onehalf}$ and $A_{m,j \pm \onehalf}$, have the values defined in the momentum path that aligns with the boundary of continuity volumes.
+The velocity and cross-sectional area utilized in the continuity flux terms, $u_{j \pm \onehalf}$ and $A_{p,j \pm \onehalf}$, have the values defined in the momentum flow path that aligns with the boundary of continuity volumes.
 The sign of the velocity at the volume boundary determines the value of the donored quantity, $\don{a}_{\text{d},j \pm \onehalf}$.
 A more generic formulation for this scheme is given by \eqref{eqn:upwind_donoring}.
 The superscripts, $b$ and $c$, denote the discrete points in time at which the variables are evaluated.
@@ -402,7 +402,7 @@ The particular time superscripts in \eqref{eqn:upwind_donoring} are for illustra
 \end{equation}
 
 The three momentum conservation equations, \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent}, are integrated over their momentum flow path.
-The cross-sectional area for a momentum path, $A_{m}$, can be defined independently of the two cross-sectional areas of the adjoining continuity volumes.
+The cross-sectional area for a momentum path, $A_{p}$, can be defined independently of the two cross-sectional areas of the adjoining continuity volumes.
 The momentum flux terms, \eqref{eqn:momentum_flux_terms}, are treated similarly to the flux terms in the continuity equations.
 
 \begin{equation}
@@ -415,7 +415,7 @@ First, the area in the flux term, $\tilde{A}$, is taken as the minimum of two ar
 
 \begin{equation}
 \label{eqn:area_def}
-\tilde{A}_{j} = \min\left(A_{m,j - \onehalf}, A_{m,j+\onehalf}\right)
+\tilde{A}_{j} = \min\left(A_{p,j - \onehalf}, A_{p,j+\onehalf}\right)
 \end{equation}
 
 Second, the phasic velocity that is used to determine the donored quantities is the arithmetic mean of the velocities from the two adjacent momentum flow paths, \eqref{eqn:average_advecting_vel}.
@@ -471,7 +471,7 @@ The definition of the conserved momentum quantity for a given phase, $\dot{m}_{\
 
 \begin{equation}
 \label{eqn:mom_dot}
-\dot{m}_{\phi} = \ave{\alpha_{\phi} \rho_{\phi}}_{\text{a}} u_{\phi} A_{m}
+\dot{m}_{\phi} = \ave{\alpha_{\phi} \rho_{\phi}}_{\text{a}} u_{\phi} A_{p}
 \end{equation}
 
 The averaging operator $\ave{a}_{\text{a}}$ provides the average of a quantity from the two adjoining continuity volumes, \eqref{eqn:average_val}.
@@ -482,7 +482,7 @@ The averaging operator $\ave{a}_{\text{a}}$ provides the average of a quantity f
 \end{equation}
 
 The use of the momenta and the product of phasic volume fractions and phasic enthalpies, such as $\alpha_g h_v$, as independent parameters represents a unique choice.
-However, these independent parameters are not the only option for safety analysis software.
+These independent parameters are not the only option for safety analysis software.
 Other software, such as TRACE and \relap53d{}, use variants of these parameters.
 These variations include the use of velocities instead of momenta, and temperatures or internal energies instead of enthalpies \cite{RELAP, TRACE}.
 
@@ -545,7 +545,7 @@ For this work the conserved quantities within a continuity volume (e.g., $\alpha
 
 This nonlinearity necessitates the use of a nonlinear solver at every timestep.
 Any dependence of $\vec{E}^{*}$ on the new-time parameters creates additional nonlinearities.
-The discrete formulation, \eqref{eqn:simple_partial_t}, can be expressed as a nonlinear residual of $\vec{x}^{n+1}$ by \eqref{eqn:nonlinear_residuals}.
+The discrete formulation, \eqref{eqn:simple_partial_t}, can be expressed as a nonlinear residual that is a function of $\vec{x}^{n+1}$, \eqref{eqn:nonlinear_residuals}.
 
 \begin{equation}
 \label{eqn:nonlinear_residuals}
@@ -563,10 +563,9 @@ However, it has been shown that if the nonlinear problem, \eqref{eqn:nonlinear_r
 \subsection{Nonlinear Approximations}
 \label{subsect:nonlinear_approximations}
 
-The method used to solve \eqref{eqn:nonlinear_residuals} for $\vec{x}^{n+1}$ in this work is Newton's method \cite{Deuflhard2004, Dennis1996}.
 The nonlinear residual is a function of the new-time unknowns, $\vec{x}^{n+1}$.
-Newton's method is an iterative procedure to obtain $\vec{x}^{n+1,k}$ such that $\vec{F}(\vec{x}^{n+1,k}) = 0$.
-Since Newton's method is an iterative procedure for obtaining the correct new-time variables, two superscripts are required.
+The method used to solve \eqref{eqn:nonlinear_residuals} for $\vec{x}^{n+1}$ in this work is Newton's method \cite{Deuflhard2004, Dennis1996}.
+Newton's method is an iterative procedure to obtain $\vec{x}^{n+1,k}$ such that $\vec{F}(\vec{x}^{n+1,k}) = 0$, as such two superscripts are required.
 The nonlinear iterate superscript will be $k$.
 Successive linearization of the nonlinear problem, \eqref{eqn:newton_taylor}, generates an iterative solution method.
 
@@ -584,7 +583,7 @@ The algorithm is then one of finding successive updates, $\vec{\delta x}^k = \ve
 
 Since the system of nonlinear equations being solved represents a transient simulation, the iterations at each timestep start with an initial guess for the new-time variables that is equal to the old-time variables, $\vec{x}^{n+1,0} = \vec{x}^{n}$.
 The underlying assumption of this initial value is that the independent parameters will not change greatly over a timestep, and the old-time variables will provide an initial vector that is within the radius of convergence of Newton's method.
-\alg{alg:local_newton} provides an overview of a transient simulation using a Newton's method for a single-stage temporal integration scheme.
+\alg{alg:local_newton} provides an overview of a transient simulation using Newton's method for a single-stage temporal integration scheme.
 The algorithm generalizes to a multi-stage temporal integration method by enclosing the Newton loop within a stage loop.
 
 \begin{algo}[ht!]
@@ -639,8 +638,8 @@ The nonlinear vector notation formulation for this method is given by \eqref{eqn
 \vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \Delta t \vec{E}(\vec{y}(\vec{x}^{n}))
 \end{equation}
 
-The algorithmic implementation is shown in \alg{algo:explicit}.
-Given the choice of independent parameters in this work, there are nonlinearities present \eqref{eqn:explicit}.
+Given the choice of independent parameters in this work, there are nonlinearities present in \eqref{eqn:explicit}.
+The algorithmic implementation shown in \alg{algo:explicit} assumes a linearized solution technique where only a single Newton step is taken.
 
 \begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
@@ -654,7 +653,7 @@ Given the choice of independent parameters in this work, there are nonlinearitie
     \Calculate $\vec{x}^{n+1} = \vec{x}^{n} + \vec{\delta x}$ 
 \EndLoop{\;$n \pluseq n+1$}
 \end{algorithmic}
-\caption{Single-stage, fully explicit, single-shot linearization method.}
+\caption{Single-stage, fully explicit, linearized method.}
 \label{algo:explicit}
 \end{algo}
 
@@ -681,7 +680,7 @@ The $\dt{}$ chosen for the $t^{n} \rightarrow t^{n+1}$ timestep is the most rest
 
 Since the CFL limit is based upon the local speed of sound it is referred to as the sonic Courant limit.
 While the explicit method may provide the lowest computational cost on a per-timestep basis, the number of timesteps required for a given problem may be much greater than the following methods due to this restrictive CFL limitation.
-This limitation of the explicit method prompted the development of alternative methods that were capable of exceeding this Courant limit.
+This limitation of the explicit method prompted the development of alternative methods that were capable of exceeding this sonic Courant limit.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -734,7 +733,7 @@ The black-box step in \alg{algo:implicit} will be discussed in \sect{subsect:nln
 
 Another alternative method for integrating \eqref{eqn:temporal_semi_discrete} is the semi-implicit method.
 It was developed to overcome the sonic Courant limitations of the explicit method while avoiding both the high computational cost and excessive diffusivity of the fully implicit method \cite{Liles1978}.
-The two distinguishing characteristics of the semi-implicit method are the use of new-time variables in the evaluation of the pressure gradient in the momentum conservation equations and in the advecting velocities in the mass and energy equations. 
+The two distinguishing characteristics of the semi-implicit method are the use of new-time variables in the evaluation of both the pressure gradient in the momentum conservation equations and the advecting velocities in the mass and energy equations. 
 The implicit evaluation of the pressure gradient in the momentum equations is what leads to a CFL limit known as the material Courant limit.
 Similar to the sonic Courant limit discussed in \sect{subsect:numerics_explicit}, the material Courant limit dictates the largest $\Delta t$ that can be achieved while maintaining a stable solution algorithm.
 In this method the Courant limit is given by \eqref{eqn:si_cfl}.
@@ -744,11 +743,11 @@ In this method the Courant limit is given by \eqref{eqn:si_cfl}.
 \dt{}_i \lesssim \frac{\dx{}_i}{|u_{\phi,i}|}
 \end{equation}
 
-The characteristic velocity used in the calculation of the Courant limit is based on the phasic velocity only.
+The characteristic velocity used in the calculation of the material Courant limit is based on the phasic velocity only.
 This allows for larger, but still limited, timestep sizes than the fully explicit method.
 The limit on timestep size is due to the explicit evaluation of the donored quantities in the flux terms in the conservation equations.
 As stated, the flux of mass and energy include new-time velocities, $u^{n+1}_{\phi}$.
-Since this work uses momenta, $\dot{m}_{\phi}$, as independent parameters, these velocities are derived quantities, whose functional form is given in \eqref{eqn:si_vel}.
+Since this work uses momenta, $\dot{m}_{\phi}$, as independent parameters, these velocities are derived quantities whose functional form is given in \eqref{eqn:si_vel}.
 The $\ave{\alpha_{\phi} \rho_{\phi}}^{n}_{\text{a}}$ represents the arithmetic average of macroscopic densities from adjoining continuity volumes.
 The averaging operator $\ave{a}^{n}_{\text{a}}$ is an extension of \eqref{eqn:upwind_donoring}.
 There is a mismatch between the averaged macroscopic density and the momentum in \eqref{eqn:si_vel}.
@@ -756,10 +755,10 @@ This mismatch will be discussed in more detail in \sect{subsect:nlnPhaseTransiti
 
 \begin{equation}
 \label{eqn:si_vel}
-u^{n+1}_{\phi, j \pm \onehalf} = \frac{\dot{m}^{n+1}_{\phi, j \pm \onehalf}}{A_{m, j \pm \onehalf} \ave{\alpha_{\phi} \rho_{\phi}}^{n}_{\text{a}, j \pm \onehalf}} 
+u^{n+1}_{\phi, j \pm \onehalf} = \frac{\dot{m}^{n+1}_{\phi, j \pm \onehalf}}{A_{p, j \pm \onehalf} \ave{\alpha_{\phi} \rho_{\phi}}^{n}_{\text{a}, j \pm \onehalf}} 
 \end{equation}
 
-\alg{alg:si_legacy} shows the algorithm for solving the semi-implicit method.
+An implementation of the semi-implicit method that takes only a single Newton step is shown in \alg{alg:si_legacy}s.
 
 \begin{algo}[ht!]
 \setlength{\baselineskip}{0.625\baselineskip}
@@ -790,7 +789,7 @@ While there are variants of the SETS method \cite{TRACE}, \alg{alg:sets} reflect
 The outline below uses velocities as independent parameters, not momenta.
 
 There are three stages in the original SETS method.
-Stage one is a single-shot linearized solution of the momentum equations where only the velocity terms in the momentum equations of $\vec{E}^{*}$ are evaluated implicitly.
+Stage one is a linearized solution of the momentum equations where only the velocity terms in the momentum equations of $\vec{E}^{*}$ are evaluated implicitly.
 This first stage only involves the solution of the momentum equations; the mass and energy equations are not solved during this step.
 The lack of implicit dependence upon any continuity variables allows for coupling only between momentum flow paths.
 This step results in predicted $u^{*}_{\phi}$ phasic velocities.
@@ -802,7 +801,7 @@ The single-shot nature of the momentum equations allows for the reduction of the
 The nonlinear continuity equations are then solved via Newton's method.
 Stated another way, the Jacobians for the momentum equations are fixed at their first Newton iterate value, while the Jacobians for the mass and energy equations are updated at each iterate.
 
-In the third stage the mass and energy equations are solved such that all continuity variables are implicitly evaluated but the velocities are from stage two.
+In the third stage the mass and energy equations are solved such that all continuity variables are implicitly evaluated, but the velocities are from stage two.
 These velocities, $\vec{u}^{2}$, are the only results from stage two that are used in stage three. 
 The resulting system of coupled continuity equations is then solved.
 This final stage allows timestep sizes that exceed the material Courant limit.
@@ -840,8 +839,8 @@ The TRACE code uses an $\mathcal{L}_{\infty}$ norm of the unscaled Newton update
 %-------------------------------------------------------------------------------
 \subsection{Nearly-Implicit Method}
 \label{subsect:numerics_nearly_implicit}
-Another possible method used to overcome the material Courant limit without incurring the same computational cost as the fully implicit method is the Nearly-implicit method \cite{Trapp1986, RELAP}.
-The Nearly-Implicit method is a multistage temporal integration scheme.
+Another possible method used to overcome the material Courant limit without incurring the same computational cost as the fully implicit method is the nearly-implicit method \cite{Trapp1986, RELAP}.
+The nearly-implicit method is a multistage temporal integration scheme.
 In the first stage the approximation  of $\vec{E}^{*}$ is one in which the mass and energy terms are implicit except for the donored values in the flux terms. 
 In addition, the the chain rule is applied to the continuous temporal derivatives, resulting in mass equations similar to \eqref{eqn:ni_dt}.
 The energy temporal derivatives are similarly expanded.
@@ -860,18 +859,18 @@ The temporal discretization of \eqref{eqn:ni_dt} is given by \eqref{eqn:ni_dis_d
 
 The momentum equations are implicit in their momentum flux, pressure, and interfacial exchange terms.
 
-The Nearly-Implicit method is a three-stage solution process.
+The nearly-implicit method is a three-stage solution process.
 The first stage is similar to the semi-implicit method.
-However, as opposed to the semi-implicit method where the momentum variables are eliminated from the equations being solved, the Nearly-Implicit method uses the mass and energy equations to eliminate the pressure terms from the momentum equations.
+However, as opposed to the semi-implicit method where the momentum variables are eliminated from the equations being solved, the nearly-implicit method uses the mass and energy equations to eliminate the pressure terms from the momentum equations.
 The resulting matrix is a linear system of coupled velocities.
 The stage-one velocities are taken to be the new-time velocities.
 Once the stage-one velocities are obtained, the corresponding stage-one continuity variables are obtained analogously to the new-time momentum in the semi-implicit method.
-Stage one is a single-shot linearization.
+Stage one is a single linearization of the semi-implicit method.
 In the second stage, only the continuity equations are solved and they are in conservative form.
 The interfacial exchange terms in the mass and energy equations are evaluated using the stage-one continuity variables.
 The resulting system of equations is linear in the conserved quantities.
 This linear system is solved for the conserved quantities.
-In stage three, the nonlinear relation between the conserved quantities and the independent parameters is then approximated via a single-shot linearization of the equations of state.
+In stage three, the nonlinear relationship between the conserved quantities and the independent parameters is then approximated via a single linearization of the equations of state.
 \alg{alg:ni} shows the three-stage process.
 
 \begin{algo}[ht!]
@@ -889,7 +888,7 @@ In stage three, the nonlinear relation between the conserved quantities and the 
 	\Set $n \pluseq 1$
 \EndLoop
 \end{algorithmic}
-\caption{Nearly-Implicit method}
+\caption{The nearly-implicit method.}
 \label{alg:ni}
 \end{algo}
 
@@ -915,7 +914,7 @@ This technique is of direct interest to the proposed research.
 The coupling of the different software involves the use of a third-party message passing interface.
 The program used for the software coupling in the papers of interest is the Parallel Virtual Machine (PVM) \cite{Geist1994}.
 PVM allows the data exchange to occur between the coupled software.
-As originally formulated, the software coupling technique involves breaking the coupled problem as two pieces, the master and the slave components.
+As originally formulated, the software coupling technique involves breaking the coupled problem into two pieces, the master and the slave components.
 In this respect, the problem can be thought of as being a single domain broken in two: one subdomain controlled by the master process, and  one subdomain being controlled by the slave process.
 The presentation of this method is in terms of the \relap53d{} conservation equations, which are different from those in \cobra{}.
 The coupling method first developed presented \relap53d{} as both the master and slave software \cite{Weaver2002}.
@@ -943,7 +942,7 @@ Upon forming the pressure matrix, the Newton update for the pressures will be ex
 \eqref{eqn:si_relap} represents change in pressure in every volume in the computational domain as a linear combination of the fluxes of mass ($n_{g,j}^{n+1}$, $m_{g,j}^{n+1}$, and $m_{f,j}^{n+1}$), volume ($w_{f,j}^{n+1}$ and $w_{g,j}^{n+1}$), and internal energy ($u_{g,j}^{n+1}$ and $u_{f,j}^{n+1}$) through the $N_\text{CPL}$ coupled boundaries.
 
 From the point-of-view of the slave process, the momentum flow path between the master domain and the slave domain is a traditional momentum flow path.
-Since the interface boundary between the master and salve domain is composed entirely of momentum flow paths, the only implicit unknowns from the master domain used in the slave domain are the pressures from the coupled continuity volumes.
+Since the interface boundary between the master and slave domain is composed entirely of momentum flow paths, the only implicit unknowns from the master domain used in the slave domain are the pressures from the coupled continuity volumes.
 These implicit pressures are expressed in terms of the old-time pressures and the updates to those pressures from the old-time values and the new-time values.
 The pressure update for a given continuity volume at the boundary of the master domain, $\delta P_{\text{cbv}}^{n+1}$, is expressed in terms of the unknown velocities in the slave momentum flow paths adjacent to the boundary of the master continuity volumes, \eqref{eqn:pressure_coupled} \cite{Weaver2002}.
 
@@ -963,7 +962,7 @@ This formulation allows for the updated pressure in the master domain to be calc
 The intent of this formulation was to enable the semi-implicit method to be used for software coupling.
 
 The coupling of system analysis codes and sub-channel codes can also be viewed through the following lens.
-The global problem, comprised of the balance-of-plant (e.g., \relap53d{}) and the in-core region (e.g., \cobra{}), can be considered as part of a global domain.
+The global problem, comprised of the balance of plant (e.g., \relap53d{}) and the in-core region (e.g., \cobra{}), can be considered as part of a global domain.
 Each piece of software can then be viewed as solving a subset of the global domain.
 The use of more detailed physics for the in-core thermal-hydraulic behavior is a particular application of model reduction \cite{Paraschivoiu1999}.
 
@@ -983,4 +982,4 @@ However, these applications do not worry about consistency at the boundaries of 
 
 The two paradigms of discrete software coupling and domain decomposition are complementary views of the same process.
 The software coupling is the algorithmic implementation of the domain decomposition.
-Using the semi-implicit software coupling as a means of domain coupling within a single code provides a mean of isolating subdomains that provides a consistent formulation for the nonlinear problem.
+Using the semi-implicit software coupling as a basis for domain decomposition within a single code provides a mean of isolating subdomains that provides a consistent formulation for the nonlinear problem.
