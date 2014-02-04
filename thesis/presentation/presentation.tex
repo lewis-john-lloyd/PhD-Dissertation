@@ -374,7 +374,7 @@ The nonlinear convergence parameters for this work, unless otherwise stated, are
 %---------
 %---------
 \begin{frame}
-\frametitle{Operator-Based Scaling}
+\frametitle{Operator-Based Scaling: Intent}
 
 Scaled residual:
 \begin{equation*}
@@ -395,11 +395,15 @@ S_{\phi} = \max[1.0, \left(C_{1}\frac{\alpha_{\phi,\text{min}}}{\alpha_{\phi}}\r
 \end{frame}
 %---------
 %---------
-\begin{frame}[shrink=5]
-\frametitle{Scale Factors}
+\begin{frame}
+\frametitle{Operator-Based Scaling: Balance Equations}
 
-Nonlinear residuals have different units:
-Scaling chosen:
+
+\end{frame}
+%---------
+%---------
+\begin{frame}[shrink=5]
+\frametitle{Operator-Based Scaling: Examples}
 
 \begin{IEEEeqnarray}{rcl}
 S^{k}_{m,l} & = & V_c \abs{\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n}} + \dt{} \sum_{i\,\in\,N_{f}}\abs{\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1,k}_l  A_{m}}_{i} \nonumber \\
@@ -416,7 +420,7 @@ S^{k}_{p, l} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[\dot{m}_{l}^
 %---------
 %---------
 \begin{frame}
-\frametitle{Timestep Sensitivity and Convergence Parameters}
+\frametitle{Timestep Sensitivity}
 
 Timestep size sensitivity studies with the set of \dtmax{} given by
 \begin{equation*}
@@ -736,12 +740,34 @@ Once the nonlinear domain is converged, the linear domain's pressure updates are
 %---------
 %---------
 \begin{frame}
-\frametitle{Time Dependent Area}
+\frametitle{Time Dependent Area and Linear Solution}
 
+\begin{columns}
+
+\column{\hpw}
+\begin{center}
+Transient Area
+
+Function of Time
+\end{center}
 \begin{figure}[h!t]
 \centering
 \includegraphics[width=0.94\textwidth]{../plots/valveTransientArea_pdf}
 \end{figure}
+
+\column{\hpw}
+\begin{center}
+Linear Solution
+
+$\dtmax{}=\expneg{6.25}{2}$ [s].
+\end{center}
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/valveLin6pt2500em02_pdf}
+\end{figure}
+
+
+\end{columns}
 
 \end{frame}
 %---------

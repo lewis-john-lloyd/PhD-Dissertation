@@ -59,8 +59,8 @@ An example of a model that includes these different geometric characteristics is
 \section{Two-Phase Flow Equations}
 \label{sect:two_phase_flow}
 The primary purpose of subchannel analysis codes is to determine fuel integrity via evaluation of effective core cooling during postulated NPP accidents, such as a LOCA.
-This requires accurate modeling the heat transfer between the coolant and the fuel. 
-During postulated accidents, the coolant, H$_2$O, can undergo phase-change.
+This requires accurate modeling of the heat transfer between the coolant and the fuel. 
+During postulated accidents, the coolant, H$_2$O, will undergo phase-change.
 There are several formulations of the governing conservation equations of fluid mechanics used to predict the thermal-hydraulic response of the nuclear reactor core to transient plant conditions.
 To model the complex phenomenon of phase-change, the governing equations for the fluid mechanics within the core will be those of a multicomponent fluid \cite{Drew1998}.
 In particular, they are a subcategory of two-phase flow \cite{Todreas2011, Stewart1984, Ishii1984}.
@@ -86,8 +86,6 @@ The formulation used in this work is area averaging, a particular form of spatia
 In the area-averaged formulation the governing equations are averaged over the cross-sectional area.
 
 The second simplification regards the manner in which the multi-phase nature of the coolant is treated.
-The particular formulation of the two-phase flow equations used in this work is commonly referred to as a ``two-phase, three-field formulation."
-While this designation comes from the three water fields that are modeled by the software, the software also models a \ncg{} field that is mixed with the steam.
 To simulate the behavior of in-core fluid dynamics during accident scenarios more accurately, the liquid and the gaseous phases are each divided into two distinct fields.
 The two fields of the liquid phase are a continuous liquid field and an entrained liquid droplet field.
 The gaseous phase is composed of a mixture of a \ncg{} field and a water-vapor field. 
@@ -145,7 +143,7 @@ The details of this system of PDEs are discussed below.
 \subsubsection{Conservation of Mass Equations}
 \label{subsubsect:mass_equations}
 
-There are four equations that represent the conservation of mass, one each for the \ncg{} \eqref{eqn:conservation_of_ncg}, continuous liquid \eqref{eqn:conservation_of_liq}, entrained liquid  \eqref{eqn:conservation_of_ent}, and vapor \eqref{eqn:conservation_of_vap} fields.
+There are four equations that represent the conservation of mass, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:conservation_of_vap},  one each for the \ncg{}, continuous liquid, entrained liquid, and vapor fields respectively.
 
 \begin{IEEEeqnarray}{rCl}
 \label{eqn:conservation_of_ncg}
@@ -161,7 +159,7 @@ There are four equations that represent the conservation of mass, one each for t
 The left-hand sides of \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:conservation_of_ent} represent the Lagrangian derivative for the given field.
 The terms on the right-hand side represent the volumetric rate of the inter-field ($\dot{\Upsilon}^{'''}$), inter-phase ($\dot{\Gamma}^{'''}$), and external ($\dot{s}^{'''}_{m,\phi}$) mass transfer, where $\phi$ represents the relevant phase or field.
 Since there are two liquid fields, the rate of mass transfer between the water-vapor field and the liquid fields, $\dot{\Gamma}^{'''}$, is apportioned between the continuous liquid field and the entrained liquid field.
-The relationship between the phasic mass transfer terms is given by \eqref{eqn:apportionment_of_mass_transfer}, where $\eta$ is an apportionment factor. 
+This relationship is shown in \eqref{eqn:apportionment_of_mass_transfer}, where $\eta$ is an apportionment factor. 
 
 \begin{equation}
 \label{eqn:apportionment_of_mass_transfer}
@@ -402,7 +400,7 @@ The particular time superscripts in \eqref{eqn:upwind_donoring} are for illustra
 \end{equation}
 
 The three momentum conservation equations, \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent}, are integrated over their momentum flow path.
-The cross-sectional area for a momentum path, $A_{p}$, can be defined independently of the two cross-sectional areas of the adjoining continuity volumes.
+The cross-sectional area for a momentum path, $A_{p}$, can be defined independently from the two cross-sectional areas of the adjoining continuity volumes.
 The momentum flux terms, \eqref{eqn:momentum_flux_terms}, are treated similarly to the flux terms in the continuity equations.
 
 \begin{equation}

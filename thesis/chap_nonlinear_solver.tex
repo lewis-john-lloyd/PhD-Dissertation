@@ -102,7 +102,8 @@ The solution of this linear system is expressed in \eqref{eqn:momStar}.
 
 The definition for the new-time momenta is a function of the as-of-yet unknown changes in pressures that occur in the continuity volumes connected by the momentum flow path.
 The $\momVec{}^{*}$ vector on the right-hand side of \eqref{eqn:momStar} contains the tentative new time momenta.
-Once all of the momentum equations have been solved in the above manner, providing estimated new-time momenta for each momentum flow path, the domain's continuity volumes are then looped over.
+Once all of the momentum equations have been solved in the above manner, providing estimated new-time momenta for each momentum flow path, the domain's continuity volumes are then traversed.
+
 The continuity equations used in this work, omitting external sources, are shown in \eqref{eqn:nlnNcgMassEquation} -- \eqref{eqn:nlnLiqMassEquation}. 
 The new-time velocities used for the $N_{f}$ advection terms in the continuity equations are defined with the new-time momenta, \eqref{eqn:momStar}, in conjunction with \eqref{eqn:si_vel}.
 $N_{f}$ represents the set of momentum flow paths that connect to a given continuity volume, and the summation index, $i$, represents the index of a given momentum flow path.
@@ -171,7 +172,7 @@ The resulting lower-triangular matrix has a unit diagonal.
 The sixth equation in the upper-triangular system is then scaled by its diagonal.
 This upper-triangular, rectangular system for each continuity volume is then stored for later back-substitution.
 Since the pressure update corresponds to the last row in the system of equations, this allows for the isolation of the pressure updates.
-The last row of each continuity volume's \eqref{eqn:linSystem} is then formed into a global, linear pressure matrix, $\vec{A}_{\text{lin}}$, and its associated right-hand side, $\vec{res}_{\text{lin}}$.
+The last row from each continuity volume's linear system, \eqref{eqn:linSystem}, is then collated into a global, linear pressure matrix, $\vec{A}_{\text{lin}}$, and its associated right-hand side, $\vec{res}_{\text{lin}}$.
 
 The two loops, one over the momentum flow paths and one over the continuity volumes, form a single group of operations that act upon a given domain.
 This grouping will be known hereafter as assembling the pressure matrix for a given domain.
@@ -304,7 +305,7 @@ Once the active volumes were identified, the way in which the domain information
 \subsection{Nonlinear Algorithm}
 \label{subsect:nlnCobraAlgo}
 
-During this research, the \cobra{} software was transitioned from the linear solver outlined in \sect{sect:linCobraAlg} to a nonlinearly-convergent solver. 
+During this research, the \cobra{} software was transitioned from being restricted to using only a linear solver, as outlined in \sect{sect:linCobraAlg}, to being able to use either a linear solver or a nonlinearly-convergent solver. 
 The solution method selected for the nonlinear system was the iterative Newton's method.
 Newton's method uses successive linearizations to find a solution vector that adequately satisfies the system of discrete nonlinear equations.
 The algorithmic outline for the nonlinear solver is presented in \alg{alg:nlnCobraAlgorithm}.
@@ -531,7 +532,7 @@ This is necessary since the momentum equations are solved for the new-time varia
 The residuals from every continuity volume and momentum flow path in the active domain are assembled into the $\vec{F}^{k}$ vector.
 The degree to which a given solution vector, $\vec{x}^{n+1, k}$, satisfies the governing PDEs can be measured by a norm of the residual vector of the nonlinear system.
 If the exact solution for the nonlinear system were known, the residual vector would be identically zero; however, in practice the residual will never be identically zero.
-As such it is necessary to discuss the various means by which a solution for a timestep is determined to be accurate enough.
+As such it is necessary to discuss the various means by which a solution for a timestep is determined to be sufficiently accurate.
 
 While a Newton step is being performed, the residual is being evaluated with the current solution vector, $\vec{x}^{n+1,k}$.
 Once the Newton update vector, $\delta \vec{x}^{k}$, has been calculated, the residual is reevaluated using the new solution vector, $\vec{x}^{n+1, k+1}$.
@@ -597,7 +598,7 @@ The different conservation equations will have different orders of magnitude at 
 Over the course of a transient the phasic composition of a volume can vary dramatically as phases appear and disappear.
 When norms are taken of the unscaled residual those equations whose terms are the largest may have a residual that is orders of magnitude greater than those equations whose terms are smallest.
 For convergence criteria that are based upon relative convergence, the reduction of those equations with larger magnitudes would result in apparent convergence without any consideration given to those equations whose scale is orders of magnitude smaller.
-This would create a situation where any norm taken of the residual would be biased towards certain equations due to the their units or phasic composition.
+This would create a situation where any norm taken of the residual would be biased towards certain equations based on their units or phasic composition.
 To avoid this an operator-based scaling strategy was developed and implemented.
 
 For a given continuity volume, the nonlinear residual will have six components: four for the conservation of mass and two for the conservation of energy.
@@ -834,6 +835,7 @@ These velocity equilibrium constraints are imposed by artificially increasing th
 However, there is a subtle issue created by this increase in the the interfacial drag.
 If the new-time velocities are not equal, then the increased interfacial drag will dominate the residual for the momentum equation of the phase that is not disappearing.
 For example, \tab{tab:gasMomentumResidual} contains the magnitudes of the various terms in the gaseous momentum equation from a nominally single-phase gaseous flow simulation.
+The term for the interfacial shear between the gaseous phase and the entrained liquid field, $\tau_{g, e}$, is an order of magnitude greater than the other terms.
 
 \begin{table}[ht]
 \centering
@@ -843,29 +845,28 @@ For example, \tab{tab:gasMomentumResidual} contains the magnitudes of the variou
 \label{tab:gasMomentumResidual}
 \end{table}
 
-The term of interest is the interfacial shear, $\tau_{g,e}$, between the gaseous phase and the entrained liquid phase.
-This term is an order of magnitude greater than the other terms.
-This is due to the combination of the artificially increased interfacial drag coefficient and the definitions of velocities in \cobra{}.
-Since \cobra{} uses conservation of momentum equations with momentum as an independent parameter in a semi-implicit discretization, the velocities are poorly defined.
-Compare the old-time velocity, as defined by \eqref{eqn:oldTimeVelocity}, with the new-time velocity as defined by \eqref{eqn:si_vel}.
+This is due to the combination of the increased interfacial drag coefficient and the poor definitions of velocities in \cobra{}.
+In a given timestep the artificially large interfacial drag coefficient will force the new-time velocities to be equal.
+During the next timestep, however, the old-time velocities are not only no longer equal to each other, but they are also no longer equal to the new-time velocities calculated at the end of the previous timestep.
 
 \begin{equation}
 \label{eqn:oldTimeVelocity}
 u^{n}_{\phi, i} = \frac{\dot{m}^{n}_{\phi, i}}{A_{p, i} \ave{\alpha_{\phi} \rho_{\phi}}^{n}_{\text{a}, i}} 
 \end{equation}
 
-Since the new-time velocity is what is forced to be equal by the interfacial drag, at the beginning of the next timestep, the old-time velocity is not equal to the new-time velocity at the end of the previous timestep.
-The discrepancy in the definition of the velocities, \eqref{eqn:compareVelocities}, created a non-zero relative velocity between the depleted phase and the present phase at the beginning of every timestep.
+By comparing the definition of the old-time velocity, \eqref{eqn:oldTimeVelocity}, with the definition of the new-time velocity, \eqref{eqn:si_vel}, the discrepancy between the two definitions is evident, as illustrated in \eqref{eqn:compareVelocities}.
 
 \begin{equation}
 \label{eqn:compareVelocities}
-\frac{\dot{m}^{n+1}_{\phi, i}}{A_{p, i} \ave{\alpha_{\phi} \rho_{\phi}}^{n}_{\text{a}, i}} \neq \frac{\dot{m}^{n+1}_{\phi, i}}{A_{p, i} \ave{\alpha_{\phi} \rho_{\phi}}^{n+1}_{\text{a}, i}}
+\underbrace{\frac{\dot{m}^{n+1}_{\phi, i}}{A_{p, i} \ave{\alpha_{\phi} \rho_{\phi}}^{n}_{\text{a}, i}}}_{\text{new-time: } t^{n} \rightarrow t^{n+1}} \neq \underbrace{\frac{\dot{m}^{n+1}_{\phi, i}}{A_{p, i} \ave{\alpha_{\phi} \rho_{\phi}}^{n+1}_{\text{a}, i}}}_{\text{old-time: } t^{n+1} \rightarrow t^{n+2}}
 \end{equation}
 
+It is the use of the momenta as the independent parameters for the conservation of momentum equations in conjunction with the use of semi-implicit method that causes the velocities to be poorly defined.
+The discrepancy in the definition of the velocities creates a non-zero relative velocity between the depleted phase and the present phase at the beginning of every timestep.
 For the linear solver, this was acceptable; however, the iterative nature of the nonlinear solver exacerbated this problem.
 This created a situation where multiple Newton steps might have been required to drive the new-time relative velocity to zero even though the previous timestep's new-time relative velocity was zero.
-To remove this problem, if the new-time relative velocity of the previous timestep is below a certain threshold, $u_{r, min}$, then the momentum of the depleted phase, $\dot{m}_{\text{dep}}$, is relinearized so that the new-time relative velocity is zero.
-The linearization point is equal to the carrier phase momentum, $\dot{m}_{\text{car}}$, multiplied by the ratio of the depleted phase's to the carrier phase's macroscopic densities, \eqref{eqn:velRelinearization}.
+To remove this problem, if the new-time relative velocity of the previous timestep is below a certain threshold, $u_{r, min}$, then the initial linearization point for the new-time momentum of the depleted phase, $\dot{m}_{\text{dep}}$, is modified so that the new-time relative velocity is zero.
+The new linearization point is equal to the carrier phase momentum, $\dot{m}_{\text{car}}$, multiplied by the ratio of the depleted phase's to the carrier phase's macroscopic densities, \eqref{eqn:velRelinearization}.
 
 \begin{equation}
 \label{eqn:velRelinearization}
@@ -873,7 +874,7 @@ The linearization point is equal to the carrier phase momentum, $\dot{m}_{\text{
 \end{equation}
 
 The second restriction is placed upon the thermodynamic state of the depleting phase.
-Below a certain threshold, the thermodynamic state of the depleted phase is set to be equal to the saturation properties associated with the thermodynamic state of carrier phase.
+Below a certain threshold, the thermodynamic state of the depleted phase is set to be equal to the saturation properties associated with the thermodynamic state of the carrier phase.
 Additionally, this issue applied to the presence or absence of the \ncg{} field.
 Within \cobra{}, only the \ncg{} field is capable of being fully depleted; the partial pressure of the \ncg{} field is allowed to go to zero.
 To determine if the initial linear point for $P^{n+1}_{n}$ is appropriate, information from the explicit portion of the continuity equations is used to identify situations where the linearization point may be poor.
