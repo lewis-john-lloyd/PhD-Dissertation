@@ -340,20 +340,28 @@ Finally, the solution and run time data from the three methods will be compared.
 \subsection{Model}
 \label{subsect:valveModel}
 
-The system being modeled was that of four vertical subchannels.
-Each subchannel was modeled as having ten continuity volumes, each with a height, $\dx{}$, of 4 [in] and a cross-sectional area, $ A_{c} $, of 16 $[\text{in}^{2}]$.
-Two subchannels each had a fixed obstruction, manifested as loss coefficients, along their lengths.
-One subchannel had a complete obstruction that prevented flow.
-The last subchannel had a boundary condition that imitated the behavior of a valve by using a time dependent loss coefficient.
+The system being modeled was that of four vertical subchannels, \fig{fig:valveModel}.
+
+\begin{figure}[h!tb]
+\centering
+\input{images/valveModel}
+\caption{Model of valve problem.}
+\label{fig:valveModel}
+\end{figure}
+
+Each subchannel was modeled as having eight continuity volumes, each with a height, $\dx{}$, of 5 [in] and a cross-sectional area, $ A_{c} $, of 16 $[\text{in}^{2}]$.
+Subchannel 1 had a complete obstruction that prevented flow.
+Subchannels 2 and 3 each had a fixed obstruction, manifested as loss coefficients, along their lengths.
+Subchannel 4 had a boundary condition that imitated the behavior of a valve by using a time dependent loss coefficient.
 Initially fully open, the valve slowly closed.
 While closing, the valve stopped twice at cross-sectional areas that were equivalent to the two loss coefficients of the two partially obstructed subchannels.
 After fully closing, the valve returned to its first stopping point.
 
 The subchannels were initially full of subcooled liquid at 800 $[ \text{psia}] $.
 The bottoms and the tops of the subchannels were open to reservoirs.
-The bottom reservoir was full of subcooled liquid with a time variant pressure.
+The bottom reservoir, denoted by the grey squares marked with the letter A, was full of subcooled liquid with a time variant pressure.
 The pressure started at 802 $[ \text{psia} ] $ and increased to 818 $[ \text{psia}]$ over the first second, staying there for the duration of the problem.
-The top reservoir was full of subcooled liquid at 800 $[\text{psia} ] $.
+The top reservoir, denoted by the black squares marked with the letter B, was full of subcooled liquid at 800 $[\text{psia} ] $.
 This pressure did not change over the course of the transient.
 The pressure difference that existed between these two reservoirs was what drove the flow in this problem.
 
@@ -613,6 +621,15 @@ The model of this pipe was composed of two sections, each with a single subchann
 While it was not necessary for so simple a problem to have multiple sections, it was done to allow the domain decomposition algorithm to run, since the algorithm uses subchannels to decompose the domain.
 The subchannel in the bottom section was 1 [ft] tall and was broken into three continuity volumes, each 4 [in] high.
 The top section's subchannel was 2 [ft] tall and was broken into six continuity volumes, each 4 [in] high.
+\fig{fig:fillModel} shows the \cobra{} model for this problem.
+
+\begin{figure}[h!tb]
+\centering
+\input{images/fillModel}
+\caption{\cobra{} model for the filling problem.}
+\label{fig:fillModel}
+\end{figure}
+
 
 First, the simulation was run once with each of the linear and the nonlinear solvers.
 The nonlinear convergence parameters were \kmax{} = 35, $F_{tol} = \expneg{1.0}{6}$, and $\delta_{tol} = \expneg{1.0}{8}$. 
@@ -759,36 +776,38 @@ In particular, if there were localized nonlinearities, then the use of the domai
 \label{sect:refillModel}
 
 This problem was a model of a generic nuclear reactor vessel.
-\fig{fig:refillModel} contains a cross-sectional schematic of the discrete representation of this problem.
+\fig{fig:refillModel} contains a schematic of the discrete representation of this problem.
+The cross-sectional view on the left of \fig{fig:refillModel} contains the lateral connection information within a given section.
+The subchannel view on the right of \fig{fig:refillModel} contains the axial connections between sections.
 There were three sections in the problem.
 In Section 1 there was the inlet plenum to the core and the two hemispheres of the downcomer.
 The downcomers were connected to each other and the inlet plenum, as indicated by the dotted lines.
-Section 2 contained five subchannels: two representing the active core, one representing the core-bypass flow paths, one representing the reflector, and two representing the downcomer.
+Section 2 contained six subchannels: two representing the active core, one representing the core-bypass flow paths, one representing the reflector, and two representing the downcomer.
 One of the active core subchannels represented the inner ring of the core, denoted by point C.
 Another subchannel represented the outer ring of the active core, marked by point D.
-And, a third subchannel represented the flow bypass paths, as denoted by the small circle adjoining subchannels C and D.
+And, a third subchannel represented the flow bypass paths, as denoted by the small circle adjoining subchannels C and D in the cross-sectional view.
 The reflector subchannel was situated between the active core subchannels and the downcomer subchannels.
 The subchannels in Section 2 were hydrodynamically isolated from each other, as indicated by the solid lines.
 Section 3 represented the upper head of the reactor.
-In this model, there were transverse flow paths connecting all adjacent subchannels in the upper head, as indicated by the dotted lines.
-However, the transverse flow paths that connected the reflector subchannels to the two downcomer subchannels were modeled by a specialized set of PDEs meant to represent leakage past the hot-leg nozzle seals, as represented by the dashed lines.
+In this model, there were transverse flow paths connecting all adjacent subchannels in the upper head, as indicated by the dotted lines in the cross-sectional view.
+However, the transverse flow paths that connected the reflector subchannels to the two downcomer subchannels were modeled by a specialized set of PDEs meant to represent leakage past the hot-leg nozzle seals, as represented by the red dashed lines in the cross-sectional view.
 These equations were specialized physical models for leakage paths and used a homogeneous-flow assumption.
 The use of the leakage path models to represent the connections between the reflector subchannels and the downcomer subchannels allowed for a pressure differential to exist between the upper head of the core and the top of the downcomer.
 In Section 3 there was also a safety injection inlet at point B, and a pressure connection to containment at point A.
 
 \begin{figure}[h!tb]
 \centering
-\input{images/refillModel}
+\resizebox{\textwidth}{!}{\input{images/refillComplexModel}}
 \caption{\cobra{} model for the refill problem.}
 \label{fig:refillModel}
 \end{figure}
 
 This simulation started after the blowdown phase of a LOCA.
-The lower plenum and the bottom of the downcomer in Section 1 were initially full of saturated water.
-The downcomer in Sections 2 and 3, however, had a mixture of saturated steam and a \ncg{} representing air.
+The lower plenum and the bottom of the downcomer in Section 1 were initially full of saturated water, as indicated by the blue subchannels.
+The downcomer in Sections 2 and 3, however, had a mixture of saturated steam and a \ncg{} representing air, as indicated by the grey subchannels.
 The mole fraction of the \ncgs{} in these four subchannels started at 25\%.
 The pressure boundary condition at point A was connected to an infinite reservoir of this \ncg{}-steam mixture at 45 [psia]. 
-Both the four subchannels of the core region in Section 2 and the seven subchannels of the upper head in Section 3 were full of saturated steam.
+Both the four subchannels of the core region in Section 2 and the seven subchannels of the upper head in Section 3 were full of saturated steam, as indicated by the white subchannels.
 Of note, this model did not have solid fuel structures to produce heat in the reactor core.
 The fuel rods were omitted from this work because the evaluation of the impact of the nonlinear solver on wall heat was beyond the scope of this work.
 However, to simulate the presence of these fuel rods, two sources, points C \& D in \fig{fig:refillModel}, produced steam within the two subchannels representing the active core.
