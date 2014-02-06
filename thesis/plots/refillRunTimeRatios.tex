@@ -6,23 +6,19 @@
 \begin{tikzpicture}
 
 \begin{axis}[%
-%width=0.8\textwidth,
-%height=0.630967741935484\textwidth,
-%width=0.8\textwidth,
-%height=0.491294629700995\textwidth,
 width=\mytikzpicwidth,
 height=\mytikzpicheight,
 scale only axis,
 x dir=reverse,
-%xmode=log,
-xmin=0.00125,
-xmax=0.01,
+xmode=log,
+xmin=0.001,
+xmax=2,
 xminorticks=true,
 xlabel={$\dtmax{} [\text{s}]$},
 ymin=0,
 ymax=10,
 ylabel={Runtime Ratio [-]},
-legend style={at={(0.03,0.5)},anchor=west,draw=black,fill=white,legend cell align=left}
+legend style={at={(0.03,0.97)},anchor=north west,draw=black,fill=white,legend cell align=left}
 ]
 \addplot [
 color=black,
@@ -31,6 +27,13 @@ mark=square,
 mark options={solid}
 ]
 table[row sep=crcr]{
+1.28 6.27895355224609\\
+0.64 6.29074716567993\\
+0.32 6.65997314453125\\
+0.16 6.24629688262939\\
+0.08 6.81604242324829\\
+0.04 6.36056804656982\\
+0.02 6.77778148651123\\
 0.01 8.02093887329102\\
 0.005 8.30350589752197\\
 0.0025 8.6132984161377\\
@@ -45,6 +48,13 @@ mark=*,
 mark options={solid}
 ]
 table[row sep=crcr]{
+1.28 2.6570348739624\\
+0.64 2.63642430305481\\
+0.32 2.79442429542542\\
+0.16 2.67521476745605\\
+0.08 2.8906033039093\\
+0.04 2.71288633346558\\
+0.02 2.81551170349121\\
 0.01 3.08566451072693\\
 0.005 3.11905431747437\\
 0.0025 3.22687935829163\\

@@ -211,7 +211,7 @@ Note that a discussion of vectors $\vec{F}_{p}$ and $\vec{F}_{c}$ will be in \se
 The system, \eqref{eqn:pressureUpdateSystem}, is then solved to determine the pressure updates for the whole domain.
 A loop over each continuity volume is then performed so that the pressure update can be used in solving its associated upper-triangular system for the updates to the other five continuity variables in \eqref{eqn:linearUpdate}.
 As the loop over the continuity volume is progressing, any momentum flow path connected to the given continuity volume will have its momenta updated according to \eqref{eqn:momStar} to include the contribution from that continuity volumes' change in pressure. 
-After the continuity volume loop has been completed the $\momVec{}^{*}$ variables are assigned to $\momVec{}^{n+1}$. 
+After the continuity volume loop has been completed, the $\momVec{}^{*}$ variables are assigned to $\momVec{}^{n+1}$. 
 This update loop is shown in \alg{alg:updateVariables}.
 
 \begin{algo}[ht!]
@@ -262,7 +262,7 @@ Third, the assumption that $\vec{x}^{n+1, k} = \vec{x}^{n}$ produced source code
 The source code was modified to reflect the intended discretization of the governing conservation laws.
 To do this, areas had to be identified where: there were implicit cancellation of terms, the new-time variables were used in place of old-time variables, and the old-time variables were used in place of new-time variables.
 This required each of the Fortran procedures involved with the calculation of the various physical parameters and operators to be evaluated to determine if the variables being used were correct.
-Where appropriate, the software was changed to reflect the distinction between old-time and tentative new-time variables and to introduce terms that had been assumed to be equal to zero.
+Where appropriate, the software was changed to reflect the distinction between old-time and tentative new-time variables and to introduce terms that had been assumed equal to zero.
 Finally, upon verification of the proper discretization of the governing equations, several architectural changes were also made to expedite the implementation of the nonlinear solver.
 
 %-------------------------------------------------------------------------------
@@ -273,10 +273,10 @@ Finally, upon verification of the proper discretization of the governing equatio
 In \cobra{} the smallest geometric component that can be input is the subchannel.
 As mentioned in \sect{sect:geometry} subchannels inherit their geometric properties from the section in which they reside.
 To create geometrically complicated problems, it is possible to enforce zero momentum in a given momentum flow path, decoupling adjacent continuity volumes by eliminating the flow paths that connect them.
-This constraint is known as a no-flow boundary condition, and it allows more complicated models to be created by isolating portions of the domain.
+This constraint is known as a no-flow boundary condition, and it allows for more complicated models to be created by isolating portions of the domain.
 If an isolated domain is not connected to an external boundary condition, then it is marked as an inactive region.
 The inactive regions are thermodynamically isolated and form a closed system.
-These areas of the domain do not impact the solution in the portion of the domain that has boundary values, known as the active region.
+These areas of the domain do not influence the solution in the portion of the domain that has boundary values, known as the active region.
 After evaluating several prototypical models, it was determined that a non-trivial portion of the domain of these problems were thermodynamically isolable.
 \fig{fig:activeDomain} shows an example of a domain with inactive regions, where the inactive portions of the domain are marked with grey, the active with white, the external boundary conditions with black, and the inter-subchannel flow paths are marked with dashed lines.
 
@@ -289,7 +289,7 @@ After evaluating several prototypical models, it was determined that a non-trivi
 
 Originally, \cobra{} would solve the momentum and continuity equations at every defined location in the problem.
 The pressure matrix, $\vec{A}$, was sized based upon the number of volumes in the domain, not the number of active volumes.
-During this work it was determined that those continuity volumes and momentum flow paths which were in the inactive region would be pruned from the the simulation.
+During this work it was determined that those continuity volumes and momentum flow paths which were in the inactive region would be pruned from the simulation.
 While the additional costs of including these volumes in the simulation have historically been acceptable, the use of an iterative solver would amplify the computational time spent in those regions to an unacceptable degree.
 Removing these inactive volumes saved computational time by precluding the evaluation of the residuals at those locations and by modifying the size of the pressure matrix \eqref{eqn:pressureUpdateSystem}.
 Additionally, since the inactive regions of the problem are interpreted as not being part of the system being modeled, including their equations in the residual would not provide an accurate measure of convergence.
@@ -305,7 +305,7 @@ Once the active volumes were identified, the way in which the domain information
 \subsection{Nonlinear Algorithm}
 \label{subsect:nlnCobraAlgo}
 
-During this research, the \cobra{} software was transitioned from being restricted to using only a linear solver, as outlined in \sect{sect:linCobraAlg}, to being able to use either a linear solver or a nonlinearly-convergent solver. 
+During this research, the \cobra{} software was transitioned from being restricted to using only a linear solver, as outlined in \sect{sect:linCobraAlg}, to being able to use either a linear solver or a nonlinearly convergent solver. 
 The solution method selected for the nonlinear system was the iterative Newton's method.
 Newton's method uses successive linearizations to find a solution vector that adequately satisfies the system of discrete nonlinear equations.
 The algorithmic outline for the nonlinear solver is presented in \alg{alg:nlnCobraAlgorithm}.
@@ -342,7 +342,7 @@ The following section will roughly parallel \alg{alg:nlnCobraAlgorithm}.
 First, the method by which the nonlinear residuals are evaluated and calculated is presented.
 This portion will be an extension of the procedure discussed in \sect{sect:linCobraAlg} and outlined in \alg{alg:xschem}.
 Second, the process through which the Newton vector is updated, \alg{alg:updateVariables}, is expounded upon and  discussed.
-Lastly, the method by which determination of convergence is discussed and is presented in \alg{alg:nlnConvergence}.
+Lastly, the methods by which convergence is determined are discussed and presented in \alg{alg:nlnConvergence}.
 
 A detailed discussion of the process through which the nonlinear residuals are evaluated and the pressure matrix is assembled will now be presented.
 Two quantities that are important to the iterative solver are the residual vector, $\vec{F}^{k}$, and the update vector, $\delta \vec{x}$.
@@ -453,11 +453,11 @@ For each continuity volume, the above six equations are linearized about the ten
 \end{IEEEeqnarray}
 
 The matrix of the derivatives of the continuity residual vector with respect to the momentum vector at the boundaries of the continuity volume, $\displaystyle \frac{\partial\,\vec{F}_{c}}{\partial \momVec{}_{i}}$, will be known as $\vec{\Xi}_{i}$.
-This matrix converts the momentum vector at a continuity volume's edge to mass and energy flows and is defined by \eqref{eqn:momentumToFlowRates}.
+This matrix, \eqref{eqn:momentumToFlowRates}, converts the momentum at a continuity volume's edge to mass and energy flow rates.
 
 \begin{equation}
 \label{eqn:momentumToFlowRates}
-\vec{\Xi}^{n+1, k}_{i} = \dt{} \begin{bmatrix}
+\vec{\Xi}^{n+1, k}_{i} = \begin{bmatrix}
  0 & \frac{\don{\alpha^{n}_{g} \rho^{n}_{n}}^{n+1,k}_{d}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a}} & 0 \\
 \frac{\don{\alpha^{n}_{l}\rho^{n}_{l}}^{n+1,k}_{d}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a}} & 0 & 0 \\
 0 & \frac{\don{\alpha^{n}_{g} \rho^{n}_{g} h^{n}_{g}}^{n+1,k}_{d}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a}} & 0 \\
@@ -469,14 +469,14 @@ This matrix converts the momentum vector at a continuity volume's edge to mass a
 
 The definition of the momentum update vector, \eqref{eqn:momentumUpdate}, is used to eliminate the momentum update vector from \eqref{eqn:nlnContinuitySystem}.
 In the above equations, a given momentum flow path will be referenced by the index $i$.
-Note that the summation over the number of continuity volumes to which a particular flow path is connected is at most two terms.
+The summation over the number of continuity volumes to which a particular flow path is connected is at most two terms.
 Since each momentum flow path can connect to only two continuity volumes, one of those two continuity volumes will be the current continuity volume, which will be marked by the index $s(i)$, and the other continuity volume will be indexed with $o(i)$.
 The resulting system is shown in \eqref{eqn:continuitySystem}.
 
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:continuitySystem}
 \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & + & \nonumber \\
-\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum_{i\, \in \, N_{f} } \vec{\Xi}^{k}_{i}\left( \delta \momVec{}_{i}^{*} + \frac{\partial \momVec{}_{i}^{k}}{\partial P_{s(i)}} \delta P_{s(i)}^{k} + \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}^{k} \right) = \vec{F}^{k}_{c} & &
+\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \dt{} \sum_{i\, \in \, N_{f} } \vec{\Xi}^{k}_{i}\left( \delta \momVec{}_{i}^{*} + \frac{\partial \momVec{}_{i}^{k}}{\partial P_{s(i)}} \delta P_{s(i)}^{k} + \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}^{k} \right) = \vec{F}^{k}_{c} & &
 \end{IEEEeqnarray}
 
 By rearranging \eqref{eqn:continuitySystem} and recognizing that the $\delta P_{s(i)}$ terms from the momentum equations correspond to the given volumes own $\delta P$, \eqref{eqn:continuitySystem02} is obtained.
@@ -484,8 +484,8 @@ By rearranging \eqref{eqn:continuitySystem} and recognizing that the $\delta P_{
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:continuitySystem02}
 \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & + & \nonumber \\
-\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \left( \frac{\partial \vec{F}^{k}_{c}}{\partial P } + \sum_{i\,\in \, N_{f} } \vec{\Xi}^{k}_{i}\frac{\partial \momVec{}^{k}_{i}}{\partial P_{s(i)}}\right) \delta P^{k} + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}^{k} & = & \nonumber \\
-- \vec{F}^{k}_{c} - \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \delta \momVec{}_{i}^{*} & &
+\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \left( \frac{\partial \vec{F}^{k}_{c}}{\partial P } + \dt{} \sum_{i\,\in \, N_{f} } \vec{\Xi}^{k}_{i}\frac{\partial \momVec{}^{k}_{i}}{\partial P_{s(i)}}\right) \delta P^{k} + \dt{} \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}^{k} & = & \nonumber \\
+- \vec{F}^{k}_{c} - \dt{} \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \delta \momVec{}_{i}^{*} & &
 \end{IEEEeqnarray}
 
 In \eqref{eqn:continuitySystem02} there are six equations and six plus the number of connecting flow paths, $N_{f}$, unknowns.
@@ -540,7 +540,7 @@ Based upon the discussion above, the process for evaluating the residual is the 
 Using the two residuals, $\vec{F}^{k}$ and $\vec{F}^{k+1}$, the comparative accuracy of the two solution vectors can be determined.
 These residual vectors are used in the evaluation of the Newton loop termination criteria.
 
-There are three ways in which the iterative Newton loop can be terminated.
+The iterative Newton loop can be terminated in three ways.
 One way is that the Newton loop will terminate if the $\mathcal{L}_{2}$ norm of the scaled residual vector, \eqref{eqn:nlnScaledResidual}, divided by the square root of the number of unknowns, $N_{u}$, drops below a specified threshold, $\ftol{}$.
 
 \begin{equation}
@@ -626,7 +626,7 @@ In constructing this scaling factor it was determined that the following charact
 
 The dynamic behavior of the residual necessitates a method for scaling that adapts to relevant physical situations.
 The scaling method developed during this work is an operator-based approach.
-The governing PDEs can be viewed as a collection of operators, both linear and nonlinear, acting upon the vector of independent parameters.
+The governing PDEs can be viewed as a collection of operators, linear and nonlinear, acting upon the vector of independent parameters.
 The summation of these operators must balance to zero for the nonlinear equation to be satisfied.
 The scaling factor developed uses the magnitudes of these operators to determine an absolute measure of the physical processes occurring in a given volume.
 This is accomplished by summing the absolute value of the different discrete operators in the governing equations.
@@ -802,9 +802,9 @@ While adding time to the development cycle, the overhead of the quality assuranc
 \label{subsect:nlnCobraInputFile}
 The primary input file for \cobra{} is fixed format, so it was decided that a separate input file for the nonlinear solver would provide the most flexibility when running simulations.
 This decision allowed for existing models to be run in nonlinear mode without modification of the actual input file.
-The presence of the file ``\classname{nwt.cob}" triggers the input processing routine for the nonlinear solver.
-There are three parameters that need to be present in the input file; in order they are $\kmax{}$, $\ftol{}$, and $\dtol{}$, each on a separate line. 
-If the file is present but empty, then the default values are used; they are $35$, \expneg{1.0}{5}, and \expneg{1.0}{10}, respectively.
+The presence of the nonlinear input file, ``\classname{nwt.cob}," triggers the input processing routine for the nonlinear solver.
+Three parameters need to be present in the input file; in order they are $\kmax{}$, $\ftol{}$, and $\dtol{}$, each on a separate line. 
+If the file is present but empty, then the default values are used; they are $35$, $\expneg{1.0}{5}$, and $\expneg{1.0}{10}$ respectively.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -832,7 +832,7 @@ The following list shows how the velocities are required to behave as their resp
 \item{ $\alpha_l \rightarrow 0$ : $u_l \rightarrow u_g$}
 \end{itemize}
 These velocity equilibrium constraints are imposed by artificially increasing the interfacial drag between the two phases to force equilibrium between the new-time velocities.
-However, there is a subtle issue created by this increase in the the interfacial drag.
+However, there is a subtle issue created by this increase in the interfacial drag.
 If the new-time velocities are not equal, then the increased interfacial drag will dominate the residual for the momentum equation of the phase that is not disappearing.
 For example, \tab{tab:gasMomentumResidual} contains the magnitudes of the various terms in the gaseous momentum equation from a nominally single-phase gaseous flow simulation.
 The term for the interfacial shear between the gaseous phase and the entrained liquid field, $\tau_{g, e}$, is an order of magnitude greater than the other terms.
@@ -847,7 +847,7 @@ The term for the interfacial shear between the gaseous phase and the entrained l
 
 This is due to the combination of the increased interfacial drag coefficient and the poor definitions of velocities in \cobra{}.
 In a given timestep the artificially large interfacial drag coefficient will force the new-time velocities to be equal.
-During the next timestep, however, the old-time velocities are not only no longer equal to each other, but they are also no longer equal to the new-time velocities calculated at the end of the previous timestep.
+During the next timestep, however, the old-time velocities are not only no longer equal to each other, but also no longer equal to the new-time velocities calculated at the end of the previous timestep.
 
 \begin{equation}
 \label{eqn:oldTimeVelocity}

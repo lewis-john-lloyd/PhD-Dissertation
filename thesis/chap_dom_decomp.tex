@@ -1,7 +1,7 @@
 \chapter{Domain Decomposition}
 \label{chap:domDecomposition}
-As discussed in \sect{sect:code_coupling}, domain coupling in thermal-hydraulic, safety-analysis software is an established method to allow for different physics to be represented in different domains.
-This research extends the domain coupling framework to allow for different domains to be consistently coupled while subject to different mathematical treatments.
+As discussed in \sect{sect:code_coupling}, domain coupling in thermal-hydraulic, safety-analysis software is an established method to allow different physics to be represented in different domains.
+This research extends the domain-coupling framework to allow different domains to be consistently coupled while subject to different mathematical treatments.
 The following chapter describes the mathematical formulation of this novel domain decomposition algorithm, several architectural changes that were made to \cobra{} to allow for the algorithm to be implemented properly, and a description of its implementation in the software.
 
 %-------------------------------------------------------------------------------
@@ -22,16 +22,16 @@ There is no requirement that these two domains be contiguous.
 Each continuity volume and momentum flow path is characterized as either existing in the linear domain or the nonlinear domain.
 Each momentum flow path is associated with a single domain; the momentum equations are not modified, regardless of the domain in which they exist.
 The coupling between the two domains occurs at the continuity volume's boundaries connecting the linear domain  to the nonlinear domain.
-Those continuity volumes which are in the linear domain, but have flow paths connecting them to the nonlinear domain, are considered to be nonlinear boundary continuity (NBC) volumes.
+Those continuity volumes that are in the linear domain, but have flow paths connecting them to the nonlinear domain, are considered nonlinear boundary continuity (NBC) volumes.
 All other continuity volumes have associated with them the nonlinear continuity equations, \eqref{eqn:nlnNcgMassEquation} -- \eqref{eqn:nlnVapMassEquation}, regardless of the domain in which they exist.
-The NBC volumes have a modified set of conservation equations which will now be discussed.
+The NBC volumes have a modified set of conservation equations that will now be discussed.
 
 The starting place for the formulation of the NBC volumes' continuity equations will be \eqref{eqn:nlnNcgMassEquation} -- \eqref{eqn:nlnVapMassEquation}.
 In these normal nonlinear continuity equations the advection terms are formulated in terms of new-time velocities and donored quantities evaluated using the new-time velocities.
 However, in an NBC volume, the flow paths that connect linear continuity volumes to nonlinear continuity volumes are formulated in terms of phasic mass and energy flow rates.
 This formulation introduces six new unknowns per domain connection, the flow rates.
 The index $i$ represents the spatial coordinate of the flow rate.
-The definition of the six unknown flow rates for a given location are shown in \eqref{eqn:nbcFluxDefinition}.
+The definition of the six unknown flow rates for a given location is shown in \eqref{eqn:nbcFluxDefinition}.
 
 \begin{equation}
 \label{eqn:nbcFluxDefinition}
@@ -107,8 +107,8 @@ Utilizing \eqref{eqn:momentumToFlowRates} and \eqref{eqn:momentumUpdate}, the li
 \begin{IEEEeqnarray}{rcl}
 \label{eqn:nbcLinearSystem}
 \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & + & \nonumber \\
-\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \left( \frac{\partial \vec{F}^{k}_{c}}{\partial P } + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i}\frac{\partial \momVec{}^{k}_{i}}{\partial P}\right) \delta P^{k} + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}^{k} + \dt{} \sum_{i \, \in \, N_{\text{NBC}}} \delta \vec{\Psi}^{k}_{i} & = &\nonumber \\
-- \left( \vec{F}^{k}_{c} + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \delta \momVec{}_{i}^{*} - \dt{} \sum_{i \, \in \, N_{\text{NBC}}} \vec{\Psi}^{k}_{i} \right) - \dt{} \sum_{i \, \in \, N_{\text{NBC}}} \vec{\Psi}^{k}_{i} & &
+\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \left( \frac{\partial \vec{F}^{k}_{c}}{\partial P } + \dt{} \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i}\frac{\partial \momVec{}^{k}_{i}}{\partial P}\right) \delta P^{k} + \dt{} \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}^{k} & + &\nonumber \\
+\dt{} \sum_{i \, \in \, N_{\text{NBC}}} \delta \vec{\Psi}^{k}_{i} = - \left( \vec{F}^{k}_{c} + \dt{} \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \delta \momVec{}_{i}^{*} - \dt{} \sum_{i \, \in \, N_{\text{NBC}}} \vec{\Psi}^{k}_{i} \right) - \dt{} \sum_{i \, \in \, N_{\text{NBC}}} \vec{\Psi}^{k}_{i} & &
 \end{IEEEeqnarray}
 
 As outlined in \sect{sect:nlnCobraSolver}, the advection terms in the residuals of \eqref{eqn:nbcLinearSystem} are evaluated using $\momVec{}^{n+1, k + \onehalf}$.
@@ -123,7 +123,7 @@ Using this matrix notation, \eqref{eqn:nbcLinearSystem} can be represented as \e
 \left[ \vec{J}_{c} \vert \vec{K}_{c} \vert \vec{Q}_{c} \right] \delta \vec{C}_{c} = \vec{r}_{c} - \vec{Q}_{c} \vec{\Psi}_{c}
 \end{equation}
 
-The vector of unknowns, $\vec{C}_{c}$ is defined in \eqref{eqn:nbcUpdate}.
+The vector of unknowns, $\vec{C}_{c}$, is defined in \eqref{eqn:nbcUpdate}.
 
 \begin{equation}
 \label{eqn:nbcUpdate}
@@ -169,11 +169,11 @@ The vector of unknowns, $\vec{C}_{c}$ is defined in \eqref{eqn:nbcUpdate}.
 However, since the matrix product $\vec{L}_{c}^{-1}\vec{Q}_{c}$ occurs twice in \eqref{eqn:nbcLUSystem}, only a single instance is included in the solution of this system.
 The $\vec{L}^{-1}_{c}\vec{Q}_{c}$ is omitted from the right-hand side of \eqref{eqn:nbcLinSystem} during the $\vec{LU}$ decomposition.
 This $\vec{LU}$ decomposition is such that the lower triangular matrix has ones along the diagonal.
-The $N_{\text{NBC}}$ identity matrices that comprise $\vec{Q}_{c}$ are now themselves the inverse of the lower triangular matrix times \dt{}.
+The $N_{\text{NBC}}$ identity matrices that comprise $\vec{Q}_{c}$ are now themselves the inverse of the lower triangular matrix multiplied by \dt{}.
 The final row of the linear system in \eqref{eqn:nbcLUSystem} is then scaled by the sixth row's sixth column entry, $\vec{U}_{c}[6,6]$.
 
 The linear pressure matrix, $\vec{A}_{\text{lin}}$, is assembled from the sixth row of each continuity volume's linear system in the linear domain including the NBC volumes.
-There will be $N_{\text{lin}}$ rows in the system that correspond to each of the linear pressure updates.
+There will be $N_{\text{lin}}$ rows in the system, which correspond to each of the linear pressure updates.
 Let $N_{n}$ represent the total number of interfaces between the linear and the nonlinear domains.
 Since there can be multiple interfaces from a single NBC volume to the nonlinear domain, $N_{n}$ is greater than or equal to the number of NBC volumes.
 There will be an additional $6 * N_{n}$ right-hand sides for the linear pressure matrix that correspond to the coefficient matrices, $\vec{L}^{-1}_{c}\vec{Q}_{c}$, for the unknown flow rates in each of the NBC volumes, represented as $\vec{B}_{\text{lin}}$.
@@ -274,19 +274,19 @@ Lastly, the dual domain input file is described.
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
-\subsection{Pressure Matrix And Solver Data Structures}
+\subsection{Pressure Matrix and Solver Data Structures}
 \label{subsect:domDecompSolverStructs}
 
 As seen in \sect{sect:linCobraAlg}, the largest linear system that is solved during a Newton step is the pressure matrix that is used to obtain the pressure update vector.
 \cobra{} provides the user with three options for the linear algebra method to be used for solving for the pressure update: the Gauss elimination routine, the SuperLU solver \cite{Li1999}, and the Pardiso solver \cite{Schenk2006, Schenk2007}.
 The SuperLU and the Pardiso solvers utilize sparse matrix storage and the Gauss elimination routine utilizes full matrix storage.
-The sparsity of the matrices typically encountered are such that use of the Gauss elimination routine is discouraged.
+The sparsity of the matrices typically encountered is such that use of the Gauss elimination routine is discouraged.
 
 The method that the user selects via the \cobra{} input file, ``\classname{deck.inp}," determines the data storage structure of the pressure matrix.
 Each of the three methods utilizes a different memory format for matrix storage.
 Given that the software as obtained was based upon procedural programming practices and written in a mixed Fortran dialect (FORTRAN 77, Fortran 90, and Fortran 95), the static memory structures for each of the three possible pressure matrices were predefined in different modules.
 However, this procedural paradigm precluded the existence of two separate pressure matrices, one for the linear domain and one for the nonlinear domain.
-This procedural approach for the pressure matrices was deemed to be inappropriate for the work being done, and an object-based approach was introduced instead.
+This procedural approach for the pressure matrices was deemed inappropriate for the work being done, and an object-based approach was introduced instead.
 To implement this switch, the way in which the solver was stored and accessed was modified to both enable multiple solvers and reduce the logical complexity of accessing the proper matrix.
 
 \begin{figure}[ht!]
@@ -303,11 +303,11 @@ The \classname{matrix} class contains the number of right-hand sides anticipated
 Additionally, this class would provide interfaces for the following procedures:
 
 \begin{itemize}
-\item{\classname{put} : a procedure that sets $\vec{A}_{i,j}$ to a given value.}
-\item{\classname{get} : a procedure that returns $\vec{A}_{i,j}$.}
-\item{\classname{rescale} : a procedure for scaling $\vec{A}_{i, :}$ by a given value.}
-\item{\classname{reset} : a procedure for setting $\vec{A} = \vec{0}$.}
-\item{\classname{invert} : a procedure that returns $\vec{x}$ from $\vec{A}\vec{x} = \vec{b}$.}
+\item{\classname{put}: a procedure that sets $\vec{A}_{i,j}$ to a given value.}
+\item{\classname{get}: a procedure that returns $\vec{A}_{i,j}$.}
+\item{\classname{rescale}: a procedure for scaling $\vec{A}_{i, :}$ by a given value.}
+\item{\classname{reset}: a procedure for setting $\vec{A} = \vec{0}$.}
+\item{\classname{invert}: a procedure that returns $\vec{x}$ from $\vec{A}\vec{x} = \vec{b}$.}
 \end{itemize}
 
 Given that the SuperLU and the Pardiso solvers utilize sparse matrices and the Gauss elimination routine uses a full matrix, there are two further abstract classes that inherit from \classname{matrix}; they are \classname{fullMatrix} and \classname{sparseMatrix}.
@@ -329,13 +329,13 @@ Once the \classname{matrix} hierarchy was developed, an abstract \classname{solv
 \fig{fig:solverClassDiagram} shows the class diagram for the \classname{solver} hierarchy.
 The \classname{solver} class contains the size of the system, \classname{size}; a pointer to a \classname{matrix} object, \classname{A}; and the right-hand side of the linear system, \classname{res}.
 Within the \classname{solver} class there is an interface for the initialization routine, \classname{init}.
-Additionally, there is a procedure named \classname{insert} that will take the sixth row of a continuity volume's linear system and properly insert it into the the correct row of the domain's pressure matrix, $\vec{A}_{j,:}$, as outlined in \sect{sec:domDecompMath}.
+Additionally, there is a procedure named \classname{insert} that will take the sixth row of a continuity volume's linear system and properly insert it into the correct row of the domain's pressure matrix, $\vec{A}_{j,:}$, as outlined in \sect{sec:domDecompMath}.
 The following procedures for manipulating the linear system are also defined within the \classname{solver} object:
 
 \begin{itemize}
-\item{ \classname{solve} : an interface to call the solver associated with the matrix.}
-\item{ \classname{rescale} : a procedure for scaling both $\vec{A}_{i, :}$ and $\vec{res}_{i}$.}
-\item{ \classname{reset} : a procedure for setting both $\vec{A} = \vec{0}$ and $\vec{res} = \vec{0}$.}
+\item{ \classname{solve}: an interface to call the solver associated with the matrix.}
+\item{ \classname{rescale}: a procedure for scaling both $\vec{A}_{i, :}$ and $\vec{res}_{i}$.}
+\item{ \classname{reset}: a procedure for setting both $\vec{A} = \vec{0}$ and $\vec{res} = \vec{0}$.}
 \end{itemize}
 
 There are three concrete classes that inherit from the abstract solver class: \classname{dsolveSolver}, \classname{superluSolver}, and \classname{pardisoSolver}.
@@ -377,9 +377,9 @@ This class also stores the volume's ordinal, \classname{ord}.
 This variable provides indexing information for the volume's pressure matrix.
 
 Additionally, information regarding the connectivity of the volume to other volumes is stored in several variables: \classname{num\_cons}, \classname{cons}, \classname{con\_type}, \classname{con\_ord}, \classname{gap\_ord}, \classname{con\_coords}, \classname{fp\_coords}, and \classname{con\_sig}.
-These variables represent the information necessary to properly references those flow paths to which the continuity volume is connected, as well as the continuity volumes on the other end of those flow paths.
+These variables represent the information necessary to properly reference those flow paths to which the continuity volume is connected, as well as the continuity volumes on the other end of those flow paths.
 This data structure has the drawback of storing redundant flow path information.
-Each of the continuity volumes connected by a particular flow path contain all of the information about that flow path in separate memory locations.
+Each of the continuity volumes connected by a particular flow path contains all of the information about that flow path in separate memory locations.
 
 The \classname{baseVolume} class also contains volume's linear system from \sect{sect:linCobraAlg}.
 The volume's linear system is stored as \classname{jac}.
@@ -393,7 +393,7 @@ This class, as shown in \fig{fig:volumeClassDiagram}, is a derived class and con
 First, a second \classname{solver} pointer is present, \classname{nln\_solver}.
 This allows for proper indexing into the nonlinear pressure matrix when needed.
 Second, the \classname{nbcVolume} also contains a separate collection of variables describing those flow paths that connect it to the nonlinear domain: \classname{nbc\_cons}, \classname{nbc\_con\_ord}, \classname{nbc\_con\_map}, \classname{nbc\_ords}, \classname{nbc\_coords}, \classname{coords}, and \classname{nln\_ord\_by\_local\_nbc\_ord}.
-Lastly, the \classname{nbcVolume} class also contains the pressure coefficients, \classname{coef\_mat}; the flow rate associated with the boundary, \classname{flux}; the derivative of the flow rate with respect to the pressure on either side of the flow path, \classname{dflux\_dp}; the matrix $\vec{\Xi}$ in compressed storage, \classname{donored\_values}; and the right-hand side of the linear domain's pressure solution, \classname{dp}.
+Lastly, the \classname{nbcVolume} class contains the pressure coefficients, \classname{coef\_mat}; the flow rate associated with the boundary, \classname{flux}; the derivative of the flow rate with respect to the pressure on either side of the flow path, \classname{dflux\_dp}; the matrix $\vec{\Xi}$ in compressed storage, \classname{donored\_values}; and the right-hand side of the linear domain's pressure solution, \classname{dp}.
 
 Each continuity volume is represented by one of the above described volume classes.
 This polymorphic approach allows for domain-agnostic procedures and references within the software.
@@ -405,7 +405,7 @@ This polymorphic approach allows for domain-agnostic procedures and references w
 \label{subsect:domDecompAlgorithm}
 
 The implementation of the domain decomposition's mathematical algorithm provided in \sect{sec:domDecompMath} will now be covered.
-\alg{alg:domDecompAlgorithm} provides a high level overview of the software as implemented.
+\alg{alg:domDecompAlgorithm} provides a high-level overview of the software as implemented.
 The steps in this algorithm will be detailed in the following section.
 
 \begin{algo}[ht!]
@@ -490,7 +490,7 @@ However, there are differences when an \classname{nbcVolume} is encountered.
 The \classname{nbcVolume} objects are treated slightly different from the regular \classname{baseVolume} objects.
 The flow rate terms from the equations are not included in the residual at this point, but are instead treated as unknowns.
 These flow rates are treated as independent parameters, which decreases the number of entries in the $\vec{K}_{c}$ matrix.
-However, the derivatives of the residuals with respect these flow rates , $\vec{Q}_{c}$, are added to the linear system.
+However, the derivatives of the residuals with respect these flow rates, $\vec{Q}_{c}$, are added to the linear system.
 If a linear continuity volume is attached through more than one surface to the nonlinear domain, then $\vec{Q}_{c}$ will contain multiple identity matrices.
 The resulting system will be subjected to the same \vec{LU} decomposition as outlined for a regular volume.
 The last equation with the additional right-hand sides will be assembled into the linear domain's pressure matrix.
@@ -553,7 +553,7 @@ Upon termination of the Newton loop, the linear domain's variables are then upda
 Since the domain decomposition algorithm uses the nonlinear solver, the nonlinear convergence tolerances and the iteration limit are input as described in \sect{subsect:nlnCobraInputFile}.
 These parameters only apply to the nonlinear domain.
 Additional information is appended to the end of the basic nonlinear input file to activate the domain decomposition algorithm.
-The nonlinear solver input file needs to have the IDs of the subchannels that are going to be subjected to additional Newtons steps specified.
+The nonlinear input file needs to have the IDs of the subchannels that are going to be subjected to additional Newton steps specified.
 The presence of the character string ``\classname{'begin-nln-channels'}'' after the nonlinear input signals that there will be two domains.
 After that string, the IDs of the subchannels are listed, one per line, in no particular order.
 Once all subchannels to be in the nonlinear domain have been listed, the character string ``\classname{'end-nln-channels'}'' needs to be on a separate line.

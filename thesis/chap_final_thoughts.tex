@@ -6,10 +6,10 @@
 This dissertation has focused on developing a novel method for solving the nonlinear PDEs associated with thermal-hydraulic safety analysis software.
 Traditional methods used in thermal-hydraulic safety analysis software involve solving large systems of nonlinear equations.
 One class of methods resolves those nonlinearities by using an iterative nonlinear refinement technique.
-Another class linearizes the nonlinear equations and attempts to minimize the nonlinear truncation error through the use of timestep size refinement.
+Another class linearizes the nonlinear equations and attempts to minimize the nonlinear truncation error with timestep size refinement.
 However, this nonlinear truncation error can cause a solution to remain unchanged with reduction in timestep size.
 This insensitivity of the solution to timestep size refinement is often taken as an indicator of a converged solution. 
-Until the nonlinear truncation error is eliminated through the use of an iterative solver, temporal convergence cannot be assured.
+Until the nonlinear truncation error is eliminated by using an iterative solver, temporal convergence cannot be assured.
 However, the application of a nonlinear solver can be excessively computationally expensive.
 These two paradigms stand at the opposite ends of a spectrum, and the middle ground had yet to be investigated.
 This research has developed a means of providing that middle ground: a spatially-selective, nonlinear refinement algorithm.
@@ -20,8 +20,8 @@ This operator-based approach allows for a scaling of the residual that eliminate
 The use of this scale factor is integral to the effective use of the nonlinear solver in  subsequent analyses.
 
 Two problems were used to determine the impact of nonlinearities upon the efficacy of the linear and the nonlinear solver.
-It was found that not resolving the nonlinearities present in a simulation may result in situations where timestep-size insensitivity is not a result of temporal convergence, but rather is an artifact brought about the degraded order of temporal accuracy caused by linearizing the discrete nonlinear equations.
-Resolving the nonlinearities at every timestep not only provided a more consistent solution during temporal convergence studies, but also allowed for convergence to a different solution than that obtained by taking only a single Newton step during each timestep.
+It was found that not resolving the nonlinearities present in a simulation might result in situations where timestep-size insensitivity is not a result of temporal convergence, but rather is an artifact brought about the degraded order of temporal accuracy caused by linearizing the discrete nonlinear equations.
+Resolving the nonlinearities at every timestep not only provided a more consistent solution during temporal convergence studies, but also produced different solutions than obtained by taking only a single Newton step during each timestep.
 However, in simulations where nonlinearities were expected to be low, it was found that the solution produced by the linear solver was as accurate as that produced by the nonlinear solver.
 
 A problem where nonlinearities were isolated to a given portion of the domain was run to determine the impact of resolving or not resolving those localized nonlinearities upon the global solution.
@@ -42,7 +42,7 @@ This simulation modeled the refill portion of an accident scenario.
 When observing engineering parameters of interest, such as condensation from the safety injection nozzle in the upper head, the nonlinear solver demonstrated a more temporally converged solution than the linear solver.
 The linear solution was also shown to converge to a different solution than that obtained by the nonlinear solver.
 The domain decomposition algorithm was capable of generating a solution that was more temporally consistent than that obtained by the linear solver, and one that was much closer to solution provided by the nonlinear solver, with only approximately one-third the computational effort.
-This problem demonstrated that the domain decomposition algorithm may be useful in obtaining nonlinearly and temporally converged safety simulations with less computational cost than traditional nonlinear solvers.
+This problem demonstrated that the domain decomposition algorithm might be useful in obtaining nonlinearly and temporally converged safety simulations with less computational cost than traditional nonlinear solvers.
 
 In summary, a nonlinear solver can assist in achieving a temporally converged simulation at larger timestep sizes during timestep sensitivity studies.
 Unfortunately, nonlinear solvers are computationally expensive when multiple nonlinear iterates are required to resolve the nonlinearities.
@@ -53,7 +53,7 @@ By selecting those areas of the domain where the nonlinearities are expected to 
 \label{sect:futureWork}
 During this work several opportunities for follow-on research presented themselves.
 These research opportunities include the development and implementation of a spatially and temporally adaptive version of the domain decomposition algorithm, the evaluation of theoretical computational costs for the domain decomposition, the investigation of the interaction of the nonlinear solver and the solid structures within \cobra{}, and the ability to dynamically switch governing equations for a given spatial location during the transient.
-The following section will outline each of the above mentioned avenues of research in turn.
+The following section will outline each of the above-mentioned avenues of research in turn.
 
 The current research produced a domain decomposition framework that requires engineering judgment to select portions of the domain where nonlinear convergence may require multiple Newton steps.
 A possible extension of this work would be the development of an algorithm that identifies areas where additional Newton steps would be advantageous.

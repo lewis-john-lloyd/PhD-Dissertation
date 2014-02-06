@@ -5,7 +5,7 @@ First, the geometric discretization used in this work is discussed.
 Second, the two-phase flow equations are detailed.
 Third, the numerical approximations with respect to space, time, and nonlinearities are covered.
 Next, the various solution methods currently used to solve the system of discrete governing equations are presented.
-And last, an outline of the various means by which domain coupling of thermal-hydraulic safety analysis software has traditionally been achieved is provided.
+Last, an outline of the various means by which domain coupling of thermal-hydraulic safety analysis software has traditionally been achieved is provided.
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ The particular axial discretization of a given section is independent from that 
 Within a given section, subchannels are defined.
 A subchannel inherits the axial discretization of its parent section.
 The number of subchannels in a given section is independent of the number of subchannels in other the sections.
-Each continuity volume and momentum flow path has an associated cross-sectional area, $A_{c}$ and $A_{p}$, respectively. 
+Each continuity volume and momentum flow path has an associated cross-sectional area, $A_{c}$ and $A_{p}$ respectively. 
 These cross-sectional areas can vary from volume to volume and from flow path to flow path.
 
 It is also possible to model multi-dimensional flow through the definition of transverse flow paths that connect two subchannels within a given section.
@@ -72,15 +72,15 @@ This section will discuss both the assumptions used and the final governing equa
 \subsection{Assumptions}
 \label{subsect:assumptions}
 
-The governing equations of fluid-mechanics provide extensive information about fluid behavior.
+The governing equations of fluid mechanics provide extensive information about fluid behavior.
 However, one of the basic assumptions of subchannel analysis is that the exact spatial behavior of the coolant is not of direct interest; as such, the average behavior of the fluid is what is modeled.
-Given the multi-phase nature of the coolant, there are various ways in which the interactions between the various phases can be modeled.
+Given the multi-phase nature of the coolant, the interactions between the various phases can be modeled in various ways.
 For the conditions encountered in a commercial nuclear reactor core, certain assumptions can be made to reduce the complexity of the physics involved.
-This section will discuss: the technique used to obtain equations for averaged quantities, the manner in which the multi-phase nature of the coolant is dealt with, and the general assumptions used reduce the complexity of the physics.
+This section will discuss the technique used to obtain equations for averaged quantities, the manner in which the multi-phase nature of the coolant is dealt with, and the general assumptions used reduce the complexity of the physics.
 
 The first simplification is that the exact topology of the interface between the coolant phases need not be known to model the fluid mechanics.
 Since the exact deterministic behavior of the phasic-interface is no longer necessary, the governing equations can be subjected to averaging procedures to produce conservation laws for averaged quantities.
-There are several averaging techniques that have been used to produce the conservation laws for two-phase flow: spatial, temporal, and ensemble averaging \cite{Drew1998, Todreas2011}.
+Several averaging techniques have been used to produce the conservation laws for two-phase flow: spatial, temporal, and ensemble averaging \cite{Drew1998, Todreas2011}.
 Each of these techniques has its own physical interpretation and mathematical formulation.
 The formulation used in this work is area averaging, a particular form of spatial averaging.
 In the area-averaged formulation the governing equations are averaged over the cross-sectional area.
@@ -112,7 +112,7 @@ The basis for this assumption is that the inter-phase dynamics at the interface 
 \item{The two components of the gaseous phase are in thermal equilibrium.}
 \item{
 The viscous dissipation of momentum in the axial flow direction and the associated generation of energy are neglected.
-This assumption is made because the simulations of interest are dominated by inertial, not viscous, forces so that the neglected terms would be small compared to other terms in the calculations.
+This assumption is made because inertial, not viscous, forces dominate the simulations of interest so that the neglected terms would be small compared to other terms in the calculations.
 }
 \item{
 The wall-shear effects of viscosity are accounted for via empirically based friction correlations.
@@ -264,7 +264,7 @@ The $\rho_g$ used in \eqref{eqn:con_mom_gas} is defined by \eqref{eqn:gaseous_de
 \rho_g = \rho_n + \rho_v
 \end{equation}
 
-The material derivative of the fluid momentum is represented by the left-hand sides of \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent}.
+The left-hand sides of \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent} represent the material derivative of the fluid momentum.
 The right-hand sides represent various surface, boundary, and body forces that act upon the fluid.
 The various terms in \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent} are described below.
 
@@ -314,14 +314,14 @@ Both formulations are known to have computational strengths and weaknesses \cite
 
 It is useful to refer to the collection of continuous conservation laws, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:conservation_of_ent}, \eqref{eqn:con_energy_gas} -- \eqref{eqn:con_energy_liq}, and \eqref{eqn:con_mom_liq} -- \eqref{eqn:con_mom_ent}, as a vector of equations.
 To accomplish this, \eqref{eqn:conservation_equations} defines such a system.
-The vector, $\vec{e}$, represents the conservation equations minus the temporal derivatives of the conserved quantities.
+The vector $\vec{e}$ represents the conservation equations minus the temporal derivatives of the conserved quantities.
 
 \begin{equation}
 \label{eqn:conservation_equations}
 \frac{\partial \vec{y} }{\partial t} = \vec{e}(\vec{y}(t))
 \end{equation}
 
-The vector, $\vec{y}$, of conserved quantities is defined in \eqref{eqn:conserved_variables}.
+\eqref{eqn:conserved_variables} defines the vector, $\vec{y}$, of conserved quantities.
 
 \begin{equation}
 \label{eqn:conserved_variables}
@@ -354,7 +354,7 @@ For example, the velocity $u_{j - \onehalf}$ would be spatially located at cente
 \end{figure}
 
 Recalling the staggered mesh from \sect{sect:geometry}, the six scalar conservation laws, \eqref{eqn:conservation_of_ncg} -- \eqref{eqn:con_energy_liq}, are each integrated over the continuity volumes.
-The assumption in these integrals is that the value of the conserved quantities and all thermodynamically-related variables are a constant, average value within a given continuity volume.
+The assumption in these integrals is that the value of the conserved quantities and all thermodynamically related variables are a constant, average value within a given continuity volume.
 \fig{fig:constant_value} shows a graphical representation of this idea for a generic function $f(x)$ over several spatial continuity volumes. 
 
 \begin{figure}[ht!]
@@ -375,7 +375,7 @@ The cross-sectional area of the boundary between two continuity volumes is given
 \end{figure}
 
 For illustrative purposes \eqref{eqn:conservation_of_liq} will be integrated over a simplified volume, $V_j$, consisting of singly connected axial flow as shown in \fig{fig:single_volume}.
-This volume integrated equation is given by \eqref{eqn:spatially_discrete_liq_m_con}.
+This volume-integrated equation is given by \eqref{eqn:spatially_discrete_liq_m_con}.
 The same general procedure is used for the other five scalar conservation equations.
 
 \begin{IEEEeqnarray}{lcl}
@@ -465,7 +465,7 @@ This work uses the following set of nine independent variables \eqref{eqn:indepe
 \vec{x} = [\alpha_{g}P_{n}, \alpha_g, \alpha_g h_v, (1 - \alpha_g) h_l, \alpha_e, P, \dot{m}_g, \dot{m}_l, \dot{m}_e]^{T}
 \end{equation}
 
-The definition of the conserved momentum quantity for a given phase, $\dot{m}_{\phi}$, is given by \eqref{eqn:mom_dot}.
+\eqref{eqn:mom_dot} gives the definition of the conserved momentum quantity for a given phase, $\dot{m}_{\phi}$.
 
 \begin{equation}
 \label{eqn:mom_dot}
@@ -629,7 +629,7 @@ While each of the following methods may have many subtly varying algorithmic imp
 \label{subsect:numerics_explicit}
 The least computationally expensive method on a per timestep basis for temporally integrating \eqref{eqn:simple_partial_t} is a single-stage, fully explicit method.
 In the fully explicit method, the driving function is approximated as $\vec{E}(\vec{x}^n)$.
-The nonlinear vector notation formulation for this method is given by \eqref{eqn:explicit}.
+\eqref{eqn:explicit} gives the nonlinear vector notation formulation for this method.
 
 \begin{equation}
 \label{eqn:explicit}
@@ -667,7 +667,7 @@ For the case of \eqref{eqn:explicit}, the CFL limit is given in \eqref{eqn:cfl_e
 
 In \eqref{eqn:cfl_explicit}, $c_i$ and $u_i$ are the speed of sound and the magnitude of a given phasic velocity, respectively, at a given location within the domain.
 These two velocities, for most applications of interest, can be of drastically different magnitude.
-For example, in single phase gaseous flow, the ratio of the local phasic velocity to the speed of sound is typically much less than one ($\approx 0.01$) for problems of interest.
+For example, in single-phase gaseous flow, the ratio of the local phasic velocity to the speed of sound is typically much less than one ($\approx 0.01$) for problems of interest.
 Using the local fluid conditions, $\dt{}_i$ is calculated at every point within the domain, $\Omega$.
 The $\dt{}$ chosen for the $t^{n} \rightarrow t^{n+1}$ timestep is the most restrictive calculated value over the domain, \eqref{eqn:global_cfl}.
 
@@ -676,7 +676,7 @@ The $\dt{}$ chosen for the $t^{n} \rightarrow t^{n+1}$ timestep is the most rest
 \dt{} = \min_{i \in \Omega} \dt{}_i
 \end{equation}
 
-Since the CFL limit is based upon the local speed of sound it is referred to as the sonic Courant limit.
+Since the CFL limit is based upon the local speed of sound, it is referred to as the sonic Courant limit.
 While the explicit method may provide the lowest computational cost on a per-timestep basis, the number of timesteps required for a given problem may be much greater than the following methods due to this restrictive CFL limitation.
 This limitation of the explicit method prompted the development of alternative methods that were capable of exceeding this sonic Courant limit.
 
@@ -734,7 +734,7 @@ It was developed to overcome the sonic Courant limitations of the explicit metho
 The two distinguishing characteristics of the semi-implicit method are the use of new-time variables in the evaluation of both the pressure gradient in the momentum conservation equations and the advecting velocities in the mass and energy equations. 
 The implicit evaluation of the pressure gradient in the momentum equations is what leads to a CFL limit known as the material Courant limit.
 Similar to the sonic Courant limit discussed in \sect{subsect:numerics_explicit}, the material Courant limit dictates the largest $\Delta t$ that can be achieved while maintaining a stable solution algorithm.
-In this method the Courant limit is given by \eqref{eqn:si_cfl}.
+\eqref{eqn:si_cfl} gives the Courant limit for this method.
 
 \begin{equation}
 \label{eqn:si_cfl}
@@ -829,7 +829,7 @@ For each stage the residual and Jacobian matrix will be denoted by $\vec{F}^{s}$
 \end{algo}
 
 This algorithm was designed to allow existing software utilizing the semi-implicit method to be embedded within a larger framework.
-The black-box loop termination criteria is a choice that varies with implementation.
+The black-box loop termination criterion is a choice that varies with implementation.
 The TRACE code uses an $\mathcal{L}_{\infty}$ norm of the unscaled Newton updates for the continuity variables to determine convergence.
 
 %-------------------------------------------------------------------------------
@@ -840,7 +840,7 @@ The TRACE code uses an $\mathcal{L}_{\infty}$ norm of the unscaled Newton update
 Another possible method used to overcome the material Courant limit without incurring the same computational cost as the fully implicit method is the nearly-implicit method \cite{Trapp1986, RELAP}.
 The nearly-implicit method is a multistage temporal integration scheme.
 In the first stage the approximation  of $\vec{E}^{*}$ is one in which the mass and energy terms are implicit except for the donored values in the flux terms. 
-In addition, the the chain rule is applied to the continuous temporal derivatives, resulting in mass equations similar to \eqref{eqn:ni_dt}.
+In addition, the chain rule is applied to the continuous temporal derivatives, resulting in mass equations similar to \eqref{eqn:ni_dt}.
 The energy temporal derivatives are similarly expanded.
 
 \begin{equation}
@@ -909,7 +909,7 @@ To circumvent the sonic Courant limit, a semi-implicit method for the coupling o
 This coupling technique allows for the material Courant limit to be uniformly applied across the two pieces of software.
 This technique is of direct interest to the proposed research.
 
-The coupling of the different software involves the use of a third-party message passing interface.
+The coupling of the different software involves the use of a third-party message-passing interface.
 The program used for the software coupling in the papers of interest is the Parallel Virtual Machine (PVM) \cite{Geist1994}.
 PVM allows the data exchange to occur between the coupled software.
 As originally formulated, the software coupling technique involves breaking the coupled problem into two pieces, the master and the slave components.
@@ -917,7 +917,7 @@ In this respect, the problem can be thought of as being a single domain broken i
 The presentation of this method is in terms of the \relap53d{} conservation equations, which are different from those in \cobra{}.
 The coupling method first developed presented \relap53d{} as both the master and slave software \cite{Weaver2002}.
 Later work showed how this base method could be extended to allow coupling between \relap53d{} and the \cobra{} subchannel analysis software \cite{Aumiller2002}.
-This reformulation was designed to allow for a consistent transition between a two-phase, two-field based solver and and a two-phase, three-field based solver. 
+This reformulation was designed to allow for a consistent transition between a two-phase, two-field based solver and a two-phase, three-field based solver. 
 A short outline of the method as formulated for \relap53d{} coupling follows.
 
 The semi-implicit software coupling is accomplished via the staggered mesh formulation.
@@ -970,11 +970,11 @@ Consequently, this software coupling method allows each software process to use 
 
 Additionally, if the boundary values are explicitly evaluated, then the decomposition of the global problem could be viewed as an application of an additive Schwarz domain decomposition algorithm.
 In an additive Schwarz algorithm the boundary values for each subdomain are functions only of the old-time values in the other domains.
-From this view point, the sonic Courant limit observed at software coupling boundaries follows naturally \cite{Aumiller2001}.
+From this viewpoint, the sonic Courant limit observed at software coupling boundaries follows naturally \cite{Aumiller2001}.
 
 The additive Schwarz method has seen extensive use as a nonlinear preconditioner for fully implicit computational fluid dynamics calculations \cite{Cai2009, Cai2002}.
 In particular, a nonlinearly convergent solution within each subdomain is obtained at each timestep.
-It has been shown that the treatment of localized nonlinearities via domain decomposition allows for globalization strategies to be used in the global Newton step that would otherwise exhibit stalled convergence if the full domain was initially subjected to a globalization strategy \cite{Cai2011}.
+It has been shown that the treatment of localized nonlinearities via domain decomposition allows globalization strategies to be used in the global Newton step that would otherwise exhibit stalled convergence if the full domain were initially subjected to a globalization strategy \cite{Cai2011}.
 This work is based upon the concept of nonlinear domain decomposition and nonlinear elimination \cite{Lanzkron1996, Dryja1997}.
 However, these applications do not worry about consistency at the boundaries of the subdomains since the obtained subdomain solutions are only used as a preconditioned initial guess for a global Newton-Krylov-Schwarz algorithm \cite{Chan1984}.
 
