@@ -22,8 +22,7 @@ Additionally, this second problem demonstrated that temporal convergence using t
 \label{subsect:single_model}
 The two models developed for these tests were thought problems with generic input conditions.
 For both of these problems, the same computational geometry was used;  \fig{fig:exp_geometry} represents the model geometry.
-Each block represents a single continuity volume with a fixed \dx{} of 4 [in].
-Each continuity cell has a cross-sectional area of 4 [in$^2$].
+Each block represents a single continuity volume with a fixed \dx{} and $A_{c}$.
 The solid block at the top of the subchannel represents a boundary cell where the pressure and enthalpy are specified.
 It represents an infinite reservoir filled with a fluid at a specified thermodynamic state.
 The solid triangle represents a specified flow at the bottom edge of the first continuity volume. 
@@ -360,7 +359,7 @@ After fully closing, the valve returned to its first stopping point.
 The subchannels were initially full of subcooled liquid at 800 $[ \text{psia}] $.
 The bottoms and the tops of the subchannels were open to reservoirs.
 The bottom reservoir, denoted by the grey squares marked with the letter A, was full of subcooled liquid with a time variant pressure.
-The pressure started at 802 $[ \text{psia} ] $ and increased to 818 $[ \text{psia}]$ over the first second, staying there for the duration of the problem.
+The pressure in the bottom reservoir started at 802 $[ \text{psia}]$ and to 818 $[ \text{psia}]$ over the first second, staying there for the duration of the problem.
 The top reservoir, denoted by the black squares marked with the letter B, was full of subcooled liquid at 800 $[\text{psia} ] $.
 This pressure did not change over the course of the transient.
 The pressure difference that existed between these two reservoirs was what drove the flow in this problem.

@@ -11,7 +11,7 @@ The following chapter describes the mathematical formulation of this novel domai
 \label{sec:domDecompMath}
 
 The governing partial differential equations described in \sect{subsect:governing_equations} contain nonlinearities that are distributed in both space and time.
-In the absence of nonlinear physics a single Newton step is adequate to accurately solve the governing set of discrete algebraic equations.
+In the absence of nonlinear physics, a single Newton step is adequate to accurately solve the governing set of discrete algebraic equations.
 However, if the number of Newton steps is limited to one for a given spatial mesh when nonlinearities are present, then the only way to resolve those nonlinearities is to refine the temporal discretization.
 If the number of Newton steps is not limited to one, then the nonlinearities may be resolved for a fixed temporal discretization.
 When the nonlinearities are isolated to a given spatial portion of the domain, the additional Newton steps do not improve the solution in the remainder of the domain.
@@ -212,7 +212,7 @@ Once the linear system has been inverted, the nonlinear pressure matrix is final
 Recall that the nonlinear continuity volumes' governing equations are not modified by the domain decomposition.
 The nonlinear domain is composed of $N_{\text{nln}}$ continuity volumes.
 Additionally, for each NBC volume there will be an extra row in the nonlinear pressure matrix, $\vec{A}_{\text{nln}}$, that corresponds to \eqref{eqn:linearDomainPressureUpdates}.
-However, within the nonlinear domain, the flow rates are not kept as unknowns; instead, the flow rates in \eqref{eqn:linearDomainPressureUpdates} are expressed in terms unknown pressures by using \eqref{eqn:momentumUpdate}, \eqref{eqn:nbcFluxMatrixStyle}, and \eqref{eqn:nbcFluxDerivative}.
+However, within the nonlinear domain, the flow rates are not kept as unknowns; instead, the flow rates in \eqref{eqn:linearDomainPressureUpdates} are expressed in terms of unknown pressures by using \eqref{eqn:momentumUpdate}, \eqref{eqn:nbcFluxMatrixStyle}, and \eqref{eqn:nbcFluxDerivative}.
 
 \begin{equation}
 \label{eqn:nbcFluxDerivative}
@@ -278,7 +278,7 @@ Lastly, the dual domain input file is described.
 \label{subsect:domDecompSolverStructs}
 
 As seen in \sect{sect:linCobraAlg}, the largest linear system that is solved during a Newton step is the pressure matrix that is used to obtain the pressure update vector.
-\cobra{} provides the user with three options for the linear algebra method to be used for solving for the pressure update: the Gauss elimination routine, the SuperLU solver \cite{Li1999}, and the Pardiso solver \cite{Schenk2006, Schenk2007}.
+\cobra{} provides the user with three options for the linear algebra method to be used when solving for the pressure updates: the Gauss elimination routine, the SuperLU solver \cite{Li1999}, and the Pardiso solver \cite{Schenk2006, Schenk2007}.
 The SuperLU and the Pardiso solvers utilize sparse matrix storage and the Gauss elimination routine utilizes full matrix storage.
 The sparsity of the matrices typically encountered is such that use of the Gauss elimination routine is discouraged.
 
@@ -531,7 +531,7 @@ This process is a system of three nested loops.
 The first, outer, loop is over all the NBC volumes in the domain, $N_{\text{nln}}$.
 From \sect{sec:domDecompMath} and \eqref{eqn:linearDomainPressureUpdates}, each of these outer NBC volumes has an associated pressure equation, \eqref{eqn:nbcPressureEquation}.
 This equation represents the inter-dependency of all of the NBC volumes upon each other.
-Evaluating \eqref{eqn:nbcPressureEquation} requires a second, inner, loop over all of the NBC volumes for each of the outer NBC volumes.
+Evaluating \eqref{eqn:nbcPressureEquation} requires a second, inner loop over all of the NBC volumes for each of the outer NBC volumes.
 For each of these inner loop NBC volumes, their $N_{\text{NBC}}$ flow paths that connect them to nonlinear domain are then traversed, creating a third and final nested loop.
 For each connecting flow path, the contribution is calculated and stored in the row of $\vec{A}_{\text{nln}}$ associated with the outer NBC volume.
 

@@ -599,7 +599,7 @@ Over the course of a transient the phasic composition of a volume can vary drama
 When norms are taken of the unscaled residual those equations whose terms are the largest may have a residual that is orders of magnitude greater than those equations whose terms are smallest.
 For convergence criteria that are based upon relative convergence, the reduction of those equations with larger magnitudes would result in apparent convergence without any consideration given to those equations whose scale is orders of magnitude smaller.
 This would create a situation where any norm taken of the residual would be biased towards certain equations based on their units or phasic composition.
-To avoid this an operator-based scaling strategy was developed and implemented.
+To avoid this, an operator-based scaling strategy was developed and implemented.
 
 For a given continuity volume, the nonlinear residual will have six components: four for the conservation of mass and two for the conservation of energy.
 For each momentum flow path, the three conservation of momentum equations will form the three components of the nonlinear residual.
@@ -687,7 +687,7 @@ S_{\phi} = \max\left[1.0, \left(C_1 \frac{\alpha_{\phi,\text{MIN}}}{\alpha_{\phi
 \end{equation}
 
 For this work, the constant $C_1$ was set equal to 100, and the exponent $C_2$ was set equal to 10.
-This particular phase-transition scaling produced the regular scaling factor when the volume fraction of a phase was at least two orders of magnitude greater than the minimum volume fraction for that phase or field, which is on the order of \expneg{1.0}{6}{[-]}.
+This particular phase-transition scaling produced the regular scaling factor when the volume fraction of a phase was at least two orders of magnitude greater than the minimum volume fraction for that phase or field, which is on the order of $\expneg{1.0}{6}$.
 This drove the scaled residuals for phases that were nominally not present to well below those residuals for equations of the phases that were present.
 
 Another phase depletion limit was a floor placed upon the scale factor.
@@ -898,7 +898,7 @@ When a predicted volume fraction falls outside of its valid range, it is truncat
 \end{equation}
 
 There are also limits placed upon the changes of the thermodynamic parameters within a timestep in \cobra{}.
-The constrained thermodynamic parameters and the limits imposed upon their per-timestep changes are:
+The constrained thermodynamic parameters and the limits imposed upon them are:
 
 \begin{itemize}
 \item{Change of phasic enthalpy cannot be greater than $45$ [$\frac{\text{BTU}}{\lbm{}}$].}
@@ -918,5 +918,6 @@ The \dt{} for any timestep is given by \eqref{eqn:time_step}.
 \dt{}^{n \rightarrow n+1} = \max\left[ \dt{}_{\text{MIN}}, \min\left[1.2 \dt{}^{n-1 \rightarrow n}, 0.85 \dtcrnt{}, \dtmax{}, \dt{}_{\text{vol}} \right]\right]
 \end{equation}
 
-\dtcrnt{} is the most restrictive timestep size as calculated by used the Courant number for both axial and transverse flows, and $\dt{}_{\text{vol}}$ is the most restrictive timestep based upon an estimation of the time required to empty a given continuity volume of all of the mass from any given field.
+\dtcrnt{} is the most restrictive of $\dt{}_{\text{vol}}$ and the material Courant limit from both axial and transverse flows.
+$\dt{}_{\text{vol}}$ is the most restrictive timestep based upon an estimation of the time required to remove all of the mass from a given continuity volume.
 The most restrictive timestep is used as $\dt{}^{n \rightarrow n+1}$.
