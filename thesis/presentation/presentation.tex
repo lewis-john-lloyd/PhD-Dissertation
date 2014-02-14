@@ -717,7 +717,7 @@ Once the nonlinear domain is converged, the linear domain's pressure updates are
 \textbf{Purpose:} to determine efficacy of the selective nonlinear refinement algorithm.
 
 \begin{itemize}
-\item{Four 40 [in] subchannels: $A_{c} = 16$ [in$^{2}$], \dx{} = 4 [in].}
+\item{Four 40 [in] subchannels: $A_{c} = 16$ [in$^{2}$], \dx{} = 5 [in].}
 \item{Conditions:
 	\begin{itemize}
 	\item{Initial $\rightarrow$ $\alpha_{l} = 1$ @ 800 [psia].}
@@ -735,6 +735,18 @@ Once the nonlinear domain is converged, the linear domain's pressure updates are
 }
 \item{No connections between channels.}
 \end{itemize}
+
+\end{frame}
+%---------
+%---------
+\begin{frame}
+\frametitle{Valve Problem Model}
+
+\begin{center}
+\resizebox{0.75\textwidth}{0.75\textheight}{
+\input{../images/valveModel}
+}
+\end{center}
 
 \end{frame}
 %---------
@@ -812,14 +824,21 @@ $\dtmax{}=\expneg{6.25}{2}$ [s].
 \frametitle{Filling Problem}
 
 \textbf{Purpose:} to determine the impact of not resolving isolated nonlinearities upon the global solution.
-
+\begin{columns}
+\column{0.90\textwidth}
 \begin{itemize}
 \item{2 Subchannels}
 \item{Dimensions: $A_{c}$ = 36 [in$^2$]; \dx{} = 4 [in].}
 \item{IC: Single-Phase: $\alpha_{g} = 1$, @ 14.7 [psia].}
 \item{Outlet $\longleftrightarrow$ Initial Conditions.}
-\item{Inlet $\rightarrow$ $\alpha_{l}=1$, @ 14.7 [psia].}
+\item{Inlet $\rightarrow$ $\dot{m}_{l} = 0.4065 [\frac{\lbm{}}{\text{s}}]$, @ $\alpha_{l}=1$, @ 14.7 [psia].}
 \end{itemize}
+\column{0.1\textwidth}
+\resizebox{!}{0.50\textheight}{
+\input{../images/fillModel}
+}
+\end{columns}
+
 \begin{equation*}
 P(t, h(t))= 
  \left\{
@@ -920,8 +939,6 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 
 \textbf{Purpose:} to demonstrate the use of the selective nonlinear refinement algorithm in physically relevant scenarios.
 
-\begin{columns}
-\column{0.80\textwidth}
 \begin{itemize}
 \item{Simplified model of PWR reactor pressure vessel.}
 \item{Simulation starts after blow-down stage of LOCA.}
@@ -938,12 +955,17 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \end{itemize}
 
 
-\column{0.20\textwidth}
-\begin{figure}[h!t]
-\centering
-\resizebox{!}{0.65\textheight}{\input{../images/refillSimpleModel}}
-\end{figure}
-\end{columns}
+\end{frame}
+%---------
+%---------
+\begin{frame}
+\frametitle{Post-Blowdown Refill Model}
+
+\begin{center}
+\resizebox{0.75\textwidth}{0.75\textheight}{
+\input{../images/refillComplexModel}
+}
+\end{center}
 
 \end{frame}
 %---------
