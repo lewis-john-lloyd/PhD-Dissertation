@@ -250,6 +250,7 @@ Taken together, the above results indicate that the nonlinear solver was impleme
 %============================================================================
 % Problem that shows that the domain decomposition algorithm is implemented correctly.
 %============================================================================
+\FloatBarrier
 \section{Complex Geometry Problem}
 \label{sect:complexProblem}
 The complex geometry problem tested whether the domain decomposition algorithm was implemented properly.
@@ -328,6 +329,7 @@ These results indicate that the domain decomposition algorithm was implemented c
 %============================================================================
 % Problem that shows that when it is possible to isolate the nonlinearities, the computational cost can be lower.
 %============================================================================
+\FloatBarrier
 \section{Valve-Type Problem}
 \label{sect:valveProblem}
 
@@ -504,15 +506,15 @@ However, the run time statistics, \tab{tab:valveDomTable}, provided additional i
 \label{tab:valveDomTable}
 \end{table}
 
-The CPU time per time step of the domain decomposition was lower than that obtained by the nonlinear solver.
-\fig{fig:valveRunTime} shows that the domain decomposition algorithm is capable of producing the same solution as the nonlinear solver at less than half the cost per timestep than the nonlinear solver.
-
 \begin{figure}[h!tb]
 \centering
 \input{plots/valveRunTime}
 \caption{CPU time per timestep for the nonlinear and the domain decomposition runs.}
 \label{fig:valveRunTime}
 \end{figure}
+
+The CPU time per time step of the domain decomposition was lower than that obtained by the nonlinear solver.
+\fig{fig:valveRunTime} shows that the domain decomposition algorithm is capable of producing the same solution as the nonlinear solver at less than half the cost per timestep than the nonlinear solver.
 
 As the \dtmax{} was reduced, the cost of the nonlinear solver decreased because there were fewer nonlinear iterates required per timestep.
 This reduction in the number of Newton iterates per timestep was also evident in the domain decomposition run-time plot.
@@ -521,7 +523,7 @@ This problem was developed to show that for a problem with isolable nonlineariti
 %============================================================================
 % Problem that shows that local nonlinearities can impact the global solution adversely.
 %============================================================================
-
+\FloatBarrier
 \section{Filling Pipe Problem}
 \label{sect:vmp}
 This problem was developed to illustrate that using the domain decomposition algorithm to resolve localized nonlinearities produced a global solution that was in-line with the nonlinear solution.
@@ -764,6 +766,7 @@ Isolating places where the nonlinearities were present and solving those regions
 %============================================================================
 % Capstone problem that how the domain decomposition is useful in a quasi-realistic model.
 %============================================================================
+\FloatBarrier
 \section{Refill Problem}
 \label{sect:refillProblem}
 
