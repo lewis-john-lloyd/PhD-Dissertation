@@ -1,4 +1,5 @@
 \documentclass[compress,xcolor=table]{beamer}
+
 \usepackage[T1]{fontenc}
 
 \usepackage{etoolbox}
@@ -33,6 +34,11 @@
 \usepackage{../IEEEtrantools}
 
 \usepackage{algpseudocode}
+
+\usepackage[absolute,overlay,showboxes]{textpos}
+\textblockcolour{white}
+\setlength{\TPHorizModule}{\paperwidth}
+\setlength{\TPVertModule}{\paperheight}
 
 \input{../commands/commandsmath}
 \input{../commands/commandsgeneral}
@@ -397,6 +403,19 @@ S_{\phi} = \max[1.0, \left(C_{1}\frac{\alpha_{\phi,\text{min}}}{\alpha_{\phi}}\r
 %---------
 \begin{frame}
 \frametitle{Operator-Based Scaling: Balance Equations}
+Conservation equations can be expressed in residual form as follows:
+
+\begin{equation*}
+0 = \frac{\partial \Phi}{\partial t} - \sum_{i \in N_{\text{source}}} \dot{S}_{\text{source}} + \sum_{i \in N_{\text{sink}}} \dot{S}_{\text{sink}}
+\end{equation*}
+
+Each source and/or sink represent a different physical process.
+
+By taking the absolute values of all terms in the residual, an operator based scale factor is obtained.
+
+\begin{equation*}
+0 = \abs{\frac{\partial \Phi}{\partial t}} + \sum_{i \in N_{\text{source}}} \abs{\dot{S}_{\text{source}}} + \sum_{i \in N_{\text{sink}}} \abs{\dot{S}_{\text{sink}}}
+\end{equation*}
 
 
 \end{frame}
@@ -487,6 +506,15 @@ For the following two problems, $n_{t}$ = 6, $r_{f}$ = 10, and $\dtmax{}_{o}$ = 
 \includegraphics[width=0.94\textwidth]{../plots/single1pt000em5_pdf}
 \end{figure}
 
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+The linear solver and the nonlinear solver produce consistent results in the absence of strong nonlinearities. 
+\vspace{0.1in}
+\end{textblock}
+}
+
 \end{frame}
 %---------
 %---------
@@ -509,6 +537,15 @@ For the following two problems, $n_{t}$ = 6, $r_{f}$ = 10, and $\dtmax{}_{o}$ = 
 \includegraphics[width=0.94\textwidth]{../plots/flashing1pt0000em5_pdf}
 \end{figure}
 
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+The linear solver and the nonlinear solver fail to produce the same solution even at small timestep sizes.
+\vspace{0.1in}
+\end{textblock}
+}
+
 \end{frame}
 %---------
 %---------
@@ -519,6 +556,15 @@ For the following two problems, $n_{t}$ = 6, $r_{f}$ = 10, and $\dtmax{}_{o}$ = 
 \centering
 \includegraphics[width=.94\textwidth]{../plots/flashingDtInsensitiveLin_pdf}
 \end{figure}
+
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+The linear solver produces solutions that are sensitive to timestep size.
+\vspace{0.1in}
+\end{textblock}
+}
 
 \end{frame}
 %---------
@@ -531,6 +577,15 @@ For the following two problems, $n_{t}$ = 6, $r_{f}$ = 10, and $\dtmax{}_{o}$ = 
 \includegraphics[width=.94\textwidth]{../plots/flashingDtInsensitiveNln_pdf}
 \end{figure}
 
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+The nonlinear solver's solutions are much less sensitive to timestep size than the linear solver's solutions.
+\vspace{0.1in}
+\end{textblock}
+}
+
 \end{frame}
 %---------
 %---------
@@ -542,6 +597,15 @@ For the following two problems, $n_{t}$ = 6, $r_{f}$ = 10, and $\dtmax{}_{o}$ = 
 \includegraphics[width=0.94\textwidth]{../plots/flashingResidualLin_pdf}
 \end{figure}
 
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+Even at small timestep sizes, the linear solver still has a large scaled residual.
+\vspace{0.1in}
+\end{textblock}
+}
+
 \end{frame}
 %---------
 %---------
@@ -552,6 +616,15 @@ For the following two problems, $n_{t}$ = 6, $r_{f}$ = 10, and $\dtmax{}_{o}$ = 
 \centering
 \includegraphics[width=0.94\textwidth]{../plots/flashingResidualNln_pdf}
 \end{figure}
+
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+The nonlinear solver provides a more nonlinearly convergent solution at larger timestep sizes.
+\vspace{0.1in}
+\end{textblock}
+}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -708,6 +781,15 @@ Once the nonlinear domain is converged, the linear domain's pressure updates are
 \includegraphics[width=0.94\textwidth]{../plots/complexBar_pdf}
 \end{figure}
 
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+Error in solution is on the order of double precision machine round-off.
+\vspace{0.1in}
+\end{textblock}
+}
+
 \end{frame}
 %---------
 %---------
@@ -781,6 +863,15 @@ $\dtmax{}=\expneg{6.25}{2}$ [s].
 
 \end{columns}
 
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+The linear solution exhibits nonphysical behavior.
+\vspace{0.1in}
+\end{textblock}
+}
+
 \end{frame}
 %---------
 %---------
@@ -791,6 +882,15 @@ $\dtmax{}=\expneg{6.25}{2}$ [s].
 \centering
 \includegraphics[width=0.94\textwidth]{../plots/valveLinSols_pdf}
 \end{figure}
+
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+This nonphysical behavior is not eliminated as timestep size is reduced.
+\vspace{0.1in}
+\end{textblock}
+}
 
 \end{frame}
 %---------
@@ -803,6 +903,16 @@ $\dtmax{}=\expneg{6.25}{2}$ [s].
 \includegraphics[width=0.94\textwidth]{../plots/valveNlnSols_pdf}
 \end{figure}
 
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+Using the nonlinear or the dual-domain solver removes the nonphysical behavior.
+\vspace{0.1in}
+\end{textblock}
+}
+
+
 \end{frame}
 %---------
 %---------
@@ -813,6 +923,16 @@ $\dtmax{}=\expneg{6.25}{2}$ [s].
 \centering
 \includegraphics[width=0.94\textwidth]{../plots/valveRunTime_pdf}
 \end{figure}
+
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+The dual-domain solver produces a the same solution as the nonlinear solver with less computational effort.
+\vspace{0.1in}
+\end{textblock}
+}
+
 
 \end{frame}
 %------------------------------------------------
@@ -870,6 +990,16 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \includegraphics[width=0.94\textwidth]{../plots/vmpLinear1em1_pdf}
 \end{figure}
 
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+Linear solver produces nonphysical solution.
+\vspace{0.1in}
+\end{textblock}
+}
+
+
 \end{frame}
 %---------
 %---------
@@ -880,6 +1010,15 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \centering
 \includegraphics[width=0.94\textwidth]{../plots/vmpDeltaTLin1em1_pdf}
 \end{figure}
+
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+The nonphysical pressure spikes produce reduced \dtmax{} during the simulation.
+\vspace{0.1in}
+\end{textblock}
+}
 
 \end{frame}
 %---------
@@ -892,6 +1031,16 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \includegraphics[width=0.94\textwidth]{../plots/vmpNLN1em1_pdf}
 \end{figure}
 
+
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+The nonlinear solver produces a solution that is more in agreement with the analytic solution. 
+\vspace{0.1in}
+\end{textblock}
+}
+
 \end{frame}
 %---------
 %---------
@@ -902,6 +1051,16 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \centering
 \includegraphics[width=0.94\textwidth]{../plots/vmpDeltaTNln1em1_pdf}
 \end{figure}
+
+
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+The nonlinear solver is capable of taking larger timesteps than the linear solver.
+\vspace{0.1in}
+\end{textblock}
+}
 
 \end{frame}
 %---------
@@ -914,6 +1073,15 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \includegraphics[width=0.94\textwidth]{../plots/vmpBotNln1em1_pdf}
 \end{figure}
 
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+When there are nonlinearities in the linear domain, the global solution exhibits nonphysical behavior.
+\vspace{0.1in}
+\end{textblock}
+}
+
 \end{frame}
 %---------
 %---------
@@ -924,6 +1092,15 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \centering
 \includegraphics[width=0.94\textwidth]{../plots/vmpTopNln1em1_pdf}
 \end{figure}
+
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+When there are nonlinearities in the nonlinear domain, the global solution is well behaved.
+\vspace{0.1in}
+\end{textblock}
+}
 
 \end{frame}
 %------------------------------------------------------------------------------
@@ -984,10 +1161,41 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \begin{frame}
 \frametitle{Downcomer and Core Effective Volume Fractions}
 
+\only<1,7>{
 \begin{figure}[h!t]
 \centering
 \includegraphics[width=0.94\textwidth]{../plots/refillCoreVolFracDom_pdf}
-\end{figure}
+\end{figure}}
+
+\only<2>{
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/refillCoreVolFracDom01_pdf}
+\end{figure}}
+
+\only<3>{
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/refillCoreVolFracDom02_pdf}
+\end{figure}}
+
+\only<4>{
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/refillCoreVolFracDom03_pdf}
+\end{figure}}
+
+\only<5>{
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/refillCoreVolFracDom04_pdf}
+\end{figure}}
+
+\only<6>{
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/refillCoreVolFracDom05_pdf}
+\end{figure}}
 
 \end{frame}
 %---------
@@ -1000,6 +1208,15 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \includegraphics[width=0.94\textwidth]{../plots/refillGammaLin_pdf}
 \end{figure}
 
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+Linear solver shows drastic variability in condensation.
+\vspace{0.1in}
+\end{textblock}
+}
+
 \end{frame}
 %---------
 %---------
@@ -1010,6 +1227,15 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \centering
 \includegraphics[width=0.94\textwidth]{../plots/refillGammaNln_pdf}
 \end{figure}
+
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+Nonlinear solver shows consistent condensation with timestep size refinement.
+\vspace{0.1in}
+\end{textblock}
+}
 
 \end{frame}
 %---------
@@ -1022,6 +1248,15 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \includegraphics[width=0.94\textwidth]{../plots/refillGammaDom_pdf}
 \end{figure}
 
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+Dual-domain solver shows more consistent and accurate condensation than the linear solver.
+\vspace{0.1in}
+\end{textblock}
+}
+
 \end{frame}
 %---------
 %---------
@@ -1033,6 +1268,15 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \includegraphics[width=0.94\textwidth]{../plots/refillMaxGamma_pdf}
 \end{figure}
 
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+Net condensation for the dual-domain and nonlinear solvers are more consistent.
+\vspace{0.1in}
+\end{textblock}
+}
+
 \end{frame}
 %---------
 %---------
@@ -1043,6 +1287,15 @@ P_o + g \frac{ h(t) - h }{ v_{l} } & [ \text{psia} ] & , &  & t & > t^{*}(h) & [
 \centering
 \includegraphics[width=0.94\textwidth]{../plots/refillRunTimeRatios_pdf}
 \end{figure}
+
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+Dual-domain solver provides a decrease of 50\% to 60\% in run time with reduction in timestep size. 
+\vspace{0.1in}
+\end{textblock}
+}
 
 \end{frame}
 %------------------------------------------------------------------------------
