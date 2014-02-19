@@ -414,7 +414,7 @@ Each source and/or sink represent a different physical process.
 By taking the absolute values of all terms in the residual, an operator based scale factor is obtained.
 
 \begin{equation*}
-0 = \abs{\frac{\partial \Phi}{\partial t}} + \sum_{i \in N_{\text{source}}} \abs{\dot{S}_{\text{source}}} + \sum_{i \in N_{\text{sink}}} \abs{\dot{S}_{\text{sink}}}
+S_{\Phi} = \abs{\frac{\partial \Phi}{\partial t}} + \sum_{i \in N_{\text{source}}} \abs{\dot{S}_{\text{source}}} + \sum_{i \in N_{\text{sink}}} \abs{\dot{S}_{\text{sink}}}
 \end{equation*}
 
 
@@ -436,19 +436,6 @@ S^{k}_{p, l} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[\dot{m}_{l}^
 %------------------------------------------------
 %------------------------------------------------
 \subsection[Implementation \& Efficacy]{Implementation and Efficacy}
-%---------
-%---------
-\begin{frame}
-\frametitle{Timestep Sensitivity}
-
-Timestep size sensitivity studies with the set of \dtmax{} given by
-\begin{equation*}
-\dtmax{} \in \bigcup^{n_{t}-1}_{i\, = 0} \frac{\dt{}_{0}}{r^{i}_{f}}
-\end{equation*}
-
-For the following two problems, $n_{t}$ = 6, $r_{f}$ = 10, and $\dtmax{}_{o}$ = 1.0 [s]. 
-
-\end{frame}
 %---------
 %---------
 \begin{frame}
@@ -632,11 +619,11 @@ The nonlinear solver provides a more nonlinearly converged solution at larger ti
 \section[SNR]{Selective Nonlinear Refinement}
 %------------------------------------------------
 %------------------------------------------------
-\subsection[Domain Decomposition Algorithm]{Domain Decomposition Algorithm}
+\subsection[Selective Nonlinear Refinement Algorithm]{Selective Nonlinear Refinement Algorithm}
 %---------
 %---------
 \begin{frame}[shrink=25]
-\frametitle{Domain Decomposition: The Boundaries}
+\frametitle{SNR: The Boundaries}
 On the linear side of the linear-nonlinear domain boundary, the flow rates connecting the two domains are kept as unknowns.
 
 \begin{IEEEeqnarray}{rcl}
@@ -664,8 +651,8 @@ On the linear side of the linear-nonlinear domain boundary, the flow rates conne
 \column{0.75\textwidth}
 
 \begin{IEEEeqnarray}{rcl}
-\left[ \vec{J}_{n} \vert \vec{K}_{n} \vert \vec{Q}_{n} \right] \delta \vec{C}_{n} &=& \vec{r}_{n} - \vec{Q}_{n} \vec{\Psi}_{n} \nonumber \\
-\left[ \vec{U}_{n} \vert \vec{L}^{-1}_{n}\vec{K}_{n} \vert \vec{L}^{-1}_{n}\vec{Q}_{n} \right] \delta \vec{C}_{j} & = & \vec{L}^{-1}_{n}\vec{r}_{n}  -\vec{L}^{-1}_{n}\vec{Q}_{n}\vec{\Psi}_{n} \nonumber 
+\left[ \vec{J}_{c} \vert \vec{K}_{c} \vert \vec{Q}_{c} \right] \delta \vec{C}_{c} &=& \vec{r}_{c} - \vec{Q}_{c} \vec{\Psi}_{c} \nonumber \\
+\left[ \vec{U}_{c} \vert \vec{L}^{-1}_{c}\vec{K}_{c} \vert \vec{L}^{-1}_{c}\vec{Q}_{c} \right] \delta \vec{C}_{j} & = & \vec{L}^{-1}_{c}\vec{r}_{c}  -\vec{L}^{-1}_{c}\vec{Q}_{c}\vec{\Psi}_{c} \nonumber 
 \end{IEEEeqnarray}
 
 Linear domain's pressure matrix is now:
@@ -676,7 +663,7 @@ Linear domain's pressure matrix is now:
 \delta \vec{P}_{\text{lin}} + \vec{W}_{\text{lin}} \delta \vec{\Psi}_{\text{lin}} & = & \delta \vec{P}^{*}_{\text{lin}} - \vec{W}_{\text{lin}} \vec{\Psi}_{\text{lin}} \nonumber
 \end{IEEEeqnarray}
 
-The row's from the linear pressure matrix that correspond to the nonlinear boundary continuity volumes are:
+The rows from the linear pressure matrix that correspond to the nonlinear boundary continuity volumes are:
 
 \begin{equation*}
 \delta P_{j} + \sum_{i\, \in \, N_{n}} \vec{w}^{T}_{j, i} \cdot \delta \vec{\Psi}_{i} = \delta P_{j}^{*} - \sum_{i\, \in \, N_{n}} \vec{w}^{T}_{j, i} \cdot{} \vec{\Psi}^{k}_{i}
@@ -685,7 +672,7 @@ The row's from the linear pressure matrix that correspond to the nonlinear bound
 \column{0.25\textwidth}
 
 \begin{equation*}
-\delta \vec{C}_{n} =
+\delta \vec{C}_{c} =
 \begin{bmatrix}
 \delta ( \alpha_{g} P_{n} ) \\
 \delta \alpha_{g} \\
@@ -745,7 +732,7 @@ Once the nonlinear domain is converged, the linear domain's pressure updates are
 \begin{frame}
 \frametitle{Complex Geometry}
 
-\textbf{Purpose:} to test the implementation of the domain decomposition algorithm.
+\textbf{Purpose:} to test the implementation of the selective nonlinear refinement algorithm.
 
 \begin{columns}
 \column{0.7\textwidth}
@@ -896,7 +883,7 @@ This nonphysical behavior is not eliminated as timestep size is reduced.
 %---------
 %---------
 \begin{frame}
-\frametitle{Nonlinear and Domain Decomposition Solver's Solutions}
+\frametitle{Nonlinear and SNR Solver's Solutions}
 
 \begin{figure}[h!t]
 \centering
@@ -928,7 +915,7 @@ Using the nonlinear or the dual-domain solver removes the nonphysical behavior.
 \begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
 \centering
 \vspace{0.1in}
-The dual-domain solver produces the same solution as the nonlinear solver with less computational effort.
+The SNR solver produces the same solution as the nonlinear solver with less computational effort.
 \vspace{0.1in}
 \end{textblock}
 }
@@ -1253,7 +1240,7 @@ Nonlinear solver shows consistent condensation with timestep size refinement.
 %---------
 %---------
 \begin{frame}
-\frametitle{Dual-Domain Solver's Net Condensation}
+\frametitle{SNR Solver's Net Condensation}
 
 \begin{figure}[h!t]
 \centering
@@ -1264,7 +1251,7 @@ Nonlinear solver shows consistent condensation with timestep size refinement.
 \begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
 \centering
 \vspace{0.1in}
-Dual-domain solver shows more consistent and accurate condensation than the linear solver.
+SNR solver shows more consistent and accurate condensation than the linear solver.
 \vspace{0.1in}
 \end{textblock}
 }
@@ -1284,7 +1271,7 @@ Dual-domain solver shows more consistent and accurate condensation than the line
 \begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
 \centering
 \vspace{0.1in}
-Net condensation for the dual-domain and nonlinear solvers are more consistent.
+Net condensation for the SNR and nonlinear solvers are more consistent.
 \vspace{0.1in}
 \end{textblock}
 }
@@ -1304,7 +1291,7 @@ Net condensation for the dual-domain and nonlinear solvers are more consistent.
 \begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
 \centering
 \vspace{0.1in}
-Dual-domain solver provides a decrease of 50\% to 60\% in run time with reduction in timestep size. 
+SNR solver provides a decrease of 50\% to 60\% in run time with reduction in timestep size. 
 \vspace{0.1in}
 \end{textblock}
 }
@@ -1325,7 +1312,7 @@ Dual-domain solver provides a decrease of 50\% to 60\% in run time with reductio
 \item{Methods that resolve nonlinearities during a timestep allow for a more timestep size insensitive solution at larger \dtmax{} than methods that do not.}
 \item{A timestep size insensitive solution produced by a linearized approximation may be different than one produced by a nonlinearly convergent solver.}
 \item{Not resolving localized nonlinearities can degrade the accuracy of the solution globally.}
-\item{By using the domain decomposition algorithm to resolve localized nonlinearities, a simulation can achieve the accuracy and consistency of a fully nonlinear solver without its associated computational costs.}
+\item{By using the selective nonlinear refinement algorithm to resolve localized nonlinearities, a simulation can achieve the accuracy and consistency of a fully nonlinear solver without its associated computational costs.}
 \end{itemize}
 
 \end{frame}
@@ -1339,7 +1326,7 @@ Dual-domain solver provides a decrease of 50\% to 60\% in run time with reductio
 
 \begin{itemize}
 \item{Develop a way to adaptively determine when and where additional nonlinear iterates would be advantageous.}
-\item{Investigate the computational costs of the general algorithm to determine when it would be more advantageous to include the entire domain in the nonlinear domain than it would be to use the domain decomposition algorithm.}
+\item{Investigate the computational costs of the SNR algorithm to determine when it would be more advantageous to include the entire domain in the nonlinear domain than it would be to use the SNR algorithm.}
 \item{Investigate the interaction between the nonlinear hydrodynamics and the explicit fluid-solid heat transfer.}
 \item{Investigate impact of switching the governing equations upon nonlinear convergence.}
 \end{itemize}
@@ -1354,6 +1341,17 @@ Dual-domain solver provides a decrease of 50\% to 60\% in run time with reductio
 \frametitle{Acknowledgments}
 
 This research was performed under appointment to the Rickover Fellowship Program in Nuclear Engineering sponsored by Naval Reactors Division of the U.S. Department of Energy.
+
+\end{frame}
+%---------
+%---------
+\begin{frame}
+\frametitle{Timestep Sensitivity}
+
+Timestep size sensitivity studies with the set of \dtmax{} given by
+\begin{equation*}
+\dtmax{} \in \bigcup^{n_{t}-1}_{i\, = 0} \frac{\dt{}_{0}}{r^{i}_{f}}
+\end{equation*}
 
 \end{frame}
 %---------
