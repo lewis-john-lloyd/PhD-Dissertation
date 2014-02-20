@@ -52,13 +52,33 @@
 \usecolortheme{beaver}
 \usefonttheme{serif}
 
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    \insertframenumber/\inserttotalframenumber
+}
+
+\usepackage{appendixnumberbeamer}
+
+
 \AtBeginSection[]
 {
+  \setbeamertemplate{navigation symbols}{\insertslidenavigationsymbol \insertframenavigationsymbol \insertsubsectionnavigationsymbol \insertsectionnavigationsymbol \insertdocnavigationsymbol \insertbackfindforwardnavigationsymbol}
   \begin{frame}
+  \addtocounter{framenumber}{-1}
   \frametitle{Road Map}
   \tableofcontents[currentsection,hideothersubsections]
   \end{frame}
+  \addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    \insertframenumber/\inserttotalframenumber
 }
+}
+
+  \setbeamertemplate{navigation symbols}{\insertslidenavigationsymbol \insertframenavigationsymbol \insertsubsectionnavigationsymbol \insertsectionnavigationsymbol \insertdocnavigationsymbol \insertbackfindforwardnavigationsymbol}
 
 %----------------------------------------------------------------------------
 %----------------------------------------------------------------------------
@@ -76,9 +96,17 @@ Thermal-Hydraulic Safety Analysis}
 \begin{document}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
-\frame{\titlepage}
+\begin{frame}[noframenumbering]
+\titlepage
+\end{frame}
 %---------
 %---------
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    \insertframenumber/\inserttotalframenumber
+}
 \begin{frame}
 \frametitle{Introduction}
 
@@ -141,7 +169,7 @@ Thermal-Hydraulic Safety Analysis}
 \resizebox{!}{0.7\textheight}{
 \input{../images/complex_geometry}
 }
-\end{figure}
+\end{figure}	
 
 \end{columns}
 
@@ -161,8 +189,8 @@ Thermal-Hydraulic Safety Analysis}
 \item{Momentum flow paths: momentum conservation equations}
 \end{itemize}
 }
-\item{Conserved quantities are constant over their respective volumes.}
-\item{1st Order upwind at volume edges.}
+\item{Properties are uniform over their respective volumes.}
+\item{Semi-implicit upwinding at volume edges.}
 \end{itemize}
 
 
@@ -188,7 +216,7 @@ Thermal-Hydraulic Safety Analysis}
 \vec{F}_{c}(\vec{x}^{n+1}) \rightarrow \left[\alpha_{g} P_{n},\alpha_{g}, (\alpha_{g} h_{v}), ((1-\alpha_{g})h_{l}), \alpha_{e}, P\right]
 \end{equation*}
 
-Each continuity volume has six conservation equations: \ncg{} mass, continuous liquid mass, gaseous enthalpy, liquid enthalpy, entrained liquid mass, and vapor mass.
+Each continuity volume has six conservation equations: \ncg{} mass, continuous liquid mass, gaseous energy, liquid energy, entrained liquid mass, and vapor mass.
 
 \begin{equation*}
 \vec{F}_{p}(\vec{x}^{n+1}) \rightarrow \left[\dot{m}_{l}, \dot{m}_{g}, \dot{m}_{e} \right]
@@ -288,36 +316,56 @@ $\vec{F}_{c}$ and $\vec{F}_{p}$ are nonlinear.
  + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum_{i \, \in \, N_{f} } \frac{\partial \vec{F}^{k}_{c}}{\partial \momVec{}_{i} } \delta \momVec{}_{i}^{k}  = - \vec{F}^{k}_{c} & & \nonumber
 \end{IEEEeqnarray*}
 
-\begin{equation*}
-\frac{\partial \vec{F}_{c}^{k}}{\partial \momVec{}_{i}} = \vec{\Xi}^{k}_{i} = \dt{} \begin{bmatrix}
- 0 & \frac{\don{\alpha^{n}_{g} \rho^{n}_{n}}^{n+1,k}_{d}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a}} & 0 \\
-\frac{\don{\alpha^{n}_{l}\rho^{n}_{l}}^{n+1,k}_{d}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a}} & 0 & 0 \\
-0 & \frac{\don{\alpha^{n}_{g} \rho^{n}_{g} h^{n}_{g}}^{n+1,k}_{d}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a}} & 0 \\
-\frac{\don{\alpha^{n}_{l}\rho^{n}_{l} h^{n}_{l}}^{n+1,k}_{d}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a}} & 0 & \frac{\don{\alpha^{n}_{e} \rho^{n}_{l} h^{n}_{l}}^{n+1, k}_{d}}{\ave{\alpha_{e} \rho_{l}}^{n}_{a}} \\
-0 & 0 & \frac{ \don{\alpha^{n}_{e} \rho^{n}_{l}}^{n+1, k}_{d}}{ \ave{\alpha_{e} \rho_{l}}^{n}_{a}} \\
-0 & \frac{ \don{\alpha^{n}_{g} \rho^{n}_{v}}^{n+1, k}_{d}}{ \ave{\alpha_{g} \rho_{g}}^{n}_{a}} & 0
-\end{bmatrix}_{i}
-\end{equation*}
+Use result from momentum flow paths to eliminate $\delta \momVec{}^{k}_{i}$ from the above equations.
 
+\begin{IEEEeqnarray}{rcl}
+\frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & + & \nonumber \\
+\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \left( \frac{\partial \vec{F}^{k}_{c}}{\partial P } + \alert<1>{\sum_{i\,\in \, N_{f} } \vec{\Xi}^{k}_{i}\frac{\partial \momVec{}^{k}_{i}}{\partial P_{s(i)}}}\right) \delta P^{k} + \alert<1>{\sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}^{k}} & = & \nonumber \\
+- \vec{F}^{k}_{c} \alert<1>{- \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \delta \momVec{}_{i}^{*}} \nonumber & &
+\end{IEEEeqnarray}
 
 \end{frame}
 %---------
 %---------
-\begin{frame}[shrink=25]
-\frametitle{Nonlinear Solver: Collapse Equations}
-
-\begin{IEEEeqnarray}{rcl}
-\frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & + & \nonumber \\
-\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum_{i\, \in \, N_{f} } \vec{\Xi}^{k}_{i}\left( \delta \momVec{}_{i}^{*} + \frac{\partial \momVec{}_{i}^{k}}{\partial P_{s(i)}} \delta P_{s(i)}^{k} + \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}^{k} \right) = \vec{F}^{k}_{c} & &\nonumber
-\end{IEEEeqnarray}
-
-\begin{IEEEeqnarray}{rcl}
-\frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & + & \nonumber \\
-\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \left( \frac{\partial \vec{F}^{k}_{c}}{\partial P } + \sum_{i\,\in \, N_{f} } \vec{\Xi}^{k}_{i}\frac{\partial \momVec{}^{k}_{i}}{\partial P_{s(i)}}\right) \delta P^{k} + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}^{k} & = & \nonumber \\
-- \vec{F}^{k}_{c} - \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \delta \momVec{}_{i}^{*} \nonumber & &
-\end{IEEEeqnarray}
-
-\end{frame}
+%\begin{frame}[shrink=25]
+%\frametitle{Nonlinear Solver: Continuity Volumes, $\vec{F}^{k}_{c}$}
+%
+%\begin{IEEEeqnarray*}{lcr}
+%\frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} +
+%\frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & & \nonumber \\
+% + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum_{i \, \in \, N_{f} } \frac{\partial \vec{F}^{k}_{c}}{\partial \momVec{}_{i} } \delta \momVec{}_{i}^{k}  = - \vec{F}^{k}_{c} & & \nonumber
+%\end{IEEEeqnarray*}
+%
+%\begin{equation*}
+%\frac{\partial \vec{F}_{c}^{k}}{\partial \momVec{}_{i}} = \vec{\Xi}^{k}_{i} = \dt{} \begin{bmatrix}
+% 0 & \frac{\don{\alpha^{n}_{g} \rho^{n}_{n}}^{n+1,k}_{d}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a}} & 0 \\
+%\frac{\don{\alpha^{n}_{l}\rho^{n}_{l}}^{n+1,k}_{d}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a}} & 0 & 0 \\
+%0 & \frac{\don{\alpha^{n}_{g} \rho^{n}_{g} h^{n}_{g}}^{n+1,k}_{d}}{\ave{\alpha_{g} \rho_{g}}^{n}_{a}} & 0 \\
+%\frac{\don{\alpha^{n}_{l}\rho^{n}_{l} h^{n}_{l}}^{n+1,k}_{d}}{\ave{\alpha_{l} \rho_{l}}^{n}_{a}} & 0 & \frac{\don{\alpha^{n}_{e} \rho^{n}_{l} h^{n}_{l}}^{n+1, k}_{d}}{\ave{\alpha_{e} \rho_{l}}^{n}_{a}} \\
+%0 & 0 & \frac{ \don{\alpha^{n}_{e} \rho^{n}_{l}}^{n+1, k}_{d}}{ \ave{\alpha_{e} \rho_{l}}^{n}_{a}} \\
+%0 & \frac{ \don{\alpha^{n}_{g} \rho^{n}_{v}}^{n+1, k}_{d}}{ \ave{\alpha_{g} \rho_{g}}^{n}_{a}} & 0
+%\end{bmatrix}_{i}
+%\end{equation*}
+%
+%
+%\end{frame}
+%---------
+%---------
+%\begin{frame}[shrink=25]
+%\frametitle{Nonlinear Solver: Collapse Equations}
+%
+%\begin{IEEEeqnarray}{rcl}
+%\frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & + & \nonumber \\
+%\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum_{i\, \in \, N_{f} } \vec{\Xi}^{k}_{i}\left( \delta \momVec{}_{i}^{*} + \frac{\partial \momVec{}_{i}^{k}}{\partial P_{s(i)}} \delta P_{s(i)}^{k} + \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}^{k} \right) = \vec{F}^{k}_{c} & &\nonumber
+%\end{IEEEeqnarray}
+%
+%\begin{IEEEeqnarray}{rcl}
+%\frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & + & \nonumber \\
+%\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \left( \frac{\partial \vec{F}^{k}_{c}}{\partial P } + \sum_{i\,\in \, N_{f} } \vec{\Xi}^{k}_{i}\frac{\partial \momVec{}^{k}_{i}}{\partial P_{s(i)}}\right) \delta P^{k} + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}^{k} & = & \nonumber \\
+%- \vec{F}^{k}_{c} - \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \delta \momVec{}_{i}^{*} \nonumber & &
+%\end{IEEEeqnarray}
+%
+%\end{frame}
 %---------
 %---------
 \begin{frame}[shrink=25]
@@ -367,7 +415,9 @@ The determination of nonlinear convergence is based upon three conditions.
 
 \begin{IEEEeqnarray}{rclcrcl}
 \frac{||\tilde{\vec{F}}^{k+1}||_{2}}{\sqrt{N_{u}}} \, & \leq & \, \ftol{} & \quad & \tilde{\vec{F}}^{k} &=& \left[\vec{S}^{k}\right]^{-1}\vec{F}^{k}\nonumber \\
+&&&&&&\nonumber\\
 \frac{||\delta \tilde{\vec{x}}^{k}||_{2}}{\sqrt{N_{u}}}  \, & \leq & \, \dtol{} & \quad & \delta \tilde{\vec{x}}^{k} &=& \frac{\delta \vec{x}^{k}}{\vec{x}^{n+1, k}} = \frac{ \vec{x}^{n+1, k+1} - \vec{x}^{n+1, k}}{\vec{x}^{n+1,k}} \nonumber \\
+&&&&&&\nonumber\\
 k \, & > & \, \kmax & \quad & & &\nonumber 
 \end{IEEEeqnarray}
 
@@ -395,7 +445,7 @@ Scaled residual:
 
 At low volume fractions:
 \begin{equation*}
-S_{\phi} = \max[1.0, \left(C_{1}\frac{\alpha_{\phi,\text{min}}}{\alpha_{\phi}}\right)^{C_{2}} ] S_{\phi}
+S_{\phi} = \max\left[1.0, \left(100 \frac{\alpha_{\phi,\text{min}}}{\alpha_{\phi}}\right)^{10}\right] S_{\phi}
 \end{equation*}
 
 \end{frame}
@@ -419,20 +469,7 @@ S_{\Phi} = \abs{\frac{\partial \Phi}{\partial t}} + \sum_{i \in N_{\text{source}
 
 
 \end{frame}
-%---------
-%---------
-\begin{frame}[shrink=5]
-\frametitle{Operator-Based Scaling: Examples}
 
-\begin{IEEEeqnarray}{rcl}
-S^{k}_{m,l} & = & V_c \abs{\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n}} + \dt{} \sum_{i\,\in\,N_{f}}\abs{\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1,k}_l  A_{m}}_{i} \nonumber \\
-&+& \abs{(1-\eta)\Gamma}^{n+1,k} + \abs{\Upsilon}^{n+1,k} \nonumber \\
-S^{k}_{p, l} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}} + \abs{\sum_{i\, \in \, N_{c} } \left( \don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a},l} \tilde{A}\right)^{n}_{i}} \right. \nonumber \\ 
-& + & \abs{\ave{\alpha_l}^{n}_{\text{a}} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_l \rho_l}_{\text{a}}^{n}} + \abs{K^{n}_{wl}(\dot{m}_l^{n+1, k})^2} \nonumber \\
-& + & \abs{K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1,k}_{g})^2} + \abs{(1 - \eta)\dot{\Gamma} u^{'}}^{n} + \abs{\dot{\Upsilon} u^{'}}^{n} \left. \vphantom{\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}}}  \right] \nonumber
-\end{IEEEeqnarray}
-
-\end{frame}
 %------------------------------------------------
 %------------------------------------------------
 \subsection[Implementation \& Efficacy]{Implementation and Efficacy}
@@ -628,13 +665,13 @@ On the linear side of the linear-nonlinear domain boundary, the flow rates conne
 
 \begin{IEEEeqnarray}{rcl}
 \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & + &  \nonumber \\
-\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum_{i \, \in \, N_{f} } \frac{\partial \vec{F}^{k}_{c}}{\partial \momVec{}_{i} } \delta \momVec{}_{i}^{k} + \sum_{i\,\in \, N_{\text{NBC}}} \frac{\partial \vec{F}^{k}_{c}}{\partial \vec{\Psi}_{i} } \delta \vec{\Psi}_{i}^{k}  = - \vec{F}^{k}_{c} & &\nonumber 
+\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial P } \delta P^{k} + \sum_{i \, \in \, N_{f} } \frac{\partial \vec{F}^{k}_{c}}{\partial \momVec{}_{i} } \delta \momVec{}_{i}^{k} \alert<1>{+ \sum_{i\,\in \, N_{\text{NBC}}} \frac{\partial \vec{F}^{k}_{c}}{\partial \vec{\Psi}_{i} } \delta \vec{\Psi}_{i}^{k}}  = - \vec{F}^{k}_{c} & &\nonumber 
 \end{IEEEeqnarray}
 
 \begin{IEEEeqnarray}{rcl}
 \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} P_{n} )} \delta (\alpha_{g} P_{n})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{g}} \delta \alpha^{k}_{g} + \frac{\partial \vec{F}^{k}_{c}}{\partial (\alpha_{g} h_{v} )} \delta (\alpha_{g} h_{v})^{k} + \frac{\partial \vec{F}^{k}_{c}}{\partial ((1 - \alpha_{g}) h_{l} )} \delta ((1 - \alpha_{g}) h_{l})^{k} & + & \nonumber \\
-\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \left( \frac{\partial \vec{F}^{k}_{c}}{\partial P } + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i}\frac{\partial \momVec{}^{k}_{i}}{\partial P}\right) \delta P^{k} + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}^{k} + \dt{} \sum_{i \, \in \, N_{\text{NBC}}} \delta \vec{\Psi}^{k}_{i} & = &\nonumber \\
-- \left( \vec{F}^{k}_{c} + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \delta \momVec{}_{i}^{*} - \dt{} \sum_{i \, \in \, N_{\text{NBC}}} \vec{\Psi}^{k}_{i} \right) - \dt{} \sum_{i \, \in \, N_{\text{NBC}}} \vec{\Psi}^{k}_{i} & & \nonumber
+\frac{\partial \vec{F}^{k}_{c}}{\partial \alpha_{e}} \delta \alpha_{e}^{k} + \left( \frac{\partial \vec{F}^{k}_{c}}{\partial P } + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i}\frac{\partial \momVec{}^{k}_{i}}{\partial P}\right) \delta P^{k} + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \frac{\partial \momVec{}_{i}^{k}}{\partial P_{o(i)}} \delta P_{o(i)}^{k} \alert<1>{+ \dt{} \sum_{i \, \in \, N_{\text{NBC}}} \delta \vec{\Psi}^{k}_{i}} & = &\nonumber \\
+- \left( \vec{F}^{k}_{c} + \sum_{i \, \in \, N_{f} } \vec{\Xi}^{k}_{i} \delta \momVec{}_{i}^{*} \alert<1>{- \dt{} \sum_{i \, \in \, N_{\text{NBC}}} \vec{\Psi}^{k}_{i}} \right) \alert<1>{- \dt{} \sum_{i \, \in \, N_{\text{NBC}}} \vec{\Psi}^{k}_{i}} & & \nonumber
 \end{IEEEeqnarray}
 
 %\begin{equation*}
@@ -652,7 +689,7 @@ On the linear side of the linear-nonlinear domain boundary, the flow rates conne
 
 \begin{IEEEeqnarray}{rcl}
 \left[ \vec{J}_{c} \vert \vec{K}_{c} \vert \vec{Q}_{c} \right] \delta \vec{C}_{c} &=& \vec{r}_{c} - \vec{Q}_{c} \vec{\Psi}_{c} \nonumber \\
-\left[ \vec{U}_{c} \vert \vec{L}^{-1}_{c}\vec{K}_{c} \vert \vec{L}^{-1}_{c}\vec{Q}_{c} \right] \delta \vec{C}_{j} & = & \vec{L}^{-1}_{c}\vec{r}_{c}  -\vec{L}^{-1}_{c}\vec{Q}_{c}\vec{\Psi}_{c} \nonumber 
+\left[ \vec{U}_{c} \vert \vec{L}^{-1}_{c}\vec{K}_{c} \vert \vec{L}^{-1}_{c}\vec{Q}_{c} \right] \delta \vec{C}_{c} & = & \vec{L}^{-1}_{c}\vec{r}_{c}  -\vec{L}^{-1}_{c}\vec{Q}_{c}\vec{\Psi}_{c} \nonumber 
 \end{IEEEeqnarray}
 
 Linear domain's pressure matrix is now:
@@ -726,58 +763,7 @@ Once the nonlinear domain is converged, the linear domain's pressure updates are
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
-\subsection[Implementation \& Efficacy]{Implementation and Efficacy}
-%---------
-%---------
-\begin{frame}
-\frametitle{Complex Geometry}
-
-\textbf{Purpose:} to test the implementation of the selective nonlinear refinement algorithm.
-
-\begin{columns}
-\column{0.7\textwidth}
-
-\begin{itemize}
-\item{Model of GE experimental facility.}
-\item{3 x 3 rod bundle.}
-\item{3 sections.}
-\item{18 subchannels.}
-\item{56 inter-subchannel flow paths.}
-\item{256 different simulations.}
-\item{Error = $\displaystyle \sum_{i\,=\,1}^{N_{t}} \abs{P_{\text{lin}}(t^{i}) -P_{k}(t^{i})}$.}
-\end{itemize}
-
-\column{0.4\textwidth}
-
-\begin{figure}[h!t]
-\centering
-\resizebox{\textwidth}{!}{
-\input{../images/position_of_pressure_taps}
-}
-\end{figure}
-
-\end{columns}
-\end{frame}
-%---------
-%---------
-\begin{frame}
-\frametitle{Error in Complex Geometry Problem}
-
-\begin{figure}[h!t]
-\centering
-\includegraphics[width=0.94\textwidth]{../plots/complexBar_pdf}
-\end{figure}
-
-\only<2>{
-\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
-\centering
-\vspace{0.1in}
-Error in solution is on the order of double precision machine round-off.
-\vspace{0.1in}
-\end{textblock}
-}
-
-\end{frame}
+\subsection[Efficacy \& Impactfullness]{Efficacy \& Impactfullness}
 %---------
 %---------
 \begin{frame}
@@ -796,10 +782,10 @@ Error in solution is on the order of double precision machine round-off.
 }
 \item{Obstructions @ 15 [in]:
 \begin{itemize}
-	\item{Subchannel 1 $\rightarrow$ K = $\infty$ [-].}
-	\item{Subchannel 2 $\rightarrow$ K = 40 [-].}
-	\item{Subchannel 3 $\rightarrow$ K = 160 [-].}
-	\item{Subchannel 4 $\rightarrow$ K(t) $\rightarrow K(t) = \frac{K_{o}}{{A(t)_r}^2}$, $K_{o} = 10$ [-].}
+	\item{Subchannel 1 $\rightarrow$ $A_{r}$ = 0.00 [-].}
+	\item{Subchannel 2 $\rightarrow$ $A_{r}$ = 0.50 [-].}
+	\item{Subchannel 3 $\rightarrow$ $A_{r}$ = 0.25 [-].}
+	\item{Subchannel 4 $\rightarrow$ $A_{r}(t)$ [-].}
 \end{itemize}
 }
 \item{No connections between channels.}
@@ -894,7 +880,7 @@ This nonphysical behavior is not eliminated as timestep size is reduced.
 \begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
 \centering
 \vspace{0.1in}
-Using the nonlinear or the dual-domain solver removes the nonphysical behavior.
+Using the nonlinear or the SNR solver removes the nonphysical behavior.
 \vspace{0.1in}
 \end{textblock}
 }
@@ -922,9 +908,6 @@ The SNR solver produces the same solution as the nonlinear solver with less comp
 
 
 \end{frame}
-%------------------------------------------------
-%------------------------------------------------
-\subsection[Impactfullness]{Impactfullness}
 %---------
 %---------
 \begin{frame}
@@ -991,26 +974,6 @@ Linear solver produces nonphysical solution.
 %---------
 %---------
 \begin{frame}
-\frametitle{Linear $\dt{}$ with $\dtmax{} = \expneg{1.0}{1}$ [s]}
-
-\begin{figure}[h!t]
-\centering
-\includegraphics[width=0.94\textwidth]{../plots/vmpDeltaTLin1em1_pdf}
-\end{figure}
-
-\only<2>{
-\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
-\centering
-\vspace{0.1in}
-The nonphysical pressure spikes produce reduced \dtmax{} during the simulation.
-\vspace{0.1in}
-\end{textblock}
-}
-
-\end{frame}
-%---------
-%---------
-\begin{frame}
 \frametitle{Nonlinear Solution with $\dtmax{} = \expneg{1.0}{1}$ [s]}
 
 \begin{figure}[h!t]
@@ -1024,27 +987,6 @@ The nonphysical pressure spikes produce reduced \dtmax{} during the simulation.
 \centering
 \vspace{0.1in}
 The nonlinear solver produces a solution that is more in agreement with the analytic solution. 
-\vspace{0.1in}
-\end{textblock}
-}
-
-\end{frame}
-%---------
-%---------
-\begin{frame}
-\frametitle{Nonlinear $\dt{}$ with $\dtmax{} = \expneg{1.0}{1}$ [s]}
-
-\begin{figure}[h!t]
-\centering
-\includegraphics[width=0.94\textwidth]{../plots/vmpDeltaTNln1em1_pdf}
-\end{figure}
-
-
-\only<2>{
-\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
-\centering
-\vspace{0.1in}
-The nonlinear solver is capable of taking larger timesteps than the linear solver.
 \vspace{0.1in}
 \end{textblock}
 }
@@ -1146,7 +1088,7 @@ When there are nonlinearities in the nonlinear domain, the global solution is we
 %---------
 %---------
 \begin{frame}
-\frametitle{Downcomer and Core Effective Volume Fractions}
+\frametitle{Downcomer and Core Effective Liquid Volume Fractions}
 
 \only<1,7>{
 \begin{figure}[h!t]
@@ -1291,7 +1233,7 @@ Net condensation for the SNR and nonlinear solvers are more consistent.
 \begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
 \centering
 \vspace{0.1in}
-SNR solver provides a decrease of 50\% to 60\% in run time with reduction in timestep size. 
+SNR solver provides a decrease of 50\% to 60\% in run time compared to the nonlinear solver. 
 \vspace{0.1in}
 \end{textblock}
 }
@@ -1318,6 +1260,22 @@ SNR solver provides a decrease of 50\% to 60\% in run time with reduction in tim
 \end{frame}
 %------------------------------------------------
 %------------------------------------------------
+\subsection[Novel Work \& Contributions]{Novel Work \& Contributions}
+%---------
+%---------
+\begin{frame}
+\frametitle{Novel Work \& Contributions}
+
+\begin{itemize}
+\item{Transitioned the linearized subchannel software \cobra{} to a nonlinear solver.}
+\item{Developed and implemented a novel operator-based scale factor for nonlinear convergence determination.}
+\item{Developed and implemented an object-oriented domain decomposition algorithm that is consistent with the underlying semi-implicit numerical discretization.}
+\item{Developed and implemented a novel and relevant selective nonlinear refinement algorithm.}
+\end{itemize}
+
+\end{frame}
+%------------------------------------------------
+%------------------------------------------------
 \subsection[Future Work]{Future Work}
 %---------
 %---------
@@ -1334,6 +1292,9 @@ SNR solver provides a decrease of 50\% to 60\% in run time with reduction in tim
 \end{frame}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
+\appendix
+%------------------------------------------------
+%------------------------------------------------
 \section*{}
 %------------------------------------------------
 %------------------------------------------------
@@ -1345,7 +1306,7 @@ This research was performed under appointment to the Rickover Fellowship Program
 \end{frame}
 %---------
 %---------
-\begin{frame}
+\begin{frame} 
 \frametitle{Timestep Sensitivity}
 
 Timestep size sensitivity studies with the set of \dtmax{} given by
@@ -1356,7 +1317,7 @@ Timestep size sensitivity studies with the set of \dtmax{} given by
 \end{frame}
 %---------
 %---------
-\begin{frame}
+\begin{frame} 
 \frametitle{Methods}
 \begin{itemize}
 \item{Fully Explicit Method
@@ -1384,7 +1345,48 @@ Timestep size sensitivity studies with the set of \dtmax{} given by
 \end{frame}
 %---------
 %---------
-\begin{frame}
+\begin{frame} 
+\frametitle{Linear $\dt{}$ with $\dtmax{} = \expneg{1.0}{1}$ [s]}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/vmpDeltaTLin1em1_pdf}
+\end{figure}
+
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+The nonphysical pressure spikes produce reduced \dtmax{} during the simulation.
+\vspace{0.1in}
+\end{textblock}
+}
+
+\end{frame}
+%---------
+%---------
+\begin{frame} 
+\frametitle{Nonlinear $\dt{}$ with $\dtmax{} = \expneg{1.0}{1}$ [s]}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/vmpDeltaTNln1em1_pdf}
+\end{figure}
+
+
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+The nonlinear solver is capable of taking larger timesteps than the linear solver.
+\vspace{0.1in}
+\end{textblock}
+}
+
+\end{frame}
+%---------
+%---------
+\begin{frame} 
 \frametitle{Methods}
 \begin{itemize}
 \item{Stability-Enhancing Two-Step Method (SETS) (Mahaffy, 1982)
@@ -1409,7 +1411,7 @@ Timestep size sensitivity studies with the set of \dtmax{} given by
 \end{frame}
 %---------
 %---------
-\begin{frame}
+\begin{frame} 
 \frametitle{Fully Explicit Method}
 Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{} \vec{E}(\vec{x}^{n})$.
 \begin{columns}
@@ -1438,7 +1440,7 @@ Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{}
 \end{frame}
 %---------
 %---------
-\begin{frame}
+\begin{frame} 
 \frametitle{Fully Implicit Method}
 
 Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{} \vec{E}(\vec{x}^{n+1})$.
@@ -1476,7 +1478,7 @@ Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{}
 \end{frame}
 %---------
 %---------
-\begin{frame}
+\begin{frame} 
 \frametitle{Stability-Enhancing Two-Step Method}
 
 \begin{columns}
@@ -1511,7 +1513,58 @@ Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{}
 \end{frame}
 %---------
 %---------
-\begin{frame}
+\begin{frame} 
+\frametitle{Complex Geometry}
+
+\textbf{Purpose:} to test the implementation of the selective nonlinear refinement algorithm.
+
+\begin{columns}
+\column{0.7\textwidth}
+
+\begin{itemize}
+\item{Model of GE experimental facility.}
+\item{3 x 3 rod bundle.}
+\item{3 sections.}
+\item{18 subchannels.}
+\item{56 inter-subchannel flow paths.}
+\item{256 random permutations.}
+\item{Error = $\displaystyle \sum_{i\,=\,1}^{N_{t}} \abs{P_{\text{lin}}(t^{i}) -P_{k}(t^{i})}$.}
+\end{itemize}
+
+\column{0.4\textwidth}
+
+\begin{figure}[h!t]
+\centering
+\resizebox{\textwidth}{!}{
+\input{../images/position_of_pressure_taps}
+}
+\end{figure}
+
+\end{columns}
+\end{frame}
+%---------
+%---------
+\begin{frame} 
+\frametitle{Error in Complex Geometry Problem}
+
+\begin{figure}[h!t]
+\centering
+\includegraphics[width=0.94\textwidth]{../plots/complexBar_pdf}
+\end{figure}
+
+\only<2>{
+\begin{textblock}{0.9}[0.0,0.0](0.05,0.5)
+\centering
+\vspace{0.1in}
+Error in solution is on the order of double precision machine round-off.
+\vspace{0.1in}
+\end{textblock}
+}
+
+\end{frame}
+%---------
+%---------
+\begin{frame} 
 \frametitle{Nearly-Implicit Method}
 
 \begin{columns}
@@ -1546,7 +1599,7 @@ Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{}
 \end{frame}
 %---------
 %---------
-\begin{frame}
+\begin{frame} 
 \frametitle{Phase Transition}
 
 \begin{itemize}
@@ -1560,7 +1613,7 @@ Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{}
 \end{frame}
 %---------
 %---------
-\begin{frame}
+\begin{frame} 
 \frametitle{Timestep Failure Mitigation and Size Selection}
 
 \begin{itemize}
@@ -1578,7 +1631,7 @@ Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{}
 \end{frame}
 %---------
 %---------
-\begin{frame}
+\begin{frame} 
 \frametitle{RELAP5-3D Semi-Implicit Coupling}
 
 \begin{IEEEeqnarray}{rcl}
@@ -1653,7 +1706,7 @@ h_{\text{cbv},j} <\alpha_f^n>_d^n v_{f,j}^{n+1} \right] \nonumber
 %\end{frame}
 %---------
 %---------
-\begin{frame}
+\begin{frame} 
 \frametitle{Temporal Convergence vs Timestep Size Insensitivity}
 
 \begin{itemize}
@@ -1672,7 +1725,7 @@ Metrics for nonlinear convergence testing:
 \end{frame}
 %---------
 %---------
-\begin{frame}
+\begin{frame} 
 \frametitle{Methods for Nuclear Thermal Hydraulic Safety Analysis}
 
 \begin{itemize}
@@ -1686,7 +1739,21 @@ Metrics for nonlinear convergence testing:
 \end{frame}
 %---------
 %---------
-\begin{frame}[shrink=5]
+\begin{frame}[shrink=5,noframenumbering]
+\frametitle{Operator-Based Scaling: Examples}
+
+\begin{IEEEeqnarray}{rcl}
+S^{k}_{m,l} & = & V_c \abs{\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n}} + \dt{} \sum_{i\,\in\,N_{f}}\abs{\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1,k}_l  A_{m}}_{i} \nonumber \\
+&+& \abs{(1-\eta)\Gamma}^{n+1,k} + \abs{\Upsilon}^{n+1,k} \nonumber \\
+S^{k}_{p, l} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}} + \abs{\sum_{i\, \in \, N_{c} } \left( \don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a},l} \tilde{A}\right)^{n}_{i}} \right. \nonumber \\ 
+& + & \abs{\ave{\alpha_l}^{n}_{\text{a}} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_l \rho_l}_{\text{a}}^{n}} + \abs{K^{n}_{wl}(\dot{m}_l^{n+1, k})^2} \nonumber \\
+& + & \abs{K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1,k}_{g})^2} + \abs{(1 - \eta)\dot{\Gamma} u^{'}}^{n} + \abs{\dot{\Upsilon} u^{'}}^{n} \left. \vphantom{\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}}}  \right] \nonumber
+\end{IEEEeqnarray}
+
+\end{frame}
+%---------
+%---------
+\begin{frame}[shrink=5,noframenumbering]
 \frametitle{Conservation of Momentum Equations}
 \begin{IEEEeqnarray}{lCl}
 F^{k}_{p, l} & = & \dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n} + \frac{\dt{}}{\dx{}}\left(\sum_{i\,\in \, N_{c} } \left( \don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a},l} \tilde{A}\right)_{i}^{n}
@@ -1703,7 +1770,7 @@ F^{k}_{p, e} & = & \dot{m}_{e}^{n+1, k} - \dot{m}_{e}^{n} + \frac{\dt{}}{\dx{}}\
 \end{frame}
 %---------
 %---------
-\begin{frame}[shrink=20]
+\begin{frame}[shrink=20,noframenumbering]
 \frametitle{Conservation of Mass and Energy Equations}
 
 \begin{IEEEeqnarray}{lCl}
