@@ -20,7 +20,7 @@ This operator-based approach allows for a scaling of the residual that eliminate
 The use of this scale factor is integral to the effective use of the nonlinear solver in  subsequent analyses.
 
 Two problems were used to determine the impact of nonlinearities upon the efficacy of the linear and the nonlinear solver.
-It was found that not resolving the nonlinearities present in a simulation might result in situations where timestep-size insensitivity is not a result of temporal convergence, but rather is an artifact brought about the degraded order of temporal accuracy caused by linearizing the discrete nonlinear equations.
+It was found that not resolving the nonlinearities present in a simulation might result in situations where timestep-size insensitivity is not a result of temporal convergence, but rather is an artifact brought about by the degraded order of temporal accuracy caused by linearizing the discrete nonlinear equations.
 Resolving the nonlinearities at every timestep not only provided a more consistent solution during temporal convergence studies, but also produced different solutions than obtained by taking only a single Newton step during each timestep.
 However, in simulations where nonlinearities were expected to be low, it was found that the solution produced by the linear solver was as accurate as that produced by the nonlinear solver.
 

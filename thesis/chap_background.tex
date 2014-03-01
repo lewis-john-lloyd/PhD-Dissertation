@@ -76,7 +76,7 @@ The governing equations of fluid mechanics provide extensive information about f
 However, one of the basic assumptions of subchannel analysis is that the exact spatial behavior of the coolant is not of direct interest; as such, the average behavior of the fluid is what is modeled.
 Given the multi-phase nature of the coolant, the interactions between the various phases can be modeled in various ways.
 For the conditions encountered in a commercial nuclear reactor core, certain assumptions can be made to reduce the complexity of the physics involved.
-This section will discuss the technique used to obtain equations for averaged quantities, the manner in which the multi-phase nature of the coolant is dealt with, and the general assumptions used reduce the complexity of the physics.
+This section will discuss the technique used to obtain equations for averaged quantities, the manner in which the multi-phase nature of the coolant is dealt with, and the general assumptions used to reduce the complexity of the physics.
 
 The first simplification is that the exact topology of the interface between the coolant phases need not be known to model the fluid mechanics.
 Since the exact deterministic behavior of the phasic-interface is no longer necessary, the governing equations can be subjected to averaging procedures to produce conservation laws for averaged quantities.
@@ -175,7 +175,7 @@ The inter-field transfer of mass occurs only between the continuous and entraine
 
 Within the conservation of mass equations several assumptions from \sect{subsect:assumptions} are evident.
 The mechanical equilibrium of the \ncg{} and the vapor field manifests itself in the singular velocity for the two gaseous fields: $\vec{u}_g$, where the $g$ subscript denotes the total gaseous phase.
-Dalton's Law allows the two components of the gaseous phase to occupy the same volume, thus providing for a singular volume fraction, $\alpha_g$.
+Dalton's Law allows the two components of the gaseous phase to occupy the same volume, thus providing for a single volume fraction, $\alpha_g$.
 The thermodynamic equilibrium of the two liquid fields results in only one liquid density, $\rho_l$.
 
 %-------------------------------------------------------------------------------
@@ -338,7 +338,7 @@ As such, methods need to be selected to approximate the spatial, temporal, and n
 
 \subsection{Spatial Approximations}
 \label{subsect:spatial_approx}
-In the thermal-hydraulic safety analysis methods of interest the governing equation are discretized using the finite-volume method \cite{LeVeque2002}.
+In this work the governing equations are discretized using the finite-volume method \cite{LeVeque2002}.
 The discussion that follows is specific to \cobra{}, but other safety analysis software use similar procedures \cite{RELAP,TRACE}.
 
 The labeling scheme for the finite volumes is shown in \fig{fig:vertical_pipe_with_cells}, which is a segment of a subchannel.
@@ -457,7 +457,7 @@ The continuous conservation equations, \eqref{eqn:conservation_equations}, are n
 \end{equation}
 
 Given that there are nine conservation equations, nine independent parameters need to be chosen.
-The choice of the nine variables that will be solved for is another distinguishing characteristic of safety analysis software.
+The choice of the nine variables is another distinguishing characteristic of safety analysis software.
 This work uses the following set of nine independent variables \eqref{eqn:independentVariables}.
 
 \begin{equation}

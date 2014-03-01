@@ -574,7 +574,7 @@ The linear solver and the nonlinear solver fail to produce the same solution eve
 %---------
 %---------
 \begin{frame}
-\frametitle{Linear Solver's Timestep Size Insensitive Solution}
+\frametitle{Linear Solver's Timestep Size Sensitive Solution}
 
 \begin{figure}[h!t]
 \centering
@@ -1306,6 +1306,60 @@ This research was performed under appointment to the Rickover Fellowship Program
 \end{frame}
 %---------
 %---------
+\begin{frame}[shrink=5,noframenumbering]
+\frametitle{Conservation of Momentum Equations}
+\begin{IEEEeqnarray}{lCl}
+F^{k}_{p, l} & = & \dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n} + \frac{\dt{}}{\dx{}}\left(\sum_{i\,\in \, N_{c} } \left( \don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a},l} \tilde{A}\right)_{i}^{n}
+ +\ave{\alpha_l}^{n}_{\text{a}} \nabla P^{\,n+1, k} - g \ave{\alpha_l \rho_l}_{\text{a}}^{n} \right. \nonumber \\
+& + & \left. K^{n}_{wl}(\dot{m}_l^{n+1, k})^2 - K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1,k}_{g})^2 + \left[(1 - \eta)\dot{\Gamma} u^{'} + \dot{\Upsilon} u^{'}\right]^{n} \vphantom{\sum_{N_{k}}}\right) \nonumber \\
+%\label{eqn:nlnGasMomentumResidual}
+F^{k}_{p, g} & = & \dot{m}_{g}^{n+1,k} - \dot{m}_{g}^{n} + \frac{\dt{}}{\dx{}}\left(\sum_{i\, \in \, N_{c} } \left( \don{\alpha_g \rho_g u_g}_{\text{d}} \ave{u}_{\text{a},g}  \tilde{A}\right)_{i}^{n}  +\ave{\alpha_g}^{n}_{\text{a}} \nabla P^{\,n+1, k} - g \ave{\alpha_g \rho_g}_{\text{a}}^{n} \right.\nonumber \\
+& + & \left. K^{n}_{wg}(\dot{m}_g^{n+1, k})^2 + K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1, k}_{g})^2 + K^{n}_{i,ge}(u^{n+1,k}_{e} - u^{n+1,k}_{g})^2 - (\dot{\Gamma} u^{'})^{n} \vphantom{\sum_{N_{k}}}\right) \nonumber\\
+%\label{eqn:nlnEntMomentumResidual}
+F^{k}_{p, e} & = & \dot{m}_{e}^{n+1, k} - \dot{m}_{e}^{n} + \frac{\dt{}}{\dx{}}\left(\sum_{i\, \in \, N_{c} } \left( \don{\alpha_e \rho_l u_e}_{\text{d}} \ave{u}_{\text{a},e}  \tilde{A}\right)_{i}^{n} + \ave{\alpha_{e}}^{n}_{\text{a}} \nabla P^{\,n+1, k} - g \ave{\alpha_e \rho_l}^{n}_{\text{a}} \right. \nonumber \\
+& + & \left. K^{n}_{we}(\dot{m}_e^{n+1, k})^2 - K^{n}_{i,ge}(u^{n+1, k}_{e} - u^{n+1, k}_{g})^2 + \left[\eta \dot{\Gamma} u^{'} - \dot{\Upsilon} u^{'}\right]^n\vphantom{\sum_{N_{k}}}\right) \nonumber
+\end{IEEEeqnarray}
+
+\end{frame}
+%---------
+%---------
+\begin{frame}[shrink=20,noframenumbering]
+\frametitle{Conservation of Mass and Energy Equations}
+
+\begin{IEEEeqnarray}{lCl}
+%\label{eqn:nlnNcgMassResidual}
+F^{k}_{m, n} & = & V_c\left[ (\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{n}\right] +\dt{} \sum_{i\, \in \,\ N_{f}}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1,k}_{d} u^{n+1, k}_{g}  A_{m} \right)_{i} \nonumber \\
+%\label{eqn:nlnLiqMassResidual}
+F^{k}_{m, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_l \rho_l \right)^{n} + \dt{} \sum_{i\,\in\,N_{f}} \left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l A_{m} \right)_{i} + \left[(1-\eta)\Gamma + \Upsilon\right]^{n+1, k}  \nonumber  \\
+%\label{eqn:nlnGasEnergyResidual}
+F^{k}_{h, g} & = & V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_{g} ( P^{\,n+1, k} - P^{\,n} ) \right] - q^{n}_{wg} \nonumber \\
+& - & \left[q_{i,v} + \Gamma h^{'}_v + q_{gl}\right]^{n+1, k} + \dt{} \sum_{i\,\in\,N_{f}} \left(\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  A_{m} \right)_{i}  \nonumber  \\
+%\label{eqn:nlnLiqEnergyResidual}
+F^{k}_{h, l} & = & V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})\right] - \left[q_{i,l} - \Gamma h^{'}_l - q_{gl}\right]^{n+1,k}    \nonumber \\
+& +& \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_l A_{m} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} - q^{n}_{wl}  \nonumber  \\
+%\label{eqn:nlnEntMassResidual}
+F^{k}_{m, e} & = & V_c \left(\alpha_e \rho_l \right)^{n+1,k} - V_c \left(\alpha_e \rho_l \right)^{n} + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} - \left[\Upsilon - \eta \Gamma \right]^{n+1, k}  \nonumber \\
+%\label{eqn:nlnVapMassResidual}
+F^{k}_{m, v} & = & V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right] + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1,k}_{d} u^{n+1, k}_{g} A_{m} \right)_{i} - \Gamma^{n+1, k}  \nonumber 
+\end{IEEEeqnarray}
+
+\end{frame}
+%---------
+%---------
+\begin{frame}[shrink=5,noframenumbering]
+\frametitle{Operator-Based Scaling: Examples}
+
+\begin{IEEEeqnarray}{rcl}
+S^{k}_{m,l} & = & V_c \abs{\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n}} + \dt{} \sum_{i\,\in\,N_{f}}\abs{\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1,k}_l  A_{m}}_{i} \nonumber \\
+&+& \abs{(1-\eta)\Gamma}^{n+1,k} + \abs{\Upsilon}^{n+1,k} \nonumber \\
+S^{k}_{p, l} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}} + \abs{\sum_{i\, \in \, N_{c} } \left( \don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a},l} \tilde{A}\right)^{n}_{i}} \right. \nonumber \\ 
+& + & \abs{\ave{\alpha_l}^{n}_{\text{a}} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_l \rho_l}_{\text{a}}^{n}} + \abs{K^{n}_{wl}(\dot{m}_l^{n+1, k})^2} \nonumber \\
+& + & \abs{K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1,k}_{g})^2} + \abs{(1 - \eta)\dot{\Gamma} u^{'}}^{n} + \abs{\dot{\Upsilon} u^{'}}^{n} \left. \vphantom{\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}}}  \right] \nonumber
+\end{IEEEeqnarray}
+
+\end{frame}
+%---------
+%---------
 \begin{frame} 
 \frametitle{Timestep Sensitivity}
 
@@ -1314,34 +1368,6 @@ Timestep size sensitivity studies with the set of \dtmax{} given by
 \dtmax{} \in \bigcup^{n_{t}-1}_{i\, = 0} \frac{\dt{}_{0}}{r^{i}_{f}}
 \end{equation*}
 
-\end{frame}
-%---------
-%---------
-\begin{frame} 
-\frametitle{Methods}
-\begin{itemize}
-\item{Fully Explicit Method
-\begin{itemize}
-\item{Lowest computational cost per timestep}
-\item{Subject to sonic CFL limit: $ \dt{} \lesssim \frac{\dx{}}{|u|+|c|}$}
-\end{itemize}
-}
-\item{Fully Implicit Method
-\begin{itemize}
-\item{Highest computational cost per timestep.}
-\item{Not subject to CFL limit.}
-\item{Nonlinearly convergent}
-\item{CATHARE (Barre and Bernard, 1990)}
-\end{itemize}
-}
-\item{Semi-Implicit Method (Liles and Reed, 1978)
-\begin{itemize}
-\item{Single Newton step}
-\item{Subject to material Courant limit: $ \dt{} \lesssim \frac{\dx{}}{|u|}$}
-\item{RELAP, TRACE, COBRA, MARS, SPACE} 
-\end{itemize}
-}
-\end{itemize}
 \end{frame}
 %---------
 %---------
@@ -1383,6 +1409,48 @@ The nonlinear solver is capable of taking larger timesteps than the linear solve
 \end{textblock}
 }
 
+\end{frame}
+%---------
+%---------
+\begin{frame} 
+\frametitle{Methods for Nuclear Thermal Hydraulic Safety Analysis}
+
+\begin{itemize}
+\item{Fully Explicit Method [COBRA-I]}
+\item{Fully Implicit Method [CATHARE] (Barre and Bernard, 1990)}
+\item{Semi-Implicit Method [COBRA-TF] (Liles and Reed, 1978) }
+\item{Stability-Enhancing Two-Step Method (SETS) [TRACE] (Mahaffy, 1982) }
+\item{Nearly Implicit Method [RELAP] (Trapp and Riemke, 1986) }
+\end{itemize}
+
+\end{frame}
+%---------
+%---------
+\begin{frame} 
+\frametitle{Methods}
+\begin{itemize}
+\item{Fully Explicit Method
+\begin{itemize}
+\item{Lowest computational cost per timestep}
+\item{Subject to sonic CFL limit: $ \dt{} \lesssim \frac{\dx{}}{|u|+|c|}$}
+\end{itemize}
+}
+\item{Fully Implicit Method
+\begin{itemize}
+\item{Highest computational cost per timestep.}
+\item{Not subject to CFL limit.}
+\item{Nonlinearly convergent}
+\item{CATHARE (Barre and Bernard, 1990)}
+\end{itemize}
+}
+\item{Semi-Implicit Method (Liles and Reed, 1978)
+\begin{itemize}
+\item{Single Newton step}
+\item{Subject to material Courant limit: $ \dt{} \lesssim \frac{\dx{}}{|u|}$}
+\item{RELAP, TRACE, COBRA, MARS, SPACE} 
+\end{itemize}
+}
+\end{itemize}
 \end{frame}
 %---------
 %---------
@@ -1513,6 +1581,41 @@ Residual: $\vec{F}(\vec{x}^{n+1}) = \vec{y}(\vec{x}^{n+1}) - \vec{y}^{n} - \dt{}
 \end{frame}
 %---------
 %---------
+\begin{frame}[shrink=5] 
+\frametitle{Nearly-Implicit Method}
+
+\begin{columns}
+\column{0.45\textwidth}
+
+\begin{itemize}
+\item{Derivative of SETS method.}
+\item{Developed to overcome material Courant limit of the semi-implicit method.}
+\item{Three-stage approximation to $\vec{E}(\vec{x}^{*})$.}
+\item{Courant limit above the material Courant limit but not unbounded.}
+\item{Two-stage variant used in RELAP5-3D}
+\end{itemize}
+
+\column{0.5\textwidth}
+\begin{algorithmic}
+\scriptsize
+\Require $\vec{x}^{0}$ and $t^{0}$
+\Set $n = 0$
+\Loop \; Transient Loop
+    \State $t^{n+1} : = t^{n} + \Delta t$
+	\Calculate $\vec{F}_1$ and $\vec{J}_1$
+	\Calculate $\vec{\delta x}^{*} = -\vec{J}^{-1}_1\vec{F}_1$
+	\Calculate $\vec{c}^{*}$ and $\vec{u}^{n+1}$
+	\Calculate $\vec{F}_2$
+	\Calculate $\vec{c}^{**}$ from $\vec{F}_2$
+	\Calculate $\vec{c}^{n+1}$ from $\vec{F}_3$.
+\EndLoop{\; $n = n + 1$}
+\end{algorithmic}
+
+\end{columns}
+
+\end{frame}
+%---------
+%---------
 \begin{frame} 
 \frametitle{Complex Geometry}
 
@@ -1560,41 +1663,6 @@ Error in solution is on the order of double precision machine round-off.
 \vspace{0.1in}
 \end{textblock}
 }
-
-\end{frame}
-%---------
-%---------
-\begin{frame} 
-\frametitle{Nearly-Implicit Method}
-
-\begin{columns}
-\column{0.45\textwidth}
-
-\begin{itemize}
-\item{Derivative of SETS method.}
-\item{Developed to overcome material Courant limit of the semi-implicit method.}
-\item{Three-stage approximation to $\vec{E}(\vec{x}^{*})$.}
-\item{Courant limit above the material Courant limit but not unbounded.}
-\item{Two-stage variant used in RELAP5-3D}
-\end{itemize}
-
-\column{0.5\textwidth}
-\begin{algorithmic}
-\scriptsize
-\Require $\vec{x}^{0}$ and $t^{0}$
-\Set $n = 0$
-\Loop \; Transient Loop
-    \State $t^{n+1} : = t^{n} + \Delta t$
-	\Calculate $\vec{F}_1$ and $\vec{J}_1$
-	\Calculate $\vec{\delta x}^{*} = -\vec{J}^{-1}_1\vec{F}_1$
-	\Calculate $\vec{c}^{*}$ and $\vec{u}^{n+1}$
-	\Calculate $\vec{F}_2$
-	\Calculate $\vec{c}^{**}$ from $\vec{F}_2$
-	\Calculate $\vec{c}^{n+1}$ from $\vec{F}_3$.
-\EndLoop{\; $n = n + 1$}
-\end{algorithmic}
-
-\end{columns}
 
 \end{frame}
 %---------
@@ -1656,6 +1724,25 @@ h_{\text{cbv},j} <\alpha_f^n>_d^n v_{f,j}^{n+1} \right] \nonumber
 \end{frame}
 %---------
 %---------
+\begin{frame} 
+\frametitle{Temporal Convergence vs Timestep Size Insensitivity}
+
+\begin{itemize}
+\item{Timestep size insensitivity: solution is insensitive to reduction of \dtmax{}.}
+\item{Temporal convergence: error due to numerical approximation of temporal integral below engineering scales of interest.}
+\end{itemize}
+
+Metrics for nonlinear convergence testing:
+\begin{equation*}
+\tilde{R} = \frac{\int_{t^{0}}^{t^{N}} ||\tilde{\vec{F}}(\tau)||_2 \,\mathrm{d} \tau}{t^{N} - t^{0}}
+\end{equation*}
+\begin{equation*}
+\tilde{R}_{\text{M}} = \frac{\int_{t^{0}}^{t^{N}} \,\tau\,||\tilde{\vec{F}}(\tau)||_2 \,\mathrm{d} \tau}{\int_{t^{0}}^{t^{N}} \,\tau \,\mathrm{d} \tau}
+\end{equation*}
+
+\end{frame}
+%---------
+%---------
 %\begin{frame}
 %\frametitle{Convergence Metrics for Flashing Problem}
 %
@@ -1704,93 +1791,4 @@ h_{\text{cbv},j} <\alpha_f^n>_d^n v_{f,j}^{n+1} \right] \nonumber
 %\end{table}
 %
 %\end{frame}
-%---------
-%---------
-\begin{frame} 
-\frametitle{Temporal Convergence vs Timestep Size Insensitivity}
-
-\begin{itemize}
-\item{Timestep size insensitivity: solution is insensitive to reduction of \dtmax{}.}
-\item{Temporal convergence: error due to numerical approximation of temporal integral below engineering scales of interest.}
-\end{itemize}
-
-Metrics for nonlinear convergence testing:
-\begin{equation*}
-\tilde{R} = \frac{\int_{t^{0}}^{t^{N}} ||\tilde{\vec{F}}(\tau)||_2 \,\mathrm{d} \tau}{t^{N} - t^{0}}
-\end{equation*}
-\begin{equation*}
-\tilde{R}_{\text{M}} = \frac{\int_{t^{0}}^{t^{N}} \,\tau\,||\tilde{\vec{F}}(\tau)||_2 \,\mathrm{d} \tau}{\int_{t^{0}}^{t^{N}} \,\tau \,\mathrm{d} \tau}
-\end{equation*}
-
-\end{frame}
-%---------
-%---------
-\begin{frame} 
-\frametitle{Methods for Nuclear Thermal Hydraulic Safety Analysis}
-
-\begin{itemize}
-\item{Fully Explicit Method [COBRA-I]}
-\item{Fully Implicit Method [CATHARE] (Barre and Bernard, 1990)}
-\item{Semi-Implicit Method [COBRA-TF] (Liles and Reed, 1978) }
-\item{Stability-Enhancing Two-Step Method (SETS) [TRACE] (Mahaffy, 1982) }
-\item{Nearly Implicit Method [RELAP] (Trapp and Riemke, 1986) }
-\end{itemize}
-
-\end{frame}
-%---------
-%---------
-\begin{frame}[shrink=5,noframenumbering]
-\frametitle{Operator-Based Scaling: Examples}
-
-\begin{IEEEeqnarray}{rcl}
-S^{k}_{m,l} & = & V_c \abs{\left(\alpha_l \rho_l \right)^{n+1,k} - \left(\alpha_l \rho_l \right)^{n}} + \dt{} \sum_{i\,\in\,N_{f}}\abs{\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1,k}_l  A_{m}}_{i} \nonumber \\
-&+& \abs{(1-\eta)\Gamma}^{n+1,k} + \abs{\Upsilon}^{n+1,k} \nonumber \\
-S^{k}_{p, l} & = & \frac{\dt{}}{\dx{}} \left[\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}} + \abs{\sum_{i\, \in \, N_{c} } \left( \don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a},l} \tilde{A}\right)^{n}_{i}} \right. \nonumber \\ 
-& + & \abs{\ave{\alpha_l}^{n}_{\text{a}} \nabla P^{\,n+1, k}} + \abs{g \ave{\alpha_l \rho_l}_{\text{a}}^{n}} + \abs{K^{n}_{wl}(\dot{m}_l^{n+1, k})^2} \nonumber \\
-& + & \abs{K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1,k}_{g})^2} + \abs{(1 - \eta)\dot{\Gamma} u^{'}}^{n} + \abs{\dot{\Upsilon} u^{'}}^{n} \left. \vphantom{\abs{\frac{\dx{} \left[\dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n}\right]}{\dt{}}}}  \right] \nonumber
-\end{IEEEeqnarray}
-
-\end{frame}
-%---------
-%---------
-\begin{frame}[shrink=5,noframenumbering]
-\frametitle{Conservation of Momentum Equations}
-\begin{IEEEeqnarray}{lCl}
-F^{k}_{p, l} & = & \dot{m}_{l}^{n+1, k} - \dot{m}_{l}^{n} + \frac{\dt{}}{\dx{}}\left(\sum_{i\,\in \, N_{c} } \left( \don{\alpha_l \rho_l u_l}_{\text{d}} \ave{u}_{\text{a},l} \tilde{A}\right)_{i}^{n}
- +\ave{\alpha_l}^{n}_{\text{a}} \nabla P^{\,n+1, k} - g \ave{\alpha_l \rho_l}_{\text{a}}^{n} \right. \nonumber \\
-& + & \left. K^{n}_{wl}(\dot{m}_l^{n+1, k})^2 - K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1,k}_{g})^2 + \left[(1 - \eta)\dot{\Gamma} u^{'} + \dot{\Upsilon} u^{'}\right]^{n} \vphantom{\sum_{N_{k}}}\right) \nonumber \\
-%\label{eqn:nlnGasMomentumResidual}
-F^{k}_{p, g} & = & \dot{m}_{g}^{n+1,k} - \dot{m}_{g}^{n} + \frac{\dt{}}{\dx{}}\left(\sum_{i\, \in \, N_{c} } \left( \don{\alpha_g \rho_g u_g}_{\text{d}} \ave{u}_{\text{a},g}  \tilde{A}\right)_{i}^{n}  +\ave{\alpha_g}^{n}_{\text{a}} \nabla P^{\,n+1, k} - g \ave{\alpha_g \rho_g}_{\text{a}}^{n} \right.\nonumber \\
-& + & \left. K^{n}_{wg}(\dot{m}_g^{n+1, k})^2 + K^{n}_{i,gl}(u^{n+1, k}_{l} - u^{n+1, k}_{g})^2 + K^{n}_{i,ge}(u^{n+1,k}_{e} - u^{n+1,k}_{g})^2 - (\dot{\Gamma} u^{'})^{n} \vphantom{\sum_{N_{k}}}\right) \nonumber\\
-%\label{eqn:nlnEntMomentumResidual}
-F^{k}_{p, e} & = & \dot{m}_{e}^{n+1, k} - \dot{m}_{e}^{n} + \frac{\dt{}}{\dx{}}\left(\sum_{i\, \in \, N_{c} } \left( \don{\alpha_e \rho_l u_e}_{\text{d}} \ave{u}_{\text{a},e}  \tilde{A}\right)_{i}^{n} + \ave{\alpha_{e}}^{n}_{\text{a}} \nabla P^{\,n+1, k} - g \ave{\alpha_e \rho_l}^{n}_{\text{a}} \right. \nonumber \\
-& + & \left. K^{n}_{we}(\dot{m}_e^{n+1, k})^2 - K^{n}_{i,ge}(u^{n+1, k}_{e} - u^{n+1, k}_{g})^2 + \left[\eta \dot{\Gamma} u^{'} - \dot{\Upsilon} u^{'}\right]^n\vphantom{\sum_{N_{k}}}\right) \nonumber
-\end{IEEEeqnarray}
-
-\end{frame}
-%---------
-%---------
-\begin{frame}[shrink=20,noframenumbering]
-\frametitle{Conservation of Mass and Energy Equations}
-
-\begin{IEEEeqnarray}{lCl}
-%\label{eqn:nlnNcgMassResidual}
-F^{k}_{m, n} & = & V_c\left[ (\alpha_g \rho_{n})^{n+1, k} -(\alpha_g \rho_{n})^{n}\right] +\dt{} \sum_{i\, \in \,\ N_{f}}\left( \don{\alpha^{n}_g \rho^{n}_{n}}^{n+1,k}_{d} u^{n+1, k}_{g}  A_{m} \right)_{i} \nonumber \\
-%\label{eqn:nlnLiqMassResidual}
-F^{k}_{m, l} & = & V_c \left(\alpha_l \rho_l \right)^{n+1,k} - V_c \left(\alpha_l \rho_l \right)^{n} + \dt{} \sum_{i\,\in\,N_{f}} \left(\don{\alpha^n_l \rho^n_l}^{n+1,k}_{d} u^{n+1, k}_l A_{m} \right)_{i} + \left[(1-\eta)\Gamma + \Upsilon\right]^{n+1, k}  \nonumber  \\
-%\label{eqn:nlnGasEnergyResidual}
-F^{k}_{h, g} & = & V_c \left[\left( \alpha_g \rho_g h_g \right)^{n+1, k} - \left( \alpha_g \rho_g h_g \right)^{n} - \alpha^{n}_{g} ( P^{\,n+1, k} - P^{\,n} ) \right] - q^{n}_{wg} \nonumber \\
-& - & \left[q_{i,v} + \Gamma h^{'}_v + q_{gl}\right]^{n+1, k} + \dt{} \sum_{i\,\in\,N_{f}} \left(\don{\alpha^{n}_g \rho^{n}_g h_g^{n}}^{n+1,k}_{d} u^{n+1, k}_g  A_{m} \right)_{i}  \nonumber  \\
-%\label{eqn:nlnLiqEnergyResidual}
-F^{k}_{h, l} & = & V_c\left[\left( \alpha_l \rho_l h_l \right)^{n+1,k} - \left( \alpha_l \rho_l h_l \right)^{n} - \alpha^{n}_l (P^{\,n+1,k} - P^{\,n})\right] - \left[q_{i,l} - \Gamma h^{'}_l - q_{gl}\right]^{n+1,k}    \nonumber \\
-& +& \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_l \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_l A_{m} + \don{\alpha^{n}_e \rho^{n}_l h^{n}_l}^{n+1,k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} - q^{n}_{wl}  \nonumber  \\
-%\label{eqn:nlnEntMassResidual}
-F^{k}_{m, e} & = & V_c \left(\alpha_e \rho_l \right)^{n+1,k} - V_c \left(\alpha_e \rho_l \right)^{n} + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_e \rho^{n}_l}^{n+1, k}_{d} u^{n+1,k}_e  A_{m} \right)_{i} - \left[\Upsilon - \eta \Gamma \right]^{n+1, k}  \nonumber \\
-%\label{eqn:nlnVapMassResidual}
-F^{k}_{m, v} & = & V_c \left[\left(\alpha_g \rho_v \right)^{n+1, k} - \left(\alpha_g \rho_v \right)^{n}\right] + \dt{} \sum_{i \, \in \, N_{f} } \left( \don{\alpha^{n}_g \rho^{n}_v}^{n+1,k}_{d} u^{n+1, k}_{g} A_{m} \right)_{i} - \Gamma^{n+1, k}  \nonumber 
-\end{IEEEeqnarray}
-
-\end{frame}
-%---------
-%---------
 \end{document}
