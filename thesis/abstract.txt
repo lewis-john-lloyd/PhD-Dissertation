@@ -1,0 +1,20 @@
+This dissertation has focused on developing a novel method for solving the nonlinear partial differential equations associated with thermal-hydraulic safety analysis software.
+Traditional methods used in thermal-hydraulic safety analysis software involve solving large systems of nonlinear equations.
+One class of methods resolves those nonlinearities by using an iterative nonlinear refinement technique.
+Another class linearizes the nonlinear equations and attempts to minimize the nonlinear truncation error with timestep size refinement.
+However, this nonlinear truncation error can cause a solution to remain unchanged with reduction in timestep size.
+This insensitivity of the solution to timestep size refinement is often taken as an indicator of a converged solution. 
+Until the nonlinear truncation error is eliminated by using an iterative solver, temporal convergence cannot be assured.
+However, the application of a nonlinear solver can be excessively computationally expensive.
+These two paradigms stand at the opposite ends of a spectrum, and the middle ground had yet to be investigated.
+
+This research has developed a means of providing that middle ground: a spatially-selective, nonlinear refinement (SNR) algorithm.
+In this work, the two-phase, three-field software COBRA was converted from a linearized semi-implicit solver to a nonlinearly convergent solver.
+As part of that development, an operator-based scaling that provides a physically meaningful convergence measure was developed and implemented.
+Resolving the local nonlinearities required the development of the SNR algorithm. 
+The SNR algorithm was capable of generating a solution that was more temporally consistent than that obtained by the linear solver, and one that was much closer to solution provided by the nonlinear solver, with only approximately one-third the computational effort.
+
+In summary, a nonlinear solver can assist in achieving a timestep size insensitive simulation at larger timestep sizes.
+Unfortunately, nonlinear solvers are computationally expensive when multiple nonlinear iterates are required to resolve the nonlinearities.
+However, in problems where the spatial location of the nonlinearities can be determined by engineering judgment, the use of the SNR algorithm is warranted.
+By selecting those areas of the computational domain where nonlinearities are expected to be high and subjecting only them to multiple nonlinear iterations, the accuracy of the nonlinear solver may be obtained without its associated computational cost.
