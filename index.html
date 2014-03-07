@@ -35,6 +35,16 @@
 <a name="abstract" class="anchor" href="#abstract"><span class="octicon octicon-link"></span></a>Abstract</h3>
 
 <p>This work focused on developing a novel method for solving the nonlinear partial differential equations associated with thermal-hydraulic safety analysis software. Traditional methods involve solving large systems of nonlinear equations. One class of methods linearizes the nonlinear equations and attempts to minimize the nonlinear truncation error with timestep size selection. These linearized methods are characterized by low computational cost but reduced accuracy. Another class resolves those nonlinearities by using an iterative nonlinear refinement technique. However, these iterative methods are computationally expensive when multiple iterates are required to resolve the nonlinearities. These two paradigms stand at the opposite ends of a spectrum, and the middle ground had yet to be investigated. This research sought to find that middle ground, a balance between the competing incentives of computational cost and accuracy, by creating a hybrid method: a spatially-selective, nonlinear refinement (SNR) algorithm. As part of this work, the two-phase, three-field software COBRA was converted from a linearized semi-implicit solver to a nonlinearly convergent solver; an operator-based scaling that provides a physically meaningful convergence measure was developed and implemented; and the SNR algorithm was developed to enable a subdomain of the simulation to be subjected to multiple nonlinear iterates while maintaining global consistency.  By selecting those areas of the computational domain where nonlinearities are expected to be high and subjecting only them to multiple nonlinear iterations, the accuracy of the nonlinear solver may be obtained without its associated computational cost.</p>
+
+<h3>
+<a name="acknowledgements" class="anchor" href="#acknowledgements"><span class="octicon octicon-link"></span></a>Acknowledgements</h3>
+
+<p>This research was performed under appointment to the Rickover Fellowship Program in Nuclear Engineering sponsored by Naval Reactors Division of the U.S. Department of Energy.</p>
+
+<h3>
+<a name="acknowledgements-1" class="anchor" href="#acknowledgements-1"><span class="octicon octicon-link"></span></a>Acknowledgements</h3>
+
+<p>You need a latex engine with dynamic memory allocation to build the dissertation. Lualatex is a viable option.</p>
       </section>
     </div>
 
